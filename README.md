@@ -30,7 +30,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 - **Flexible and Modular Design**
 
   We decompose the flow estimation framework into different components,
-  which make it much easy and flexible to build a new model by combining different modules.
+  which makes it much easy and flexible to build a new model by combining different modules.
 
 - **Plenty of Algorithms and Datasets Out of the Box**
 
