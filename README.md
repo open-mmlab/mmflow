@@ -19,7 +19,7 @@ MMFlow is an open source optical flow toolbox based on PyTorch. It is a part of 
 
 The master branch works with **PyTorch 1.5+**.
 
-![demo image](resources/sintel_mountain_1.gif)
+https://user-images.githubusercontent.com/76149310/141924208-b33425b0-b94d-419b-9a72-6a974d145493.mp4
 
 ### Major features
 
