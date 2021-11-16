@@ -19,7 +19,7 @@ MMFlow 是一款基于 PyTorch 的光流工具箱，是 [OpenMMLab](http://openm
 
 主分支代码目前支持 **PyTorch 1.5 以上**的版本。
 
-![demo image](resources/sintel_mountain_1.gif)
+https://user-images.githubusercontent.com/76149310/141924208-b33425b0-b94d-419b-9a72-6a974d145493.mp4
 
 ### 主要特性
 
