@@ -8,12 +8,12 @@ from mmflow.models.decoders.raft_decoder import (ConvGRU, CorrelationPyramid,
 
 
 def test_correlation_pyramid():
-    corr_pyramid_layer = CorrelationPyramid(num_levels=4).cuda()
+    corr_pyramid_layer = CorrelationPyramid(num_levels=4)
 
     H = 64
     W = 64
-    feat1 = torch.randn(1, 1, H, W).cuda()
-    feat2 = torch.randn(1, 1, H, W).cuda()
+    feat1 = torch.randn(1, 1, H, W)
+    feat2 = torch.randn(1, 1, H, W)
 
     corr_pyramid = corr_pyramid_layer(feat1, feat2)
 
@@ -100,18 +100,18 @@ def test_raft_decoder():
         num_levels=4,
         radius=4,
         iters=12,
-        flow_loss=dict(type='SequenceLoss')).cuda()
-    mask = torch.ones((1, 64 * 9, 10, 10)).cuda()
-    flow = torch.randn((1, 2, 10, 10)).cuda()
+        flow_loss=dict(type='SequenceLoss'))
+    mask = torch.ones((1, 64 * 9, 10, 10))
+    flow = torch.randn((1, 2, 10, 10))
     assert model._upsample(flow, mask).shape == torch.Size((1, 2, 80, 80))
 
-    feat1 = torch.randn(1, 256, 8, 8).cuda()
-    feat2 = torch.randn(1, 256, 8, 8).cuda()
-    h_feat = torch.randn(1, 128, 8, 8).cuda()
-    cxt_feat = torch.randn(1, 128, 8, 8).cuda()
-    flow = torch.zeros((1, 2, 8, 8)).cuda()
+    feat1 = torch.randn(1, 256, 8, 8)
+    feat2 = torch.randn(1, 256, 8, 8)
+    h_feat = torch.randn(1, 128, 8, 8)
+    cxt_feat = torch.randn(1, 128, 8, 8)
+    flow = torch.zeros((1, 2, 8, 8))
 
-    flow_gt = torch.randn(1, 2, 64, 64).cuda()
+    flow_gt = torch.randn(1, 2, 64, 64)
     # test forward function
     out = model(feat1, feat2, flow, h_feat, cxt_feat)
     assert isinstance(out, list)

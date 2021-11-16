@@ -23,6 +23,7 @@ def _get_corr_block_cfg():
         corr_cfg=dict(type='Correlation', max_displacement=1, padding=0))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('scaled', [True, False])
 def test_corr_block(scaled):
     feat1 = torch.randn(1, 10, 10, 10).cuda()
@@ -60,6 +61,7 @@ def test_pwcmodule(up_flow):
     assert feat.shape == torch.Size((1, 100, 56, 56))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_pwcnet_decoder():
 
     # test invalid in_channels

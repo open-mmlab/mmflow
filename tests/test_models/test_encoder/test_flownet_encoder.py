@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import pytest
 import torch
 
 from mmflow.models.encoders import (CorrEncoder, FlowNetEncoder,
@@ -111,6 +112,7 @@ def test_flownet_dc_encoder():
         assert feat[k].shape == torch.Size([1, out_channel, H, H])
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_corr_encoder():
     pyramid_levels = ['level3', 'level4', 'level5', 'level6']
     strides = (1, 2, 2, 2)
