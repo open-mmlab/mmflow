@@ -78,7 +78,7 @@ def _build_demo_runner(runner_type='IterBasedRunner',
 
 
 @pytest.mark.parametrize('multi_optimziers', (True, False))
-def test_multisteplr_updater_hook(multi_optimziers):
+def test_multistagelr_updater_hook(multi_optimziers):
     # test lengths of  milestone_lrs, milestone_steps, steps, and gammas
     # must be equal.
     with pytest.raises(AssertionError):

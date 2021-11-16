@@ -23,7 +23,7 @@ class MultiStageLrUpdaterHook(LrUpdaterHook):
 
         assert len(milestone_lrs) == len(milestone_iters) == len(steps) == len(
             gammas
-        ), ('For MultiStepLr, lengths of milestones_lr and steps and gammas',
+        ), ('For MultiStageLr, lengths of milestones_lr and steps and gammas',
             f'must be equal, but got {len(milestone_lrs)}, ',
             f'{len(milestone_iters)}, {len(steps)}, and {len(gammas)}')
         for i in range(len(milestone_iters)):
