@@ -9,6 +9,7 @@ from mmflow.models import build_flow_estimator
 from mmflow.models.flow_estimators.base import FlowEstimator
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('cfg_file', [
     '../../configs/_base_/models/pwcnet.py',
     '../../configs/_base_/models/raft.py',
@@ -44,6 +45,7 @@ def test_flow_estimator(cfg_file):
     assert float(loss.item()) > 0
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_irr_pwc():
 
     cfg_file = '../../configs/_base_/models/irrpwc.py'

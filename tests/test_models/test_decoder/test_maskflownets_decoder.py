@@ -58,6 +58,7 @@ def test_mask_module(up_flow, with_mask):
     assert outputs[0].shape == torch.Size((1, 2, 56, 56))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('with_deform_bias', [True, False])
 def test_warp_block(with_deform_bias):
 
@@ -88,6 +89,7 @@ def test_warp_block(with_deform_bias):
     assert warp_block(feat2, flow, mask, upfeat).shape == feat2.shape
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_maskflownets_decoder():
 
     in_channels = dict(level6=81, level5=227)
