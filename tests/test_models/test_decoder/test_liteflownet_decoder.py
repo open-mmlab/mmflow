@@ -40,6 +40,7 @@ def test_basic_block():
         assert isinstance(layers.layers[i].activate, nn.LeakyReLU)
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('scaled_corr', (True, False))
 def test_matching_block(scaled_corr):
     in_channels = (2 * 1 + 1)**2  # corr feat channels
@@ -141,6 +142,7 @@ def test_regularization_block():
     assert pred_flow.shape == torch.Size((1, 2, 10, 10))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize(('extra_training_loss', 'regularized_flow'),
                          [(True, True), (False, False)])
 def test_nete(extra_training_loss, regularized_flow):

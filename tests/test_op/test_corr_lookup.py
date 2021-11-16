@@ -37,7 +37,7 @@ def test_bilinear_sample():
 
 
 def test_corr_lookup():
-    corr_pyramid_layer = CorrelationPyramid(num_levels=4).cuda()
+    corr_pyramid_layer = CorrelationPyramid(num_levels=4)
 
     H = 8
     W = 16

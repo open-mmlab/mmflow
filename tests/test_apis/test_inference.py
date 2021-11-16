@@ -3,6 +3,7 @@ import os.path as osp
 
 import mmcv
 import pytest
+import torch
 from mmcv.utils import Config
 
 from mmflow.apis import inference_model, init_model
@@ -14,13 +15,14 @@ def test_init_model():
     cfg_file = osp.join(osp.dirname(__file__), cfg_file)
     cfg = Config.fromfile(cfg_file)
 
-    model_from_cfg_file = init_model(config=cfg_file)
-    model_from_cfg = init_model(config=cfg)
+    model_from_cfg_file = init_model(config=cfg_file, device='cpu')
+    model_from_cfg = init_model(config=cfg, device='cpu')
 
     assert isinstance(model_from_cfg_file, PWCNet)
     assert isinstance(model_from_cfg, PWCNet)
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('cfg_file', [
     '../../configs/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.py',
     '../../configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py'
