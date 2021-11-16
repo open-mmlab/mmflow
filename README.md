@@ -25,15 +25,16 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 - **The First Unified Framework for Optical Flow**
 
-  MMFlow is the first toolbox that provides a framework for unified implementation and evaluation of optical flow methods.
+  MMFlow is the first toolbox that provides a framework for unified implementation and evaluation of optical flow algorithms.
 
 - **Flexible and Modular Design**
 
-  We decompose the flow estimation framework into different components and one can build a new model easily and flexibly by combining different modules.
+  We decompose the flow estimation framework into different components,
+  which make it much easy and flexible to build a new model by combining different modules.
 
 - **Plenty of Algorithms and Datasets Out of the Box**
 
-  The toolbox directly supports popular and contemporary optical flow methods, *e.g.* FlowNet, PWC-Net, RAFT, etc,
+  The toolbox directly supports popular and contemporary optical flow models, *e.g.* FlowNet, PWC-Net, RAFT, etc,
   and representative datasets, FlyingChairs, FlyingThings3D, Sintel, KITTI, etc.
 
 ## License
