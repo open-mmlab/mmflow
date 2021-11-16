@@ -7,7 +7,7 @@ Please check the following conventions if you would like to modify MMFlow as you
 In MMFlow, we render the optical flow following this color wheel from [Middlebury flow dataset](https://vision.middlebury.edu/flow/). Smaller vectors are lighter and color represents the direction.
 
 <div align=center>
-<img src="../resources/color_wheel.png">
+<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/e9ffff6a01dc8a4770871e5ece05637c7893da8a/resources/color_wheel.png">
 </div>
 
 ## Return Values
