@@ -164,8 +164,14 @@ if __name__ == '__main__':
         author='MMFlow Contributors',
         author_email='openmmlab@gmail.com',
         license='Apache License 2.0',
-        setup_requires=['pytest-runner', 'numpy'],
-        tests_require=['pytest'],
-        install_requires=parse_requirements('requirements/build.txt'),
+        setup_requires=parse_requirements('requirements/build.txt'),
+        tests_require=parse_requirements('requirements/tests.txt'),
+        install_requires=parse_requirements('requirements/runtime.txt'),
+        extras_require={
+            'all': parse_requirements('requirements.txt'),
+            'tests': parse_requirements('requirements/tests.txt'),
+            'build': parse_requirements('requirements/build.txt'),
+            'optional': parse_requirements('requirements/optional.txt'),
+        },
         ext_modules=[],
         zip_safe=False)
