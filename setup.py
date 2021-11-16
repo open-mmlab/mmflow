@@ -166,6 +166,6 @@ if __name__ == '__main__':
         license='Apache License 2.0',
         setup_requires=['pytest-runner', 'numpy'],
         tests_require=['pytest'],
-        install_requires=parse_requirements('requirements.txt'),
+        install_requires=parse_requirements('requirements/build.txt'),
         ext_modules=[],
         zip_safe=False)
