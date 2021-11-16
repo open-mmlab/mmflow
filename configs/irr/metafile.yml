@@ -1,0 +1,95 @@
+Collections:
+  - Name: IRR
+    Metadata:
+      Training Data: FlyingChairsOcc, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015
+    Paper:
+      URL: https://openaccess.thecvf.com/content_CVPR_2019/papers/Hur_Iterative_Residual_Refinement_for_Joint_Optical_Flow_and_Occlusion_Estimation_CVPR_2019_paper.pdf
+      Title: 'Iterative Residual Refinement for Joint Optical Flow and Occlusion Estimation'
+    README: configs/irr/README.md
+
+Models:
+  - Name: irrpwc_8x1_sshort_flyingchairsocc_384x448
+    In Collection: IRR
+    Config: configs/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.py
+    Metadata:
+      Training Data: FlyingChairsOcc
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairsOcc
+        Metrics:
+          EPE: 1.44
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.38
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.86
+    Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.pth
+
+  - Name: irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768
+    In Collection: IRR
+    Config: configs/irr/irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.79
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.38
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 8.32
+          Fl-all: 25.06%
+    Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768.pth
+
+  - Name: irrpwc_ft_4x1_300k_sintel_384x768
+    In Collection: IRR
+    Config: configs/irr/irrpwc_ft_4x1_300k_sintel_384x768.py
+    Metadata:
+      Training Data: Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.51
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.18
+    Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_ft_4x1_300k_sintel_384x768.pth
+
+  - Name: irrpwc_ft_4x1_300k_sintel_final_384x768
+    In Collection: IRR
+    Config: configs/irr/irrpwc_ft_4x1_300k_sintel_final_384x768.py
+    Metadata:
+      Training Data: Sintel final
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.71
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 1.94
+    Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_ft_4x1_300k_sintel_final_384x768.pth
+
+  - Name: irrpwc_ft_4x1_300k_kitti_320x896
+    In Collection: IRR
+    Config: configs/irr/irrpwc_ft_4x1_300k_kitti_320x896.py
+    Metadata:
+      Training Data: KITTI2012, KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 2.19
+          Fl-all: 8.51%
+    Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_ft_4x1_300k_kitti_320x896.pth

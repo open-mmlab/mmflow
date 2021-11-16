@@ -1,0 +1,144 @@
+Collections:
+  - Name: LiteFlowNet2
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015
+    Paper:
+      URL: https://arxiv.org/abs/1903.07414.pdf
+      Title: 'A Lightweight Optical Flow CNN - Revisiting Data Fidelity and Regularization'
+    README: configs/LiteFlowNet2/README.md
+
+Models:
+  - Name: liteflownet2_pre_M6S6_8x1_flyingchairs_320x448
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_pre_M6S6_8x1_flyingchairs_320x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 4.20
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_pre_M6S6_8x1_flyingchairs_320x448.pth
+
+  - Name: liteflownet2_pre_M6S6R6_8x1_flyingchairs_320x448
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_pre_M6S6R6_8x1_flyingchairs_320x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 3.94
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_pre_M6S6R6_8x1_flyingchairs_320x448.pth
+
+  - Name: liteflownet2_pre_M5S5R5_8x1_flyingchairs_320x448
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_pre_M5S5R5_8x1_flyingchairs_320x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 2.85
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_pre_M5S5R5_8x1_flyingchairs_320x448.pth
+
+  - Name: liteflownet2_pre_M4S4R4_8x1_flyingchairs_320x448
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_pre_M4S4R4_8x1_flyingchairs_320x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 2.07
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_pre_M4S4R4_8x1_flyingchairs_320x448.pth
+
+  - Name: liteflownet2_pre_M3S3R3_8x1_flyingchairs_320x448
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_pre_M3S3R3_8x1_flyingchairs_320x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.57
+      - Task: Optical flow estimation
+        Dataset: Sintel Clean
+        Metrics:
+          EPE: 2.78
+      - Task: Optical flow estimation
+        Dataset: Sintel Final
+        Metrics:
+          EPE: 4.24
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 5.79
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 14.34
+          Fl-all: 39.42%
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_pre_M3S3R3_8x1_flyingchairs_320x448.pth
+
+  - Name: liteflownet2_8x1_500k_flyingthing3d_subset_384x768
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_8x1_500k_flyingthing3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.35
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.86
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 4.86
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 12.07
+          Fl-all: 32.87%
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_8x1_500k_flyingthing3d_subset_384x768.pth
+
+  - Name: liteflownet2_ft_4x1_600k_sintel_kitti_320x768
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_ft_4x1_600k_sintel_kitti_320x768.py
+    Metadata:
+      Training Data: Sintel, KITTI2012, KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.32
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 1.65
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_ft_4x1_600k_sintel_kitti_320x768.pth
+
+  - Name: liteflownet2_ft_4x1_500k_kitti_320x896
+    In Collection: LiteFlowNet2
+    Config: configs/liteflownet2/liteflownet2_ft_4x1_500k_kitti_320x896.py
+    Metadata:
+      Training Data: KITTI2012, KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 0.89s
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 1.24
+          Fl-all: 4.31%
+    Weights: https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_ft_4x1_500k_kitti_320x896.pth

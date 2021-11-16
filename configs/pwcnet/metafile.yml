@@ -1,0 +1,121 @@
+Collections:
+  - Name: PWC-Net
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015, HD1K
+    Paper:
+      URL: https://arxiv.org/pdf/1709.02371.pdf
+      Title: 'PWC-Net: CNNs for Optical Flow Using Pyramid, Warping, and Cost Volume'
+    README: configs/pwcnet/README.md
+
+Models:
+  - Name: pwcnet_8x1_slong_flyingchairs_384x448
+    In Collection: PWC-Net
+    Config: configs/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.51
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.52
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.81
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: pwcnet_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: PWC-Net
+    Config: configs/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.26
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.79
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.66
+          Fl-all: 17.88%
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 9.49
+          Fl-all: 29.85%
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: pwcnet_ft_4x1_300k_sintel_384x768
+    In Collection: PWC-Net
+    Config: configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py
+    Metadata:
+      Training Data: Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.50
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.06
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.ckpt
+
+  - Name: pwcnet_ft_4x1_300k_sintel_final_384x768
+    In Collection: PWC-Net
+    Config: configs/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.py
+    Metadata:
+      Training Data: Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.82
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 1.78
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.pth
+
+  - Name: pwcnet_ft_4x1_300k_kitti_320x896
+    In Collection: PWC-Net
+    Config: configs/pwcnet/pwcnet_ft_4x1_300k_kitti_320x896.py
+    Metadata:
+      Training Data: KITTI2012 KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 1.07
+          Fl-all: 3.94%
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 1.64
+          Fl-all: 6.09%
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_kitti_320x896.pth
+
+  - Name: pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768
+    In Collection: PWC-Net
+    Config: configs/pwcnet/.py
+    Metadata:
+      Training Data: Sintel, KITTI2015, HD1K
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.90
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.39
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768.pth

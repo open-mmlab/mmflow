@@ -1,0 +1,6 @@
+include requirements/*.txt
+include mmflow/VERSION
+include mmflow/.mim/model-index.yml
+include mmflow/.mim/demo/*/*
+recursive-include mmflow/.mim/configs *.py *.yml
+recursive-include mmflow/.mim/tools *.sh *.py

@@ -1,0 +1,81 @@
+Collections:
+  - Name: MaskFlownet
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D, Sintel, KITTI2015, HD1K
+    Paper:
+      URL: https://arxiv.org/pdf/2003.10955.pdf
+      Title: 'MaskFlownet: Asymmetric Feature Matching with Learnable Occlusion Mask'
+    README: configs/maskflownet/README.md
+
+Models:
+  - Name: maskflownets_8x1_slong_flyingchairs_384x448
+    In Collection: MaskFlownet
+    Config: configs/maskflownet/maskflownets_8x1_slong_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.54
+    Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownets_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: maskflownets_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: MaskFlownet
+    Config: configs/maskflownet/maskflownets_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.30
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.73
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.94
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          Fl-all: 29.70%
+    Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownets_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: maskflownet_8x1_800k_flyingchairs_384x448
+    In Collection: MaskFlownet
+    Config: configs/maskflownet/maskflownet_8x1_800k_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.37
+    Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownet_8x1_800k_flyingchairs_384x448.pth
+
+  - Name: maskflownet_8x1_500k_flyingthings3d_subset_384x768
+    In Collection: MaskFlownet
+    Config: configs/maskflownet/maskflownet_8x1_500k_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.23
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 3.70
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.82
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          Fl-all: 29.04%
+    Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownet_8x1_500k_flyingthings3d_subset_384x768.pth

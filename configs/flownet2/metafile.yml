@@ -1,0 +1,145 @@
+Collections:
+  - Name: FlowNet2
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D subset, ChairsSDHom
+    Paper:
+      URL: https://openaccess.thecvf.com/content_cvpr_2017/papers/Ilg_FlowNet_2.0_Evolution_CVPR_2017_paper.pdf
+      Title: 'FlowNet 2.0: Evolution of Optical Flow Estimation with Deep Networks'
+    README: configs/flownet2/README.md
+
+Models:
+  - Name: flownet2cs_8x1_slong_flyingchairs_384x448
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.59
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: flownet2cs_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.96
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.69
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.50
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 8.23
+          Fl-all: 28.28%
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: flownet2css_8x1_slong_flyingchairs_384x448
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.55
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: flownet2css_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.85
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.57
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.13
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 7.72
+          Fl-all: 25.76%
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.81
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.69
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 2.98
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 7.99
+          Fl-all: 25.66%
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.pth
+
+  - Name: flownet2sd_8x1_slong_chairssdhom_384x448
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.py
+    Metadata:
+      Training Data: ChairsSDHom
+    Results:
+      - Task: Optical flow estimation
+        Dataset: ChairsSDHom
+        Metrics:
+          EPE: 0.37
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.pth
+
+  - Name: flownet2_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: FlowNet
+    Config: configs/flownet2/flownet2_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.78
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.31
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 3.02
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 8.02
+          Fl-all: 25.18%
+    Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2_8x1_sfine_flyingthings3d_subset_384x768.pth

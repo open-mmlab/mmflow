@@ -1,0 +1,87 @@
+Collections:
+  - Name: RAFT
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D, Sintel, KITTI2015, HD1K
+    Paper:
+      URL: https://arxiv.org/pdf/2003.12039.pdf
+      Title: 'RAFT: Recurrent All Pairs Field Transforms for Optical Flow'
+    README: configs/raft/README.md
+
+Models:
+  - Name: raft_8x2_100k_flyingchairs_368x496
+    In Collection: RAFT
+    Config: configs/raft/raft_8x2_100k_flyingchairs_368x496.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 0.78
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.54
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 5.32
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.pth
+
+  - Name: raft_8x2_100k_flyingthings3d_400x720
+    In Collection: RAFT
+    Config: configs/raft/raft_8x2_100k_flyingthings3d_400x720.py
+    Metadata:
+      Training Data: FlyingThings3D
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.46
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.67
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 4.52
+          Fl-all: 15.07%
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth
+
+  - Name: raft_8x2_100k_flyingthings3d_sintel_368x768
+    In Collection: RAFT
+    Config: configs/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.py
+    Metadata:
+      Training Data: FlyingThings3D, Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.60
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 0.98
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.pth
+
+  - Name: raft_8x2_100k_TSKH_368x768.py
+    In Collection: RAFT
+    Config: configs/raft/raft_8x2_100k_TSKH_368x768.py
+    Metadata:
+      Training Data: FlyingThings3D, Sintel, KITTI2012,  KITTI2015, HD1K
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.61
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 1.03
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 1.70
+          Fl-all: 5.74%
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth

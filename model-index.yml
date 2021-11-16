@@ -1,0 +1,9 @@
+Import:
+  - configs/flownet/metafile.yml
+  - configs/flownet2/metafile.yml
+  - configs/irr/metafile.yml
+  - configs/liteflownet/metafile.yml
+  - configs/liteflownet2/metafile.yml
+  - configs/maskflownet/metafile.yml
+  - configs/pwcnet/metafile.yml
+  - configs/raft/metafile.yml

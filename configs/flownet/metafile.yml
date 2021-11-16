@@ -1,0 +1,129 @@
+Collections:
+  - Name: FlowNet
+    Metadata:
+      Training Data: FlyingChairs, FlyingThings3D subset, Sintel
+    Paper:
+      URL: https://openaccess.thecvf.com/content_iccv_2015/papers/Dosovitskiy_FlowNet_Learning_Optical_ICCV_2015_paper.pdf
+      Title: 'FlowNet: Learning Optical Flow with Convolutional Networks'
+    README: configs/flownet/README.md
+
+Models:
+  - Name: flownetc_8x1_slong_flyingchairs_384x448
+    In Collection: FlowNet
+    Config: configs/flownet/flownetc_8x1_slong_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.78
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 3.60
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.93
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 7.95
+    Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: flownetc_8x1_sfine_flyingthings3d_subset_384x768
+    In Collection: FlowNet
+    Config: configs/flownet/flownetc_8x1_sfine_flyingthings3d_subset_384x768.py
+    Metadata:
+      Training Data: FlyingThings3D subset
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 2.57
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.74
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.52
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 5.42
+    Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: flownetc_8x1_sfine_sintel_384x448
+    In Collection: FlowNet
+    Config: configs/flownet/flownetc_8x1_sfine_sintel_384x448.py
+    Metadata:
+      Training Data: Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 2.80
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.73
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.09
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 4.78
+    Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_sfine_sintel_384x448.pth
+
+  - Name: flownets_8x1_slong_flyingchairs_384x448
+    In Collection: FlowNet
+    Config: configs/flownet/flownets_8x1_slong_flyingchairs_384x448.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 2.03
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 4.25
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 5.64
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 8.81
+    Weights: https://download.openmmlab.com/mmflow/flownet/flownets_8x1_slong_flyingchairs_384x448.pth
+
+  - Name: flownets_8x1_sfine_sintel_384x448
+    In Collection: FlowNet
+    Config: configs/flownet/flownets_8x1_sfine_sintel_384x448.py
+    Metadata:
+      Training Data: Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 3.06
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.93
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.12
+      - Task: Optical flow estimation
+        Dataset: KITTI2012
+        Metrics:
+          EPE: 6.83
+    Weights: https://download.openmmlab.com/mmflow/flownet/flownets_8x1_sfine_sintel_384x448.pth
