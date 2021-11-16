@@ -66,6 +66,7 @@ def test_irr_occ_head():
         (1, in_channels + sum(feat_channels), 56, 56))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('in_channels', (64, 32))
 def test_irr_corr_block(in_channels):
     out_channels = 32
@@ -101,6 +102,7 @@ def test_irr_corr_block(in_channels):
     assert feat2_.shape == torch.Size((1, out_channels, 12, 12))
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_irr_pwc_decoder():
 
     model = IRRPWCDecoder(

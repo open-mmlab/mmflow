@@ -7,7 +7,7 @@ from mmflow.models.decoders.flownet_decoder import (BasicBlock, DeconvModule,
                                                     FlowNetSDecoder)
 
 
-def _get_test_data(
+def _get_test_data_cuda(
         _channels=dict(
             level1=64,
             level2=128,
@@ -24,6 +24,26 @@ def _get_test_data(
         w = w // 2
         h = h // 2
     flow_gt = torch.randn(1, 2, h, w).cuda()
+    return feat, flow_gt
+
+
+def _get_test_data_cpu(
+        _channels=dict(
+            level1=64,
+            level2=128,
+            level3=256,
+            level4=512,
+            level5=512,
+            level6=1024),
+        w=64,
+        h=64):
+    feat = dict()
+
+    for level, ch in _channels.items():
+        feat[level] = torch.randn(1, ch, h, w)
+        w = w // 2
+        h = h // 2
+    flow_gt = torch.randn(1, 2, h, w)
     return feat, flow_gt
 
 
@@ -101,9 +121,9 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
                 'level4': 0.02,
                 'level5': 0.08,
                 'level6': 0.32
-            })).cuda()
+            }))
 
-    feat, flow_gt = _get_test_data()
+    feat, flow_gt = _get_test_data_cpu()
 
     # test multi-levels flow
     out = model.forward_train(feat, return_multi_level_flow=True)
@@ -134,6 +154,7 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
     assert out[0]['flow'].shape == (64, 64, 2)
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_flownetc_decoder():
     model = FlowNetCDecoder(
         in_channels=dict(
@@ -151,8 +172,9 @@ def test_flownetc_decoder():
                 'level6': 0.32
             })).cuda()
 
-    feat1, flow_gt = _get_test_data(dict(level1=64, level2=128, level3=256))
-    corr_feat, _ = _get_test_data(
+    feat1, flow_gt = _get_test_data_cuda(
+        dict(level1=64, level2=128, level3=256))
+    corr_feat, _ = _get_test_data_cuda(
         dict(level3=256, level4=512, level5=512, level6=1024), w=16, h=16)
 
     # test multi-levels flow
