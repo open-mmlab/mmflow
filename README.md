@@ -50,11 +50,11 @@ Supported methods:
 - [x] [FlowNet (ICCV'2015)](configs/flownet/README.md)
 - [x] [FlowNet2 (CVPR'2017)](configs/flownet2/README.md)
 - [x] [PWC-Net (CVPR'2018)](configs/pwcnet/README.md)
-- [x] [LiteFlowNet (CVPR'2018)](config/liteflownet/README.md)
-- [x] [LiteFlowNet2 (TPAMI'2020)](config/liteflownet2/README.md)
-- [x] [IRR (CVPR'2019)](config/irr/README.md)
-- [x] [MaskFlownet (CVPR'2020)](config/maskflownet/README.md)
-- [x] [RAFT (ECCV'2020)](config/raft/README.md)
+- [x] [LiteFlowNet (CVPR'2018)](configs/liteflownet/README.md)
+- [x] [LiteFlowNet2 (TPAMI'2020)](configs/liteflownet2/README.md)
+- [x] [IRR (CVPR'2019)](configs/irr/README.md)
+- [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
+- [x] [RAFT (ECCV'2020)](configs/raft/README.md)
 
 ## Installation
 
