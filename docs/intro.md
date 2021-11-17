@@ -13,7 +13,7 @@ so the motion raises the optical flow, and referring to the color wheel whose co
 as blue.
 
 <div align=center>
-<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/e9ffff6a01dc8a4770871e5ece05637c7893da8a/demo/frames.gif" width=30%/> <img src="https://raw.githubusercontent.com/open-mmlab/mmflow/e9ffff6a01dc8a4770871e5ece05637c7893da8a/demo/frame_gt.png" width=30%/> <img src="https://raw.githubusercontent.com/open-mmlab/mmflow/e9ffff6a01dc8a4770871e5ece05637c7893da8a/resources/color_wheel.png" width=8%/>
+<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/demo/frames.gif" width=30%/> <img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/demo/frame_gt.png" width=30%/> <img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/resources/color_wheel.png" width=8%/>
 </div>
 
 Note that optical flow only focuses on images, and is not relative to the projection of the 3D motion of points
@@ -39,7 +39,7 @@ MMFlow is the first toolbox that provides a framework for unified implementation
 and below is its whole framework:
 
 <div align=center>
-<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/e9ffff6a01dc8a4770871e5ece05637c7893da8a/resources/mmflow_framework.png" width=50%/>
+<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/resources/mmflow_framework.png" width=50%/>
 </div>
 
 MMFlow consists of 4 main parts, `datasets`, `models`, `core` and `apis`.

@@ -56,7 +56,7 @@ We provide scripts to run demos. Here is an example to predict the optical flow 
 
     ```shell
     python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
-        configs/raft/raft_8x2_100k_mixed_368x768.pth \
+        configs/raft/raft_8x2_100k_mixed_368x768.py \
         checkpoints/raft_8x2_100k_mixed_368x768.pth raft_demo
     ```
 
