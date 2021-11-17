@@ -106,7 +106,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install system dependencies
+      # opencv-python is a dependency of mmcv
+      - name: Install opencv-python dependencies
         run: apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxrender-dev libxext6
       - name: Install python-dev
         run: apt-get update && apt-get install -y python${{matrix.python-version}}-dev
@@ -166,7 +167,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install system dependencies
+      # opencv-python is a dependency of mmcv
+      - name: Install opencv-python dependencies
         run: apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxrender-dev libxext6
       - name: Install python-dev
         run: apt-get update && apt-get install -y python${{matrix.python-version}}-dev
