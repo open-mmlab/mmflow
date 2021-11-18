@@ -26,7 +26,7 @@
 Here is the script to prepare FlyingChairs dataset.
 
 ```bash
-wegt https://lmb.informatik.uni-freiburg.de/data/FlyingChairs/FlyingChairs.zip
+wget https://lmb.informatik.uni-freiburg.de/data/FlyingChairs/FlyingChairs.zip
 unzip FlyingChairs.zip
 cd FlyingChairs_release
 wget https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs/FlyingChairs_train_val.txt
