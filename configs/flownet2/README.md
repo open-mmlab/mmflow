@@ -21,6 +21,8 @@ It performs on par with state-of-the-art methods, while running at interactive
 frame rates. Moreover, we present faster variants that allow optical flow
 computation at up to 140fps with accuracy matching the original FlowNet.
 
+![flow2](https://user-images.githubusercontent.com/76149310/142731310-af0c4586-97b6-4a1e-9ada-50c7b2ee0851.png)
+
 ## Citation
 
 <!-- [ALGORITHM] -->

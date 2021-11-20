@@ -16,6 +16,8 @@ LiteFlowNet2 improves the optical flow accuracy on Sintel Clean by 23.3%, Sintel
 2015 by 18.8%, while being 2.2 times faster. Our network protocol and trained models are made publicly available on
 https://github.com/twhui/LiteFlowNet2.
 
+![lite](https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png)
+
 ## Citation
 
 <!-- [ALGORITHM] -->

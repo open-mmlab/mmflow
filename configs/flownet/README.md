@@ -16,6 +16,8 @@ on this unrealistic data still generalize very well to
 existing datasets such as Sintel and KITTI, achieving competitive accuracy
 at frame rates of 5 to 10 fps.
 
+![flow](https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png)
+
 ## Citation
 
 <!-- [ALGORITHM] -->
