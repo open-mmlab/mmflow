@@ -1,6 +1,29 @@
 # LiteFlowNet
 
-## Introduction
+## Abstract
+
+FlowNet2, the state-of-the-art convolutional neural
+network (CNN) for optical flow estimation, requires over
+160M parameters to achieve accurate flow estimation. In
+this paper we present an alternative network that outperforms
+FlowNet2 on the challenging Sintel final pass and
+KITTI benchmarks, while being 30 times smaller in the
+model size and 1.36 times faster in the running speed. This
+is made possible by drilling down to architectural details
+that might have been missed in the current frameworks: (1)
+We present a more effective flow inference approach at each
+pyramid level through a lightweight cascaded network. It
+not only improves flow estimation accuracy through early
+correction, but also permits seamless incorporation of descriptor matching
+in our network. (2) We present a novel flow regularization layer
+to ameliorate the issue of outliers and vague flow boundaries
+by using a feature-driven local convolution. (3) Our network owns
+an effective structure for pyramidal feature extraction and embraces feature
+warping rather than image warping as practiced in FlowNet2.
+Our code and trained models are available at
+https://github.com/twhui/LiteFlowNet.
+
+## Citation
 
 <!-- [ALGORITHM] -->
 
