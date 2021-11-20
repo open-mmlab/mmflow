@@ -1,6 +1,30 @@
 # LiteFlowNet2
 
-## Introduction
+## Abstract
+
+<!-- [ABSTRACT] -->
+
+Over four decades, the majority addresses the problem of optical flow estimation using variational methods. With the
+advance of machine learning, some recent works have attempted to address the problem using convolutional neural network (CNN)
+and have showed promising results. FlowNet2, the state-of-the-art CNN, requires over 160M parameters to achieve accurate flow
+estimation. Our LiteFlowNet2 outperforms FlowNet2 on Sintel and KITTI benchmarks, while being 25.3 times smaller in the model size
+and 3.1 times faster in the running speed. LiteFlowNet2 is built on the foundation laid by conventional methods and resembles the
+corresponding roles as data fidelity and regularization in variational methods. We compute optical flow in a spatial-pyramid formulation
+as SPyNet but through a novel lightweight cascaded flow inference. It provides high flow estimation accuracy through early
+correction with seamless incorporation of descriptor matching. Flow regularization is used to ameliorate the issue of outliers and vague
+flow boundaries through feature-driven local convolutions. Our network also owns an effective structure for pyramidal feature extraction
+and embraces feature warping rather than image warping as practiced in FlowNet2 and SPyNet. Comparing to LiteFlowNet,
+LiteFlowNet2 improves the optical flow accuracy on Sintel Clean by 23.3%, Sintel Final by 12.8%, KITTI 2012 by 19.6%, and KITTI
+2015 by 18.8%, while being 2.2 times faster. Our network protocol and trained models are made publicly available on
+https://github.com/twhui/LiteFlowNet2.
+
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png" width="400"/>
+</div>
+
+## Citation
 
 <!-- [ALGORITHM] -->
 

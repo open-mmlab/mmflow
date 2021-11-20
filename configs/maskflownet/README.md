@@ -1,6 +1,32 @@
 # MaskFlowNet
 
-## Introduction
+## Abstract
+
+<!-- [ABSTRACT] -->
+
+Feature warping is a core technique in optical flow estimation;
+however, the ambiguity caused by occluded areas during warping is a major
+problem that remains unsolved. In this paper, we propose
+an asymmetric occlusionaware feature matching module,
+which can learn a rough occlusion mask that filters useless (occluded) areas
+immediately after feature warping without any explicit supervision.
+The proposed module can be easily integrated into
+end-to-end network architectures and enjoys performance
+gains while introducing negligible computational cost. The
+learned occlusion mask can be further fed into a subsequent
+network cascade with dual feature pyramids with which we
+achieve state-of-the-art performance. At the time of submission,
+our method, called MaskFlownet, surpasses all published optical flow
+methods on the MPI Sintel, KITTI 2012 and 2015 benchmarks.
+Code is available at https://github.com/microsoft/MaskFlownet.
+
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png" width="400"/>
+</div>
+
+## Citation
 
 <!-- [ALGORITHM] -->
 
