@@ -2,6 +2,8 @@
 
 ## Abstract
 
+<!-- [ABSTRACT] -->
+
 Over four decades, the majority addresses the problem of optical flow estimation using variational methods. With the
 advance of machine learning, some recent works have attempted to address the problem using convolutional neural network (CNN)
 and have showed promising results. FlowNet2, the state-of-the-art CNN, requires over 160M parameters to achieve accurate flow
@@ -16,7 +18,11 @@ LiteFlowNet2 improves the optical flow accuracy on Sintel Clean by 23.3%, Sintel
 2015 by 18.8%, while being 2.2 times faster. Our network protocol and trained models are made publicly available on
 https://github.com/twhui/LiteFlowNet2.
 
-![lite](https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png)
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png" width="400"/>
+</div>
 
 ## Citation
 

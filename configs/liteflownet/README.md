@@ -2,6 +2,8 @@
 
 ## Abstract
 
+<!-- [ABSTRACT] -->
+
 FlowNet2, the state-of-the-art convolutional neural
 network (CNN) for optical flow estimation, requires over
 160M parameters to achieve accurate flow estimation. In
@@ -23,7 +25,11 @@ warping rather than image warping as practiced in FlowNet2.
 Our code and trained models are available at
 https://github.com/twhui/LiteFlowNet.
 
-![lite](https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png)
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png" width="400"/>
+</div>
 
 ## Citation
 

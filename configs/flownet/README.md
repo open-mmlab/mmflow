@@ -2,6 +2,8 @@
 
 ## Abstract
 
+<!-- [ABSTRACT] -->
+
 Convolutional neural networks (CNNs) have recently been very successful
 in a variety of computer vision tasks, especially on those linked to
 recognition. Optical flow estimation has not been among
@@ -16,7 +18,11 @@ on this unrealistic data still generalize very well to
 existing datasets such as Sintel and KITTI, achieving competitive accuracy
 at frame rates of 5 to 10 fps.
 
-![flow](https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png)
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png" width="400"/>
+</div>
 
 ## Citation
 

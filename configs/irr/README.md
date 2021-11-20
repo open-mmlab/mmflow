@@ -2,6 +2,8 @@
 
 ## Abstract
 
+<!-- [ABSTRACT] -->
+
 Deep learning approaches to optical flow estimation
 have seen rapid progress over the recent years. One common trait of
 many networks is that they refine an initial flow estimate either
@@ -19,7 +21,11 @@ further boost the accuracy. Our full network achieves state-
 of-the-art results for both optical flow
 and occlusion estimation across several standard datasets.
 
-![irr](https://user-images.githubusercontent.com/76149310/142731424-9cda1d89-e222-4bcf-b1b8-b18b31f7643b.png)
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731424-9cda1d89-e222-4bcf-b1b8-b18b31f7643b.png" width="400"/>
+</div>
 
 ## Citation
 

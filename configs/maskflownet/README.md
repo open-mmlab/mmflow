@@ -2,6 +2,8 @@
 
 ## Abstract
 
+<!-- [ABSTRACT] -->
+
 Feature warping is a core technique in optical flow estimation;
 however, the ambiguity caused by occluded areas during warping is a major
 problem that remains unsolved. In this paper, we propose
@@ -16,10 +18,13 @@ network cascade with dual feature pyramids with which we
 achieve state-of-the-art performance. At the time of submission,
 our method, called MaskFlownet, surpasses all published optical flow
 methods on the MPI Sintel, KITTI 2012 and 2015 benchmarks.
-Code is available at https:
-//github.com/microsoft/MaskFlownet.
+Code is available at https://github.com/microsoft/MaskFlownet.
 
-![mask](https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png)
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png" width="400"/>
+</div>
 
 ## Citation
 
