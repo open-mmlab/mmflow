@@ -12,7 +12,7 @@ from mmcv.runner import init_dist
 from mmcv.utils import get_git_hash
 
 from mmflow import __version__
-from mmflow.apis import set_random_seed, train_model
+from mmflow.apis import init_random_seed, set_random_seed, train_model
 from mmflow.datasets import build_dataset
 from mmflow.models import build_flow_estimator
 from mmflow.utils import collect_env, get_root_logger
@@ -130,12 +130,12 @@ def main():
     logger.info(f'Config:\n{cfg.pretty_text}')
 
     # set random seeds
-    if args.seed is not None:
-        logger.info(f'Set random seed to {args.seed}, deterministic: '
-                    f'{args.deterministic}')
-        set_random_seed(args.seed, deterministic=args.deterministic)
-    cfg.seed = args.seed
-    meta['seed'] = args.seed
+    seed = init_random_seed(args.seed)
+    logger.info(f'Set random seed to {seed}, '
+                f'deterministic: {args.deterministic}')
+    set_random_seed(seed, deterministic=args.deterministic)
+    cfg.seed = seed
+    meta['seed'] = seed
     meta['exp_name'] = osp.basename(args.config)
 
     model = build_flow_estimator(cfg.model)
