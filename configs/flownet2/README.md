@@ -1,6 +1,35 @@
 # FlowNet2
 
-## Introduction
+## Abstract
+
+<!-- [ABSTRACT] -->
+
+The FlowNet demonstrated that optical flow estimation
+can be cast as a learning problem. However, the state of
+the art with regard to the quality of the flow has still been
+defined by traditional methods. Particularly on small displacements
+and real-world data, FlowNet cannot compete with variational methods.
+In this paper, we advance the concept of end-to-end learning of optical flow
+and make it work really well.
+The large improvements in quality and speed are caused
+by three major contributions: first, we focus on the training data
+and show that the schedule of presenting data during training is very important.
+Second, we develop a stacked architecture that includes warping
+of the second image with intermediate optical flow. Third,
+we elaborate on small displacements by introducing a sub-network specializing
+on small motions. FlowNet 2.0 is only marginally slower than
+the original FlowNet but decreases the estimation error by more than 50%.
+It performs on par with state-of-the-art methods, while running at interactive
+frame rates. Moreover, we present faster variants that allow optical flow
+computation at up to 140fps with accuracy matching the original FlowNet.
+
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731310-af0c4586-97b6-4a1e-9ada-50c7b2ee0851.png" width="400"/>
+</div>
+
+## Citation
 
 <!-- [ALGORITHM] -->
 

@@ -1,6 +1,29 @@
 # RAFT
 
-## Introduction
+## Abstract
+
+<!-- [ABSTRACT] -->
+
+We introduce Recurrent All-Pairs Field Transforms (RAFT),
+a new deep network architecture for optical flow. RAFT extracts perpixel
+features, builds multi-scale 4D correlation volumes for all pairs
+of pixels, and iteratively updates a flow field through a recurrent unit
+that performs lookups on the correlation volumes. RAFT achieves state-
+of-the-art performance. On KITTI, RAFT achieves an F1-all error of
+5.10%, a 16% error reduction from the best published result (6.10%).
+On Sintel (final pass), RAFT obtains an end-point-error of 2.855 pixels,
+a 30% error reduction from the best published result (4.098 pixels). In
+addition, RAFT has strong cross-dataset generalization as well as high
+efficiency in inference time, training speed, and parameter count. Code
+is available at https://github.com/princeton-vl/RAFT.
+
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731339-c1978af7-c9de-4b21-9d6c-e786daff9601.png" width="400"/>
+</div>
+
+## Citation
 
 <!-- [ALGORITHM] -->
 

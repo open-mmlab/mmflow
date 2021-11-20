@@ -1,6 +1,30 @@
 # FlowNet
 
-## Introduction
+## Abstract
+
+<!-- [ABSTRACT] -->
+
+Convolutional neural networks (CNNs) have recently been very successful
+in a variety of computer vision tasks, especially on those linked to
+recognition. Optical flow estimation has not been among
+the tasks CNNs succeeded at. In this paper we construct CNNs
+which are capable of solving the optical flow estimation problem
+as a supervised learning task. We propose and compare two architectures:
+a generic architecture and another one including a layer that correlates
+feature vectors at different image locations. Since existing ground truth
+data sets are not sufficiently large to train a CNN, we generate a large
+synthetic Flying Chairs dataset. We show that networks trained
+on this unrealistic data still generalize very well to
+existing datasets such as Sintel and KITTI, achieving competitive accuracy
+at frame rates of 5 to 10 fps.
+
+<!-- [IMAGE] -->
+
+<div align=center>
+<img src="https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png" width="400"/>
+</div>
+
+## Citation
 
 <!-- [ALGORITHM] -->
 
