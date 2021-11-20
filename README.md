@@ -2,6 +2,7 @@
   <img src="resources/mmflow-logo.png" width="600"/>
 </div>
 
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
 [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
 [![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
 [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
