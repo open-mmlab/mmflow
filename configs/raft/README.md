@@ -20,7 +20,7 @@ is available at https://github.com/princeton-vl/RAFT.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731339-c1978af7-c9de-4b21-9d6c-e786daff9601.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731339-c1978af7-c9de-4b21-9d6c-e786daff9601.png" width="70%"/>
 </div>
 
 ## Citation

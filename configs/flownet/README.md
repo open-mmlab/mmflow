@@ -21,7 +21,7 @@ at frame rates of 5 to 10 fps.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png" width="70%"/>
 </div>
 
 ## Citation

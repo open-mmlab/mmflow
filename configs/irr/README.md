@@ -24,7 +24,7 @@ and occlusion estimation across several standard datasets.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731424-9cda1d89-e222-4bcf-b1b8-b18b31f7643b.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731424-9cda1d89-e222-4bcf-b1b8-b18b31f7643b.png" width="70%"/>
 </div>
 
 ## Citation
