@@ -23,7 +23,7 @@ on https://github.com/NVlabs/PWC-Net.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731246-f94698da-9c69-419d-bafe-7b9baab4a7aa.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731246-f94698da-9c69-419d-bafe-7b9baab4a7aa.png" width="70%"/>
 </div>
 
 ## Citation

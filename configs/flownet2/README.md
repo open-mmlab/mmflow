@@ -26,7 +26,7 @@ computation at up to 140fps with accuracy matching the original FlowNet.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731310-af0c4586-97b6-4a1e-9ada-50c7b2ee0851.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731310-af0c4586-97b6-4a1e-9ada-50c7b2ee0851.png" width="70%"/>
 </div>
 
 ## Citation

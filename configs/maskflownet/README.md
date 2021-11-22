@@ -23,7 +23,7 @@ Code is available at https://github.com/microsoft/MaskFlownet.
 <!-- [IMAGE] -->
 
 <div align=center>
-<img src="https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png" width="400"/>
+<img src="https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png" width="70%"/>
 </div>
 
 ## Citation
