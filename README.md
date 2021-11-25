@@ -64,7 +64,7 @@ guidance in [dataset_prepare](docs/dataset_prepare.md) for dataset preparation.
 
 ## Getting Started
 
-If you're new of optical flow, you can start with [Learn the basics](docs/intro.md). If you’re familiar with it, check out [getting_started.md](docs/getting_started.md) to try out MMFlow.
+If you're new of optical flow, you can start with [learn the basics](docs/intro.md). If you’re familiar with it, check out [getting_started](docs/getting_started.md) to try out MMFlow.
 
 Refer to the below tutorials to dive deeper:
 
