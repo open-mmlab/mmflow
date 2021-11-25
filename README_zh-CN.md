@@ -63,8 +63,8 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 快速入门
 
-如果初次解除光流算法，你可以从[Learn the basics](docs/intro.md)开始了解光流的基本概念和 MMFlow 的框架。
-如果对光流很熟悉，请参考[getting_started.md](docs/getting_started.md)上手使用 MMFlow.
+如果初次接触光流算法，你可以从 [learn the basics](docs/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
+如果对光流很熟悉，请参考　[getting_started](docs/getting_started.md)　上手使用 MMFlow.
 
 MMFlow 也提供了其他更详细的教程，包括：
 
