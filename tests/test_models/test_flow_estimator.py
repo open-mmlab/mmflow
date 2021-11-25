@@ -21,7 +21,8 @@ from mmflow.models.flow_estimators.base import FlowEstimator
     '../../configs/_base_/models/flownet2/flownet2cs.py',
     '../../configs/_base_/models/flownet2/flownet2css.py',
     '../../configs/_base_/models/flownet2/flownet2sd.py',
-    '../../configs/_base_/models/flownet2/flownet2.py'
+    '../../configs/_base_/models/flownet2/flownet2.py',
+    '../../configs/_base_/models/gma.py'
 ])
 def test_flow_estimator(cfg_file):
     # BaseFlowEstimator has abstract method

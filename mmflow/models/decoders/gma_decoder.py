@@ -1,4 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from typing import Optional
+
 import torch
 import torch.nn as nn
 
@@ -7,8 +9,22 @@ from .raft_decoder import ConvGRU, RAFTDecoder
 
 
 class Attention(nn.Module):
+    """Compute 4D attention matrix encodes self-similarity in appearance
+    feature space by using context features.
 
-    def __init__(self, in_channels, heads, head_channels, max_pos_size=None):
+    Args:
+        in_channels (int): The channels of input context features
+        heads (int): The number of parallel attention heads.
+        head_channels (int): The channels of head feature.
+        max_pos_size (int, optional): The max size of positional embedding
+            vectors.
+    """
+
+    def __init__(self,
+                 in_channels: int,
+                 heads: int,
+                 head_channels: int,
+                 max_pos_size: Optional[int] = None) -> None:
         super().__init__()
 
         self.in_channels = in_channels
@@ -23,7 +39,16 @@ class Attention(nn.Module):
             kernel_size=1,
             bias=False)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward function for computing self-similarity with context
+        features.
+
+        Args:
+            x (torch.Tensor): The context features.
+
+        Returns:
+            torch.Tensor: self-similarity for context features.
+        """
         B, _, H, W = x.shape
         q, k = torch.split(
             self.to_qk(x),
@@ -33,6 +58,7 @@ class Attention(nn.Module):
         q = q.view(B, self.heads, self.head_channels, H, W)
         k = k.view(B, self.heads, self.head_channels, H, W)
 
+        # self_similarity shape is (B, heads, HxW, HxW)
         self_similarity = torch.matmul(
             q.view(B, self.heads, self.head_channels, -1).permute(0, 1, 3, 2),
             k.view(B, self.heads, self.head_channels, -1)) * self.scale
@@ -43,8 +69,16 @@ class Attention(nn.Module):
 
 
 class Aggregate(nn.Module):
+    """Computing aggregated global motion features.
 
-    def __init__(self, in_channels, heads, head_channels):
+    Args:
+        in_channels (int): The channels of motion features.
+        heads (int): The number of parallel heads.
+        head_channels (int): The channels of head feature.
+    """
+
+    def __init__(self, in_channels: int, heads: int,
+                 head_channels: int) -> None:
         super().__init__()
 
         self.in_channels = in_channels
@@ -68,7 +102,16 @@ class Aggregate(nn.Module):
         else:
             self.project = nn.Sequential()
 
-    def forward(self, attn, x):
+    def forward(self, attn: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        """Forward function to compute aggregated global motion features.
+
+        Args:
+            attn (torch.Tensor): The attention features
+            x (torch.Tensor): The motion features
+
+        Returns:
+            torch.Tensor: The aggregated global motion features
+        """
         B, _, H, W = x.shape
 
         # v shape : B, Heads, Head_channels, HxW
@@ -88,23 +131,29 @@ class Aggregate(nn.Module):
 
 @DECODERS.register_module()
 class GMADecoder(RAFTDecoder):
+    """The decoder of GMA.
 
-    def __init__(self, *args, attn_heads, motion_channels, aggr_heads,
+    Args:
+        heads (int): The number of parallel attention heads.
+        motion_channels (int): The channels of motion channels.
+    """
+
+    def __init__(self, *args, heads: int, motion_channels: int,
                  **kwargs) -> None:
-        self.attn_head = attn_heads
+        self.heads = heads
         self.motion_channels = motion_channels
-        self.aggr_heands = aggr_heads
+
         super().__init__(*args, **kwargs)
         self.attn = Attention(
             in_channels=self.cxt_channels,
-            heads=attn_heads,
+            heads=heads,
             head_channels=self.cxt_channels)
         self.aggregator = Aggregate(
             in_channels=motion_channels,
-            heads=aggr_heads,
+            heads=heads,
             head_channels=motion_channels)
 
-    def make_gru_block(self):
+    def make_gru_block(self) -> torch.nn.Module:
         return ConvGRU(
             self.h_channels,
             self.cxt_channels + self.motion_channels * 2,
