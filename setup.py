@@ -131,7 +131,7 @@ def add_mim_extension():
                 try:
                     os.symlink(src_relpath, tar_path)
                 except OSError:
-                    # Create a symbolic link on windows may raise an
+                    # Creating a symbolic link on windows may raise an
                     # `OSError: [WinError 1314]` due to privilege. If
                     # error happens, the src file will be copied
                     mode = 'copy'
