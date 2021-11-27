@@ -133,7 +133,7 @@ def add_mim_extension():
                 except OSError:
                     # Creating a symbolic link on windows may raise an
                     # `OSError: [WinError 1314]` due to privilege. If
-                    # error happens, the src file will be copied
+                    # the error happens, the src file will be copied
                     mode = 'copy'
                     warnings.warn(
                         f'Failed to create a symbolic link for {src_relpath}, '
