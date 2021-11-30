@@ -43,7 +43,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 基准测试和模型库
 
-测试结果和模型可以在[模型库](docs/en/model_zoo.md)中找到。
+测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
 
 已支持的算法：
 
