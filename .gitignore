@@ -133,7 +133,6 @@ dmypy.json
 *.pkl
 *.pkl.json
 *.log.json
-docs/en/modelzoo_statistics.md
 mmflow/.mim
 work_dir/
 
