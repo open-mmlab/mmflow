@@ -15,7 +15,7 @@ import sys
 
 import pytorch_sphinx_theme
 
-sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
@@ -99,17 +99,21 @@ html_theme_options = {
                     'url': 'https://mmcv.readthedocs.io/zh_CN/latest/',
                 },
                 {
+                    'name': 'MIM',
+                    'url': 'https://openmim.readthedocs.io/en/latest/'
+                },
+                {
                     'name': 'MMAction2',
                     'url': 'https://mmaction2.readthedocs.io/zh_CN/latest/',
                 },
                 {
                     'name': 'MMClassification',
-                    'url': 'https://github.com/open-mmlab/mmclassification',
+                    'url':
+                    'https://mmclassification.readthedocs.io/zh_CN/latest/',
                 },
                 {
                     'name': 'MMDetection',
-                    'url':
-                    'https://mmclassification.readthedocs.io/zh_CN/latest/',
+                    'url': 'https://mmdetection.readthedocs.io/zh_CN/latest/',
                 },
                 {
                     'name': 'MMDetection3D',
@@ -143,7 +147,11 @@ html_theme_options = {
                 },
                 {
                     'name': 'MMFlow',
-                    'url': 'https://mmflow.readthedocs.io/zh_CN/latest/',
+                    'url': 'https://mmflow.readthedocs.io/en/latest/',
+                },
+                {
+                    'name': 'MMFewShot',
+                    'url': 'https://mmfewshot.readthedocs.io/zh_CN/latest/',
                 },
             ]
         },

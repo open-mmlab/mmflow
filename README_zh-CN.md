@@ -2,6 +2,7 @@
   <img src="resources/mmflow-logo.png" width="600"/>
 </div>
 
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
 [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
 [![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
 [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
@@ -62,8 +63,8 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 快速入门
 
-如果初次解除光流算法，你可以从[Learn the basics](docs/en/intro.md)开始了解光流的基本概念和 MMFlow 的框架。
-如果对光流很熟悉，请参考[getting_started.md](docs/en/getting_started.md)上手使用 MMFlow.
+如果初次接触光流算法，你可以从 [learn the basics](docs/en/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
+如果对光流很熟悉，请参考　[getting_started](docs/en/getting_started.md)　上手使用 MMFlow.
 
 MMFlow 也提供了其他更详细的教程，包括：
 
@@ -110,6 +111,8 @@ MMFlow 也提供了其他更详细的教程，包括：
 - [MMEditing](https://github.com/open-mmlab/mmediting): OpenMMLab 图像视频编辑工具箱
 - [MMOCR](https://github.com/open-mmlab/mmocr): OpenMMLab 全流程文字检测识别理解工具包
 - [MMGeneration](https://github.com/open-mmlab/mmgeneration): OpenMMLab 新一代生成模型工具箱
+- [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab 光流估计工具箱与测试基准
+- [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab 少样本学习工具箱与测试基准
 
 ## 欢迎加入 OpenMMLab 社区
 

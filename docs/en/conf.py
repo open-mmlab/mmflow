@@ -15,7 +15,7 @@ import sys
 
 import pytorch_sphinx_theme
 
-sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
@@ -92,6 +92,10 @@ html_theme_options = {
                     'url': 'https://mmcv.readthedocs.io/en/latest/',
                 },
                 {
+                    'name': 'MIM',
+                    'url': 'https://openmim.readthedocs.io/en/latest/'
+                },
+                {
                     'name': 'MMAction2',
                     'url': 'https://mmaction2.readthedocs.io/en/latest/',
                 },
@@ -135,6 +139,10 @@ html_theme_options = {
                 {
                     'name': 'MMFlow',
                     'url': 'https://mmflow.readthedocs.io/en/latest/',
+                },
+                {
+                    'name': 'MMFewShot',
+                    'url': 'https://mmfewshot.readthedocs.io/en/latest/',
                 },
             ]
         },

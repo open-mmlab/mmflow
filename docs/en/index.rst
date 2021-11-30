@@ -37,7 +37,7 @@ Welcome to MMFlow's documentation!
    conventions.md
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: API Reference
 
    api.rst

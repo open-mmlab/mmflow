@@ -2,6 +2,7 @@
   <img src="resources/mmflow-logo.png" width="600"/>
 </div>
 
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
 [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
 [![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
 [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
@@ -63,7 +64,7 @@ guidance in [dataset_prepare](docs/en/dataset_prepare.md) for dataset preparatio
 
 ## Getting Started
 
-If you're new of optical flow, you can start with [Learn the basics](docs/en/intro.md). If you’re familiar with it, check out [getting_started.md](docs/en/getting_started.md) to try out MMFlow.
+If you're new of optical flow, you can start with [learn the basics](docs/en/intro.md). If you’re familiar with it, check out [getting_started](docs/en/getting_started.md) to try out MMFlow.
 
 Refer to the below tutorials to dive deeper:
 
@@ -111,3 +112,4 @@ If you use this toolbox or benchmark in your research, please cite this project.
 - [MMOCR](https://github.com/open-mmlab/mmocr): A Comprehensive Toolbox for Text Detection, Recognition and Understanding.
 - [MMGeneration](https://github.com/open-mmlab/mmgeneration): OpenMMLab image and video generative models toolbox.
 - [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab optical flow toolbox and benchmark.
+- [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab FewShot Learning Toolbox and Benchmark.
