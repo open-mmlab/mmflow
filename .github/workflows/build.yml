@@ -106,8 +106,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      # opencv-python is a dependency of mmcv
-      - name: Install opencv-python dependencies
+      - name: Install system dependencies
         run: apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxrender-dev libxext6
       - name: Install python-dev
         run: apt-get update && apt-get install -y python${{matrix.python-version}}-dev
@@ -130,16 +129,6 @@ jobs:
           coverage run --branch --source mmflow -m pytest tests/
           coverage xml
           coverage report -m
-      # Only upload coverage report for python3.7 && pytorch1.8
-      - name: Upload coverage to Codecov
-        if: ${{matrix.torch == '1.8.0+cu101' && matrix.python-version == '3.7'}}
-        uses: codecov/codecov-action@v1.0.14
-        with:
-          file: ./coverage.xml
-          flags: unittests
-          env_vars: OS,PYTHON
-          name: codecov-umbrella
-          fail_ci_if_error: false
 
   build_cu102:
     runs-on: ubuntu-18.04
@@ -167,9 +156,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      # opencv-python is a dependency of mmcv
-      - name: Install opencv-python dependencies
-        run: apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxrender-dev libxext6
+      - name: Install system dependencies
+        run: apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxrender-dev libxext6 git
       - name: Install python-dev
         run: apt-get update && apt-get install -y python${{matrix.python-version}}-dev
         if: ${{matrix.python-version != '3.9'}}
@@ -191,3 +179,13 @@ jobs:
           coverage run --branch --source mmflow -m pytest tests/
           coverage xml
           coverage report -m
+      # Only upload coverage report for python3.8 && pytorch1.9
+      - name: Upload coverage to Codecov
+        if: ${{matrix.torch == '1.9.0+cu102' && matrix.python-version == '3.8'}}
+        uses: codecov/codecov-action@v2
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: false
