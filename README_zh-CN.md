@@ -43,7 +43,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 基准测试和模型库
 
-测试结果和模型可以在[模型库](docs/model_zoo.md)中找到。
+测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
 
 已支持的算法：
 
@@ -59,26 +59,26 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 安装
 
-请参考[安装文档](docs/install.md)进行安装, 参考[数据准备](docs/dataset_prepare.md)准备数据集。
+请参考[安装文档](docs/en/install.md)进行安装, 参考[数据准备](docs/en/dataset_prepare.md)准备数据集。
 
 ## 快速入门
 
-如果初次接触光流算法，你可以从 [learn the basics](docs/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
-如果对光流很熟悉，请参考　[getting_started](docs/getting_started.md)　上手使用 MMFlow.
+如果初次接触光流算法，你可以从 [learn the basics](docs/en/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
+如果对光流很熟悉，请参考　[getting_started](docs/en/getting_started.md)　上手使用 MMFlow.
 
 MMFlow 也提供了其他更详细的教程，包括：
 
-- [配置文件](docs/tutorials/0_config.md)
+- [配置文件](docs/en/tutorials/0_config.md)
 
-- [模型推理](docs/tutorials/1_inference.md)
+- [模型推理](docs/en/tutorials/1_inference.md)
 
-- [微调模型](docs/tutorials/2_finetune.md)
+- [微调模型](docs/en/tutorials/2_finetune.md)
 
-- [数据预处理](docs/tutorials/3_data_pipeline.md)
+- [数据预处理](docs/en/tutorials/3_data_pipeline.md)
 
-- [添加新模型](docs/tutorials/4_new_modules.md)
+- [添加新模型](docs/en/tutorials/4_new_modules.md)
 
-- [自定义模型运行参数](docs/tutorials/6_customize_runtime.md)。
+- [自定义模型运行参数](docs/en/tutorials/5_customize_runtime.md)。
 
 ## 贡献指南
 

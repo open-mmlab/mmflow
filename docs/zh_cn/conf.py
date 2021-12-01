@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = 'mmflow'
 copyright = '2018-2021, OpenMMLab'
 author = 'MMFlow Author'
-version_file = '../mmflow/version.py'
+version_file = '../../mmflow/version.py'
 
 
 def get_version():
