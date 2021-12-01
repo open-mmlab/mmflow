@@ -67,17 +67,17 @@ Here is a detailed step-by-step guide to learn more about MMFlow:
 
 3. Refer to the below tutorials to dive deeper:
 
-   - [config](docs/tutorials/0_config.md)
+   - [config](tutorials/0_config.md)
 
-   - [model inference](docs/tutorials/1_inference.md)
+   - [model inference](tutorials/1_inference.md)
 
-   - [fine tuning](docs/tutorials/2_finetune.md)
+   - [fine tuning](tutorials/2_finetune.md)
 
-   - [data pipeline](docs/tutorials/3_data_pipeline.md)
+   - [data pipeline](tutorials/3_data_pipeline.md)
 
-   - [add new modules](docs/tutorials/4_new_modules.md)
+   - [add new modules](tutorials/4_new_modules.md)
 
-   - [customized runtime](docs/tutorials/5_customize_runtime.md)
+   - [customized runtime](tutorials/5_customize_runtime.md)
 
 ## References
 

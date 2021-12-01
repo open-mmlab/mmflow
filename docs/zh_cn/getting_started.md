@@ -16,15 +16,15 @@
 
 我们推荐用将目录 `$MMFlow/data` 指向（symlink）存放目录的地址。请根据以下指引准备训练数据集。
 
-- [FlyingChairs](../docs/data_prepare/FlyingChairs/README.md)
-- [FlyingThings3d_subset](../docs/data_prepare/FlyingThings3d_subset/README.md)
-- [FlyingThings3d](../docs/data_prepare/FlyingThings3d/README.md)
-- [Sintel](../docs/data_prepare/Sintel/README.md)
-- [KITTI2015](../docs/data_prepare/KITTI2015/README.md)
-- [KITTI2012](../docs/data_prepare/KITTI2012/README.md)
-- [FlyingChairsOcc](../docs/data_prepare/FlyingChairsOcc/README.md)
-- [ChairsSDHom](../docs/data_prepare/ChairsSDHom/README.md)
-- [HD1K](../docs/data_prepare/hd1k/README.md)
+- [FlyingChairs](../en/data_prepare/FlyingChairs/README.md)
+- [FlyingThings3d_subset](../en/data_prepare/FlyingThings3d_subset/README.md)
+- [FlyingThings3d](../en/data_prepare/FlyingThings3d/README.md)
+- [Sintel](../en/data_prepare/Sintel/README.md)
+- [KITTI2015](../en/data_prepare/KITTI2015/README.md)
+- [KITTI2012](../en/data_prepare/KITTI2012/README.md)
+- [FlyingChairsOcc](../en/data_prepare/FlyingChairsOcc/README.md)
+- [ChairsSDHom](../en/data_prepare/ChairsSDHom/README.md)
+- [HD1K](../en/data_prepare/hd1k/README.md)
 
 ## 模型推理
 
@@ -82,7 +82,7 @@
 
 ### 数据集上测试
 
-可以利用以下命令来测试模型在数据集上的精度，更多细节可以查看 [tutorials/1_inference](../docs/tutorials/1_inference.md)。
+可以利用以下命令来测试模型在数据集上的精度，更多细节可以查看 [tutorials/1_inference](../en/tutorials/1_inference.md)。
 
 ```shell
 # single-gpu testing
@@ -110,7 +110,7 @@ python tools/test.py configs/pwcnet_8x1_sfine_sintel_384x768.py \
 
 ## 模型训练
 
-你可以使用[训练脚本](../tools/train.py)直接来启动一个单卡训练任务，更多信息请查看 [tutorials/2_finetune](../docs/tutorials/2_finetune.md)
+你可以使用[训练脚本](../tools/train.py)直接来启动一个单卡训练任务，更多信息请查看 [tutorials/2_finetune](../en/tutorials/2_finetune.md)
 
 ```shell
 python tools/train.py ${CONFIG_FILE} [optional arguments]
@@ -135,9 +135,9 @@ python tools/train.py ${CONFIG_FILE} [optional arguments]
 
 我们为用户提供了一些教程文档:
 
-- [learn about configs](../docs/tutorials/0_config.md)
-- [inference model](../docs/tutorials/1_inference.md)
-- [finetune model](../docs/tutorials/2_finetune.md)
-- [customize data pipelines](../docs/tutorials/3_data_pipeline.md)
-- [add new modules](../docs/tutorials/4_new_modules.md)
-- [customize runtime settings](../docs/tutorials/5_customize_runtime.md).
+- [learn about configs](../en/tutorials/0_config.md)
+- [inference model](../en/tutorials/1_inference.md)
+- [finetune model](../en/tutorials/2_finetune.md)
+- [customize data pipelines](../en/tutorials/3_data_pipeline.md)
+- [add new modules](../en/tutorials/4_new_modules.md)
+- [customize runtime settings](../en/tutorials/5_customize_runtime.md).

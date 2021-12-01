@@ -44,7 +44,7 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Benchmark and model zoo
 
-Results and models are available in the [model zoo](docs/model_zoo.md).
+Results and models are available in the [model zoo](docs/en/model_zoo.md).
 
 Supported methods:
 
@@ -59,26 +59,26 @@ Supported methods:
 
 ## Installation
 
-Please refer to [install.md](docs/install.md) for installation and
-guidance in [dataset_prepare](docs/dataset_prepare.md) for dataset preparation.
+Please refer to [install.md](docs/en/install.md) for installation and
+guidance in [dataset_prepare](docs/en/dataset_prepare.md) for dataset preparation.
 
 ## Getting Started
 
-If you're new of optical flow, you can start with [learn the basics](docs/intro.md). If you’re familiar with it, check out [getting_started](docs/getting_started.md) to try out MMFlow.
+If you're new of optical flow, you can start with [learn the basics](docs/en/intro.md). If you’re familiar with it, check out [getting_started](docs/en/getting_started.md) to try out MMFlow.
 
 Refer to the below tutorials to dive deeper:
 
-- [config](docs/tutorials/0_config.md)
+- [config](docs/en/tutorials/0_config.md)
 
-- [model inference](docs/tutorials/1_inference.md)
+- [model inference](docs/en/tutorials/1_inference.md)
 
-- [fine tuning](docs/tutorials/2_finetune.md)
+- [fine tuning](docs/en/tutorials/2_finetune.md)
 
-- [data pipeline](docs/tutorials/3_data_pipeline.md)
+- [data pipeline](docs/en/tutorials/3_data_pipeline.md)
 
-- [add new modules](docs/tutorials/4_new_modules.md)
+- [add new modules](docs/en/tutorials/4_new_modules.md)
 
-- [customized runtime](docs/tutorials/5_customize_runtime.md)
+- [customized runtime](docs/en/tutorials/5_customize_runtime.md)。
 
 ## Contributing
 

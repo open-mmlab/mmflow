@@ -69,8 +69,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
-docs_zh-CN/_build/
+docs/en/_build/
+docs/zh_cn/_build/
 
 # PyBuilder
 target/
@@ -133,7 +133,6 @@ dmypy.json
 *.pkl
 *.pkl.json
 *.log.json
-docs/modelzoo_statistics.md
 mmflow/.mim
 work_dir/
 
