@@ -65,9 +65,9 @@ Models:
           EPE: 0.98
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.pth
 
-  - Name: raft_8x2_100k_TSKH_368x768.py
+  - Name: raft_8x2_100k_mixed_368x768
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_100k_TSKH_368x768.py
+    Config: configs/raft/raft_8x2_100k_mixed_368x768.py
     Metadata:
       Training Data: FlyingThings3D, Sintel, KITTI2012,  KITTI2015, HD1K
     Results:
