@@ -9,7 +9,7 @@ Collections:
 
 Models:
   - Name: flownet2cs_8x1_slong_flyingchairs_384x448
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.py
     Metadata:
       Training Data: FlyingChairs
@@ -21,7 +21,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.pth
 
   - Name: flownet2cs_8x1_sfine_flyingthings3d_subset_384x768
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
@@ -46,7 +46,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.pth
 
   - Name: flownet2css_8x1_slong_flyingchairs_384x448
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.py
     Metadata:
       Training Data: FlyingChairs
@@ -58,7 +58,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.pth
 
   - Name: flownet2css_8x1_sfine_flyingthings3d_subset_384x768
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
@@ -83,7 +83,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.pth
 
   - Name: flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.py
     Metadata:
       Training Data: FlyingThings3D subset
@@ -108,7 +108,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.pth
 
   - Name: flownet2sd_8x1_slong_chairssdhom_384x448
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.py
     Metadata:
       Training Data: ChairsSDHom
@@ -120,7 +120,7 @@ Models:
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.pth
 
   - Name: flownet2_8x1_sfine_flyingthings3d_subset_384x768
-    In Collection: FlowNet
+    In Collection: FlowNet2
     Config: configs/flownet2/flownet2_8x1_sfine_flyingthings3d_subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
