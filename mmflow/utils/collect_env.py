@@ -59,7 +59,7 @@ def collect_env() -> dict:
     env_info['OpenCV'] = cv2.__version__
 
     env_info['MMCV'] = mmcv.__version__
-    env_info['MMOpticalFlow'] = f'{ mmflow.__version__ }+{get_git_hash()[:7]}'
+    env_info['MMFlow'] = f'{ mmflow.__version__ }+{get_git_hash()[:7]}'
     try:
         from mmcv.ops import get_compiler_version, get_compiling_cuda_version
         env_info['MMCV Compiler'] = get_compiler_version()
