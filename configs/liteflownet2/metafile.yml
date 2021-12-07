@@ -1,11 +1,16 @@
 Collections:
   - Name: LiteFlowNet2
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D subset
+        - Sintel
+        - KITTI2012
+        - KITTI2015
     Paper:
       URL: https://arxiv.org/abs/1903.07414.pdf
       Title: 'A Lightweight Optical Flow CNN - Revisiting Data Fidelity and Regularization'
-    README: configs/LiteFlowNet2/README.md
+    README: configs/liteflownet2/README.md
 
 Models:
   - Name: liteflownet2_pre_M6S6_8x1_flyingchairs_320x448
@@ -114,7 +119,10 @@ Models:
     In Collection: LiteFlowNet2
     Config: configs/liteflownet2/liteflownet2_ft_4x1_600k_sintel_kitti_320x768.py
     Metadata:
-      Training Data: Sintel, KITTI2012, KITTI2015
+      Training Data:
+        - Sintel
+        - KITTI2012
+        - KITTI2015
     Results:
       - Task: Optical flow estimation
         Dataset: Sintel clean
@@ -130,7 +138,9 @@ Models:
     In Collection: LiteFlowNet2
     Config: configs/liteflownet2/liteflownet2_ft_4x1_500k_kitti_320x896.py
     Metadata:
-      Training Data: KITTI2012, KITTI2015
+      Training Data:
+        - KITTI2012
+        - KITTI2015
     Results:
       - Task: Optical flow estimation
         Dataset: KITTI2012

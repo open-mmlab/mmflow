@@ -1,7 +1,10 @@
 Collections:
   - Name: FlowNet2
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D subset, ChairsSDHom
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D subset
+        - ChairsSDHom
     Paper:
       URL: https://openaccess.thecvf.com/content_cvpr_2017/papers/Ilg_FlowNet_2.0_Evolution_CVPR_2017_paper.pdf
       Title: 'FlowNet 2.0: Evolution of Optical Flow Estimation with Deep Networks'
