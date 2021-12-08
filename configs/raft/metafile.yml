@@ -1,7 +1,12 @@
 Collections:
   - Name: RAFT
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D, Sintel, KITTI2015, HD1K
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D
+        - Sintel
+        - KITTI2015
+        - HD1K
     Paper:
       URL: https://arxiv.org/pdf/2003.12039.pdf
       Title: 'RAFT: Recurrent All Pairs Field Transforms for Optical Flow'
@@ -53,7 +58,9 @@ Models:
     In Collection: RAFT
     Config: configs/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.py
     Metadata:
-      Training Data: FlyingThings3D, Sintel
+      Training Data:
+        - FlyingThings3D
+        - Sintel
     Results:
       - Task: Optical flow estimation
         Dataset: Sintel clean
@@ -69,7 +76,12 @@ Models:
     In Collection: RAFT
     Config: configs/raft/raft_8x2_100k_mixed_368x768.py
     Metadata:
-      Training Data: FlyingThings3D, Sintel, KITTI2012,  KITTI2015, HD1K
+      Training Data:
+        - FlyingThings3D
+        - Sintel
+        - KITTI2012
+        - KITTI2015
+        - HD1K
     Results:
       - Task: Optical flow estimation
         Dataset: Sintel clean

@@ -1,7 +1,12 @@
 Collections:
   - Name: IRR
     Metadata:
-      Training Data: FlyingChairsOcc, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015
+      Training Data:
+        - FlyingChairsOcc
+        - FlyingThings3D subset
+        - Sintel
+        - KITTI2012
+        - KITTI2015
     Paper:
       URL: https://openaccess.thecvf.com/content_CVPR_2019/papers/Hur_Iterative_Residual_Refinement_for_Joint_Optical_Flow_and_Occlusion_Estimation_CVPR_2019_paper.pdf
       Title: 'Iterative Residual Refinement for Joint Optical Flow and Occlusion Estimation'
@@ -85,7 +90,9 @@ Models:
     In Collection: IRR
     Config: configs/irr/irrpwc_ft_4x1_300k_kitti_320x896.py
     Metadata:
-      Training Data: KITTI2012, KITTI2015
+      Training Data:
+        - KITTI2012
+        - KITTI2015
     Results:
       - Task: Optical flow estimation
         Dataset: KITTI2015

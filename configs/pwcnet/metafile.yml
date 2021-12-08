@@ -1,7 +1,13 @@
 Collections:
   - Name: PWC-Net
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015, HD1K
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D subset
+        - Sintel
+        - KITTI2012
+        - KITTI2015
+        - HD1K
     Paper:
       URL: https://arxiv.org/pdf/1709.02371.pdf
       Title: 'PWC-Net: CNNs for Optical Flow Using Pyramid, Warping, and Cost Volume'
@@ -90,7 +96,9 @@ Models:
     In Collection: PWC-Net
     Config: configs/pwcnet/pwcnet_ft_4x1_300k_kitti_320x896.py
     Metadata:
-      Training Data: KITTI2012 KITTI2015
+      Training Data:
+        - KITTI2012
+        - KITTI2015
     Results:
       - Task: Optical flow estimation
         Dataset: KITTI2012
@@ -108,7 +116,10 @@ Models:
     In Collection: PWC-Net
     Config: configs/pwcnet/.py
     Metadata:
-      Training Data: Sintel, KITTI2015, HD1K
+      Training Data:
+        - Sintel
+        - KITTI2015
+        - HD1K
     Results:
       - Task: Optical flow estimation
         Dataset: Sintel clean
