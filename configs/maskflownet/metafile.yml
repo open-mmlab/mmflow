@@ -1,7 +1,12 @@
 Collections:
   - Name: MaskFlownet
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D, Sintel, KITTI2015, HD1K
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D
+        - Sintel
+        - KITTI2015
+        - HD1K
     Paper:
       URL: https://arxiv.org/pdf/2003.10955.pdf
       Title: 'MaskFlownet: Asymmetric Feature Matching with Learnable Occlusion Mask'

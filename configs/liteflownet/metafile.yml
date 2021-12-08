@@ -1,11 +1,16 @@
 Collections:
   - Name: LiteFlowNet
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D subset, Sintel, KITTI2012, KITTI2015
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D subset
+        - Sintel
+        - KITTI2012
+        - KITTI2015
     Paper:
       URL: https://arxiv.org/pdf/1805.07036.pdf
       Title: 'LiteFlowNet: A Lightweight Convolutional Neural Network for Optical Flow Estimation'
-    README: configs/LiteFlowNet/README.md
+    README: configs/liteflownet/README.md
 
 Models:
   - Name: liteflownet_pre_M6S6_8x1_flyingchairs_320x448
@@ -142,7 +147,9 @@ Models:
     In Collection: LiteFlowNet
     Config: configs/liteflownet/liteflownet_ft_4x1_500k_kitti_320x896.py
     Metadata:
-      Training Data: KITTI2012, KITTI2015
+      Training Data:
+        - KITTI2012
+        - KITTI2015
     Results:
       - Task: Optical flow estimation
         Dataset: KITTI2012
