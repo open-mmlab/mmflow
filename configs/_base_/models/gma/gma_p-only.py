@@ -42,6 +42,8 @@ model = dict(
         gru_type='SeqConv',
         heads=1,
         motion_channels=128,
+        position_only=True,
+        max_pos_size=160,
         flow_loss=dict(type='SequenceLoss'),
         act_cfg=dict(type='ReLU')),
     freeze_bn=False,
