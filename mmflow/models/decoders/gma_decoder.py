@@ -8,6 +8,50 @@ from ..builder import DECODERS
 from .raft_decoder import ConvGRU, RAFTDecoder
 
 
+class RelPosEmb(nn.Module):
+    """Relative position embedding.
+
+    Separate embedding vectors are learned for the vertical and horizontal
+    offset and are added on query tensor.
+
+    Args:
+        max_pos_size (int): maximum position length.
+        head_channels (int): The channels of head feature.
+    """
+
+    def __init__(self, max_pos_size: int, head_channels: int):
+        super().__init__()
+        self.rel_height = nn.Embedding(2 * max_pos_size - 1, head_channels)
+        self.rel_width = nn.Embedding(2 * max_pos_size - 1, head_channels)
+        deltas = torch.arange(max_pos_size).view(
+            1, -1) - torch.arange(max_pos_size).view(-1, 1)
+        rel_ind = deltas + max_pos_size - 1
+        self.register_buffer('rel_ind', rel_ind)
+
+    def forward(self, q: torch.Tensor):
+        """forward function for relative position embedding.
+
+        Args:
+            q (torch.Tensor): query tensor in attention.
+
+        Returns:
+            torch.Tensor: Position score with shape (B, heads, H * W, H * W).
+        """
+        B, heads, H, W, head_channels = q.shape
+
+        height_emb = self.rel_height(self.rel_ind[:H, :H].reshape(-1)).reshape(
+            H, H, -1, head_channels)
+        width_emb = self.rel_width(self.rel_ind[:W, :W].reshape(-1)).reshape(
+            W, -1, W, head_channels)
+
+        height_score = torch.einsum('b h x y d, x u v d -> b h x y u v', q,
+                                    height_emb)
+        width_score = torch.einsum('b h x y d, y u v d -> b h x y u v', q,
+                                   width_emb)
+
+        return (height_score + width_score).reshape(B, heads, H * W, H * W)
+
+
 class Attention(nn.Module):
     """Compute 4D attention matrix encodes self-similarity in appearance
     feature space by using context features.
@@ -16,20 +60,39 @@ class Attention(nn.Module):
         in_channels (int): The channels of input context features
         heads (int): The number of parallel attention heads.
         head_channels (int): The channels of head feature.
+        position_only (bool): Whether use position-only attention. Default to
+            False.
         max_pos_size (int, optional): The max size of positional embedding
-            vectors.
+            vectors. If max_pos_size is None, attention is content-only
+            self-similarity attention model. If position_only=True,
+            max_pos_size must be defined. Default to None.
+
+        Note:
+            Attention module has 3 mode based on different `position_only` and
+            `max_pos_size`:
+            1. If `position_only` is True and `max_pos_size` is defined,
+            it denotes the position-only attention module.
+            2. If `position_only` is False and `max_pos_size` is defined,
+            it denotes the joint position and content-wise attention module.
+            3. If `postion_only` is False and `max_pos_size` is not defined,
+            it denotes the content-only self-similarity attention module.
     """
 
     def __init__(self,
                  in_channels: int,
                  heads: int,
                  head_channels: int,
+                 position_only: bool = False,
                  max_pos_size: Optional[int] = None) -> None:
         super().__init__()
+        if position_only and max_pos_size is None:
+            raise RuntimeError(
+                'Must define `max_pos_size`, if position_only=True')
 
         self.in_channels = in_channels
         self.heads = heads
         self.head_channels = head_channels
+        self.position_only = position_only
         self.max_pos_size = max_pos_size
 
         self.scale = head_channels**-0.5
@@ -38,6 +101,10 @@ class Attention(nn.Module):
             out_channels=self.heads * self.head_channels * 2,
             kernel_size=1,
             bias=False)
+
+        if self.max_pos_size is not None:
+            self.pos_emb = RelPosEmb(
+                max_pos_size=self.max_pos_size, head_channels=head_channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward function for computing self-similarity with context
@@ -55,13 +122,22 @@ class Attention(nn.Module):
             [self.heads * self.head_channels, self.heads * self.head_channels],
             dim=1)
 
-        q = q.view(B, self.heads, self.head_channels, H, W)
-        k = k.view(B, self.heads, self.head_channels, H, W)
+        # q shape is (B, heads, HxW, head_channels)
+        q = q.view(B, self.heads, self.head_channels, H,
+                   W).permute(0, 1, 3, 4, 2)
+        # k shape is (B, heads, head_channels, HxW)
+        k = k.view(B, self.heads, self.head_channels, -1)
 
-        # self_similarity shape is (B, heads, HxW, HxW)
-        self_similarity = torch.matmul(
-            q.view(B, self.heads, self.head_channels, -1).permute(0, 1, 3, 2),
-            k.view(B, self.heads, self.head_channels, -1)) * self.scale
+        self_similarity = torch.zeros((B, self.heads, H * W, H * W)).to(q)
+
+        if self.max_pos_size is not None:
+            self_similarity += self.pos_emb(q)
+
+        if not self.position_only:
+            # self_similarity shape is (B, heads, HxW, HxW)
+            self_similarity += torch.matmul(
+                q.view(B, self.heads, -1, self.head_channels),
+                k.view(B, self.heads, self.head_channels, -1)) * self.scale
 
         attn = self_similarity.softmax(dim=-1)
 
@@ -136,18 +212,44 @@ class GMADecoder(RAFTDecoder):
     Args:
         heads (int): The number of parallel attention heads.
         motion_channels (int): The channels of motion channels.
+        position_only (bool): Whether use position-only attention. Default to
+            False.
+        max_pos_size (int, optional): The max size of positional embedding
+            vectors. If max_pos_size is None, attention is content-only
+            self-similarity attention model. If position_only=True,
+            max_pos_size must be defined. Default to None.
+
+        Note:
+            Attention module has 3 mode based on different `position_only` and
+            `max_pos_size`:
+            1. If `position_only` is True and `max_pos_size` is defined,
+            it denotes the position-only attention module.
+            2. If `position_only` is False and `max_pos_size` is defined,
+            it denotes the joint position and content-wise attention module.
+            3. If `postion_only` is False and `max_pos_size` is not defined,
+            it denotes the content-only self-similarity attention module.
     """
 
-    def __init__(self, *args, heads: int, motion_channels: int,
+    def __init__(self,
+                 *args,
+                 heads: int,
+                 motion_channels: int,
+                 position_only: bool = False,
+                 max_pos_size: Optional[int] = None,
                  **kwargs) -> None:
         self.heads = heads
         self.motion_channels = motion_channels
+        self.position_only = position_only
+        self.max_pos_size = max_pos_size
 
         super().__init__(*args, **kwargs)
         self.attn = Attention(
             in_channels=self.cxt_channels,
             heads=heads,
-            head_channels=self.cxt_channels)
+            head_channels=self.cxt_channels,
+            position_only=self.position_only,
+            max_pos_size=self.max_pos_size)
+
         self.aggregator = Aggregate(
             in_channels=motion_channels,
             heads=heads,
