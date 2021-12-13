@@ -15,14 +15,14 @@ import sys
 
 import pytorch_sphinx_theme
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'mmflow'
 copyright = '2018-2021, OpenMMLab'
 author = 'MMFlow Author'
-version_file = '../mmflow/version.py'
+version_file = '../../mmflow/version.py'
 
 
 def get_version():
@@ -139,6 +139,14 @@ html_theme_options = {
                 {
                     'name': 'MMFlow',
                     'url': 'https://mmflow.readthedocs.io/en/latest/',
+                },
+                {
+                    'name': 'MMFewShot',
+                    'url': 'https://mmfewshot.readthedocs.io/en/latest/',
+                },
+                {
+                    'name': 'MMHuman3D',
+                    'url': 'https://mmhuman3d.readthedocs.io/en/latest/',
                 },
             ]
         },

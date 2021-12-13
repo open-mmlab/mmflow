@@ -1,7 +1,10 @@
 Collections:
   - Name: FlowNet
     Metadata:
-      Training Data: FlyingChairs, FlyingThings3D subset, Sintel
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D subset
+        - Sintel
     Paper:
       URL: https://openaccess.thecvf.com/content_iccv_2015/papers/Dosovitskiy_FlowNet_Learning_Optical_ICCV_2015_paper.pdf
       Title: 'FlowNet: Learning Optical Flow with Convolutional Networks'
