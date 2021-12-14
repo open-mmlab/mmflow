@@ -212,7 +212,8 @@ class IRRPWCDecoder(BaseDecoder):
             elements involved to calculate correlation or not.
             Defaults to True.
         warp_cfg (dict): Config for warp operation. Defaults to
-            dict(type='Warp', align_corners=True).
+            dict(type='Warp', align_corners=True) that are same to the official
+            implementation of IRRPWC.
         densefeat_channels (Sequence[int]): Number of output channels for
             dense layers. Defaults to (128, 128, 96, 64, 32).
         flow_post_processor (dict, optional): Config of flow post process
