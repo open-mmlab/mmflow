@@ -9,8 +9,8 @@ from mmcv.runner import BaseModule
 
 from mmflow.ops.builder import build_operators
 from ..builder import DECODERS, build_components, build_loss
+from ..utils import BasicDenseBlock, CorrBlock
 from .base_decoder import BaseDecoder
-from .utils import BasicDenseBlock, CorrBlock
 
 
 class PWCModule(BaseModule):
