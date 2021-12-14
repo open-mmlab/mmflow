@@ -212,7 +212,8 @@ class IRRPWCDecoder(BaseDecoder):
             elements involved to calculate correlation or not.
             Defaults to True.
         warp_cfg (dict): Config for warp operation. Defaults to
-            dict(type='Warp', align_corners=True).
+            dict(type='Warp', align_corners=True) that are same to the official
+            implementation of IRRPWC.
         densefeat_channels (Sequence[int]): Number of output channels for
             dense layers. Defaults to (128, 128, 96, 64, 32).
         flow_post_processor (dict, optional): Config of flow post process
@@ -230,6 +231,8 @@ class IRRPWCDecoder(BaseDecoder):
             module. Defaults to None.
         flow_div (float): The divisor works for scaling the ground truth.
             Default: 20.
+        upsample_cfg (dict): Config dict of interpolate in PyTorch.
+            Default: dict(mode='bilinear', align_corners=True)
         conv_cfg (dict, optional): Config dict of convolution layer in
             module. Default: None.
         norm_cfg (dict, optional): Config dict of norm layer in module.
@@ -259,6 +262,8 @@ class IRRPWCDecoder(BaseDecoder):
                  occ_refined_levels: Sequence[str] = ['level0', 'level1'],
                  occ_upsample: dict = None,
                  flow_div: float = 20.,
+                 upsample_cfg: dict = dict(
+                     mode='bilinear', align_corners=True),
                  conv_cfg: Optional[dict] = None,
                  norm_cfg: Optional[dict] = None,
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
@@ -299,6 +304,8 @@ class IRRPWCDecoder(BaseDecoder):
             conv_cfg=conv_cfg,
             norm_cfg=norm_cfg,
             act_cfg=act_cfg)
+
+        self.upsample_cfg = upsample_cfg
 
         self.flow_refine = build_components(flow_refine)
         self.flow_post_processor = build_components(flow_post_processor)
@@ -524,8 +531,7 @@ class IRRPWCDecoder(BaseDecoder):
         Returns:
             Tensor: The output image.
         """
-        return F.interpolate(
-            img, size=(h, w), mode='bilinear', align_corners=True)
+        return F.interpolate(img, size=(h, w), **self.upsample_cfg)
 
     def _scale_flow(self, flow, h, w):
         """Scale flow function.
@@ -539,18 +545,10 @@ class IRRPWCDecoder(BaseDecoder):
             Tensor: The output optical flow.
         """
         h_org, w_org = flow.shape[2:]
-        u_scale = float(w) / float(w_org)
-        v_scale = float(h) / float(h_org)
-        u = flow[:, 0, ...] * u_scale
-        v = flow[:, 1, ...] * v_scale
-        u = u[:, None, ...]
-        v = v[:, None, ...]
+        scale = torch.Tensor([float(w / w_org), float(h / h_org)]).to(flow)
+        flow = torch.einsum('b c h w, c -> b c h w', flow, scale)
 
-        return F.interpolate(
-            torch.cat((u, v), dim=1),
-            size=(h, w),
-            mode='bilinear',
-            align_corners=True)
+        return F.interpolate(flow, size=(h, w), **self.upsample_cfg)
 
     def _scale_flow_as_gt(self, flow: torch.Tensor, H_img: int,
                           W_img: int) -> torch.Tensor:
@@ -564,14 +562,9 @@ class IRRPWCDecoder(BaseDecoder):
             Tensor: The output optical flow.
         """
         h_org, w_org = flow.shape[2:]
-        u_scale = float(W_img) / float(w_org)
-        v_scale = float(H_img) / float(h_org)
-        u = flow[:, 0, ...] * u_scale / self.flow_div
-        v = flow[:, 1, ...] * v_scale / self.flow_div
-        u = u[:, None, ...]
-        v = v[:, None, ...]
-
-        return torch.cat((u, v), dim=1)
+        scale = torch.Tensor([float(W_img / w_org),
+                              float(H_img / h_org)]).to(flow) / self.flow_div
+        return torch.einsum('b c h w, c -> b c h w', flow, scale)
 
     def forward_train(
             self,
