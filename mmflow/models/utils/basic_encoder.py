@@ -8,21 +8,21 @@ from mmcv.runner import BaseModule
 
 
 class BasicConvBlock(BaseModule):
-    """Basic convolutional block for PWC-Net.
+    """Basic convolution block for PWC-Net.
 
-    This module consists of several plain convolutional layers.
+    This module consists of several plain convolution layers.
 
     Args:
         in_channels (int): Number of input channels.
         out_channels (int): Number of output channels.
-        num_convs (int): Number of convolutional layers. Default: 3.
+        num_convs (int): Number of convolution layers. Default: 3.
         stride (int): Whether use stride convolution to downsample
             the input feature map. If stride=2, it only uses stride convolution
-            in the first convolutional layer to downsample the input feature
+            in the first convolution layer to downsample the input feature
             map. Options are 1 or 2. Default: 2.
         dilation (int): Whether use dilated convolution to expand the
-            receptive field. Set dilation rate of each convolutional layer and
-            the dilation rate of the first convolutional layer is always 1.
+            receptive field. Set dilation rate of each convolution layer and
+            the dilation rate of the first convolution layer is always 1.
             Default: 1.
         kernel_size (int): Kernel size of each feature level. Default: 3.
         conv_cfg (dict , optional): Config dict for convolution layer.

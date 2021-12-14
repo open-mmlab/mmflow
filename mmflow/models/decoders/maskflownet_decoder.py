@@ -10,8 +10,8 @@ from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
 
 from ..builder import DECODERS
+from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
-from .utils import CorrBlock
 
 
 def Upsample(img, factor) -> torch.Tensor:
