@@ -11,7 +11,7 @@ from mmcv.runner import BaseModule
 from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.ops import build_operators
 from ..builder import DECODERS, build_components, build_loss
-from .utils import BasicDenseBlock, CorrBlock
+from ..utils import BasicDenseBlock, CorrBlock
 
 
 class IRRCorrBlock(BaseModule):

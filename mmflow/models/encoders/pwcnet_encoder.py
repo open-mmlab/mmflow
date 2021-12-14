@@ -2,7 +2,7 @@
 from typing import Optional, Sequence, Union
 
 from ..builder import ENCODERS
-from .utils import BasicEncoder
+from ..utils import BasicEncoder
 
 
 @ENCODERS.register_module()

@@ -3,7 +3,6 @@ import pytest
 import torch
 
 from mmflow.models.decoders.pwcnet_decoder import PWCModule, PWCNetDecoder
-from mmflow.models.decoders.utils import CorrBlock
 
 
 def _get_test_data():
@@ -16,22 +15,6 @@ def _get_test_data():
         level6=torch.randn(1, 196, 8, 8).cuda(),
         level5=torch.randn(1, 128, 16, 16).cuda())
     return input_feat1, input_feat2
-
-
-def _get_corr_block_cfg():
-    return dict(
-        corr_cfg=dict(type='Correlation', max_displacement=1, padding=0))
-
-
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-@pytest.mark.parametrize('scaled', [True, False])
-def test_corr_block(scaled):
-    feat1 = torch.randn(1, 10, 10, 10).cuda()
-    feat2 = torch.randn(1, 10, 10, 10).cuda()
-    corr_block_cfg = _get_corr_block_cfg()
-    out = CorrBlock(**corr_block_cfg, scaled=scaled)(feat1, feat2)
-
-    assert out.shape == torch.Size((1, 9, 10, 10))
 
 
 @pytest.mark.parametrize('up_flow', [False, True])
