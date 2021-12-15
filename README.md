@@ -78,7 +78,7 @@ Refer to the below tutorials to dive deeper:
 
 - [add new modules](docs/en/tutorials/4_new_modules.md)
 
-- [customized runtime](docs/en/tutorials/5_customize_runtime.md)。
+- [customized runtime](docs/en/tutorials/5_customize_runtime.md)
 
 ## Contributing
 
