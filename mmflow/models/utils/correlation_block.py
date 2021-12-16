@@ -65,11 +65,10 @@ class CorrBlock(BaseModule):
             else:
                 scale_factor = float(C * self.kernel_size**2)
 
-        corr = self.corr_block[0](feat1, feat2)
-
         corr = self.corr_block[0](feat1, feat2) / scale_factor
 
         corr = corr.view(N, -1, H // self.stride, W // self.stride)
+
         out = self.corr_block[1](corr)
 
         return out
