@@ -20,6 +20,7 @@ def multi_level_flow_loss(loss_function,
                           max_flow: float = float('inf'),
                           resize_flow: str = 'downsample',
                           reduction: str = 'sum',
+                          scale_as_level: bool = False,
                           **kwargs) -> torch.Tensor:
     """Multi-level endpoint error loss function.
 
@@ -45,6 +46,17 @@ def multi_level_flow_loss(loss_function,
             full-size epe map, 'mean': the mean of the epe map is taken, 'sum':
             the epe map will be summed but averaged by batch_size.
             Default: 'sum'.
+        resize_flow (str): mode for reszing flow: 'downsample' and 'upsample',
+            as multi-level predicted outputs don't match the ground truth.
+            If set to 'downsample', it will downsample the ground truth, and
+            if set to 'upsample' it will upsample the predicted flow, and
+            'upsample' is used for sparse flow map as no generic interpolation
+            mode can resize a ground truth of sparse flow correctly.
+            Default to 'downsample'.
+        scale_as_level (bool): Whether flow for each level is at its native
+            spatial resolution. If `'scale_as_level'` is True, the ground
+            truth is scaled at different levels, if it is False, the ground
+            truth will not be scaled. Default to False.
         kwargs: arguments for loss_function.
 
     Returns:
@@ -65,6 +77,9 @@ def multi_level_flow_loss(loss_function,
 
     target_div = target / flow_div
 
+    c_org, h_org, w_org = target.shape[1:]
+    assert c_org == 2, f'The channels ground truth must be 2, but got {c_org}'
+
     loss = 0
 
     for level in weights.keys():
@@ -76,6 +91,10 @@ def multi_level_flow_loss(loss_function,
         num_preds = len(cur_pred)
 
         b, _, h, w = cur_pred[0].shape
+
+        scale_factor = torch.Tensor([
+            float(w / w_org), float(h / h_org)
+        ]).to(target) if scale_as_level else torch.Tensor([1., 1.]).to(target)
 
         cur_weight = weights.get(level)
 
@@ -103,6 +122,9 @@ def multi_level_flow_loss(loss_function,
                     size=cur_target.shape[2:],
                     mode='bilinear',
                     align_corners=False)
+
+            cur_target = torch.einsum('b c h w, c -> b c h w', cur_target,
+                                      scale_factor)
 
             loss_map += loss_function(i_pred, cur_target, **kwargs) * cur_valid
 
