@@ -32,8 +32,7 @@ def test_corr_block(scaled):
         out_scaled_sqrtdimension = CorrBlock(
             **corr_block_cfg, scaled=scaled,
             scale_mode='sqrt dimension')(feat1, feat2)
-        print(out)
-        print(out_scaled_dimension)
+
         # test scaled by dimension and sqrt dimension
         assert torch.allclose(out, out_scaled_dimension * 3)
         assert torch.allclose(out, out_scaled_sqrtdimension * sqrt(3))
