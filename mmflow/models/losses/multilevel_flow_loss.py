@@ -77,7 +77,8 @@ def multi_level_flow_loss(loss_function,
 
     target_div = target / flow_div
 
-    h_org, w_org = target.shape[2:]
+    c_org, h_org, w_org = target.shape[1:]
+    assert c_org == 2, f'The channels ground truth must be 2, but got {c_org}'
 
     loss = 0
 
