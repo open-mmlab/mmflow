@@ -20,7 +20,7 @@ def test_multi_level_endpoint_error():
     gt = torch.randn(b, 2, h, w)
     weights = dict(level1=1.)
 
-    # test pred does not match gt
+    # test gt channels is not 2
     with pytest.raises(AssertionError):
         multi_level_flow_loss(
             endpoint_error, pred, torch.randn(b, 1, 1, 1), weights=weights)
@@ -99,7 +99,7 @@ def test_multi_level_charbonnier_loss():
     gt = torch.randn(b, 2, h, w)
     weights = dict(level1=1.)
 
-    # test pred does not match gt
+    # test gt channels is not 2
     with pytest.raises(AssertionError):
         multi_level_flow_loss(
             charbonnier_loss, pred, torch.randn(b, 1, 1, 1), weights=weights)
@@ -124,10 +124,10 @@ def test_multi_level_charbonnier_loss():
     assert torch.allclose(loss_gt, loss)
 
 
-@pytest.mark.parametrize(['reduction', 'resize_flow'],
-                         [['mean', 'upsample'], ['sum', 'upsample'],
-                          ['mean', 'downsample'], ['sum', 'downsample']])
-def test_multilevel_epe(reduction, resize_flow):
+@pytest.mark.parametrize('reduction', ('mean', 'sum'))
+@pytest.mark.parametrize('resize_flow', ['upsample', 'downsample'])
+@pytest.mark.parametrize('scale_as_level', [True, False])
+def test_multilevel_epe(reduction, resize_flow, scale_as_level):
 
     b = 8
 
@@ -157,24 +157,29 @@ def test_multilevel_epe(reduction, resize_flow):
     with pytest.raises(AssertionError):
         MultiLevelEPE(resize_flow='z')
 
+    # test invalid scale_as_level
+    with pytest.raises(AssertionError):
+        MultiLevelEPE(scale_as_level='a')
+
     def answer():
         loss = 0
         weights = [0.005, 0.01]
         scales = [2, 4]
-
+        scale_factor = [1 / 2, 1 / 4] if scale_as_level else [1., 1.]
         div_gt = gt / 20.
 
         for i in range(len(weights)):
             if resize_flow == 'downsample':
-                cur_gt = F.avg_pool2d(div_gt, scales[i])
+                cur_gt = F.avg_pool2d(div_gt, scales[i]) * scale_factor[i]
                 cur_pred = preds_list[i]
             else:
-                cur_gt = div_gt
+                cur_gt = div_gt * scale_factor[i]
                 cur_pred = F.interpolate(
                     preds_list[i],
                     size=(24, 32),
                     mode='bilinear',
                     align_corners=False)
+
             l2_loss = torch.norm(cur_pred - cur_gt, p=2, dim=1)
             if reduction == 'mean':
                 loss += l2_loss.mean() * weights[i]
@@ -187,7 +192,10 @@ def test_multilevel_epe(reduction, resize_flow):
 
     # test accuracy of mean reduction
     loss_func = MultiLevelEPE(
-        weights=weights, reduction=reduction, resize_flow=resize_flow)
+        weights=weights,
+        reduction=reduction,
+        resize_flow=resize_flow,
+        scale_as_level=scale_as_level)
     loss = loss_func(preds, gt)
     assert torch.isclose(answer_, loss, atol=1e-4)
 
@@ -285,14 +293,16 @@ def test_sequence_loss():
 
 
 @pytest.mark.parametrize('reduction', ('mean', 'sum'))
-def test_multi_levels_charbonnier(reduction):
+@pytest.mark.parametrize('resize_flow', ['upsample', 'downsample'])
+@pytest.mark.parametrize('scale_as_level', [True, False])
+def test_multi_levels_charbonnier(reduction, resize_flow, scale_as_level):
 
     b = 2
 
-    flow2 = torch.randn(b, 2, 16, 16)
-    flow3 = torch.randn(b, 2, 8, 8)
+    flow2 = torch.randn(b, 2, 12, 16)
+    flow3 = torch.randn(b, 2, 6, 8)
 
-    gt = torch.randn(b, 2, 64, 64)
+    gt = torch.randn(b, 2, 24, 32)
 
     preds_list = [flow2, flow3]
     preds = {
@@ -307,17 +317,39 @@ def test_multi_levels_charbonnier(reduction):
     with pytest.raises(AssertionError):
         MultiLevelCharbonnierLoss(weights=[0.005, 0.01])
 
+    # test reduction value
+    with pytest.raises(AssertionError):
+        MultiLevelEPE(reduction=None)
+
+    # test invalid resize_flow
+    with pytest.raises(AssertionError):
+        MultiLevelEPE(resize_flow='z')
+
+    # test invalid scale_as_level
+    with pytest.raises(AssertionError):
+        MultiLevelEPE(scale_as_level='a')
+
     def answer():
         loss = 0
         weights = [0.005, 0.01]
-        scales = [4, 8]
-
+        scales = [2, 4]
+        scale_factor = [1 / 2, 1 / 4] if scale_as_level else [1., 1.]
         div_gt = gt / 20.
 
         for i in range(len(weights)):
 
-            cur_gt = F.avg_pool2d(div_gt, scales[i])
-            loss_square = torch.sum((preds_list[i] - cur_gt)**2, dim=1)
+            if resize_flow == 'downsample':
+                cur_gt = F.avg_pool2d(div_gt, scales[i]) * scale_factor[i]
+                cur_pred = preds_list[i]
+            else:
+                cur_gt = div_gt * scale_factor[i]
+                cur_pred = F.interpolate(
+                    preds_list[i],
+                    size=(24, 32),
+                    mode='bilinear',
+                    align_corners=False)
+
+            loss_square = torch.sum((cur_pred - cur_gt)**2, dim=1)
             if reduction == 'mean':
                 loss += ((loss_square + 0.01)**0.2).mean() * weights[i]
             else:
@@ -328,10 +360,11 @@ def test_multi_levels_charbonnier(reduction):
     answer_ = answer()
 
     # test accuracy of mean reduction
-    loss_obj = MultiLevelCharbonnierLoss(weights=weights, reduction=reduction)
+    loss_obj = MultiLevelCharbonnierLoss(
+        weights=weights, resize_flow=resize_flow, reduction=reduction)
     loss = loss_obj(preds, gt)
-    assert torch.isclose(answer_, loss, atol=1e-4)
+    assert torch.isclose(answer_, loss, rtol=1e-2)
 
     valid = torch.zeros_like(gt[:, 0, :, :])
     loss = loss_obj(preds, gt, valid)
-    assert torch.isclose(torch.Tensor([0.]), loss, atol=1e-4)
+    assert torch.isclose(torch.Tensor([0.]), loss, rtol=1e-2)
