@@ -37,9 +37,14 @@ repos:
     rev: v2.1.0
     hooks:
       - id: codespell
-
   - repo: https://github.com/myint/docformatter
     rev: v1.3.1
     hooks:
       - id: docformatter
         args: ["--in-place", "--wrap-descriptions", "79"]
+  - repo: https://github.com/open-mmlab/pre-commit-hooks
+    rev: v0.1.0  # Use the rev to fix revision
+    hooks:
+      - id: check-algo-readme
+      - id: check-copyright
+        args: ["mmflow", "tools", "tests", "demo"]  # replace the dir_to_check with expected directory to check
