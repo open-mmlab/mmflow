@@ -91,7 +91,11 @@ data = dict(
         drop_last=True,
         shuffle=False,
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=5,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
     train=[kitti2015_train, kitti2012_train],
     val=dict(
