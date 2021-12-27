@@ -48,7 +48,7 @@ train_pipeline = [
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='InputResize', exponent=4),
+    dict(type='InputResize', exponent=6),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='TestFormatBundle'),
     dict(
