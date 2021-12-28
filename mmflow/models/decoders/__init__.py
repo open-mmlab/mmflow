@@ -7,9 +7,11 @@ from .liteflownet_decoder import NetE
 from .maskflownet_decoder import MaskFlowNetDecoder, MaskFlowNetSDecoder
 from .pwcnet_decoder import PWCNetDecoder
 from .raft_decoder import RAFTDecoder
+from .spynet_decoder import SpyNetDecoder
 
 __all__ = [
     'FlowNetCDecoder', 'FlowNetSDecoder', 'PWCNetDecoder',
     'MaskFlowNetSDecoder', 'NetE', 'ContextNet', 'RAFTDecoder', 'FlowRefine',
-    'OccRefine', 'OccShuffleUpsample', 'IRRPWCDecoder', 'MaskFlowNetDecoder'
+    'OccRefine', 'OccShuffleUpsample', 'IRRPWCDecoder', 'MaskFlowNetDecoder',
+    'SpyNetDecoder'
 ]

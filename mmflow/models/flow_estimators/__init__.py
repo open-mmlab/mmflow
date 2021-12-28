@@ -6,8 +6,9 @@ from .liteflownet import LiteFlowNet
 from .maskflownet import MaskFlowNet, MaskFlowNetS
 from .pwcnet import PWCNet
 from .raft import RAFT
+from .spynet import SpyNet
 
 __all__ = [
     'FlowNetC', 'FlowNetS', 'LiteFlowNet', 'PWCNet', 'MaskFlowNetS', 'RAFT',
-    'IRRPWC', 'FlowNet2', 'FlowNetCSS', 'MaskFlowNet'
+    'IRRPWC', 'FlowNet2', 'FlowNetCSS', 'MaskFlowNet', 'SpyNet'
 ]
