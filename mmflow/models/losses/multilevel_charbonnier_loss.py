@@ -62,6 +62,17 @@ class MultiLevelCharbonnierLoss(nn.Module):
         max_flow (float): maximum value of optical flow, if some pixel's flow
             of target is larger than it, this pixel is not valid. Default to
             float('inf').
+        resize_flow (str): mode for reszing flow: 'downsample' and 'upsample',
+            as multi-level predicted outputs don't match the ground truth.
+            If set to 'downsample', it will downsample the ground truth, and
+            if set to 'upsample' it will upsample the predicted flow, and
+            'upsample' is used for sparse flow map as no generic interpolation
+            mode can resize a ground truth of sparse flow correctly.
+            Default to 'downsample'.
+        scale_as_level (bool): Whether flow for each level is at its native
+            spatial resolution. If `'scale_as_level'` is True, the ground
+            truth is scaled at different levels, if it is False, the ground
+            truth will not be scaled. Default to False.
         reduction (str): the reduction to apply to the output:'none', 'mean',
             'sum'. 'none': no reduction will be applied and will return a
             full-size epe map, 'mean': the mean of the epe map is taken, 'sum':
@@ -81,6 +92,7 @@ class MultiLevelCharbonnierLoss(nn.Module):
                      level2=0.005),
                  max_flow: float = float('inf'),
                  resize_flow: str = 'downsample',
+                 scale_as_level: bool = False,
                  reduction: str = 'sum') -> None:
         super().__init__()
 
@@ -101,6 +113,9 @@ class MultiLevelCharbonnierLoss(nn.Module):
 
         assert resize_flow in ('downsample', 'upsample')
         self.resize_flow = resize_flow
+
+        assert isinstance(scale_as_level, bool)
+        self.scale_as_level = scale_as_level
 
         assert reduction in ('mean', 'sum')
         self.reduction = reduction
@@ -133,6 +148,7 @@ class MultiLevelCharbonnierLoss(nn.Module):
             flow_div=self.flow_div,
             max_flow=self.max_flow,
             resize_flow=self.resize_flow,
+            scale_as_level=self.scale_as_level,
             reduction=self.reduction,
             q=self.q,
             eps=self.eps,
@@ -141,7 +157,9 @@ class MultiLevelCharbonnierLoss(nn.Module):
     def __repr__(self) -> str:
 
         repr_str = self.__class__.__name__
-        repr_str += (f'(flow_div={self.flow_div}, '
+        repr_str += (f'(resize_flow={self.resize_flow}, '
+                     f'scale_as_level={self.scale_as_level}, '
+                     f'flow_div={self.flow_div}, '
                      f'weights={self.weights}, '
                      f'q={self.q}, '
                      f'eps={self.eps}, '

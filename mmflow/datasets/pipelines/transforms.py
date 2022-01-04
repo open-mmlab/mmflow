@@ -722,7 +722,7 @@ class RandomCrop:
         return img
 
     def __call__(self, results):
-        """Call function to randomly crop images, semantic segmentation maps.
+        """Call function to randomly crop images, flow maps.
 
         Args:
             results (dict): Result dict from loading pipeline.

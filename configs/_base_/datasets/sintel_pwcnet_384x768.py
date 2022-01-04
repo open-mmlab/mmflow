@@ -49,7 +49,7 @@ train_pipeline = [
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='InputResize', exponent=4),
+    dict(type='InputResize', exponent=6),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='TestFormatBundle'),
     dict(
@@ -96,7 +96,11 @@ data = dict(
         workers_per_gpu=5,
         drop_last=True,
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=5,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
     train=[sintel_clean_train, sintel_final_train],
     val=dict(

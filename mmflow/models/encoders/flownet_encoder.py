@@ -5,8 +5,7 @@ import torch
 from mmcv.cnn.bricks.conv_module import ConvModule
 
 from ..builder import ENCODERS
-from ..decoders.utils import CorrBlock
-from .utils import BasicEncoder
+from ..utils import BasicEncoder, CorrBlock
 
 
 @ENCODERS.register_module()

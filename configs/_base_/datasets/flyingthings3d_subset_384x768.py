@@ -89,7 +89,11 @@ data = dict(
         workers_per_gpu=5,
         drop_last=True,
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=5,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
     train=flyingthings3d_subset_train,
     val=dict(

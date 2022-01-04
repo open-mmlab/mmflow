@@ -137,7 +137,7 @@ class RAFT(PWCNet):
             Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
                 with the same size of images after augmentation.
         """
-
+        train_iter = self.decoder.iters
         if self.test_cfg is not None and self.test_cfg.get(
                 'iters') is not None:
             self.decoder.iters = self.test_cfg.get('iters')
@@ -148,10 +148,14 @@ class RAFT(PWCNet):
         if flow_init is None:
             flow_init = torch.zeros((B, 2, H, W), device=feat1.device)
 
-        return self.decoder.forward_test(
+        results = self.decoder.forward_test(
             feat1=feat1,
             feat2=feat2,
             flow=flow_init,
             h_feat=h_feat,
             cxt_feat=cxt_feat,
             img_metas=img_metas)
+        # recover iter in train
+        self.decoder.iters = train_iter
+
+        return results
