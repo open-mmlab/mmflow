@@ -32,6 +32,10 @@ def test_flow_estimator(cfg_file):
     cfg_file = osp.join(osp.dirname(__file__), cfg_file)
     cfg = Config.fromfile(cfg_file)
 
+    if cfg.model.type == 'RAFT':
+        # Replace SyncBN with BN to inference on CPU
+        cfg.model.cxt_encoder.norm_cfg = dict(type='BN', requires_grad=True)
+
     estimator = build_flow_estimator(cfg.model).cuda()
 
     imgs = torch.randn(1, 6, 64, 64).cuda()
