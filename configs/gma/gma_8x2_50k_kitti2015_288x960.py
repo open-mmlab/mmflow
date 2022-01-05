@@ -40,6 +40,5 @@ runner = dict(type='IterBasedRunner', max_iters=50000)
 checkpoint_config = dict(by_epoch=False, interval=5000)
 evaluation = dict(interval=5000, metric='EPE')
 
-# Train on FlyingChairs and FlyingThings3D, and finetune on
-# and Sintel, KITTI2015 and HD1K
-# load_from = 'https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth'  # noqa
+# Load model training on mixed datasets and finetune it on KITTI2015s
+load_from = 'https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.pth'  # noqa

@@ -24,3 +24,6 @@ lr_config = dict(
 runner = dict(type='IterBasedRunner', max_iters=120000)
 checkpoint_config = dict(by_epoch=False, interval=10000)
 evaluation = dict(interval=10000, metric='EPE')
+
+# Train on FlyingChairs and finetune on FlyingThings3D
+load_from = 'https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingchairs_368x496.pth'  # noqa
