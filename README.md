@@ -56,6 +56,7 @@ Supported methods:
 - [x] [IRR (CVPR'2019)](configs/irr/README.md)
 - [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
 - [x] [RAFT (ECCV'2020)](configs/raft/README.md)
+- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
 
 ## Installation
 
@@ -114,3 +115,6 @@ If you use this toolbox or benchmark in your research, please cite this project.
 - [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab optical flow toolbox and benchmark.
 - [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab FewShot Learning Toolbox and Benchmark.
 - [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab Human Pose and Shape Estimation Toolbox and Benchmark.
+- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab self-supervised learning toolbox and benchmark.
+- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab Model Compression Toolbox and Benchmark.
+- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab Model Deployment Framework.

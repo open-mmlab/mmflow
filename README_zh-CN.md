@@ -55,6 +55,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 - [x] [IRR (CVPR'2019)](configs/irr/README.md)
 - [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
 - [x] [RAFT (ECCV'2020)](configs/raft/README.md)
+- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
 
 ## 安装
 
@@ -113,6 +114,9 @@ MMFlow 也提供了其他更详细的教程，包括：
 - [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab 光流估计工具箱与测试基准
 - [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab 少样本学习工具箱与测试基准
 - [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab 人体参数化模型工具箱与测试基准
+- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab 自监督学习工具箱与测试基准
+- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab 模型压缩工具箱与测试基准
+- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab 模型部署框架
 
 ## 欢迎加入 OpenMMLab 社区
 
