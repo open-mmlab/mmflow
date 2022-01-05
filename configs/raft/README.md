@@ -63,23 +63,23 @@ is available at https://github.com/princeton-vl/RAFT.
         <tr>
             <th>RAFT</th>
             <th>Flying Chairs</th>
-            <th>0.78</th>
-            <th>2.54</th>
-            <th>5.32</th>
+            <th>0.80</th>
+            <th>2.27</th>
+            <th>4.85</th>
             <th>-</th>
             <th>-</th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.log.json'>log</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs_368x496.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs_368x496.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.pth'>Model</a></th>
         </tr>
         <tr>
             <th>RAFT</th>
             <th>FlyingChairs + FlyingThing3d</th>
             <th>-</th>
-            <th>1.46</th>
-            <th>2.67</th>
-            <th>15.07%</th>
-            <th>4.52</th>
+            <th>1.38</th>
+            <th>2.79</th>
+            <th>16.23%</th>
+            <th>4.95</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.log.json'>log</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth'>Model</a></th>
@@ -88,8 +88,8 @@ is available at https://github.com/princeton-vl/RAFT.
             <th>RAFT</th>
             <th>FlyingChairs + FlyingThing3d + Sintel</th>
             <th>-</th>
-            <th>0.60</th>
-            <th>0.98</th>
+            <th>0.63</th>
+            <th>0.97</th>
             <th>-</th>
             <th>-</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.log.json'>log</a></th>
@@ -100,13 +100,25 @@ is available at https://github.com/princeton-vl/RAFT.
             <th>RAFT</th>
             <th>Mixed Dataset<sup>[1]</sup></th>
             <th>-</th>
-            <th>0.61</th>
-            <th>1.03</th>
-            <th>5.74%</th>
-            <th>1.70</th>
+            <th>0.63</th>
+            <th>1.01</th>
+            <th>5.68%</th>
+            <th>1.59</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.log.json'>log</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth'>Model</a></th>
+        </tr>
+        <tr>
+            <th>RAFT</th>
+            <th>KITTI2015</th>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+            <th>1.45%</th>
+            <th>0.61</th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.pth'>Model</a></th>
         </tr>
     </tbody>
 </table>

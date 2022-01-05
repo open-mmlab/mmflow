@@ -23,14 +23,14 @@ model = dict(
         in_channels=3,
         out_channels=256,
         net_type='Basic',
-        norm_cfg=dict(type='BN'),
+        norm_cfg=dict(type='SyncBN'),
         init_cfg=[
             dict(
                 type='Kaiming',
                 layer=['Conv2d'],
                 mode='fan_out',
                 nonlinearity='relu'),
-            dict(type='Constant', layer=['BatchNorm2d'], val=1, bias=0)
+            dict(type='Constant', layer=['SyncBatchNorm2d'], val=1, bias=0)
         ]),
     decoder=dict(
         type='RAFTDecoder',
