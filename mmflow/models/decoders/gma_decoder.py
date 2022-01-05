@@ -3,12 +3,13 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
+from mmcv.runner import BaseModule
 
 from ..builder import DECODERS
 from .raft_decoder import ConvGRU, RAFTDecoder
 
 
-class RelPosEmb(nn.Module):
+class RelPosEmb(BaseModule):
     """Relative position embedding.
 
     Separate embedding vectors are learned for the vertical and horizontal
@@ -52,7 +53,7 @@ class RelPosEmb(nn.Module):
         return (height_score + width_score).reshape(B, heads, H * W, H * W)
 
 
-class Attention(nn.Module):
+class Attention(BaseModule):
     """Compute 4D attention matrix encodes self-similarity in appearance
     feature space by using context features.
 
@@ -144,7 +145,7 @@ class Attention(nn.Module):
         return attn
 
 
-class Aggregate(nn.Module):
+class Aggregate(BaseModule):
     """Computing aggregated global motion features.
 
     Args:
