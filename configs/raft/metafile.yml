@@ -22,15 +22,15 @@ Models:
       - Task: Optical flow estimation
         Dataset: FlyingChairs
         Metrics:
-          EPE: 0.78
+          EPE: 0.80
       - Task: Optical flow estimation
         Dataset: Sintel clean
         Metrics:
-          EPE: 2.54
+          EPE: 2.27
       - Task: Optical flow estimation
         Dataset: Sintel final
         Metrics:
-          EPE: 5.32
+          EPE: 4.85
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.pth
 
   - Name: raft_8x2_100k_flyingthings3d_400x720
@@ -42,16 +42,16 @@ Models:
       - Task: Optical flow estimation
         Dataset: Sintel clean
         Metrics:
-          EPE: 1.46
+          EPE: 1.38
       - Task: Optical flow estimation
         Dataset: Sintel final
         Metrics:
-          EPE: 2.67
+          EPE: 2.79
       - Task: Optical flow estimation
         Dataset: KITTI2015
         Metrics:
-          EPE: 4.52
-          Fl-all: 15.07%
+          EPE: 4.95
+          Fl-all: 16.23%
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth
 
   - Name: raft_8x2_100k_flyingthings3d_sintel_368x768
@@ -65,11 +65,11 @@ Models:
       - Task: Optical flow estimation
         Dataset: Sintel clean
         Metrics:
-          EPE: 0.60
+          EPE: 0.63
       - Task: Optical flow estimation
         Dataset: Sintel final
         Metrics:
-          EPE: 0.98
+          EPE: 0.97
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.pth
 
   - Name: raft_8x2_100k_mixed_368x768
@@ -86,14 +86,14 @@ Models:
       - Task: Optical flow estimation
         Dataset: Sintel clean
         Metrics:
-          EPE: 0.61
+          EPE: 0.63
       - Task: Optical flow estimation
         Dataset: Sintel final
         Metrics:
-          EPE: 1.03
+          EPE: 1.01
       - Task: Optical flow estimation
         Dataset: KITTI2015
         Metrics:
-          EPE: 1.70
-          Fl-all: 5.74%
+          EPE: 1.59
+          Fl-all: 5.68%
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth
