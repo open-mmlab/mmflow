@@ -18,7 +18,11 @@ from mmflow.models.flow_estimators.base import FlowEstimator
     '../../configs/_base_/models/liteflownet/liteflownet.py',
     '../../configs/_base_/models/flownet2/flownet2cs.py',
     '../../configs/_base_/models/flownet2/flownet2css.py',
-    '../../configs/_base_/models/flownet2/flownet2.py'
+    '../../configs/_base_/models/flownet2/flownet2sd.py',
+    '../../configs/_base_/models/flownet2/flownet2.py',
+    '../../configs/_base_/models/gma/gma.py',
+    '../../configs/_base_/models/gma/gma_p-only.py',
+    '../../configs/_base_/models/gma/gma_plus-p.py'
 ])
 def test_flow_estimator(cfg_file):
     # BaseFlowEstimator has abstract method
@@ -27,6 +31,10 @@ def test_flow_estimator(cfg_file):
 
     cfg_file = osp.join(osp.dirname(__file__), cfg_file)
     cfg = Config.fromfile(cfg_file)
+
+    if cfg.model.type == 'RAFT':
+        # Replace SyncBN with BN to inference on CPU
+        cfg.model.cxt_encoder.norm_cfg = dict(type='BN', requires_grad=True)
 
     estimator = build_flow_estimator(cfg.model).cuda()
 

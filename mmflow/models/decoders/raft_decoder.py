@@ -357,11 +357,8 @@ class RAFTDecoder(BaseDecoder):
             conv_cfg=conv_cfg,
             norm_cfg=norm_cfg,
             act_cfg=act_cfg)
-
-        self.gru = ConvGRU(
-            self.h_channels,
-            self.encoder.out_channels[0] + 2 + self.cxt_channels,
-            net_type=gru_type)
+        self.gru_type = gru_type
+        self.gru = self.make_gru_block()
         self.flow_pred = XHead(self.h_channels, feat_channels, 2, x='flow')
 
         if net_type == 'Basic':
@@ -370,6 +367,12 @@ class RAFTDecoder(BaseDecoder):
 
         if flow_loss is not None:
             self.flow_loss = build_loss(flow_loss)
+
+    def make_gru_block(self):
+        return ConvGRU(
+            self.h_channels,
+            self.encoder.out_channels[0] + 2 + self.cxt_channels,
+            net_type=self.gru_type)
 
     def _upsample(self,
                   flow: torch.Tensor,
