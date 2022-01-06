@@ -7,6 +7,9 @@ import warnings
 def find_latest_checkpoint(path, suffix='pth'):
     """Find the latest checkpoint from the working directory.
 
+    It will be used when automatically resume, modified from
+    https://github.com/open-mmlab/mmdetection/blob/dev-v2.20.0/mmdet/utils/misc.py.
+
     Args:
         path(str): The path to find checkpoints.
         suffix(str): File extension.
@@ -18,7 +21,7 @@ def find_latest_checkpoint(path, suffix='pth'):
     References:
         .. [1] https://github.com/microsoft/SoftTeacher
                   /blob/main/ssod/utils/patch.py
-    """
+    """ # noqa
     if not osp.exists(path):
         warnings.warn('The path of checkpoints does not exist.')
         return None
