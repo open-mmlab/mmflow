@@ -13,7 +13,7 @@ from mmcv.utils import Config, build_from_cfg
 
 from mmflow.core import DistEvalHook, EvalHook
 from mmflow.datasets import build_dataloader, build_dataset
-from mmflow.utils import get_root_logger
+from mmflow.utils import find_latest_checkpoint, get_root_logger
 
 Module = torch.nn.Module
 Dataset = torch.utils.data.Dataset
@@ -198,6 +198,12 @@ def train_model(model: Module,
             priority = hook_cfg.pop('priority', 'NORMAL')
             hook = build_from_cfg(hook_cfg, HOOKS)
             runner.register_hook(hook, priority=priority)
+
+    resume_from = None
+    if cfg.resume_from is None and cfg.get('auto_resume'):
+        resume_from = find_latest_checkpoint(cfg.work_dir)
+    if resume_from is not None:
+        cfg.resume_from = resume_from
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)
