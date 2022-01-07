@@ -41,6 +41,16 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 该项目采用 [Apache 2.0 开源许可证](LICENSE)。
 
+## 更新日志
+
+最新的 0.2.0 版本已经在 2022.01.07 发布:
+
+- 支持的新算法 [GMA (ICCV'2021)](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation
+- 修复 RAFT 算法 refine iter 的 bug，并更新模型权重文件
+- 支持了自动从最新的存储参数节点恢复训练
+
+如果想了解更多版本更新细节和历史信息，请参考[更新日志](docs/en/changelog.md)。
+
 ## 基准测试和模型库
 
 测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
