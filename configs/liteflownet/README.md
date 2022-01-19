@@ -1,5 +1,7 @@
 # LiteFlowNet
 
+[LiteFlowNet: A Lightweight Convolutional Neural Network for Optical Flow Estimation](https://arxiv.org/pdf/1805.07036.pdf)
+
 ## Abstract
 
 <!-- [ABSTRACT] -->
