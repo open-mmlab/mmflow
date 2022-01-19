@@ -1,5 +1,7 @@
 # LiteFlowNet2
 
+[A Lightweight Optical Flow CNN - Revisiting Data Fidelity and Regularization](https://arxiv.org/abs/1903.07414.pdf)
+
 ## Abstract
 
 <!-- [ABSTRACT] -->
