@@ -86,9 +86,6 @@ def main():
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
 
-    # set multi-process settings
-    setup_multi_processes(cfg)
-
     if cfg.get('custom_imports', None):
         from mmcv.utils import import_modules_from_strings
         import_modules_from_strings(**cfg['custom_imports'])
@@ -108,6 +105,9 @@ def main():
     else:
         distributed = True
         init_dist(args.launcher, **cfg.dist_params)
+
+    # set multi-process settings
+    setup_multi_processes(cfg)
 
     # build the dataloader
     separate_eval = cfg.data.test.get('separate_eval', False)
