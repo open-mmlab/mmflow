@@ -16,7 +16,7 @@ from mmflow.core import online_evaluation
 from mmflow.datasets import build_dataloader, build_dataset
 from mmflow.datasets.utils.flow_io import write_flow, write_flow_kitti
 from mmflow.models import build_flow_estimator
-from mmflow.utils.logger import get_root_logger
+from mmflow.utils import get_root_logger, setup_multi_processes
 
 
 def parse_args():
@@ -85,6 +85,10 @@ def main():
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
+
+    # set multi-process settings
+    setup_multi_processes(cfg)
+
     if cfg.get('custom_imports', None):
         from mmcv.utils import import_modules_from_strings
         import_modules_from_strings(**cfg['custom_imports'])
