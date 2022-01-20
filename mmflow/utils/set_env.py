@@ -31,7 +31,7 @@ def setup_multi_processes(cfg):
     else:
         logger.info(f'OpenCV num_threads is `{cv2.getNumThreads}')
 
-    if cfg.data.workers_per_gpu > 1:
+    if cfg.data.train_dataloader.workers_per_gpu > 1:
         # setup OMP threads
         # This code is referred from https://github.com/pytorch/pytorch/blob/master/torch/distributed/run.py  # noqa
         omp_num_threads = cfg.get('omp_num_threads', None)
