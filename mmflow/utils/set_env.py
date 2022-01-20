@@ -15,16 +15,13 @@ def setup_multi_processes(cfg):
     # set multi-process start method
     if platform.system() != 'Windows':
         mp_start_method = cfg.get('mp_start_method', None)
-        current_method = mp.get_start_method(allow_none=True)
+        current_method = mp.get_start_method(allow_none=False)
         if mp_start_method in ('fork', 'spawn', 'forkserver'):
             logger.info(
-                f'Multi-processing start method `{mp_start_method}` is '
-                f'different from the previous setting `{current_method}`.'
-                f'It will be force set to `{mp_start_method}`.')
+                f'Multi-processing start method is `{mp_start_method}`')
             mp.set_start_method(mp_start_method, force=True)
         else:
-            logger.info(
-                f'Multi-processing start method is `{mp_start_method}`')
+            logger.info(f'Multi-processing start method is `{current_method}`')
 
     # disable opencv multithreading to avoid system being overloaded
     opencv_num_threads = cfg.get('opencv_num_threads', None)
