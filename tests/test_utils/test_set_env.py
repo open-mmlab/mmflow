@@ -31,7 +31,9 @@ def test_setup_multi_processes(workers_per_gpu, valid, env_cfg):
     sys_omp_threads = os.environ.pop('OMP_NUM_THREADS', default=None)
     sys_mkl_threads = os.environ.pop('MKL_NUM_THREADS', default=None)
 
-    config = dict(data=dict(workers_per_gpu=workers_per_gpu))
+    config = dict(
+        data=dict(
+            train_dataloader=dict(dict(workers_per_gpu=workers_per_gpu))))
     config.update(env_cfg)
     cfg = Config(config)
     setup_multi_processes(cfg)
