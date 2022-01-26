@@ -2,9 +2,9 @@
 
 [Iterative Residual Refinement for Joint Optical Flow and Occlusion Estimation](https://openaccess.thecvf.com/content_CVPR_2019/papers/Hur_Iterative_Residual_Refinement_for_Joint_Optical_Flow_and_Occlusion_Estimation_CVPR_2019_paper.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 Deep learning approaches to optical flow estimation
 have seen rapid progress over the recent years. One common trait of
@@ -23,25 +23,9 @@ further boost the accuracy. Our full network achieves state-
 of-the-art results for both optical flow
 and occlusion estimation across several standard datasets.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731424-9cda1d89-e222-4bcf-b1b8-b18b31f7643b.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{hur2019iterative,
-  title={Iterative residual refinement for joint optical flow and occlusion estimation},
-  author={Hur, Junhwa and Roth, Stefan},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={5754--5763},
-  year={2019}
-}
-```
 
 ## Results and Models
 
@@ -127,3 +111,15 @@ and occlusion estimation across several standard datasets.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{hur2019iterative,
+  title={Iterative residual refinement for joint optical flow and occlusion estimation},
+  author={Hur, Junhwa and Roth, Stefan},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={5754--5763},
+  year={2019}
+}
+```
