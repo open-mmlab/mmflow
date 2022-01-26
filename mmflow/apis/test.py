@@ -54,7 +54,7 @@ def single_gpu_test(
     if out_dir is not None:
         mmcv.mkdir_or_exist(out_dir)
         for i, r in enumerate(results):
-            write_flow(osp.join(out_dir, f'flow_{i:03d}.flo'), r)
+            write_flow(r, osp.join(out_dir, f'flow_{i:03d}.flo'))
 
     if show_dir is not None:
         mmcv.mkdir_or_exist(show_dir)
