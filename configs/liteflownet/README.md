@@ -2,9 +2,9 @@
 
 [LiteFlowNet: A Lightweight Convolutional Neural Network for Optical Flow Estimation](https://arxiv.org/pdf/1805.07036.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 FlowNet2, the state-of-the-art convolutional neural
 network (CNN) for optical flow estimation, requires over
@@ -27,25 +27,9 @@ warping rather than image warping as practiced in FlowNet2.
 Our code and trained models are available at
 https://github.com/twhui/LiteFlowNet.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{hui2018liteflownet,
-  title={Liteflownet: A lightweight convolutional neural network for optical flow estimation},
-  author={Hui, Tak-Wai and Tang, Xiaoou and Loy, Chen Change},
-  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
-  pages={8981--8989},
-  year={2018}
-}
-```
 
 ## Results and Models
 
@@ -190,3 +174,15 @@ https://github.com/twhui/LiteFlowNet.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{hui2018liteflownet,
+  title={Liteflownet: A lightweight convolutional neural network for optical flow estimation},
+  author={Hui, Tak-Wai and Tang, Xiaoou and Loy, Chen Change},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={8981--8989},
+  year={2018}
+}
+```

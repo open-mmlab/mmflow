@@ -2,9 +2,9 @@
 
 [A Lightweight Optical Flow CNN - Revisiting Data Fidelity and Regularization](https://arxiv.org/abs/1903.07414.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 Over four decades, the majority addresses the problem of optical flow estimation using variational methods. With the
 advance of machine learning, some recent works have attempted to address the problem using convolutional neural network (CNN)
@@ -20,28 +20,9 @@ LiteFlowNet2 improves the optical flow accuracy on Sintel Clean by 23.3%, Sintel
 2015 by 18.8%, while being 2.2 times faster. Our network protocol and trained models are made publicly available on
 https://github.com/twhui/LiteFlowNet2.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731269-eee91f40-1a4d-4c9e-afc6-6d90b0674b62.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@article{hui2020lightweight,
-  title={A lightweight optical flow CNN—Revisiting data fidelity and regularization},
-  author={Hui, Tak-Wai and Tang, Xiaoou and Loy, Chen Change},
-  journal={IEEE transactions on pattern analysis and machine intelligence},
-  volume={43},
-  number={8},
-  pages={2555--2569},
-  year={2020},
-  publisher={IEEE}
-}
-```
 
 ## Results and Models
 
@@ -173,3 +154,18 @@ https://github.com/twhui/LiteFlowNet2.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@article{hui2020lightweight,
+  title={A lightweight optical flow CNN—Revisiting data fidelity and regularization},
+  author={Hui, Tak-Wai and Tang, Xiaoou and Loy, Chen Change},
+  journal={IEEE transactions on pattern analysis and machine intelligence},
+  volume={43},
+  number={8},
+  pages={2555--2569},
+  year={2020},
+  publisher={IEEE}
+}
+```

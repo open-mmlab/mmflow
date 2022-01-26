@@ -2,9 +2,9 @@
 
 [Learning to Estimate Hidden Motions with Global Motion Aggregation](https://arxiv.org/pdf/2104.02409.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 Occlusions pose a significant challenge to optical flow
 algorithms that rely on local evidences. We consider an occluded point to be
@@ -30,22 +30,9 @@ and 13.7% on Sintel Clean. At the time of submission,
 our method ranks first on these benchmarks among all published and
 unpublished approaches. Code is available at https://github.com/zacjiang/GMA.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/148016891-b8aec62a-3722-4693-913f-10181c946273.png" width="100%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-@article{jiang2021learning,
-  title={Learning to Estimate Hidden Motions with Global Motion Aggregation},
-  author={Jiang, Shihao and Campbell, Dylan and Lu, Yao and Li, Hongdong and Hartley, Richard},
-  journal={arXiv preprint arXiv:2104.02409},
-  year={2021}
-}
 
 ## Results and Models
 
@@ -227,5 +214,14 @@ unpublished approaches. Code is available at https://github.com/zacjiang/GMA.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+@article{jiang2021learning,
+  title={Learning to Estimate Hidden Motions with Global Motion Aggregation},
+  author={Jiang, Shihao and Campbell, Dylan and Lu, Yao and Li, Hongdong and Hartley, Richard},
+  journal={arXiv preprint arXiv:2104.02409},
+  year={2021}
+}
 
 [1] The mixed dataset consisted of FlyingChairs, FlyingThing3d, Sintel, KITTI2015, and HD1K.
