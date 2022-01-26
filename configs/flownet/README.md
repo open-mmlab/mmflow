@@ -2,9 +2,9 @@
 
 [FlowNet: Learning Optical Flow with Convolutional Networks](https://openaccess.thecvf.com/content_iccv_2015/papers/Dosovitskiy_FlowNet_Learning_Optical_ICCV_2015_paper.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 Convolutional neural networks (CNNs) have recently been very successful
 in a variety of computer vision tasks, especially on those linked to
@@ -20,25 +20,9 @@ on this unrealistic data still generalize very well to
 existing datasets such as Sintel and KITTI, achieving competitive accuracy
 at frame rates of 5 to 10 fps.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731289-41f87333-c35e-4f15-8d3c-164e005200b8.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{dosovitskiy2015flownet,
-  title={Flownet: Learning optical flow with convolutional networks},
-  author={Dosovitskiy, Alexey and Fischer, Philipp and Ilg, Eddy and Hausser, Philip and Hazirbas, Caner and Golkov, Vladimir and Van Der Smagt, Patrick and Cremers, Daniel and Brox, Thomas},
-  booktitle={Proceedings of the IEEE international conference on computer vision},
-  pages={2758--2766},
-  year={2015}
-}
-```
 
 ## Results and Models
 
@@ -118,3 +102,15 @@ at frame rates of 5 to 10 fps.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{dosovitskiy2015flownet,
+  title={Flownet: Learning optical flow with convolutional networks},
+  author={Dosovitskiy, Alexey and Fischer, Philipp and Ilg, Eddy and Hausser, Philip and Hazirbas, Caner and Golkov, Vladimir and Van Der Smagt, Patrick and Cremers, Daniel and Brox, Thomas},
+  booktitle={Proceedings of the IEEE international conference on computer vision},
+  pages={2758--2766},
+  year={2015}
+}
+```

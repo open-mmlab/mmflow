@@ -2,9 +2,9 @@
 
 [RAFT: Recurrent All Pairs Field Transforms for Optical Flow](https://arxiv.org/pdf/2003.12039.pdf)
 
-## Abstract
+<!-- [ALGORITHM] -->
 
-<!-- [ABSTRACT] -->
+## Abstract
 
 We introduce Recurrent All-Pairs Field Transforms (RAFT),
 a new deep network architecture for optical flow. RAFT extracts perpixel
@@ -19,26 +19,9 @@ addition, RAFT has strong cross-dataset generalization as well as high
 efficiency in inference time, training speed, and parameter count. Code
 is available at https://github.com/princeton-vl/RAFT.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731339-c1978af7-c9de-4b21-9d6c-e786daff9601.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{teed2020raft,
-  title={Raft: Recurrent all-pairs field transforms for optical flow},
-  author={Teed, Zachary and Deng, Jia},
-  booktitle={European conference on computer vision},
-  pages={402--419},
-  year={2020},
-  organization={Springer}
-}
-```
 
 ## Results and Models
 
@@ -124,5 +107,18 @@ is available at https://github.com/princeton-vl/RAFT.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{teed2020raft,
+  title={Raft: Recurrent all-pairs field transforms for optical flow},
+  author={Teed, Zachary and Deng, Jia},
+  booktitle={European conference on computer vision},
+  pages={402--419},
+  year={2020},
+  organization={Springer}
+}
+```
 
 [1] The mixed dataset consisted of FlyingChairs, FlyingThing3d, Sintel, KITTI2015, and HD1K.
