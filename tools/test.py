@@ -1,16 +1,19 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import argparse
 import os
+import warnings
 
 import mmcv
 import torch
 from mmcv import Config, DictAction
 from mmcv.cnn import fuse_conv_bn
+from mmcv.cnn.utils import revert_sync_batchnorm
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
 from mmcv.runner import (get_dist_info, init_dist, load_checkpoint,
                          wrap_fp16_model)
 from mmcv.utils.logging import print_log
 
+from mmflow import digit_version
 from mmflow.apis import multi_gpu_test, single_gpu_test
 from mmflow.core import online_evaluation
 from mmflow.datasets import build_dataloader, build_dataset
@@ -143,8 +146,18 @@ def main():
     load_checkpoint(model, args.checkpoint, map_location='cpu')
     if args.fuse_conv_bn:
         model = fuse_conv_bn(model)
+
     if not distributed:
-        model = MMDataParallel(model, device_ids=[0])
+        warnings.warn(
+            'SyncBN is only supported with DDP. To be compatible with DP, '
+            'we convert SyncBN to BN. Please use dist_train.sh which can '
+            'avoid this error.')
+        model = revert_sync_batchnorm(model)
+        if not torch.cuda.is_available():
+            assert digit_version(mmcv.__version__) >= digit_version('1.4.4'), \
+                'Please use MMCV >= 1.4.4 for CPU training!'
+        model = MMDataParallel(model, device_ids=cfg.gpu_ids)
+
     else:
         model = MMDistributedDataParallel(
             model.cuda(),
