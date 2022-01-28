@@ -41,6 +41,7 @@ We provide testing scripts for evaluating an existing model on the whole dataset
 The following testing environments are supported:
 
 - single GPU
+- CPU
 - single node multiple GPUs
 - multiple nodes
 
@@ -54,6 +55,15 @@ python tools/test.py \
     [--eval ${EVAL_METRICS}] \
     [--out-dir ${OUTPUT_DIRECTORY}] \
     [--show-dir ${VISUALIZATION_DIRECTORY}]
+
+# CPU: disable GPUs and run single-gpu testing script
+export CUDA_VISIBLE_DEVICES=-1
+python tools/test.py \
+    ${CONFIG_FILE} \
+    ${CHECKPOINT_FILE} \
+    [--out ${RESULT_FILE}] \
+    [--eval ${EVAL_METRICS}] \
+    [--show]
 
 # multi-gpu testing
 bash tools/dist_test.sh \
