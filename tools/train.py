@@ -164,6 +164,7 @@ def main():
 
     model = build_flow_estimator(cfg.model)
     model.init_weights()
+
     logger.info(model)
     if cfg.data.train_dataloader.get('sample_ratio') is None:
         # build_dataset will concat the list of dataset
