@@ -33,7 +33,6 @@ jobs:
           - torch: 1.9.0
             torch_version: torch1.9
             torchvision: 0.10.0
-            python-version: 3.9
           - torch: 1.9.0
             torch_version: torch1.9
             torchvision: 0.10.0
