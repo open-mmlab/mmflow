@@ -61,7 +61,7 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-**0.2.0** was released in 07/01/2022:
+**0.2.0** was released in 01/07/2022:
 
 - Support [GMA](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation (ICCV 2021)
 - Fix the bug of wrong refine iter in RAFT, and update [RAFT](../../configs/raft/README.md) model checkpoint after the bug fixing
