@@ -100,9 +100,9 @@ unpublished approaches. Code is available at https://github.com/zacjiang/GMA.
             <th>0.85</th>
             <th>5.27%</th>
             <th>1.50</th>
-            <th><a href='https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.log.json'>log</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.py'>Config</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.pth'>Model</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.pth'>Model</a></th>
         </tr>
         <tr>
             <th>GMA</th>
