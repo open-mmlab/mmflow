@@ -1,3 +1,4 @@
 matplotlib
 numpy
+opencv-python>=3
 six
