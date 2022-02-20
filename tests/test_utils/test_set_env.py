@@ -81,7 +81,7 @@ def test_setup_multi_processes(workers_per_gpu, valid, env_cfg):
             os.environ['MKL_NUM_THREADS'] = sys_mkl_threads
 
     else:
-        assert mp.get_start_method() == sys_start_mehod
+        assert mp.get_start_method(allow_none=True) == sys_start_mehod
         assert cv2.getNumThreads() == sys_cv_threads
         assert 'OMP_NUM_THREADS' not in os.environ
         assert 'MKL_NUM_THREADS' not in os.environ
