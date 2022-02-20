@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import os
 import os.path as osp
 import re
 
@@ -128,27 +129,27 @@ def test_flyingthings3d(direction, scene):
     def check(dataset, indices):
         for idx in indices:
             s1, filename1 = dataset[idx]['img_info']['filename1'].split(
-                '/')[-2:]
+                os.sep)[-2:]
             s2, filename2 = dataset[idx]['img_info']['filename2'].split(
-                '/')[-2:]
+                os.sep)[-2:]
 
             if direction == 'forward':
                 sf, filename_flow = dataset[idx]['ann_info'][
-                    'filename_flow'].split('/')[-2:]
+                    'filename_flow'].split(os.sep)[-2:]
                 assert s1 == s2 == sf == scene
                 assert int(filename1[:-4]) == int(filename2[:-4]) - 1 == int(
                     re.findall(r'\d+', filename_flow)[0])
             elif direction == 'backward':
                 sf, filename_flow = dataset[idx]['ann_info'][
-                    'filename_flow'].split('/')[-2:]
+                    'filename_flow'].split(os.sep)[-2:]
                 assert s1 == s2 == sf == scene
                 assert int(filename1[:-4]) == int(filename2[:-4]) + 1 == int(
                     re.findall(r'\d+', filename_flow)[0])
             elif direction == 'bidirection':
                 sf_fw, filename_flow_fw = dataset[idx]['ann_info'][
-                    'filename_flow_fw'].split('/')[-2:]
+                    'filename_flow_fw'].split(os.sep)[-2:]
                 sf_bw, filename_flow_bw = dataset[idx]['ann_info'][
-                    'filename_flow_bw'].split('/')[-2:]
+                    'filename_flow_bw'].split(os.sep)[-2:]
                 assert s1 == s2 == sf_fw == sf_bw == scene
                 assert int(filename1[:-4]) == int(filename2[:-4]) - 1 == int(
                     re.findall(r'\d+', filename_flow_fw)[0])
@@ -157,7 +158,7 @@ def test_flyingthings3d(direction, scene):
 
             else:
                 sf, filename_flow = dataset[idx]['ann_info'][
-                    'filename_flow'].split('/')[-2:]
+                    'filename_flow'].split(os.sep)[-2:]
                 assert s1 == s2 == sf == scene
                 int(filename1[:-4]) == int(filename2[:-4]) - 1 == int(
                     re.findall(r'\d+', filename_flow)[0]) or int(

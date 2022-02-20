@@ -146,7 +146,7 @@ class FlyingThings3DSubset(BaseDataset):
         occ_bw_filenames = []
         for _flow_fw_dir, _flow_bw_dir in zip(self.flow_fw_dir,
                                               self.flow_bw_dir):
-            scene = _flow_fw_dir.split('/')[-2]
+            scene = _flow_fw_dir.split(os.sep)[-2]
 
             exc_key_fw = scene + '_into_future'
             exc_key_bw = scene + '_into_past'
@@ -222,23 +222,27 @@ class FlyingThings3DSubset(BaseDataset):
 
         idx_f = int(osp.splitext(osp.basename(flow_fw_filename))[0])
 
-        img1_filename = flow_fw_filename.replace('/flow/', '/image_clean/')
-        img1_filename = img1_filename.replace('/into_future/', '/')
+        img1_filename = flow_fw_filename.replace(
+            f'{os.sep}flow{os.sep}', f'{os.sep}image_clean{os.sep}')
+        img1_filename = img1_filename.replace(f'{os.sep}into_future{os.sep}',
+                                              f'{os.sep}')
+
         img1_filename = img1_filename.replace(self.flow_suffix,
                                               self.img1_suffix)
         img2_filename = re.sub(r'\d{7}', f'{idx_f+1:07d}', img1_filename)
 
-        flow_bw_filename = flow_fw_filename.replace('/into_future/',
-                                                    '/into_past/')
+        print(img1_filename, img2_filename)
+        flow_bw_filename = flow_fw_filename.replace(
+            f'{os.sep}into_future{os.sep}', f'{os.sep}into_past{os.sep}')
         flow_bw_filename = re.sub(r'\d{7}', f'{idx_f+1:07d}', flow_bw_filename)
 
-        occ_fw_filename = flow_fw_filename.replace('/flow/',
-                                                   '/flow_occlusions/')
+        occ_fw_filename = flow_fw_filename.replace(
+            f'{os.sep}flow{os.sep}', f'{os.sep}flow_occlusions{os.sep}')
 
         occ_fw_filename = occ_fw_filename.replace(self.flow_suffix,
                                                   self.occ_suffix)
-        occ_bw_filename = flow_bw_filename.replace('/flow/',
-                                                   '/flow_occlusions/')
+        occ_bw_filename = flow_bw_filename.replace(
+            f'{os.sep}flow{os.sep}', f'{os.sep}flow_occlusions{os.sep}')
 
         occ_bw_filename = occ_bw_filename.replace(self.flow_suffix,
                                                   self.occ_suffix)
