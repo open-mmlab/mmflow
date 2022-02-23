@@ -3,17 +3,20 @@ import random
 import warnings
 from typing import Optional, Sequence, Union
 
+import mmcv
 import numpy as np
 import torch
 import torch.distributed as dist
+from mmcv.cnn.utils import revert_sync_batchnorm
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
 from mmcv.runner import (HOOKS, Fp16OptimizerHook, OptimizerHook,
                          build_optimizer, build_runner, get_dist_info)
 from mmcv.utils import Config, build_from_cfg
 
+from mmflow import digit_version
 from mmflow.core import DistEvalHook, EvalHook
 from mmflow.datasets import build_dataloader, build_dataset
-from mmflow.utils import get_root_logger
+from mmflow.utils import find_latest_checkpoint, get_root_logger
 
 Module = torch.nn.Module
 Dataset = torch.utils.data.Dataset
@@ -114,8 +117,17 @@ def train_model(model: Module,
             broadcast_buffers=False,
             find_unused_parameters=find_unused_parameters)
     else:
-        model = MMDataParallel(
-            model.cuda(cfg.gpu_ids[0]), device_ids=cfg.gpu_ids)
+        # SyncBN is not support for DP
+        warnings.warn(
+            'SyncBN is only supported with DDP. To be compatible with DP, '
+            'we convert SyncBN to BN. Please use dist_train.sh which can '
+            'avoid this error.')
+        model = revert_sync_batchnorm(model)
+        if not torch.cuda.is_available():
+            assert digit_version(mmcv.__version__) >= digit_version('1.4.4'), \
+                    'Please use MMCV >= 1.4.4 for CPU training!'
+
+        model = MMDataParallel(model, device_ids=cfg.gpu_ids)
 
     # build runner
     optimizer = build_optimizer(model, cfg.optimizer)
@@ -198,6 +210,12 @@ def train_model(model: Module,
             priority = hook_cfg.pop('priority', 'NORMAL')
             hook = build_from_cfg(hook_cfg, HOOKS)
             runner.register_hook(hook, priority=priority)
+
+    resume_from = None
+    if cfg.resume_from is None and cfg.get('auto_resume'):
+        resume_from = find_latest_checkpoint(cfg.work_dir)
+    if resume_from is not None:
+        cfg.resume_from = resume_from
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)

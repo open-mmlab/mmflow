@@ -1,8 +1,10 @@
 # FlowNet2
 
-## Abstract
+[FlowNet 2.0: Evolution of Optical Flow Estimation with Deep Networks](https://openaccess.thecvf.com/content_cvpr_2017/papers/Ilg_FlowNet_2.0_Evolution_CVPR_2017_paper.pdf)
 
-<!-- [ABSTRACT] -->
+<!-- [ALGORITHM] -->
+
+## Abstract
 
 The FlowNet demonstrated that optical flow estimation
 can be cast as a learning problem. However, the state of
@@ -23,25 +25,9 @@ It performs on par with state-of-the-art methods, while running at interactive
 frame rates. Moreover, we present faster variants that allow optical flow
 computation at up to 140fps with accuracy matching the original FlowNet.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731310-af0c4586-97b6-4a1e-9ada-50c7b2ee0851.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{ilg2017flownet,
-  title={Flownet 2.0: Evolution of optical flow estimation with deep networks},
-  author={Ilg, Eddy and Mayer, Nikolaus and Saikia, Tonmoy and Keuper, Margret and Dosovitskiy, Alexey and Brox, Thomas},
-  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
-  pages={2462--2470},
-  year={2017}
-}
-```
 
 ## Results and Models
 
@@ -170,3 +156,15 @@ computation at up to 140fps with accuracy matching the original FlowNet.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{ilg2017flownet,
+  title={Flownet 2.0: Evolution of optical flow estimation with deep networks},
+  author={Ilg, Eddy and Mayer, Nikolaus and Saikia, Tonmoy and Keuper, Margret and Dosovitskiy, Alexey and Brox, Thomas},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={2462--2470},
+  year={2017}
+}
+```

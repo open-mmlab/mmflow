@@ -1,5 +1,22 @@
 <div align="center">
   <img src="resources/mmflow-logo.png" width="600"/>
+    <div>&nbsp;</div>
+  <div align="center">
+    <b><font size="5">OpenMMLab website</font></b>
+    <sup>
+      <a href="https://openmmlab.com">
+        <i><font size="4">HOT</font></i>
+      </a>
+    </sup>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <b><font size="5">OpenMMLab platform</font></b>
+    <sup>
+      <a href="https://platform.openmmlab.com">
+        <i><font size="4">TRY IT OUT</font></i>
+      </a>
+    </sup>
+  </div>
+  <div>&nbsp;</div>
 </div>
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
@@ -42,6 +59,16 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 This project is released under the [Apache 2.0 license](LICENSE).
 
+## Changelog
+
+**0.2.0** was released in 01/07/2022:
+
+- Support [GMA](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation (ICCV 2021)
+- Fix the bug of wrong refine iter in RAFT, and update [RAFT](../../configs/raft/README.md) model checkpoint after the bug fixing
+- Support resuming from the latest checkpoint automatically
+
+Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
+
 ## Benchmark and model zoo
 
 Results and models are available in the [model zoo](docs/en/model_zoo.md).
@@ -56,6 +83,7 @@ Supported methods:
 - [x] [IRR (CVPR'2019)](configs/irr/README.md)
 - [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
 - [x] [RAFT (ECCV'2020)](configs/raft/README.md)
+- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
 
 ## Installation
 
@@ -114,3 +142,6 @@ If you use this toolbox or benchmark in your research, please cite this project.
 - [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab optical flow toolbox and benchmark.
 - [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab FewShot Learning Toolbox and Benchmark.
 - [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab Human Pose and Shape Estimation Toolbox and Benchmark.
+- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab self-supervised learning toolbox and benchmark.
+- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab Model Compression Toolbox and Benchmark.
+- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab Model Deployment Framework.

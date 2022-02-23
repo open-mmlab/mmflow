@@ -1,8 +1,10 @@
 # MaskFlowNet
 
-## Abstract
+[MaskFlownet: Asymmetric Feature Matching with Learnable Occlusion Mask](https://arxiv.org/pdf/2003.10955.pdf)
 
-<!-- [ABSTRACT] -->
+<!-- [ALGORITHM] -->
+
+## Abstract
 
 Feature warping is a core technique in optical flow estimation;
 however, the ambiguity caused by occluded areas during warping is a major
@@ -20,25 +22,9 @@ our method, called MaskFlownet, surpasses all published optical flow
 methods on the MPI Sintel, KITTI 2012 and 2015 benchmarks.
 Code is available at https://github.com/microsoft/MaskFlownet.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731471-ed5fc41b-59f9-4e00-b27b-d0456b2a09a2.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{zhao2020maskflownet,
-  title={Maskflownet: Asymmetric feature matching with learnable occlusion mask},
-  author={Zhao, Shengyu and Sheng, Yilun and Dong, Yue and Chang, Eric I and Xu, Yan and others},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={6278--6287},
-  year={2020}
-}
-```
 
 ## Results and Models
 
@@ -113,3 +99,15 @@ Code is available at https://github.com/microsoft/MaskFlownet.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{zhao2020maskflownet,
+  title={Maskflownet: Asymmetric feature matching with learnable occlusion mask},
+  author={Zhao, Shengyu and Sheng, Yilun and Dong, Yue and Chang, Eric I and Xu, Yan and others},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={6278--6287},
+  year={2020}
+}
+```

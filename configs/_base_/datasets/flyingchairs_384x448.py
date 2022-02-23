@@ -73,7 +73,11 @@ data = dict(
         workers_per_gpu=2,
         drop_last=True,
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=2, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=2,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=2, shuffle=False),
     train=flyingchairs_train,
     val=dict(

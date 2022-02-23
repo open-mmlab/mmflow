@@ -1,5 +1,22 @@
 <div align="center">
   <img src="resources/mmflow-logo.png" width="600"/>
+    <div>&nbsp;</div>
+  <div align="center">
+    <b><font size="5">OpenMMLab 官网</font></b>
+    <sup>
+      <a href="https://openmmlab.com">
+        <i><font size="4">HOT</font></i>
+      </a>
+    </sup>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <b><font size="5">OpenMMLab 开放平台</font></b>
+    <sup>
+      <a href="https://platform.openmmlab.com">
+        <i><font size="4">TRY IT OUT</font></i>
+      </a>
+    </sup>
+  </div>
+  <div>&nbsp;</div>
 </div>
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
@@ -41,6 +58,16 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 该项目采用 [Apache 2.0 开源许可证](LICENSE)。
 
+## 更新日志
+
+最新的 0.2.0 版本已经在 2022.01.07 发布:
+
+- 支持的新算法 [GMA (ICCV'2021)](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation
+- 修复 RAFT 算法 refine iter 的 bug，并更新模型权重文件
+- 支持了自动从最新的存储参数节点恢复训练
+
+如果想了解更多版本更新细节和历史信息，请参考[更新日志](docs/en/changelog.md)。
+
 ## 基准测试和模型库
 
 测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
@@ -55,6 +82,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 - [x] [IRR (CVPR'2019)](configs/irr/README.md)
 - [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
 - [x] [RAFT (ECCV'2020)](configs/raft/README.md)
+- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
 
 ## 安装
 
@@ -113,6 +141,9 @@ MMFlow 也提供了其他更详细的教程，包括：
 - [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab 光流估计工具箱与测试基准
 - [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab 少样本学习工具箱与测试基准
 - [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab 人体参数化模型工具箱与测试基准
+- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab 自监督学习工具箱与测试基准
+- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab 模型压缩工具箱与测试基准
+- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab 模型部署框架
 
 ## 欢迎加入 OpenMMLab 社区
 

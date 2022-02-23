@@ -65,6 +65,20 @@ Difference between `resume-from` and `load-from`:
 It is usually used for resuming the training process that is interrupted accidentally.
 `load-from` only loads the model weights and the training iteration starts from 0. It is usually used for finetuning.
 
+### Training on CPU
+
+The process of training on the CPU is consistent with single GPU training. We just need to disable GPUs before the training process.
+
+```shell
+export CUDA_VISIBLE_DEVICES=-1
+```
+
+And then run the script [above](#training-on-a-single-GPU).
+
+```{note}
+We do not recommend users to use CPU for training because it is too slow. We support this feature to allow users to debug on machines without GPU for convenience.
+```
+
 ## Training on multiple GPUs
 
 MMFlow implements **distributed** training with `MMDistributedDataParallel`.

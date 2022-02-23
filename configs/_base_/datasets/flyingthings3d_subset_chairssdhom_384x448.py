@@ -48,7 +48,7 @@ train_pipeline = [
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='InputResize', exponent=4),
+    dict(type='InputResize', exponent=6),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='TestFormatBundle'),
     dict(
@@ -97,7 +97,11 @@ data = dict(
         shuffle=False,
         sample_ratio=(0.25, 0.75),
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=5,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
     train=[flyingthings3d_subset_train, chairssdHom_train],
     val=dict(

@@ -1,8 +1,10 @@
 # PWC-Net
 
-## Abstract
+[PWC-Net: CNNs for Optical Flow Using Pyramid, Warping, and Cost Volume](https://arxiv.org/pdf/1709.02371.pdf)
 
-<!-- [ABSTRACT] -->
+<!-- [ALGORITHM] -->
+
+## Abstract
 
 We present a compact but effective CNN model for optical flow,
 called PWC-Net. PWC-Net has been designed
@@ -20,25 +22,9 @@ KITTI 2015 benchmarks, running at about 35 fps on Sintel
 resolution (1024×436) images. Our models are available
 on https://github.com/NVlabs/PWC-Net.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731246-f94698da-9c69-419d-bafe-7b9baab4a7aa.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{sun2018pwc,
-  title={Pwc-net: Cnns for optical flow using pyramid, warping, and cost volume},
-  author={Sun, Deqing and Yang, Xiaodong and Liu, Ming-Yu and Kautz, Jan},
-  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
-  pages={8934--8943},
-  year={2018}
-}
-```
 
 ## Results and Models
 
@@ -144,3 +130,15 @@ on https://github.com/NVlabs/PWC-Net.
         </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{sun2018pwc,
+  title={Pwc-net: Cnns for optical flow using pyramid, warping, and cost volume},
+  author={Sun, Deqing and Yang, Xiaodong and Liu, Ming-Yu and Kautz, Jan},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={8934--8943},
+  year={2018}
+}
+```

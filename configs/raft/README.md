@@ -1,8 +1,10 @@
 # RAFT
 
-## Abstract
+[RAFT: Recurrent All Pairs Field Transforms for Optical Flow](https://arxiv.org/pdf/2003.12039.pdf)
 
-<!-- [ABSTRACT] -->
+<!-- [ALGORITHM] -->
+
+## Abstract
 
 We introduce Recurrent All-Pairs Field Transforms (RAFT),
 a new deep network architecture for optical flow. RAFT extracts perpixel
@@ -17,26 +19,9 @@ addition, RAFT has strong cross-dataset generalization as well as high
 efficiency in inference time, training speed, and parameter count. Code
 is available at https://github.com/princeton-vl/RAFT.
 
-<!-- [IMAGE] -->
-
 <div align=center>
 <img src="https://user-images.githubusercontent.com/76149310/142731339-c1978af7-c9de-4b21-9d6c-e786daff9601.png" width="70%"/>
 </div>
-
-## Citation
-
-<!-- [ALGORITHM] -->
-
-```bibtex
-@inproceedings{teed2020raft,
-  title={Raft: Recurrent all-pairs field transforms for optical flow},
-  author={Teed, Zachary and Deng, Jia},
-  booktitle={European conference on computer vision},
-  pages={402--419},
-  year={2020},
-  organization={Springer}
-}
-```
 
 ## Results and Models
 
@@ -63,23 +48,23 @@ is available at https://github.com/princeton-vl/RAFT.
         <tr>
             <th>RAFT</th>
             <th>Flying Chairs</th>
-            <th>0.78</th>
-            <th>2.54</th>
-            <th>5.32</th>
+            <th>0.80</th>
+            <th>2.27</th>
+            <th>4.85</th>
             <th>-</th>
             <th>-</th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.log.json'>log</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs_368x496.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs_368x496.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.pth'>Model</a></th>
         </tr>
         <tr>
             <th>RAFT</th>
             <th>FlyingChairs + FlyingThing3d</th>
             <th>-</th>
-            <th>1.46</th>
-            <th>2.67</th>
-            <th>15.07%</th>
-            <th>4.52</th>
+            <th>1.38</th>
+            <th>2.79</th>
+            <th>16.23%</th>
+            <th>4.95</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.log.json'>log</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth'>Model</a></th>
@@ -88,8 +73,8 @@ is available at https://github.com/princeton-vl/RAFT.
             <th>RAFT</th>
             <th>FlyingChairs + FlyingThing3d + Sintel</th>
             <th>-</th>
-            <th>0.60</th>
-            <th>0.98</th>
+            <th>0.63</th>
+            <th>0.97</th>
             <th>-</th>
             <th>-</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.log.json'>log</a></th>
@@ -100,15 +85,40 @@ is available at https://github.com/princeton-vl/RAFT.
             <th>RAFT</th>
             <th>Mixed Dataset<sup>[1]</sup></th>
             <th>-</th>
-            <th>0.61</th>
-            <th>1.03</th>
-            <th>5.74%</th>
-            <th>1.70</th>
+            <th>0.63</th>
+            <th>1.01</th>
+            <th>5.68%</th>
+            <th>1.59</th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.log.json'>log</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth'>Model</a></th>
         </tr>
+        <tr>
+            <th>RAFT</th>
+            <th>KITTI2015</th>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+            <th>1.45%</th>
+            <th>0.61</th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.pth'>Model</a></th>
+        </tr>
     </tbody>
 </table>
+
+## Citation
+
+```bibtex
+@inproceedings{teed2020raft,
+  title={Raft: Recurrent all-pairs field transforms for optical flow},
+  author={Teed, Zachary and Deng, Jia},
+  booktitle={European conference on computer vision},
+  pages={402--419},
+  year={2020},
+  organization={Springer}
+}
+```
 
 [1] The mixed dataset consisted of FlyingChairs, FlyingThing3d, Sintel, KITTI2015, and HD1K.

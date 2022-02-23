@@ -1,0 +1,272 @@
+Collections:
+  - Name: GMA
+    Metadata:
+      Training Data:
+        - FlyingChairs
+        - FlyingThings3D
+        - Sintel
+        - KITTI2015
+        - HD1K
+    Paper:
+      URL: https://arxiv.org/pdf/2104.02409.pdf
+      Title: 'Learning to Estimate Hidden Motions with Global Motion Aggregation'
+    README: configs/gma/README.md
+
+Models:
+  - Name: gma_8x2_120k_flyingchairs_368x496
+    In Collection: GMA
+    Config: configs/gma/gma_8x2_120k_flyingchairs_368x496.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 0.72
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.40
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.53
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingchairs_368x496.pth
+
+  - Name: gma_8x2_120k_flyingthings3d_400x720
+    In Collection: GMA
+    Config: configs/gma/gma_8x2_120k_flyingthings3d_400x720.py
+    Metadata:
+      Training Data: FlyingThings3D
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.31
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.61
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 5.00
+          Fl-all: 16.54%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingthings3d_400x720.pth
+
+  - Name: gma_8x2_120k_flyingthings3d_sintel_368x768
+    In Collection: GMA
+    Config: configs/gma/gma_8x2_120k_flyingthings3d_sintel_368x768.py
+    Metadata:
+      sTraining Data:
+        - FlyingThings3D
+        - Sintel
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.56
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 0.84
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingthings3d_sintel_368x768.pth
+
+  - Name: gma_8x2_120k_mixed_368x768
+    In Collection: GMA
+    Config: configs/gma/gma_8x2_120k_mixed_368x768.py
+    Metadata:
+      sTraining Data:
+        - FlyingThings3D
+        - Sintel
+        - KITTI2012
+        - KITTI2015
+        - HD1K
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.56
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 0.85
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 1.50
+          Fl-all: 5.27%
+    Weights: https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.pth
+
+  - Name: gma_8x2_50k_kitti2015_288x960
+    In Collection: GMA
+    Config: configs/gma/gma_8x2_50k_kitti2015_288x960.py
+    Metadata:
+      Training Data: KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 0.58
+          Fl-all: 1.34%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_50k_kitti2015_288x960.pth
+
+  - Name: gma_p-only_8x2_120k_flyingchairs_368x496
+    In Collection: GMA
+    Config: configs/gma/gma_p-only_8x2_120k_flyingchairs_368x496.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 0.76
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.38
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.69
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_flyingchairs_368x496.pth
+
+  - Name: gma_p-only_8x2_120k_flyingthings3d_400x720
+    In Collection: GMA
+    Config: configs/gma/gma_p-only_8x2_120k_flyingthings3d_400x720.py
+    Metadata:
+      Training Data: FlyingThings3D
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.48
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.73
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 4.81
+          Fl-all: 16.46%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_flyingthings3d_400x720.pth
+
+  - Name: gma_p-only_8x2_120k_mixed_368x768
+    In Collection: GMA
+    Config: configs/gma/gma_p-only_8x2_120k_mixed_368x768.py
+    Metadata:
+      sTraining Data:
+        - FlyingThings3D
+        - Sintel
+        - KITTI2012
+        - KITTI2015
+        - HD1K
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.58
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 0.89
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 1.47
+          Fl-all: 5.28%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_mixed_368x768.pth
+
+  - Name: gma_p-only_8x2_50k_kitti2015_288x960
+    In Collection: GMA
+    Config: configs/gma/gma_p-only_8x2_50k_kitti2015_288x960.py
+    Metadata:
+      Training Data: KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 0.58
+          Fl-all: 1.39%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_50k_kitti2015_288x960.pth
+
+  - Name: gma_plus-p_8x2_120k_flyingchairs_368x496
+    In Collection: GMA
+    Config: configs/gma/gma_plus-p_8x2_120k_flyingchairs_368x496.py
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 0.73
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 2.52
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 4.65
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_flyingchairs_368x496.pth
+
+  - Name: gma_plus-p_8x2_120k_flyingthings3d_400x720
+    In Collection: GMA
+    Config: configs/gma/gma_plus-p_8x2_120k_flyingthings3d_400x720.py
+    Metadata:
+      Training Data: FlyingThings3D
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 1.38
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 2.79
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 6.73
+          Fl-all: 19.17%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_flyingthings3d_400x720.pth
+
+  - Name: gma_plus-p_8x2_120k_mixed_368x768
+    In Collection: GMA
+    Config: configs/gma/gma_plus-p_8x2_120k_mixed_368x768.py
+    Metadata:
+      sTraining Data:
+        - FlyingThings3D
+        - Sintel
+        - KITTI2012
+        - KITTI2015
+        - HD1K
+    Results:
+      - Task: Optical flow estimation
+        Dataset: Sintel clean
+        Metrics:
+          EPE: 0.63
+      - Task: Optical flow estimation
+        Dataset: Sintel final
+        Metrics:
+          EPE: 0.94
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 3.82
+          Fl-all: 9.07%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_mixed_368x768.pth
+
+  - Name: gma_plus-p_8x2_50k_kitti2015_288x960
+    In Collection: GMA
+    Config: configs/gma/gma_plus-p_8x2_50k_kitti2015_288x960.py
+    Metadata:
+      Training Data: KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 0.62
+          Fl-all: 1.50%
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_50k_kitti2015_288x960.pth

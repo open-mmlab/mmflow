@@ -135,7 +135,11 @@ data = dict(
         drop_last=True,
         shuffle=True,
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=2, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=2,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=2, shuffle=False),
     train=[
         sintel_clean_train_x100, sintel_final_train_x100,

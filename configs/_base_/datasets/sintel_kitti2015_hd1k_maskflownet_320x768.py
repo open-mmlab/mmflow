@@ -199,7 +199,11 @@ data = dict(
         drop_last=True,
         sample_ratio=(0.5, 0.25, 0.25),
         persistent_workers=True),
-    val_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
+    val_dataloader=dict(
+        samples_per_gpu=1,
+        workers_per_gpu=5,
+        shuffle=False,
+        persistent_workers=True),
     test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
     train=[[sintel_clean_train, sintel_final_train], kitti2015_train,
            hd1k_train],

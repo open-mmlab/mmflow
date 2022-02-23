@@ -3,8 +3,9 @@ from .builder import (COMPONENTS, DECODERS, ENCODERS, FLOW_ESTIMATORS,
                       build_components, build_decoder, build_encoder,
                       build_flow_estimator)
 from .decoders import (FlowNetCDecoder, FlowNetSDecoder, FlowRefine,
-                       IRRPWCDecoder, MaskFlowNetDecoder, MaskFlowNetSDecoder,
-                       NetE, OccRefine, OccShuffleUpsample, PWCNetDecoder)
+                       GMADecoder, IRRPWCDecoder, MaskFlowNetDecoder,
+                       MaskFlowNetSDecoder, NetE, OccRefine,
+                       OccShuffleUpsample, PWCNetDecoder)
 from .encoders import (CorrEncoder, FlowNetEncoder, FlowNetSDEncoder, NetC,
                        PWCNetEncoder, RAFTEncoder)
 from .flow_estimators import (IRRPWC, FlowNet2, FlowNetC, FlowNetCSS, FlowNetS,
@@ -21,5 +22,5 @@ __all__ = [
     'build_flow_estimator', 'COMPONENTS', 'build_components', 'MultiLevelBCE',
     'MultiLevelEPE', 'MultiLevelCharbonnierLoss', 'SequenceLoss', 'IRRPWC',
     'IRRPWCDecoder', 'FlowRefine', 'OccRefine', 'OccShuffleUpsample',
-    'FlowNet2', 'FlowNetCSS', 'MaskFlowNetDecoder', 'MaskFlowNet'
+    'FlowNet2', 'FlowNetCSS', 'MaskFlowNetDecoder', 'MaskFlowNet', 'GMADecoder'
 ]
