@@ -6,8 +6,7 @@ import torch.nn.functional as F
 from mmflow.models.losses import (MultiLevelBCE, MultiLevelCharbonnierLoss,
                                   MultiLevelEPE, SequenceLoss,
                                   multi_levels_binary_cross_entropy,
-                                  sequence_loss, smooth_loss_1st,
-                                  smooth_loss_2nd)
+                                  sequence_loss, smooth_1st_loss)
 from mmflow.models.losses.multilevel_charbonnier_loss import charbonnier_loss
 from mmflow.models.losses.multilevel_epe import endpoint_error
 from mmflow.models.losses.multilevel_flow_loss import multi_level_flow_loss
@@ -372,7 +371,7 @@ def test_multi_levels_charbonnier(reduction, resize_flow, scale_as_level):
 
 
 @pytest.mark.parametrize('smooth_edge_weighting', ('exponential', 'gaussian'))
-@pytest.mark.parametrize('loss_func', (smooth_loss_1st, smooth_loss_2nd))
+@pytest.mark.parametrize('loss_func', (smooth_1st_loss, smooth_1st_loss))
 def test_smooth_loss(smooth_edge_weighting, loss_func):
     B, H, W = (1, 5, 5)
 

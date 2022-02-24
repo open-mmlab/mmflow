@@ -24,7 +24,7 @@ def gradient(data: Tensor, stride: int = 1) -> Tuple[Tensor]:
     return D_dx / stride, D_dy / stride
 
 
-def smooth_loss_1st(flow: Tensor,
+def smooth_1st_loss(flow: Tensor,
                     image: Tensor,
                     alpha: float = 0.,
                     smooth_edge_weighting: str = 'exponential') -> Tensor:
@@ -70,7 +70,7 @@ def smooth_loss_1st(flow: Tensor,
     return loss_x.mean() + loss_y.mean()
 
 
-def smooth_loss_2nd(flow: Tensor,
+def smooth_2nd_loss(flow: Tensor,
                     image: Tensor,
                     alpha: float = 0.,
                     smooth_edge_weighting: str = 'exponential'):
