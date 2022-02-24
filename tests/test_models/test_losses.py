@@ -370,7 +370,12 @@ def test_multi_levels_charbonnier(reduction, resize_flow, scale_as_level):
     assert torch.isclose(torch.Tensor([0.]), loss, rtol=1e-2)
 
 
-def test_weighted_ssim():
+@pytest.mark.parametrize('kwargs', [
+    dict(c1=0.01**2, c2=0.03**2),
+    dict(c1=float('inf'), c2=0.03**2),
+    dict(c1=0.01**2, c2=float('inf'))
+])
+def test_weighted_ssim(kwargs):
     B, C, H, W = 4, 2, 7, 7
     x = torch.ones((B, C, H, W), dtype=torch.float32)
     y_like = x * 2.
@@ -386,8 +391,8 @@ def test_weighted_ssim():
     with pytest.raises(AssertionError):
         weighted_ssim(x, y_like, weight=torch.randn((1, 2)))
 
-    ssim_like = weighted_ssim(x, y_like)
-    ssim_unlike = weighted_ssim(x, y_unlike)
+    ssim_like = weighted_ssim(x, y_like, **kwargs)
+    ssim_unlike = weighted_ssim(x, y_unlike, **kwargs)
 
     assert ssim_unlike.shape == ssim_like.shape == (B, C, H - 2, W - 2)
 
