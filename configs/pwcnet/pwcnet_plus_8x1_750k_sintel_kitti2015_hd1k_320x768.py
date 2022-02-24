@@ -51,5 +51,5 @@ model = dict(
         layer=['Conv2d', 'ConvTranspose2d'],
         mode='fan_in',
         bias=0))
-# Train on FlyingChairs and FlyingThings3D_subset, and finetune on sintel/kitti2015/hd1k
+# Train on FlyingChairs & FlyingThings3D_subset, and finetune on sintel & kitti2015 & hd1k  # noqa
 load_from = 'https://download.openmmlab.com/mmflow/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.pth'  # noqa
