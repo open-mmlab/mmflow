@@ -6,7 +6,8 @@ import torch.nn.functional as F
 from mmflow.models.losses import (MultiLevelBCE, MultiLevelCharbonnierLoss,
                                   MultiLevelEPE, SequenceLoss,
                                   multi_levels_binary_cross_entropy,
-                                  sequence_loss, weighted_ssim)
+                                  sequence_loss, smooth_1st_loss,
+                                  smooth_2nd_loss, weighted_ssim)
 from mmflow.models.losses.multilevel_charbonnier_loss import charbonnier_loss
 from mmflow.models.losses.multilevel_epe import endpoint_error
 from mmflow.models.losses.multilevel_flow_loss import multi_level_flow_loss
@@ -397,3 +398,53 @@ def test_weighted_ssim(kwargs):
     assert ssim_unlike.shape == ssim_like.shape == (B, C, H - 2, W - 2)
 
     assert ssim_like.mean() < ssim_unlike.mean()
+
+
+@pytest.mark.parametrize('smooth_edge_weighting', ('exponential', 'gaussian'))
+@pytest.mark.parametrize('loss_func', (smooth_1st_loss, smooth_2nd_loss))
+def test_smooth_loss(smooth_edge_weighting, loss_func):
+    B, H, W = (1, 5, 5)
+
+    image_smooth = torch.ones((B, 3, H, W)) + torch.randn((B, 3, H, W)) * 0.1
+    image_unsmooth = torch.ones(B, 3, H, W) + torch.randn((B, 3, H, W)) * 5
+
+    flow_smooth = torch.ones((B, 2, H, W)) * 2 + torch.randn(
+        (B, 2, H, W)) * 0.1
+    flow_unsmooth = torch.ones((B, 2, H, W)) * 2 + torch.randn(
+        (B, 2, H, W)) * 5
+
+    # test invalid smoothness_edge_weighting
+    with pytest.raises(AssertionError):
+        loss_func(flow_smooth, image_smooth, smooth_edge_weighting='a')
+
+    # test alpha = 0 that image will not effect loss
+    assert loss_func(
+        flow_smooth,
+        image_unsmooth,
+        alpha=0,
+        smooth_edge_weighting=smooth_edge_weighting) == loss_func(
+            flow_smooth,
+            image_smooth,
+            alpha=0,
+            smooth_edge_weighting=smooth_edge_weighting)
+    assert loss_func(
+        flow_unsmooth,
+        image_unsmooth,
+        alpha=0,
+        smooth_edge_weighting=smooth_edge_weighting) == loss_func(
+            flow_unsmooth,
+            image_smooth,
+            alpha=0,
+            smooth_edge_weighting=smooth_edge_weighting)
+
+    # test image edge effect loss
+    # flow is unsmooth but image is smooth so loss will bigger
+    assert loss_func(
+        flow_unsmooth,
+        image_smooth,
+        alpha=1,
+        smooth_edge_weighting=smooth_edge_weighting) > loss_func(
+            flow_unsmooth,
+            image_unsmooth,
+            alpha=1,
+            smooth_edge_weighting=smooth_edge_weighting)
