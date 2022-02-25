@@ -7,7 +7,7 @@ from mmflow.models.losses import (MultiLevelBCE, MultiLevelCharbonnierLoss,
                                   MultiLevelEPE, SequenceLoss,
                                   multi_levels_binary_cross_entropy,
                                   sequence_loss, smooth_1st_loss,
-                                  smooth_2nd_loss)
+                                  smooth_2nd_loss, weighted_ssim)
 from mmflow.models.losses.multilevel_charbonnier_loss import charbonnier_loss
 from mmflow.models.losses.multilevel_epe import endpoint_error
 from mmflow.models.losses.multilevel_flow_loss import multi_level_flow_loss
@@ -369,6 +369,35 @@ def test_multi_levels_charbonnier(reduction, resize_flow, scale_as_level):
     valid = torch.zeros_like(gt[:, 0, :, :])
     loss = loss_obj(preds, gt, valid)
     assert torch.isclose(torch.Tensor([0.]), loss, rtol=1e-2)
+
+
+@pytest.mark.parametrize('kwargs', [
+    dict(c1=0.01**2, c2=0.03**2),
+    dict(c1=float('inf'), c2=0.03**2),
+    dict(c1=0.01**2, c2=float('inf'))
+])
+def test_weighted_ssim(kwargs):
+    B, C, H, W = 4, 2, 7, 7
+    x = torch.ones((B, C, H, W), dtype=torch.float32)
+    y_like = x * 2.
+    y_unlike = x * torch.randn((H, W))
+
+    # test c1 c2 input value
+    with pytest.raises(ValueError):
+        c1 = float('inf')
+        c2 = float('inf')
+        weighted_ssim(x, y_like, c1=c1, c2=c2)
+
+    # test weight with invalid shape
+    with pytest.raises(AssertionError):
+        weighted_ssim(x, y_like, weight=torch.randn((1, 2)))
+
+    ssim_like = weighted_ssim(x, y_like, **kwargs)
+    ssim_unlike = weighted_ssim(x, y_unlike, **kwargs)
+
+    assert ssim_unlike.shape == ssim_like.shape == (B, C, H - 2, W - 2)
+
+    assert ssim_like.mean() < ssim_unlike.mean()
 
 
 @pytest.mark.parametrize('smooth_edge_weighting', ('exponential', 'gaussian'))
