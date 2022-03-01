@@ -8,6 +8,7 @@ from mmflow.models.losses import (MultiLevelBCE, MultiLevelCharbonnierLoss,
                                   multi_levels_binary_cross_entropy,
                                   sequence_loss, smooth_1st_loss,
                                   smooth_2nd_loss, weighted_ssim)
+from mmflow.models.losses.census_loss import census_loss
 from mmflow.models.losses.multilevel_charbonnier_loss import charbonnier_loss
 from mmflow.models.losses.multilevel_epe import endpoint_error
 from mmflow.models.losses.multilevel_flow_loss import multi_level_flow_loss
@@ -448,3 +449,16 @@ def test_smooth_loss(smooth_edge_weighting, loss_func):
             image_unsmooth,
             alpha=1,
             smooth_edge_weighting=smooth_edge_weighting)
+
+
+def test_census_loss():
+    image1 = torch.randn(1, 3, 5, 5)
+    image2 = torch.randn(1, 3, 5, 5)
+
+    loss1 = census_loss(image1=image1, image2=image2)
+
+    image2.data = image1.data
+
+    loss2 = census_loss(image1=image1, image2=image2)
+
+    assert loss2 == 0. and loss1.abs() > loss2

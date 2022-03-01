@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from .census_loss import census_loss
 from .multilevel_bce import (MultiLevelBCE, binary_cross_entropy,
                              multi_levels_binary_cross_entropy)
 from .multilevel_charbonnier_loss import (MultiLevelCharbonnierLoss,
@@ -12,5 +13,5 @@ __all__ = [
     'endpoint_error', 'sequence_loss', 'binary_cross_entropy', 'SequenceLoss',
     'MultiLevelBCE', 'MultiLevelEPE', 'MultiLevelCharbonnierLoss',
     'multi_levels_binary_cross_entropy', 'charbonnier_loss', 'weighted_ssim',
-    'smooth_1st_loss', 'smooth_2nd_loss'
+    'smooth_1st_loss', 'smooth_2nd_loss', 'census_loss'
 ]
