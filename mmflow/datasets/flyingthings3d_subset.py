@@ -231,7 +231,6 @@ class FlyingThings3DSubset(BaseDataset):
                                               self.img1_suffix)
         img2_filename = re.sub(r'\d{7}', f'{idx_f+1:07d}', img1_filename)
 
-        print(img1_filename, img2_filename)
         flow_bw_filename = flow_fw_filename.replace(
             f'{os.sep}into_future{os.sep}', f'{os.sep}into_past{os.sep}')
         flow_bw_filename = re.sub(r'\d{7}', f'{idx_f+1:07d}', flow_bw_filename)
