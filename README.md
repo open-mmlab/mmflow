@@ -61,11 +61,12 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-**0.2.0** was released in 01/07/2022:
+**v0.3.0** was released in 03/04/2022:
 
-- Support [GMA](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation (ICCV 2021)
-- Fix the bug of wrong refine iter in RAFT, and update [RAFT](../../configs/raft/README.md) model checkpoint after the bug fixing
-- Support resuming from the latest checkpoint automatically
+- Officially support CPU train/inference
+- Officially support model inference in windows platform
+- Add census loss, SSIM loss and smoothness loss
+- Update `nan` files in Flyingthings3d_subset dataset
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
 
