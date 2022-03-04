@@ -62,7 +62,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 最新的 v0.3.0 版本已经在 2022.03.04 发布:
 
-- 官方支持 CPU 训练和推理
+- 官方支持 CPU 模型训练和推理
 - 添加　census loss, SSIM loss, smoothness loss
 - 官方支持在 windows 平台上进行模型推理
 - 更新　Flyingthings3d_subset　`nan` 文件列表
