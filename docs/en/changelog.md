@@ -1,6 +1,45 @@
 # Changelog
 
-## v0.2.0(07/01/2022)
+## v0.3.0(03/04/2022)
+
+### Highlights
+
+- Officially support CPU Train/Inference
+- Add census loss, SSIM loss and smoothness loss
+- Officially support model inference in windows platform
+- Update `nan` files in Flyingthings3d_subset dataset
+
+### Features
+
+- Add census loss (#100)
+- Add smoothness loss function (#97)
+- Add SSIM loss function (#96)
+
+### Bug Fixes
+
+- Update `nan` files in Flyingthings3d_subset (94)
+- Add pretrained pwcnet-model when train PWCNet+ (#99)
+- Fix bug in non-distributed multi-gpu training/testing (#85)
+- Fix writing flow map bug in test (#83)
+
+### Improvements
+
+- Add win-ci (#92)
+- Update the installation of MMCV (#89)
+- Upgrade isort in pre-commit hook (#87)
+- Support CPU Train/Inference (#86)
+- Add multi-processes script (#79)
+- Deprecate the support for "python setup.py test" (#73)
+
+### Documents
+
+- Fix broken URLs in GMA README (#93)
+- Fix date format in readme (#90)
+- Reorganizing OpenMMLab projects in readme (#98)
+- Fix README files of algorithms (#84)
+- Add url of OpenMMLab and platform in README (76)
+
+## v0.2.0(01/07/2022)
 
 ### Highlights
 
