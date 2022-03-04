@@ -64,8 +64,8 @@ This project is released under the [Apache 2.0 license](LICENSE).
 **v0.3.0** was released in 03/04/2022:
 
 - Officially support CPU train/inference
-- Add census loss, SSIM loss and smoothness loss
 - Officially support model inference in windows platform
+- Add census loss, SSIM loss and smoothness loss
 - Update `nan` files in Flyingthings3d_subset dataset
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
