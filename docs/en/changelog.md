@@ -5,9 +5,9 @@
 ### Highlights
 
 - Officially support CPU Train/Inference
-- Add census loss, SSIM loss, smoothness loss
+- Add census loss, SSIM loss and smoothness loss
 - Officially support model inference in windows platform
-- Update `nan` files in Flyingthings3d_subset
+- Update `nan` files in Flyingthings3d_subset dataset
 
 ### Features
 
