@@ -165,3 +165,4 @@ def worker_init_fn(worker_id: int, num_workers: int, rank: int, seed: int):
     worker_seed = num_workers * rank + worker_id + seed
     np.random.seed(worker_seed)
     random.seed(worker_seed)
+    torch.manual_seed(worker_seed)
