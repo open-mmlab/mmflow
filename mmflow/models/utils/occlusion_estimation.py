@@ -25,16 +25,17 @@ def flow_to_coords(flow: Tensor) -> Tensor:
     return coords
 
 
-def compute_range_map(flow, win_size):
+def compute_range_map(flow: Tensor, **kwargs) -> Tensor:
     """Compute range map.
 
     Args:
         flow (Tensor): The backward flow with shape (N, 2, H, W)
-        win_size (Tensor): The window size for calculating range map.
+        win_size (int, tuple): The window size for calculating range map.
 
     Return:
         Tensor: The forward-to-backward occlusion mask with shape (N, 1, H, W)
     """
+    win_size = kwargs['win_size']
     assert isinstance(win_size, (tuple, int)), \
         f'win_size must be a tuple or int, but got {type(win_size)}'
 
@@ -103,7 +104,8 @@ def compute_range_map(flow, win_size):
     return count_image
 
 
-def forward_backward_consistency(flow_fw, flow_bw, **kwarg: dict):
+def forward_backward_consistency(flow_fw: Tensor, flow_bw: Tensor,
+                                 **kwarg) -> Tensor:
     """Occlusion mask from forward-backward consistency.
 
     Args:
@@ -128,26 +130,60 @@ def forward_backward_consistency(flow_fw, flow_bw, **kwarg: dict):
     return occ
 
 
-def occlusion_estimation(flow_fw: Tensor, flow_bw: Tensor, mode: str,
-                         **kwarg) -> Dict[str:Tensor]:
-    """_summary_
+def forward_backward_absdiff(flow_fw: Tensor, flow_bw: Tensor,
+                             **kwarg) -> Tensor:
+    """Occlusion mask from forward-backward consistency.
 
     Args:
-        flow_fw (Tensor): _description_
-        flow_bw (Tensor): _description_
-        mode (str): _description_
+        flow_fw (Tensor): The forward flow with shape (N, 2, H, W)
+        flow_bw (Tensor): The backward flow with shape (N, 2, H, W)
+
+    Returns:
+        Tensor: The forward-to-backward occlusion mask with shape (N, 1, H, W)
+    """
+
+    warp = build_operators(kwarg['warp_cfg'])
+
+    warped_flow_bw = warp(flow_bw)
+
+    forward_backward_sq_diff = torch.sum(
+        (flow_fw + warped_flow_bw)**2, dim=1, keepdim=True)
+
+    occ = (forward_backward_sq_diff**0.5 < 1.5).to(flow_fw)
+
+    return occ
+
+
+def occlusion_estimation(flow_fw: Tensor,
+                         flow_bw: Tensor,
+                         mode: str = 'consistency',
+                         **kwarg) -> Dict[str, Tensor]:
+    """Occlusion estimation.
+
+    Args:
+        flow_fw (Tensor): The forward flow with shape (N, 2, H, W)
+        flow_bw (Tensor): The backward flow with shape (N, 2, H, W)
+        mode (str): The method for occlusion estimation, which can be
+            ``'consistency'``, ``'range_map'`` or ``'fb_abs'``.
         warp_cfg (dict, optional): _description_. Defaults to None.
 
     Returns:
-        Dict[str:Tensor]: 1 denote non-occluded and 0 denote occluded
+        Dict[str,Tensor]: 1 denote non-occluded and 0 denote occluded
     """
+    assert mode in ('consistency', 'range_map', 'fb_abs'), \
+        'mode must be \'consistency\', \'range_map\' or \'fb_abs\', ' \
+        f'but got {mode}'
 
     if mode == 'consistency':
-        occ_fw = forward_backward_consistency(flow_fw, flow_bw, kwarg)
-        occ_bw = forward_backward_consistency(flow_bw, flow_fw, kwarg)
+        occ_fw = forward_backward_consistency(flow_fw, flow_bw, **kwarg)
+        occ_bw = forward_backward_consistency(flow_bw, flow_fw, **kwarg)
 
     elif mode == 'range_map':
         occ_fw = compute_range_map(flow_bw)
         occ_bw = compute_range_map(flow_fw)
+
+    elif mode == 'fb_abs':
+        occ_fw = forward_backward_absdiff(flow_fw, flow_bw)
+        occ_bw = forward_backward_absdiff(flow_bw, flow_fw)
 
     return dict(occ_fw=occ_fw, occ_bw=occ_bw)
