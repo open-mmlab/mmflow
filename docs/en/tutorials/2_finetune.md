@@ -75,9 +75,7 @@ export CUDA_VISIBLE_DEVICES=-1
 
 And then run the script [above](#training-on-a-single-GPU).
 
-```{note}
 We do not recommend users to use CPU for training because it is too slow. We support this feature to allow users to debug on machines without GPU for convenience.
-```
 
 ## Training on multiple GPUs
 
