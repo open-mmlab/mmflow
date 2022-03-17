@@ -75,9 +75,7 @@ export CUDA_VISIBLE_DEVICES=-1
 
 And then run the script [above](#training-on-a-single-GPU).
 
-```{note}
 We do not recommend users to use CPU for training because it is too slow. We support this feature to allow users to debug on machines without GPU for convenience.
-```
 
 ## Training on multiple GPUs
 
@@ -87,7 +85,7 @@ We provide `tools/dist_train.sh` to launch training on multiple GPUs.
 The basic usage is as follows.
 
 ```shell
-bash ./tools/dist_train.sh \
+sh tools/dist_train.sh \
     ${CONFIG_FILE} \
     ${GPU_NUM} \
     [optional arguments]
@@ -96,7 +94,7 @@ bash ./tools/dist_train.sh \
 Optional arguments remain the same as stated [above](#training-on-a-single-gpu)
 and has additional arguments to specify the number of GPUs.
 
-### Launch multiple jobs simultaneously
+### Launch multiple jobs on a single machine
 
 If you would like to launch multiple jobs on a single machine, e.g., 2 jobs of 4-GPU training on a machine with 8 GPUs,
 you need to specify different ports (29500 by default) for each job to avoid communication conflict.
@@ -104,14 +102,34 @@ you need to specify different ports (29500 by default) for each job to avoid com
 If you use `dist_train.sh` to launch training jobs, you can set the port in commands.
 
 ```shell
-CUDA_VISIBLE_DEVICES=0,1,2,3 PORT=29500 ./tools/dist_train.sh ${CONFIG_FILE} 4
-CUDA_VISIBLE_DEVICES=4,5,6,7 PORT=29501 ./tools/dist_train.sh ${CONFIG_FILE} 4
+CUDA_VISIBLE_DEVICES=0,1,2,3 PORT=29500 sh tools/dist_train.sh ${CONFIG_FILE} 4
+CUDA_VISIBLE_DEVICES=4,5,6,7 PORT=29501 sh tools/dist_train.sh ${CONFIG_FILE} 4
 ```
 
 ## Training on multiple nodes
 
 MMFlow relies on `torch.distributed` package for distributed training.
 Thus, as a basic usage, one can launch distributed training via PyTorch's [launch utility](https://pytorch.org/docs/stable/distributed.html#launch-utility).
+
+### Train with multiple machines
+
+If you launch with multiple machines simply connected with ethernet, you can simply run following commands:
+
+On the first machine:
+
+On the first machine:
+
+```shell
+NNODES=2 NODE_RANK=0 PORT=${MASTER_PORT} MASTER_ADDR=${MASTER_ADDR} sh tools/dist_train.sh ${CONFIG_FILE} ${GPUS}
+```
+
+On the second machine:
+
+```shell
+NNODES=2 NODE_RANK=1 PORT=${MASTER_PORT} MASTER_ADDR=${MASTER_ADDR} sh tools/dist_train.sh ${CONFIG_FILE} ${GPUS}
+```
+
+Usually it is slow if you do not have high speed networking like InfiniBand.
 
 ### Manage jobs with Slurm
 
@@ -121,13 +139,13 @@ On a cluster managed by Slurm, you can use `slurm_train.sh` to spawn training jo
 The basic usage is as follows.
 
 ```shell
-[GPUS=${GPUS}] ./tools/slurm_train.sh ${PARTITION} ${JOB_NAME} ${CONFIG_FILE} ${WORK_DIR}
+[GPUS=${GPUS}] sh tools/slurm_train.sh ${PARTITION} ${JOB_NAME} ${CONFIG_FILE} ${WORK_DIR}
 ```
 
 Below is an example of using 8 GPUs to train PWC-Net on a Slurm partition named _dev_, and set the work-dir to some shared file systems.
 
 ```shell
-GPUS=8 ./tools/slurm_train.sh dev pwc_chairs configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py work_dir/pwc_chairs
+GPUS=8 sh tools/slurm_train.sh dev pwc_chairs configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py work_dir/pwc_chairs
 ```
 
 You can check [the source code](../../tools/dist_train.sh) to review full arguments and environment variables.
@@ -137,8 +155,8 @@ When using Slurm, the port option need to be set in one of the following ways:
 1. Set the port through `--cfg-options`. This is more recommended since it does not change the original configs.
 
    ```shell
-   GPUS=4 GPUS_PER_NODE=4 ./tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config1.py ${WORK_DIR} --cfg-options 'dist_params.port=29500'
-   GPUS=4 GPUS_PER_NODE=4 ./tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config2.py ${WORK_DIR} --cfg-options 'dist_params.port=29501'
+   GPUS=4 GPUS_PER_NODE=4 sh tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config1.py ${WORK_DIR} --cfg-options 'dist_params.port=29500'
+   GPUS=4 GPUS_PER_NODE=4 sh tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config2.py ${WORK_DIR} --cfg-options 'dist_params.port=29501'
    ```
 
 2. Modify the config files to set different communication ports.
@@ -158,6 +176,6 @@ When using Slurm, the port option need to be set in one of the following ways:
    Then you can launch two jobs with `config1.py` and `config2.py`.
 
    ```shell
-   GPUS=4 GPUS_PER_NODE=4 ./tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config1.py ${WORK_DIR}
-   GPUS=4 GPUS_PER_NODE=4 ./tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config2.py ${WORK_DIR}
+   GPUS=4 GPUS_PER_NODE=4 sh tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config1.py ${WORK_DIR}
+   GPUS=4 GPUS_PER_NODE=4 sh tools/slurm_train.sh ${PARTITION} ${JOB_NAME} config2.py ${WORK_DIR}
    ```
