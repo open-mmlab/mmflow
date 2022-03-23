@@ -25,26 +25,17 @@ def flow_to_coords(flow: Tensor) -> Tensor:
     return coords
 
 
-def compute_range_map(flow: Tensor, **kwargs) -> Tensor:
+def compute_range_map(flow: Tensor) -> Tensor:
     """Compute range map.
 
     Args:
         flow (Tensor): The backward flow with shape (N, 2, H, W)
-        win_size (int, tuple): The window size for calculating range map.
 
     Return:
         Tensor: The forward-to-backward occlusion mask with shape (N, 1, H, W)
     """
-    win_size = kwargs['win_size']
-    assert isinstance(win_size, (tuple, int)), \
-        f'win_size must be a tuple or int, but got {type(win_size)}'
 
-    if isinstance(win_size, int):
-        win_size = (win_size, win_size)
-
-    win_h, win_w = win_size
-
-    N, _, H, W = flow
+    N, _, H, W = flow.shape
 
     coords = flow_to_coords(flow)
 
@@ -59,34 +50,33 @@ def compute_range_map(flow: Tensor, **kwargs) -> Tensor:
     idx_batch_offset = batch_range.repeat(1, H, W) * H * W
 
     # Flatten everything.
-    coords_floor_flattened = coords_floor.reshape(N, 2, -1)
-    coords_offset_flattened = coords_offset.reshape(N, 2, -1)
-    idx_batch_offset_flattened = idx_batch_offset.reshape(N, -1)
+    coords_floor_flattened = coords_floor.permute(0, 2, 3, 1).reshape(-1, 2)
+    coords_offset_flattened = coords_offset.permute(0, 2, 3, 1).reshape(-1, 2)
+    idx_batch_offset_flattened = idx_batch_offset.reshape(-1)
 
     # Initialize results.
     idxs_list = []
     weights_list = []
 
     # Loop over differences di and dj to the four neighboring pixels.
-    for di in range(win_h):
-        for dj in range(win_w):
+    for di in range(2):
+        for dj in range(2):
             # Compute the neighboring pixel coordinates.
-            idxs_i = coords_floor_flattened[:, 0, ...] + di
-            idxs_j = coords_floor_flattened[:, 1, ...] + dj
+            idxs_i = coords_floor_flattened[..., 0] + di
+            idxs_j = coords_floor_flattened[..., 1] + dj
             # Compute the flat index into all pixels.
             idxs = idx_batch_offset_flattened + idxs_i * W + idxs_j
 
             # Only count valid pixels.
-            mask = torch.where(
-                torch.logical_and(
-                    torch.logical_and(idxs_i >= 0, idxs_i < H),
-                    torch.logical_and(idxs_j >= 0, idxs_j < W))).reshape(-1)
-            valid_idxs = torch.select(idxs, mask)
-            valid_offsets = torch.select(coords_offset_flattened, mask)
+            mask = torch.logical_and(
+                torch.logical_and(idxs_i >= 0, idxs_i < H),
+                torch.logical_and(idxs_j >= 0, idxs_j < W))
+            valid_idxs = idxs[mask]
+            valid_offsets = coords_offset_flattened[mask]
 
             # Compute weights according to bilinear interpolation.
-            weights_i = (1. - di) - (-1)**di * valid_offsets[:, 0, ...]
-            weights_j = (1. - dj) - (-1)**dj * valid_offsets[:, 1, ...]
+            weights_i = (1. - di) - (-1)**di * valid_offsets[:, 0]
+            weights_j = (1. - dj) - (-1)**dj * valid_offsets[:, 1]
             weights = weights_i * weights_j
 
             # Append indices and weights to the corresponding list.
@@ -98,14 +88,18 @@ def compute_range_map(flow: Tensor, **kwargs) -> Tensor:
 
     # Sum up weights for each pixel and reshape the result.
     count_image = torch.zeros_like(weights)
-    count_image.index_add_(
-        dim=1, index=idxs, source=weights)[:N * H * W].reshape(N, 1, H, W)
+    count_image = count_image.index_add_(
+        dim=0, index=idxs,
+        source=weights).reshape(-1, N * H * W).sum(0).reshape(N, 1, H, W)
+    occ = (count_image >= 1).to(flow)
+    return occ
 
-    return count_image
 
-
-def forward_backward_consistency(flow_fw: Tensor, flow_bw: Tensor,
-                                 **kwarg) -> Tensor:
+def forward_backward_consistency(
+        flow_fw: Tensor,
+        flow_bw: Tensor,
+        warp_cfg: dict = dict(type='Warp', align_corners=True),
+) -> Tensor:
     """Occlusion mask from forward-backward consistency.
 
     Args:
@@ -116,9 +110,9 @@ def forward_backward_consistency(flow_fw: Tensor, flow_bw: Tensor,
         Tensor: The forward-to-backward occlusion mask with shape (N, 1, H, W)
     """
 
-    warp = build_operators(kwarg['warp_cfg'])
+    warp = build_operators(warp_cfg)
 
-    warped_flow_bw = warp(flow_bw)
+    warped_flow_bw = warp(flow_bw, flow_fw)
 
     forward_backward_sq_diff = torch.sum(
         (flow_fw + warped_flow_bw)**2, dim=1, keepdim=True)
@@ -130,8 +124,11 @@ def forward_backward_consistency(flow_fw: Tensor, flow_bw: Tensor,
     return occ
 
 
-def forward_backward_absdiff(flow_fw: Tensor, flow_bw: Tensor,
-                             **kwarg) -> Tensor:
+def forward_backward_absdiff(flow_fw: Tensor,
+                             flow_bw: Tensor,
+                             warp_cfg: dict = dict(
+                                 type='Warp', align_corners=True),
+                             diff: int = 1.5) -> Tensor:
     """Occlusion mask from forward-backward consistency.
 
     Args:
@@ -142,14 +139,14 @@ def forward_backward_absdiff(flow_fw: Tensor, flow_bw: Tensor,
         Tensor: The forward-to-backward occlusion mask with shape (N, 1, H, W)
     """
 
-    warp = build_operators(kwarg['warp_cfg'])
+    warp = build_operators(warp_cfg)
 
-    warped_flow_bw = warp(flow_bw)
+    warped_flow_bw = warp(flow_bw, flow_fw)
 
     forward_backward_sq_diff = torch.sum(
         (flow_fw + warped_flow_bw)**2, dim=1, keepdim=True)
 
-    occ = (forward_backward_sq_diff**0.5 < 1.5).to(flow_fw)
+    occ = (forward_backward_sq_diff**0.5 < diff).to(flow_fw)
 
     return occ
 
@@ -183,7 +180,7 @@ def occlusion_estimation(flow_fw: Tensor,
         occ_bw = compute_range_map(flow_fw)
 
     elif mode == 'fb_abs':
-        occ_fw = forward_backward_absdiff(flow_fw, flow_bw)
-        occ_bw = forward_backward_absdiff(flow_bw, flow_fw)
+        occ_fw = forward_backward_absdiff(flow_fw, flow_bw, **kwarg)
+        occ_bw = forward_backward_absdiff(flow_bw, flow_fw, **kwarg)
 
     return dict(occ_fw=occ_fw, occ_bw=occ_bw)
