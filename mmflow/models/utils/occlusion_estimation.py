@@ -62,21 +62,21 @@ def compute_range_map(flow: Tensor) -> Tensor:
     for di in range(2):
         for dj in range(2):
             # Compute the neighboring pixel coordinates.
-            idxs_i = coords_floor_flattened[..., 0] + di
-            idxs_j = coords_floor_flattened[..., 1] + dj
+            idxs_j = coords_floor_flattened[..., 0] + dj
+            idxs_i = coords_floor_flattened[..., 1] + di
             # Compute the flat index into all pixels.
             idxs = idx_batch_offset_flattened + idxs_i * W + idxs_j
 
             # Only count valid pixels.
             mask = torch.logical_and(
-                torch.logical_and(idxs_i >= 0, idxs_i < H),
-                torch.logical_and(idxs_j >= 0, idxs_j < W))
+                torch.logical_and(idxs_j >= 0, idxs_j < W),
+                torch.logical_and(idxs_i >= 0, idxs_i < H))
             valid_idxs = idxs[mask]
             valid_offsets = coords_offset_flattened[mask]
 
             # Compute weights according to bilinear interpolation.
-            weights_i = (1. - di) - (-1)**di * valid_offsets[:, 0]
-            weights_j = (1. - dj) - (-1)**dj * valid_offsets[:, 1]
+            weights_j = (1. - dj) - (-1)**dj * valid_offsets[:, 0]
+            weights_i = (1. - di) - (-1)**di * valid_offsets[:, 1]
             weights = weights_i * weights_j
 
             # Append indices and weights to the corresponding list.
@@ -87,11 +87,10 @@ def compute_range_map(flow: Tensor) -> Tensor:
     weights = torch.cat(weights_list, dim=0)
 
     # Sum up weights for each pixel and reshape the result.
-    count_image = torch.zeros_like(weights)
+    count_image = torch.zeros(N * H * W)
     count_image = count_image.index_add_(
-        dim=0, index=idxs,
-        source=weights).reshape(-1, N * H * W).sum(0).reshape(N, 1, H, W)
-    occ = (count_image >= 1).to(flow)
+        dim=0, index=idxs, source=weights).reshape(N, H, W)
+    occ = (count_image >= 1).to(flow)[:, None, ...]
     return occ
 
 
