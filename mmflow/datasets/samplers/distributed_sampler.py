@@ -8,15 +8,13 @@ from torch.utils.data import Dataset
 from torch.utils.data import DistributedSampler as _DistributedSampler
 from torch.utils.data import Sampler
 
-from mmflow.core.utils import sync_random_seed
-
 
 class DistributedSampler(_DistributedSampler):
     """DistributedSampler inheriting from
     `torch.utils.data.DistributedSampler`.
 
     This distributed sampler is compatible Pytorch==1.5, as there is no
-    `shuffle` argument in Pytorch==1.5.
+    `seed` argument in Pytorch==1.5.
 
     Args:
         datasets (Dataset): the dataset will be loaded.
@@ -40,13 +38,7 @@ class DistributedSampler(_DistributedSampler):
         super().__init__(
             dataset, num_replicas=num_replicas, rank=rank, shuffle=shuffle)
 
-        # In distributed sampling, different ranks should sample
-        # non-overlapped data in the dataset. Therefore, this function
-        # is used to make sure that each rank shuffles the data indices
-        # in the same order based on the same seed. Then different ranks
-        # could use different indices to select non-overlapped data from the
-        # same data list.
-        self.seed = sync_random_seed(seed)
+        self.seed = seed
 
     def __iter__(self) -> Iterator:
         """
@@ -170,7 +162,7 @@ class MixedBatchDistributedSampler(Sampler):
         # in the same order based on the same seed. Then different ranks
         # could use different indices to select non-overlapped data from the
         # same data list.
-        self.seed = sync_random_seed(seed)
+        self.seed = seed
 
     def __iter__(self) -> Iterator:
         """

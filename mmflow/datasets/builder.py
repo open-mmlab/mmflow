@@ -12,6 +12,7 @@ from mmcv.runner import get_dist_info
 from mmcv.utils import Registry, build_from_cfg
 from torch.utils.data import DataLoader, Dataset
 
+from mmflow.core.utils import sync_random_seed
 from .samplers import DistributedSampler, MixedBatchDistributedSampler
 
 if platform.system() != 'Windows':
@@ -106,7 +107,17 @@ def build_dataloader(dataset: Dataset,
 
         if sample_ratio is None:
             sampler = DistributedSampler(
-                dataset, world_size, rank, shuffle=shuffle, seed=seed)
+                dataset,
+                world_size,
+                rank,
+                shuffle=shuffle,
+                # In distributed sampling, different ranks should sample
+                # non-overlapped data in the dataset. Therefore, this function
+                # is used to make sure that each rank shuffles the data indices
+                # in the same order based on the same seed. Then different
+                # ranks could use different indices to select non-overlapped
+                # data from the same data list.
+                seed=sync_random_seed(seed))
             shuffle = False
         else:
             from .dataset_wrappers import ConcatDataset
@@ -116,7 +127,13 @@ def build_dataloader(dataset: Dataset,
                 num_replicas=world_size,
                 rank=rank,
                 shuffle=shuffle,
-                seed=seed)
+                # In distributed sampling, different ranks should sample
+                # non-overlapped data in the dataset. Therefore, this function
+                # is used to make sure that each rank shuffles the data indices
+                # in the same order based on the same seed. Then different
+                # ranks could use different indices to select non-overlapped
+                # data from the same data list.
+                seed=sync_random_seed(seed))
             shuffle = False
             dataset = ConcatDataset(dataset)
     else:
