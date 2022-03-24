@@ -156,12 +156,6 @@ class MixedBatchDistributedSampler(Sampler):
         self.rank = rank
         self.epoch = 0
         self.shuffle = shuffle
-        # In distributed sampling, different ranks should sample
-        # non-overlapped data in the dataset. Therefore, this function
-        # is used to make sure that each rank shuffles the data indices
-        # in the same order based on the same seed. Then different ranks
-        # could use different indices to select non-overlapped data from the
-        # same data list.
         self.seed = seed
 
     def __iter__(self) -> Iterator:
