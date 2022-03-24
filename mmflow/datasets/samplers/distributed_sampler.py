@@ -15,6 +15,9 @@ class DistributedSampler(_DistributedSampler):
     """DistributedSampler inheriting from
     `torch.utils.data.DistributedSampler`.
 
+    This distributed sampler is compatible Pytorch==1.5, as there is no
+    `shuffle` argument in Pytorch==1.5.
+
     Args:
         datasets (Dataset): the dataset will be loaded.
         num_replicas (int, optional): Number of processes participating in
