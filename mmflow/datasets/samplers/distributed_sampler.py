@@ -8,6 +8,8 @@ from torch.utils.data import Dataset
 from torch.utils.data import DistributedSampler as _DistributedSampler
 from torch.utils.data import Sampler
 
+from mmflow.core.utils import sync_random_seed
+
 
 class DistributedSampler(_DistributedSampler):
     """DistributedSampler inheriting from
@@ -24,15 +26,27 @@ class DistributedSampler(_DistributedSampler):
         rank (int, optional):  Rank of the current process within num_replicas.
             By default, rank is retrieved from the current distributed group.
         shuffle (bool): If True (default), sampler will shuffle the indices.
+        seed (int): random seed used to shuffle the sampler if
+            :attr:`shuffle=True`. This number should be identical across all
+            processes in the distributed group. Default: ``0``.
     """
 
     def __init__(self,
                  dataset: Dataset,
                  num_replicas: Optional[int] = None,
                  rank: Optional[int] = None,
-                 shuffle: bool = True) -> None:
-        super().__init__(dataset, num_replicas=num_replicas, rank=rank)
-        self.shuffle = shuffle
+                 shuffle: bool = True,
+                 seed=0) -> None:
+        super().__init__(
+            dataset, num_replicas=num_replicas, rank=rank, shuffle=shuffle)
+
+        # In distributed sampling, different ranks should sample
+        # non-overlapped data in the dataset. Therefore, this function
+        # is used to make sure that each rank shuffles the data indices
+        # in the same order based on the same seed. Then different ranks
+        # could use different indices to select non-overlapped data from the
+        # same data list.
+        self.seed = sync_random_seed(seed)
 
     def __iter__(self) -> Iterator:
         """
@@ -42,7 +56,11 @@ class DistributedSampler(_DistributedSampler):
         # deterministically shuffle based on epoch
         if self.shuffle:
             g = torch.Generator()
-            g.manual_seed(self.epoch)
+            # When :attr:`shuffle=True`, this ensures all replicas
+            # use a different random ordering for each epoch.
+            # Otherwise, the next iteration of this sampler will
+            # yield the same ordering.
+            g.manual_seed(self.epoch + self.seed)
             indices = torch.randperm(len(self.dataset), generator=g).tolist()
         else:
             indices = torch.arange(len(self.dataset)).tolist()
@@ -74,6 +92,9 @@ class MixedBatchDistributedSampler(Sampler):
         rank (int, optional):  Rank of the current process within num_replicas.
             By default, rank is retrieved from the current distributed group.
         shuffle (bool): If True (default), sampler will shuffle the indices.
+        seed (int): random seed used to shuffle the sampler if
+            :attr:`shuffle=True`. This number should be identical across all
+            processes in the distributed group. Default: ``0``.
     """
 
     def __init__(self,
@@ -81,7 +102,8 @@ class MixedBatchDistributedSampler(Sampler):
                  sample_ratio: Sequence[float],
                  num_replicas: Optional[int] = None,
                  rank: Optional[int] = None,
-                 shuffle: bool = True) -> None:
+                 shuffle: bool = True,
+                 seed: int = 0) -> None:
 
         # base class `Sampler` do nothing in `__init__` function
         # super().__init__()
@@ -142,6 +164,13 @@ class MixedBatchDistributedSampler(Sampler):
         self.rank = rank
         self.epoch = 0
         self.shuffle = shuffle
+        # In distributed sampling, different ranks should sample
+        # non-overlapped data in the dataset. Therefore, this function
+        # is used to make sure that each rank shuffles the data indices
+        # in the same order based on the same seed. Then different ranks
+        # could use different indices to select non-overlapped data from the
+        # same data list.
+        self.seed = sync_random_seed(seed)
 
     def __iter__(self) -> Iterator:
         """
@@ -158,7 +187,11 @@ class MixedBatchDistributedSampler(Sampler):
         # deterministically shuffle each datasets based on epoch
         if self.shuffle:
             g = torch.Generator()
-            g.manual_seed(self.epoch)
+            # When :attr:`shuffle=True`, this ensures all replicas
+            # use a different random ordering for each epoch.
+            # Otherwise, the next iteration of this sampler will
+            # yield the same ordering.
+            g.manual_seed(self.epoch + self.seed)
 
             indices = torch.randperm(
                 self.datasets_length[dataset_idx], generator=g).tolist()

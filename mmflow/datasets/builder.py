@@ -106,7 +106,7 @@ def build_dataloader(dataset: Dataset,
 
         if sample_ratio is None:
             sampler = DistributedSampler(
-                dataset, world_size, rank, shuffle=shuffle)
+                dataset, world_size, rank, shuffle=shuffle, seed=seed)
             shuffle = False
         else:
             from .dataset_wrappers import ConcatDataset
@@ -115,7 +115,8 @@ def build_dataloader(dataset: Dataset,
                 sample_ratio=sample_ratio,
                 num_replicas=world_size,
                 rank=rank,
-                shuffle=shuffle)
+                shuffle=shuffle,
+                seed=seed)
             shuffle = False
             dataset = ConcatDataset(dataset)
     else:
