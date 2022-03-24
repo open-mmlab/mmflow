@@ -15,9 +15,6 @@ class DistributedSampler(_DistributedSampler):
     """DistributedSampler inheriting from
     `torch.utils.data.DistributedSampler`.
 
-    In pytorch of lower versions, there is no `shuffle` argument. This child
-    class will port one to DistributedSampler.
-
     Args:
         datasets (Dataset): the dataset will be loaded.
         num_replicas (int, optional): Number of processes participating in
