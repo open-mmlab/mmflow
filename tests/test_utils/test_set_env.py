@@ -101,7 +101,7 @@ def test_collect_env():
     expected_keys = [
         'sys.platform', 'Python', 'CUDA available', 'PyTorch',
         'PyTorch compiling details', 'OpenCV', 'MMCV', 'MMCV Compiler',
-        'MMCV CUDA Compiler', 'MMFlow', 'GCC', 'NVCC'
+        'MMCV CUDA Compiler', 'MMFlow', 'GCC'
     ]
     for key in expected_keys:
         assert key in env_info
