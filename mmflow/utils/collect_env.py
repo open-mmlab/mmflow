@@ -48,9 +48,12 @@ def collect_env() -> dict:
         for name, devids in devices.items():
             env_info['GPU ' + ','.join(devids)] = name
 
-    gcc = subprocess.check_output('gcc --version | head -n1', shell=True)
-    gcc = gcc.decode('utf-8').strip()
-    env_info['GCC'] = gcc
+    try:
+        gcc = subprocess.check_output('gcc --version | head -n1', shell=True)
+        gcc = gcc.decode('utf-8').strip()
+        env_info['GCC'] = gcc
+    except subprocess.CalledProcessError:  # gcc is unavailable
+        env_info['GCC'] = 'n/a'
 
     env_info['PyTorch'] = torch.__version__
     env_info['PyTorch compiling details'] = get_build_config()
