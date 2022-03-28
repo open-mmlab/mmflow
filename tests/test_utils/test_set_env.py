@@ -110,9 +110,6 @@ def test_collect_env():
         for key in ['CUDA_HOME', 'NVCC']:
             assert key in env_info
 
-    if sys.platform == 'win32':
-        assert env_info['GCC'] == 'n/a'
-
     assert env_info['sys.platform'] == sys.platform
     assert env_info['Python'] == sys.version.replace('\n', '')
     assert env_info['MMCV'] == mmcv.__version__
