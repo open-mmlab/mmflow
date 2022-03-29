@@ -2,11 +2,14 @@
 import multiprocessing as mp
 import os
 import platform
+import sys
 
 import cv2
+import mmcv
 import pytest
 from mmcv import Config
 
+import mmflow
 from mmflow.utils import setup_multi_processes
 
 
@@ -85,3 +88,29 @@ def test_setup_multi_processes(workers_per_gpu, valid, env_cfg):
         assert cv2.getNumThreads() == sys_cv_threads
         assert 'OMP_NUM_THREADS' not in os.environ
         assert 'MKL_NUM_THREADS' not in os.environ
+
+
+def test_collect_env():
+    try:
+        import torch  # noqa: F401
+    except ModuleNotFoundError:
+        pytest.skip('skipping tests that require PyTorch')
+
+    from mmflow.utils import collect_env
+    env_info = collect_env()
+    expected_keys = [
+        'sys.platform', 'Python', 'CUDA available', 'PyTorch',
+        'PyTorch compiling details', 'OpenCV', 'MMCV', 'MMCV Compiler',
+        'MMCV CUDA Compiler', 'MMFlow', 'GCC'
+    ]
+    for key in expected_keys:
+        assert key in env_info
+
+    if env_info['CUDA available']:
+        for key in ['CUDA_HOME', 'NVCC']:
+            assert key in env_info
+
+    assert env_info['sys.platform'] == sys.platform
+    assert env_info['Python'] == sys.version.replace('\n', '')
+    assert env_info['MMCV'] == mmcv.__version__
+    assert mmflow.__version__ in env_info['MMFlow']
