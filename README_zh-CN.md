@@ -89,6 +89,17 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 请参考[安装文档](docs/en/install.md)进行安装, 参考[数据准备](docs/en/dataset_prepare.md)准备数据集。
 
+以下是安装的简要步骤：
+
+```shell
+conda create -n open-mmlab python=3.8 pytorch=1.10 cudatoolkit=11.3 torchvision -c pytorch -y
+conda activate open-mmlab
+pip3 install openmim
+mim install mmcv-full
+git clone https://github.com/open-mmlab/mmflow
+pip3 install -e .
+```
+
 ## 快速入门
 
 如果初次接触光流算法，你可以从 [learn the basics](docs/en/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
