@@ -9,7 +9,7 @@
 ### Features
 
 - Support three occlusion estimation methods (#106)
-- Support different seeds to different ranks when distributed training (#104)
+- Support different seeds on different ranks when distributed training (#104)
 
 ### Improvements
 
