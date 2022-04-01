@@ -1,5 +1,21 @@
 # Changelog
 
+# v0.4.0(04/01/2022)
+
+### Highlights
+
+- Support occlusion estimation methods including flow forward-backward consistency, range map of the backward flow, and flow forward-backward abstract difference
+
+### Features
+
+- Support three occlusion estimation methods (#106)
+- Support different seeds on different ranks when distributed training (#104)
+
+### Improvements
+
+- Revise collect_env for win platform (112)
+- Add script and documentation for multi-machine distributed training (#107)
+
 ## v0.3.0(03/04/2022)
 
 ### Highlights
@@ -17,7 +33,7 @@
 
 ### Bug Fixes
 
-- Update `nan` files in Flyingthings3d_subset (94)
+- Update `nan` files in Flyingthings3d_subset (#94)
 - Add pretrained pwcnet-model when train PWCNet+ (#99)
 - Fix bug in non-distributed multi-gpu training/testing (#85)
 - Fix writing flow map bug in test (#83)
