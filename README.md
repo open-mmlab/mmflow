@@ -61,12 +61,9 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-**v0.3.0** was released in 03/04/2022:
+**v0.4.0** was released in 04/01/2022:
 
-- Officially support CPU train/inference
-- Officially support model inference in windows platform
-- Add census loss, SSIM loss and smoothness loss
-- Update `nan` files in Flyingthings3d_subset dataset
+- Support occlusion estimation methods including flow forward-backward consistency, range map of the backward flow, and flow forward-backward abstract difference
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
 
