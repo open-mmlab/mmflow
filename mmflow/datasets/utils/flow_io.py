@@ -246,8 +246,10 @@ def read_pfm(file: str) -> np.ndarray:
     This function is modified from
     https://lmb.informatik.uni-freiburg.de/resources/datasets/IO.py
     Copyright (c) 2011, LMB, University of Freiburg.
+
     Args:
         file (str): The file name will be loaded
+
     Returns:
         ndarray: The loaded data
     """
