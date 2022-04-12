@@ -182,7 +182,8 @@ def read_pfm(file: Union[bytes, str]) -> np.ndarray:
     Copyright (c) 2011, LMB, University of Freiburg.
 
     Args:
-        file (str): The file name will be loaded
+        file (str, bytes): The file name will be loaded, or optical flow bytes
+            got from files or other streams.
 
     Returns:
         ndarray: The loaded data
@@ -199,27 +200,27 @@ def read_pfm(file: Union[bytes, str]) -> np.ndarray:
     endian = None
 
     header = file.readline().rstrip()
-    if header.decode('ascii') == 'PF':
+    if header == b'PF':
         color = True
-    elif header.decode('ascii') == 'Pf':
+    elif header == b'Pf':
         color = False
     else:
         raise Exception('Not a PFM file.')
 
-    dim_match = re.match(r'^(\d+)\s(\d+)\s$', file.readline().decode('ascii'))
+    dim_match = re.match(rb'^(\d+)\s(\d+)\s$', file.readline())
     if dim_match:
         width, height = list(map(int, dim_match.groups()))
     else:
         raise Exception('Malformed PFM header.')
 
-    scale = float(file.readline().decode('ascii').rstrip())
+    scale = float(file.readline().rstrip())
     if scale < 0:  # little-endian
         endian = '<'
         scale = -scale
     else:
         endian = '>'  # big-endian
 
-    data = np.fromfile(file, endian + 'f')
+    data = np.frombuffer(file.read(), endian + 'f')
     shape = (height, width, 3) if color else (height, width)
 
     data = np.reshape(data, shape)
