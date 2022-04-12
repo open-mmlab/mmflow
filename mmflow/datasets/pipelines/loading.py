@@ -3,10 +3,10 @@ import os.path as osp
 
 import mmcv
 import numpy as np
-from mmcv import flow_from_bytes, sparse_flow_from_bytes
+from mmcv import sparse_flow_from_bytes
 
 from ..builder import PIPELINES
-from ..utils import read_pfm
+from ..utils import flow_from_bytes, read_pfm
 
 
 @PIPELINES.register_module()

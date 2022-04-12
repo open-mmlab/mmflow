@@ -1,12 +1,14 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 
 import re
-from typing import Tuple
+from io import BytesIO
+from typing import Tuple, Union
 
 import cv2
 import matplotlib.pyplot as plt
 import mmcv
 import numpy as np
+from numpy import ndarray
 
 
 def read_flow(name: str) -> np.ndarray:
@@ -142,7 +144,37 @@ def write_flow_kitti(uv: np.ndarray, filename: str):
     cv2.imwrite(filename, uv[..., ::-1])
 
 
-def read_pfm(file: str) -> np.ndarray:
+def flow_from_bytes(content: bytes) -> ndarray:
+    """Read dense optical flow from bytes.
+
+    .. note::
+        This load optical flow function works for FlyingChairs, FlyingThings3D,
+        Sintel, FlyingChairsOcc datasets, but cannot load the data from
+        ChairsSDHom.
+
+    Args:
+        content (bytes): Optical flow bytes got from files or other streams.
+
+    Returns:
+        ndarray: Loaded optical flow with the shape (H, W, 2).
+    """
+
+    # header in first 4 bytes
+    header = content[:4]
+    if header != b'PIEH':
+        raise Exception('Flow file header does not contain PIEH')
+    # width in second 4 bytes
+    width = np.frombuffer(content[4:], np.int32, 1).squeeze()
+    # height in third 4 bytes
+    height = np.frombuffer(content[8:], np.int32, 1).squeeze()
+    # after first 12 bytes, all bytes are flow
+    flow = np.frombuffer(content[12:], np.float32, width * height * 2).reshape(
+        (height, width, 2))
+
+    return flow
+
+
+def read_pfm(file: Union[bytes, str]) -> np.ndarray:
     """Load the file with the suffix '.pfm'.
 
     This function is modified from
@@ -155,7 +187,10 @@ def read_pfm(file: str) -> np.ndarray:
     Returns:
         ndarray: The loaded data
     """
-    file = open(file, 'rb')
+    if isinstance(file, str):
+        file = open(file, 'rb')
+    else:
+        file = BytesIO(file)
 
     color = None
     width = None
