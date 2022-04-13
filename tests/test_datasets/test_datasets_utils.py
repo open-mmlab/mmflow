@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from mmflow.datasets.utils import (adjust_gamma, adjust_hue, visualize_flow,
-                                   write_flow)
+from mmflow.datasets.utils import (adjust_gamma, adjust_hue, flow_from_bytes,
+                                   visualize_flow, write_flow)
 
 img1_ = '../data/0000000-img_0.png'
 
@@ -70,3 +70,14 @@ def test_visualize_flow():
     with TemporaryDirectory() as tmpdirname:
         visualize_flow(flow, save_file=osp.join(tmpdirname, 'flow.png'))
         write_flow(flow, osp.join(tmpdirname, 'flow.flo'))
+
+
+@pytest.mark.parametrize(
+    'filename',
+    ('../data/OpticalFlowIntoFuture_0006_L.pfm', '../data/0000000-flow_01.flo')
+)
+def test_flow_from_bytes(filename):
+    file_client = mmcv.FileClient(backend='disk')
+    flow_bytes = file_client.get(osp.join(osp.dirname(__file__), filename))
+    flow = flow_from_bytes(flow_bytes, filename[-3:])
+    assert flow.shape[-1] == 2 and len(flow.shape) == 3
