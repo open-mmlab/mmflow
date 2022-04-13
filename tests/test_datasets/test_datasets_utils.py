@@ -72,11 +72,8 @@ def test_visualize_flow():
         write_flow(flow, osp.join(tmpdirname, 'flow.flo'))
 
 
-@pytest.mark.parametrize(
-    'filename',
-    ('../data/OpticalFlowIntoFuture_0006_L.pfm', '../data/0000000-flow_01.flo')
-)
 def test_flow_from_bytes(filename):
+    filename = '../data/0000000-flow_01.flo'
     file_client = mmcv.FileClient(backend='disk')
     flow_bytes = file_client.get(osp.join(osp.dirname(__file__), filename))
     flow = flow_from_bytes(flow_bytes, filename[-3:])
