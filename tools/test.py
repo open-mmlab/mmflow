@@ -120,6 +120,17 @@ def main():
     # set multi-process settings
     setup_multi_processes(cfg)
 
+    # The overall dataloader settings
+    loader_cfg = {
+        k: v
+        for k, v in cfg.data.items() if k not in [
+            'train', 'val', 'test', 'train_dataloader', 'val_dataloader',
+            'test_dataloader'
+        ]
+    }
+    # The specific training dataloader settings
+    test_loader_cfg = {**loader_cfg, **cfg.data.get('test_dataloader', {})}
+
     # build the dataloader
     separate_eval = cfg.data.test.get('separate_eval', False)
     if separate_eval:
@@ -133,7 +144,7 @@ def main():
     data_loader = [
         build_dataloader(
             _dataset,
-            **cfg.data.test_dataloader,
+            **test_loader_cfg,
             dist=distributed,
         ) for _dataset in dataset
     ]
