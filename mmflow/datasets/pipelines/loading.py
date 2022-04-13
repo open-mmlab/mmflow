@@ -3,10 +3,10 @@ import os.path as osp
 
 import mmcv
 import numpy as np
-from mmcv import flow_from_bytes, sparse_flow_from_bytes
+from mmcv import sparse_flow_from_bytes
 
 from ..builder import PIPELINES
-from ..utils import read_pfm
+from ..utils import flow_from_bytes
 
 
 @PIPELINES.register_module()
@@ -167,13 +167,8 @@ class LoadAnnotations:
             if filename.find('flow') > -1:
 
                 filename_flow = results['ann_info'][filename]
-
-                if filename_flow.endswith('pfm'):
-                    #  files with .pfm do not support file_client
-                    flow = read_pfm(filename_flow)
-                else:
-                    flow_bytes = self.file_client.get(filename_flow)
-                    flow = flow_from_bytes(flow_bytes)
+                flow_bytes = self.file_client.get(filename_flow)
+                flow = flow_from_bytes(flow_bytes, filename_flow[-3:])
 
                 results[filename] = filename_flow
                 results['ori_' + filename] = osp.split(filename_flow)[-1]

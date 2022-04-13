@@ -1,12 +1,14 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 
 import re
+from io import BytesIO
 from typing import Tuple
 
 import cv2
 import matplotlib.pyplot as plt
 import mmcv
 import numpy as np
+from numpy import ndarray
 
 
 def read_flow(name: str) -> np.ndarray:
@@ -140,6 +142,102 @@ def write_flow_kitti(uv: np.ndarray, filename: str):
     valid = np.ones([uv.shape[0], uv.shape[1], 1])
     uv = np.concatenate([uv, valid], axis=-1).astype(np.uint16)
     cv2.imwrite(filename, uv[..., ::-1])
+
+
+def flow_from_bytes(content: bytes, suffix: str = 'flo') -> ndarray:
+    """Read dense optical flow from bytes.
+
+    .. note::
+        This load optical flow function works for FlyingChairs, FlyingThings3D,
+        Sintel, FlyingChairsOcc datasets, but cannot load the data from
+        ChairsSDHom.
+
+    Args:
+        content (bytes): Optical flow bytes got from files or other streams.
+
+    Returns:
+        ndarray: Loaded optical flow with the shape (H, W, 2).
+    """
+
+    assert suffix in ('flo', 'pfm'), 'suffix of flow file must be `flo` '\
+        f'or `pfm`, but got {suffix}'
+
+    if suffix == 'flo':
+        return flo_from_bytes(content)
+    else:
+        return pfm_from_bytes(content)
+
+
+def flo_from_bytes(content: bytes):
+    """Decode bytes based on flo file.
+
+    Args:
+        content (bytes): Optical flow bytes got from files or other streams.
+
+    Returns:
+        ndarray: Loaded optical flow with the shape (H, W, 2).
+    """
+
+    # header in first 4 bytes
+    header = content[:4]
+    if header != b'PIEH':
+        raise Exception('Flow file header does not contain PIEH')
+    # width in second 4 bytes
+    width = np.frombuffer(content[4:], np.int32, 1).squeeze()
+    # height in third 4 bytes
+    height = np.frombuffer(content[8:], np.int32, 1).squeeze()
+    # after first 12 bytes, all bytes are flow
+    flow = np.frombuffer(content[12:], np.float32, width * height * 2).reshape(
+        (height, width, 2))
+
+    return flow
+
+
+def pfm_from_bytes(content: bytes) -> np.ndarray:
+    """Load the file with the suffix '.pfm'.
+
+    Args:
+        content (bytes): Optical flow bytes got from files or other streams.
+
+    Returns:
+        ndarray: The loaded data
+    """
+
+    file = BytesIO(content)
+
+    color = None
+    width = None
+    height = None
+    scale = None
+    endian = None
+
+    header = file.readline().rstrip()
+    if header == b'PF':
+        color = True
+    elif header == b'Pf':
+        color = False
+    else:
+        raise Exception('Not a PFM file.')
+
+    dim_match = re.match(rb'^(\d+)\s(\d+)\s$', file.readline())
+    if dim_match:
+        width, height = list(map(int, dim_match.groups()))
+    else:
+        raise Exception('Malformed PFM header.')
+
+    scale = float(file.readline().rstrip())
+    if scale < 0:  # little-endian
+        endian = '<'
+        scale = -scale
+    else:
+        endian = '>'  # big-endian
+
+    data = np.frombuffer(file.read(), endian + 'f')
+    shape = (height, width, 3) if color else (height, width)
+
+    data = np.reshape(data, shape)
+    data = np.flipud(data)
+    return data[:, :, :-1]
 
 
 def read_pfm(file: str) -> np.ndarray:
