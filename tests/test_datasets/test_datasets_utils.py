@@ -72,7 +72,7 @@ def test_visualize_flow():
         write_flow(flow, osp.join(tmpdirname, 'flow.flo'))
 
 
-def test_flow_from_bytes(filename):
+def test_flow_from_bytes():
     filename = '../data/0000000-flow_01.flo'
     file_client = mmcv.FileClient(backend='disk')
     flow_bytes = file_client.get(osp.join(osp.dirname(__file__), filename))
