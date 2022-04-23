@@ -58,6 +58,7 @@ def main():
                 dict(
                     img1_dir='data',
                     img2_dir='data',
+                    flow_dir='data',
                     filename1=osp.join(img1_filenames[i]),
                     filename2=osp.join(img2_filenames[i]),
                     filename_flow=osp.join(flow_filenames[i])))
@@ -67,6 +68,7 @@ def main():
                 dict(
                     img1_dir='data',
                     img2_dir='data',
+                    flow_dir='data',
                     filename1=img1_filenames[i],
                     filename2=img2_filenames[i],
                     filename_flow=flow_filenames[i]))
