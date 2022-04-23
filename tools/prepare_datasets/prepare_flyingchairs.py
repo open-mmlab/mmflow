@@ -53,25 +53,18 @@ def main():
     test_meta = dict(dataset='FlyingChairs', subset='test')
 
     for i, flag in enumerate(split):
+        data_info = dict(
+            img1_dir='data',
+            img2_dir='data',
+            flow_dir='data',
+            img_info=dict(
+                filename1=img1_filenames[i], filename2=img2_filenames[i]),
+            ann_info=dict(filename_flow=flow_filenames[i]))
         if flag == 1:
-            train_list.append(
-                dict(
-                    img1_dir='data',
-                    img2_dir='data',
-                    flow_dir='data',
-                    filename1=osp.join(img1_filenames[i]),
-                    filename2=osp.join(img2_filenames[i]),
-                    filename_flow=osp.join(flow_filenames[i])))
+            train_list.append(data_info)
 
         else:
-            test_list.append(
-                dict(
-                    img1_dir='data',
-                    img2_dir='data',
-                    flow_dir='data',
-                    filename1=img1_filenames[i],
-                    filename2=img2_filenames[i],
-                    filename_flow=flow_filenames[i]))
+            test_list.append(data_info)
 
     with open('FlyingChairs_train.json', 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
