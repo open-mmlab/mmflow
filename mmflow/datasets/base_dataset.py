@@ -54,14 +54,22 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
             self.load_ann_file(ann_file)
 
     def load_ann_file(self, ann_file):
+        """_summary_
+
+        Args:
+            ann_file (_type_): _description_
+        """
         ann = mmcv.load(
             ann_file,
             file_format='json',
             file_client_args=self.file_client_args)
         self.data_infos = ann['data_list']
-        self.img1_dir = self.data_infos[0]['img1_dir']
-        self.img2_dir = self.data_infos[0]['img2_dir']
-        self.flow_dir = self.data_infos[0]['flow_dir']
+        self.img1_dir = osp.join(self.data_root,
+                                 self.data_infos[0]['img1_dir'])
+        self.img2_dir = osp.join(self.data_root,
+                                 self.data_infos[0]['img2_dir'])
+        self.flow_dir = osp.join(self.data_root,
+                                 self.data_infos[0]['flow_dir'])
         for data_info in self.data_infos:
             data_info['img_info']['filename1'] = \
                 osp.join(self.img1_dir, data_info['filename1'])
