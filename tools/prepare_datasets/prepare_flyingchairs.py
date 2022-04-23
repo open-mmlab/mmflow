@@ -56,9 +56,9 @@ def main():
         if flag == 1:
             train_list.append(
                 dict(
-                    img1_filename=img1_filenames[i],
-                    img2_filename=img2_filenames[i],
-                    flow_filename=flow_filenames[i]))
+                    img1_filename=osp.join('data', img1_filenames[i]),
+                    img2_filename=osp.join('data', img2_filenames[i]),
+                    flow_filename=osp.join('data', flow_filenames[i])))
 
         else:
             test_list.append(
