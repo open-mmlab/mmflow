@@ -56,16 +56,20 @@ def main():
         if flag == 1:
             train_list.append(
                 dict(
-                    img1_filename=osp.join('data', img1_filenames[i]),
-                    img2_filename=osp.join('data', img2_filenames[i]),
-                    flow_filename=osp.join('data', flow_filenames[i])))
+                    img1_dir='data',
+                    img2_dir='data',
+                    filename1=osp.join(img1_filenames[i]),
+                    filename2=osp.join(img2_filenames[i]),
+                    filename_flow=osp.join(flow_filenames[i])))
 
         else:
             test_list.append(
                 dict(
-                    img1_filename=img1_filenames[i],
-                    img2_filename=img2_filenames[i],
-                    flow_filename=flow_filenames[i]))
+                    img1_dir='data',
+                    img2_dir='data',
+                    filename1=img1_filenames[i],
+                    filename2=img2_filenames[i],
+                    filename_flow=flow_filenames[i]))
 
     with open('FlyingChairs_train.json', 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
