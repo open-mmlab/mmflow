@@ -66,14 +66,12 @@ def main():
                     img1_filename=img1_filenames[i],
                     img2_filename=img2_filenames[i],
                     flow_filename=flow_filenames[i]))
-    train_json = json.dumps({'data_list': train_list, 'metainfo': train_meta})
-    test_json = json.dumps({'data_list': test_list, 'metainfo': test_meta})
-    print(test_json)
+
     with open('FlyingChairs_train.json', 'w') as jsonfile:
-        json.dump(train_json, jsonfile)
+        json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
 
     with open('FlyingChairs_test.json', 'w') as jsonfile:
-        json.dump(test_json, jsonfile)
+        json.dump({'data_list': test_list, 'metainfo': test_meta}, jsonfile)
 
 
 if __name__ == '__main__':
