@@ -72,11 +72,11 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                                  self.data_infos[0]['flow_dir'])
         for data_info in self.data_infos:
             data_info['img_info']['filename1'] = \
-                osp.join(self.img1_dir, data_info['filename1'])
+                osp.join(self.img1_dir, data_info['img_info']['filename1'])
             data_info['img_info']['filename2'] = \
-                osp.join(self.img2_dir, data_info['filename2'])
-            data_info['filename_flow'] = \
-                osp.join(self.data_root, data_info['filename_flow'])
+                osp.join(self.img2_dir, data_info['img_info']['filename2'])
+            data_info['ann_info']['filename_flow'] = osp.join(
+                self.data_root, data_info['ann_info']['filename_flow'])
 
     @abstractmethod
     def load_data_info(self):
