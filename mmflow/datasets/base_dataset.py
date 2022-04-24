@@ -53,11 +53,12 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         else:
             self.load_ann_file(ann_file)
 
-    def load_ann_file(self, ann_file):
-        """_summary_
+    def load_ann_file(self, ann_file: str) -> None:
+        """Load annotation file.
 
         Args:
-            ann_file (_type_): _description_
+            ann_file (str): The json file contains the data sample
+                information.
         """
         ann = mmcv.load(
             ann_file,
