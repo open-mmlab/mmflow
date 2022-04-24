@@ -77,7 +77,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
             data_info['img_info']['filename2'] = \
                 osp.join(self.img2_dir, data_info['img_info']['filename2'])
             data_info['ann_info']['filename_flow'] = osp.join(
-                self.data_root, data_info['ann_info']['filename_flow'])
+                self.flow_dir, data_info['ann_info']['filename_flow'])
 
     @abstractmethod
     def load_data_info(self):
