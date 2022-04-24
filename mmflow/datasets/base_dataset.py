@@ -18,6 +18,9 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         data_root (str): Directory for dataset.
         pipeline (Sequence[dict]): Processing pipeline.
         ann_file: Annotation file path. Defaults to None.
+        file_client_args (dict): Arguments to instantiate a FileClient.
+            See :class:`mmcv.fileio.FileClient` for details.
+            Defaults to ``dict(backend='disk')``.
         test_mode (bool): Whether the dataset works for model testing or
             training.
     """
