@@ -53,6 +53,7 @@ def main():
     test_meta = dict(dataset='FlyingChairs', subset='test')
 
     for i, flag in enumerate(split):
+
         data_info = dict(
             img1_dir='data',
             img2_dir='data',
@@ -60,9 +61,9 @@ def main():
             img_info=dict(
                 filename1=img1_filenames[i], filename2=img2_filenames[i]),
             ann_info=dict(filename_flow=flow_filenames[i]))
+
         if flag == 1:
             train_list.append(data_info)
-
         else:
             test_list.append(data_info)
 
