@@ -6,7 +6,7 @@
 
 在目录 `config/_base_` 下有四种基本模块类型，即数据集 (datasets) 、模型 (models) 、训练计划 (schedules) 以及默认运行配置 (default_runtime)。很多模型可以很容易地参考其中一种方法 (如 PWC-Net )来构建。这些由 `_base_` 中的模块构成的配置文件被称为 *原始配置 (primitive configs)*。
 
-对于同一文件夹下的所有配置，建议只有**一个**原始配置。所有其他配置都应该从原始配置继承。这样，最大继承级别 (inheritance level) 为 3。
+对于同一文件夹下的所有配置，建议只有**1个**原始配置。所有其他配置都应该从原始配置继承。这样，最大继承级别 (inheritance level) 为 3。
 
 简单来说，我们建议贡献者去继承现有模型的配置文件。例如，如果在 PWC-Net 的基础上做了一些改动，可以首先通过在配置文件中指定原始配置 `_base_ = ../pwcnet/pwcnet_slong_8x1_flyingchairs_384x448.py` 来继承基本的 PWC-Net 结构，然后再根据需要修改配置文件中的指定字段 (fields)。
 
@@ -38,42 +38,42 @@
 _base_ = [
     '../_base_/models/pwcnet.py', '../_base_/datasets/flyingchairs_384x448.py',
     '../_base_/schedules/schedule_s_long.py', '../_base_/default_runtime.py'
-]# base config file which we build new config file on.
+]# 新增配置文件依赖的基本配置文件
 ```
 
 `_base_/models/pwc_net.py` 是 PWC-Net 模型的基本配置文件。
 
 ```python
 model = dict(
-    type='PWCNet',  # The algorithm name
-    encoder=dict(  # Encoder module config
-        type='PWCNetEncoder',  # The name of encoder in PWC-Net.
-        in_channels=3,  # The input channels
-        #  The type of this sub-module, if net_type is Basic, the the number of convolution layers of each level is 3,
-        #  if net_type is Small, the the number of convolution layers of each level is 2.
+    type='PWCNet',  # 算法名称
+    encoder=dict(  # 编码器 (Encoder) 模块配置
+        type='PWCNetEncoder',  # PWC-Net 编码器名称
+        in_channels=3,  # 输入通道数
+        # 子卷积模块的类型: 如果 net_type 为 Basic，各尺度的卷积层数量为3；如果 net_type 为 
+        # Small，各尺度的卷积层数量为 2
         net_type='Basic',
         pyramid_levels=[
             'level1', 'level2', 'level3', 'level4', 'level5', 'level6'
-        ], # The list of feature pyramid levels that are the keys for output dict.
-        out_channels=(16, 32, 64, 96, 128, 196),  #  List of numbers of output channels of each pyramid level.
-        strides=(2, 2, 2, 2, 2, 2),  # List of strides of each pyramid level.
-        dilations=(1, 1, 1, 1, 1, 1),  # List of dilation of each pyramid level.
-        act_cfg=dict(type='LeakyReLU', negative_slope=0.1)),  # Config dict for each activation layer in ConvModule.
-    decoder=dict(  # Decoder module config.
-        type='PWCNetDecoder',  # The name of flow decoder in PWC-Net.
+        ], # 特征金字塔尺度，同时也是编码器输出字典 (dict) 的键值 (keys)
+        out_channels=(16, 32, 64, 96, 128, 196),  #  各金字塔尺度 (pyramid level) 的输出通道数列表
+        strides=(2, 2, 2, 2, 2, 2),  # 各金字塔尺度 (pyramid level) 的步长 (stride) 列表
+        dilations=(1, 1, 1, 1, 1, 1),  # 各金字塔尺度 (pyramid level) 的膨胀率 (dilation) 列表
+        act_cfg=dict(type='LeakyReLU', negative_slope=0.1)),  # 针对编码器内 ConvModule 模块的激活函数配置
+    decoder=dict(  # 解码器 (Decoder) 模块配置
+        type='PWCNetDecoder',  # 光流估计解码器 (Decoder) 名称
         in_channels=dict(
-            level6=81, level5=213, level4=181, level3=149, level2=117),  # Input channels of basic dense block.
-        flow_div=20.,  # The constant divisor to scale the ground truth value.
+            level6=81, level5=213, level4=181, level3=149, level2=117),  # PWC-Net 的 basic dense block 的输入通道数
+        flow_div=20.,  # 用于缩放真实值 (Ground Truth) 的常数除数
         corr_cfg=dict(type='Correlation', max_displacement=4, padding=0),
         warp_cfg=dict(type='Warp'),
         act_cfg=dict(type='LeakyReLU', negative_slope=0.1),
-        scaled=False,  # Whether to use scaled correlation by the number of elements involved to calculate correlation or not.
-        post_processor=dict(type='ContextNet', in_channels=565),  # The configuration for post processor.
-        flow_loss=dict(  # The loss function configuration.
+        scaled=False,  # 是否使用按参与相关性 (correlation) 计算的元素数量缩放相关性计算结果
+        post_processor=dict(type='ContextNet', in_channels=565),  # 后处理网络配置
+        flow_loss=dict(  # 损失函数配置
             type='MultiLevelEPE',
             p=2,
             reduction='sum',
-            weights={ # The weights for different levels of flow.
+            weights={ # 不同尺度下的光流损失加权权重
                 'level2': 0.005,
                 'level3': 0.01,
                 'level4': 0.02,
@@ -81,7 +81,7 @@ model = dict(
                 'level6': 0.32
             }),
     ),
-    # model training and testing settings
+    # 模型训练测试配置。
     train_cfg=dict(),
     test_cfg=dict(),
     init_cfg=dict(
@@ -95,33 +95,32 @@ model = dict(
 原始配置文件 `_base_/datasets/flyingchairs_384x448.py` 中是:
 
 ```python
-dataset_type = 'FlyingChairs'  # Dataset name
-data_root = 'data/FlyingChairs/data'  # Root path of dataset
+dataset_type = 'FlyingChairs'  # 数据集名称
+data_root = 'data/FlyingChairs/data'  # 数据集根目录
 
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255], to_rgb=False)  # Image normalization config to normalize the input images
+img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255], to_rgb=False)  # 输入图像标准化所需要的均值、标准差信息
 
-train_pipeline = [ # Training pipeline
-    dict(type='LoadImageFromFile'),  # load images
-    dict(type='LoadAnnotations'),  # load flow data
-    dict(type='ColorJitter',  # Randomly change the brightness, contrast, saturation and hue of an image.
-     brightness=0.5,  # How much to jitter brightness.
-     contrast=0.5,  # How much to jitter contrast.
-     saturation=0.5,  # How much to jitter saturation.
-         hue=0.5),  # How much to jitter hue.
-    dict(type='RandomGamma', gamma_range=(0.7, 1.5)),  # Randomly gamma correction on images.
-    dict(type='Normalize', **img_norm_cfg),  # Normalization config, the values are from img_norm_cfg
-    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),  # Add Gaussian noise and a sigma uniformly sampled from [0, 0.04];
-    dict(type='RandomFlip', prob=0.5, direction='horizontal'),  # Random horizontal flip
-    dict(type='RandomFlip', prob=0.5, direction='vertical'),   # Random vertical flip
-    # Random affine transformation of images
-    # Keys of global_transform and relative_transform should be the subset of
-    #     ('translates', 'zoom', 'shear', 'rotate'). And also, each key and its
-    #     corresponding values has to satisfy the following rules:
-    #         - translates: the translation ratios along x axis and y axis. Defaults
-    #             to(0., 0.).
-    #         - zoom: the min and max zoom ratios. Defaults to (1.0, 1.0).
-    #         - shear: the min and max shear ratios. Defaults to (1.0, 1.0).
-    #         - rotate: the min and max rotate degree. Defaults to (0., 0.).
+train_pipeline = [ # 训练图片处理管道 (Pipeline)
+    dict(type='LoadImageFromFile'),  # 加载图片
+    dict(type='LoadAnnotations'),  # 加载光流数据
+    dict(type='ColorJitter',  # 随机改变输入图片亮度、对比度、饱和度以及色调
+     brightness=0.5,  # 亮度调整范围
+     contrast=0.5,  # 对比度调整范围
+     saturation=0.5,  # 饱和度调整范围
+         hue=0.5),  # 色调调整范围
+    dict(type='RandomGamma', gamma_range=(0.7, 1.5)),  # 随机伽马校正配置
+    dict(type='Normalize', **img_norm_cfg),  # 图像标准化配置，具体数值来自 img_norm_cfg
+    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),  # 增加高斯噪声，高斯噪声的标准差采样自 [0, 0.04] 区间
+    dict(type='RandomFlip', prob=0.5, direction='horizontal'),  # 随机水平翻转配置
+    dict(type='RandomFlip', prob=0.5, direction='vertical'),   # 随机竖直翻转配置
+    # 随机仿射变换配置
+    # global_transform 和 relative_transform 的键值应该是下列其中之一:
+    #     ('translates', 'zoom', 'shear', 'rotate')。同时，每个键值和对应的数
+    #     值需要满足下面的规则:
+    #         - 平移: 沿图像坐标系 x 轴、y 轴的平移比率。默认为 (0., 0.)。
+    #         - 缩放: 最小、最大的图片缩放比。默认为 (1.0, 1.0)。
+    #         - 剪切: 最小、最大的图片剪切比。 默认为 (1.0, 1.0)。
+    #         - 旋转: 最小、最大的旋转角度。 默认为 (0., 0.)。
     dict(type='RandomAffine',
          global_transform=dict(
             translates=(0.05, 0.05),
@@ -135,10 +134,10 @@ train_pipeline = [ # Training pipeline
             shear=(1.0, 1.0),
             rotate=(-1.0, 1.0)
         )),
-    dict(type='RandomCrop', crop_size=(384, 448)),  # Random crop the image and flow as (384, 448)
-    dict(type='DefaultFormatBundle'),  # It simplifies the pipeline of formatting common fields, including "img1", "img2" and "flow_gt".
+    dict(type='RandomCrop', crop_size=(384, 448)),  # 随即裁剪输入图像与光流到 (384, 448) 大小
+    dict(type='DefaultFormatBundle'),  # 它提供了格式化常用输入字段的简化接口，支持 'img1'、'img2' 和 'flow_gt' 字段
     dict(
-        type='Collect',  # Collect data from the loader relevant to the specific task.
+        type='Collect',  # 从加载器 (loader) 收集与特定任务相关的数据
         keys=['imgs', 'flow_gt'],
         meta_keys=('img_fields', 'ann_fields', 'filename1', 'filename2',
                    'ori_filename1', 'ori_filename2', 'filename_flow',
@@ -151,37 +150,36 @@ test_pipeline = [
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=4),
     dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),  # It simplifies the pipeline of formatting common fields, including "img1"
-    # and "img2".
+    dict(type='TestFormatBundle'),  # 它提供了格式化常用输入字段的简化接口，支持 'img1'、'img2' 和 'flow_gt' 字段
     dict(
         type='Collect',
-        keys=['imgs'],  # Collect data from the loader relevant to the specific task.
+        keys=['imgs'],  # 从加载器 (loader) 收集与特定任务相关的数据
         meta_keys=('flow_gt', 'filename1', 'filename2', 'ori_filename1',
                    'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-                   'scale_factor', 'pad_shape'))  # 'flow_gt' in img_meta is works for online evaluation.
+                   'scale_factor', 'pad_shape'))  # meta_keys 中的 'flow_gt' 是用于在线模型评估 (online evaluation) 的字段
 ]
 
 data = dict(
     train_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=5,  # Worker to pre-fetch data for each single GPU
-        drop_last=True),  # Drops the last non-full batch
+        samples_per_gpu=1,  # 单一 GPU 上的样本数
+        workers_per_gpu=5,  # 每个 GPU 上预取数据的线程数
+        drop_last=True),  # 是否删除最后一个非完整的批次 (batch)
 
     val_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=2,  # Worker to pre-fetch data for each single GPU
-        shuffle=False),  # Whether shuffle dataset.
+        samples_per_gpu=1,  # 单一 GPU 上的样本数
+        workers_per_gpu=2,  # 每个 GPU 上预取数据的线程数
+        shuffle=False),  # 是否删除最后一个非完整的批次 (batch)
 
     test_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=2,  # Worker to pre-fetch data for each single GPU
-        shuffle=False),  # Whether shuffle dataset.
+        samples_per_gpu=1,  # 单一 GPU 上的样本数
+        workers_per_gpu=2,  # 每个 GPU 上预取数据的线程数
+        shuffle=False),  # 是否打乱输入顺序
 
-    train=dict(  # Train dataset config
+    train=dict(  # 训练数据集配置
         type=dataset_type,
         pipeline=train_pipeline,
         data_root=data_root,
-        split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt',  # train-validation split file
+        split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt',  # 训练、验证子集
     ),
 
     val=dict(
@@ -219,16 +217,16 @@ evaluation = dict(interval=100000, metric='EPE')
 原始配置文件 `_base_/default_runtime.py` 中是:
 
 ```python
-log_config = dict(  # config to register logger hook
-    interval=50,  # Interval to print the log
+log_config = dict(  # 配置注册记录器钩子
+    interval=50,  # 打印训练日志信息的频率
     hooks=[
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook')
-    ])  # The logger used to record the training process.
-dist_params = dict(backend='nccl')  # Parameters to setup distributed training, the port can also be set.
-log_level = 'INFO'  # The level of logging.
-load_from = None  # load models as a pre-trained model from a given path. This will not resume training.
-workflow = [('train', 1)]  # Workflow for runner. [('train', 1)] means there is only one workflow and the workflow named 'train' is executed once.
+    ])  # 记录训练过程的记录器配置
+dist_params = dict(backend='nccl')  # 设置分布式训练的参数，端口 (port) 也可以在这里配置
+log_level = 'INFO'  # 日志信息等级
+load_from = None  # 从给定路径加载模型作为预训练模型，这不同于恢复训练 (resume training)
+workflow = [('train', 1)]  # 运行期的工作流设置。 [('train', 1)] 是指只有一个工作流 'train'，且它只执行一次
 ```
 
 ## 通过脚本参数来修改配置
