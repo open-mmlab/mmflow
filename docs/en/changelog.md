@@ -1,6 +1,32 @@
 # Changelog
 
-# v0.4.0(04/01/2022)
+## v0.4.1(04/29/2022)
+
+### Feature
+
+- Loading flow annotation from file client ([#116](https://github.com/open-mmlab/mmflow/pull/116))
+- Support overall dastaloader settings ([#117](https://github.com/open-mmlab/mmflow/pull/117))
+- Generate ann_file for flyingchairs ([121](https://github.com/open-mmlab/mmflow/pull/121))
+
+### Improvements
+
+- Add GPG keys in CI([127](https://github.com/open-mmlab/mmflow/pull/127))
+
+### Bug Fixes
+
+- The config and weights are not corresponding in the metafile.yml ([#118](https://github.com/open-mmlab/mmflow/pull/118))
+- Replace recommonmark with myst_parser ([#120](https://github.com/open-mmlab/mmflow/pull/120))
+
+### Documents
+
+- Add zh-cn doc 0_config_.md ([#126](https://github.com/open-mmlab/mmflow/pull/126))
+
+## New Contributors
+
+* @HiiiXinyiii made their first contribution in https://github.com/open-mmlab/mmflow/pull/118
+* @SheffieldCao made their first contribution in https://github.com/open-mmlab/mmflow/pull/126
+
+## v0.4.0(04/01/2022)
 
 ### Highlights
 
@@ -13,7 +39,7 @@
 
 ### Improvements
 
-- Revise collect_env for win platform (112)
+- Revise collect_env for win platform (#112)
 - Add script and documentation for multi-machine distributed training (#107)
 
 ## v0.3.0(03/04/2022)
