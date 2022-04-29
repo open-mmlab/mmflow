@@ -49,7 +49,7 @@ model = dict(
     encoder=dict(  # 编码器 (Encoder) 模块配置
         type='PWCNetEncoder',  # PWC-Net 编码器名称
         in_channels=3,  # 输入通道数
-        # 子卷积模块的类型: 如果 net_type 为 Basic，各尺度的卷积层数量为3；如果 net_type 为 
+        # 子卷积模块的类型: 如果 net_type 为 Basic，各尺度的卷积层数量为3；如果 net_type 为
         # Small，各尺度的卷积层数量为 2
         net_type='Basic',
         pyramid_levels=[
