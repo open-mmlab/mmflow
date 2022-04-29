@@ -17,7 +17,7 @@ For example, if some modification is made base on PWC-Net, user may first inheri
 specifying `_base_ = ../pwcnet/pwcnet_slong_8x1_flyingchairs_384x448.py`, then modify the necessary fields in the config files.
 
 If you are building an entirely new method that does not share the structure with any of the existing methods,
-you may create a folder `xxx` under `configs`,
+you may create a folder `xxx` under `configs`.
 
 Please refer to [mmcv](https://mmcv.readthedocs.io/en/latest/understand_mmcv/config.html) for detailed documentation.
 
