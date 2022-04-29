@@ -61,7 +61,7 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-**v0.4.0** was released in 04/01/2022:
+**v0.4.1** was released in 04/29/2022:
 
 - Support occlusion estimation methods including flow forward-backward consistency, range map of the backward flow, and flow forward-backward abstract difference
 

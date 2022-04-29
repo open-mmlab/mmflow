@@ -60,7 +60,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 更新日志
 
-最新的 v0.4.0 版本已经在 2022.04.01 发布:
+最新的 v0.4.1 版本已经在 2022.04.29 发布:
 
 - 支持三种遮挡估计的方法，包括 flow forward-backward consistency，range map of the backward flow，和 flow forward-backward abstract difference
 
