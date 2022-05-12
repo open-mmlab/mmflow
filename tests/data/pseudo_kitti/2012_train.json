@@ -1,0 +1,13 @@
+{
+    "data_list": [
+        {
+            "img1_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2012/training/colored_0/000000_10.png",
+            "img2_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2012/training/colored_0/000000_11.png",
+            "flow_fw_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2012/training/flow_occ/000000_10.png"
+        }
+    ],
+    "metainfo": {
+        "dataset": "KITTI2012",
+        "subset": "train"
+    }
+}

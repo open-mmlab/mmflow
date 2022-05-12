@@ -1,0 +1,13 @@
+{
+    "metainfo": {
+        "dataset": "FlyingChairs",
+        "subset": "train"
+    },
+    "data_list": [
+        {
+            "img1_path": "pseudo_flyingchairs/data/00002_img1.ppm",
+            "img2_path": "pseudo_flyingchairs/data/00002_img2.ppm",
+            "flow_fw_path": "pseudo_flyingchairs/data/00002_flow.flo"
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "metainfo": {
+        "dataset": "FlyingThings3D",
+        "subset": "test"
+    },
+    "data_list": [
+        {
+            "scene": "left",
+            "pass_style": "clean",
+            "img1_path": "pseudo_flyingthings3d/frames_cleanpass/TEST/B/0744/left/0006.png",
+            "img2_path": "pseudo_flyingthings3d/frames_cleanpass/TEST/B/0744/left/0007.png",
+            "flow_fw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_future/left/OpticalFlowIntoFuture_0006_L.pfm",
+            "flow_bw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_past/left/OpticalFlowIntoPast_0007_L.pfm"
+        },
+        {
+            "scene": "left",
+            "pass_style": "final",
+            "img1_path": "pseudo_flyingthings3d/frames_finalpass/TEST/B/0744/left/0006.png",
+            "img2_path": "pseudo_flyingthings3d/frames_finalpass/TEST/B/0744/left/0007.png",
+            "flow_fw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_future/left/OpticalFlowIntoFuture_0006_L.pfm",
+            "flow_bw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_past/left/OpticalFlowIntoPast_0007_L.pfm"
+        },
+        {
+            "scene": "right",
+            "pass_style": "clean",
+            "img1_path": "pseudo_flyingthings3d/frames_cleanpass/TEST/B/0744/right/0006.png",
+            "img2_path": "pseudo_flyingthings3d/frames_cleanpass/TEST/B/0744/right/0007.png",
+            "flow_fw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_future/right/OpticalFlowIntoFuture_0006_R.pfm",
+            "flow_bw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_past/right/OpticalFlowIntoPast_0007_R.pfm"
+        },
+        {
+            "scene": "right",
+            "pass_style": "final",
+            "img1_path": "pseudo_flyingthings3d/frames_finalpass/TEST/B/0744/right/0006.png",
+            "img2_path": "pseudo_flyingthings3d/frames_finalpass/TEST/B/0744/right/0007.png",
+            "flow_fw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_future/right/OpticalFlowIntoFuture_0006_R.pfm",
+            "flow_bw_path": "pseudo_flyingthings3d/optical_flow/TEST/B/0744/into_past/right/OpticalFlowIntoPast_0007_R.pfm"
+        }
+    ]
+}

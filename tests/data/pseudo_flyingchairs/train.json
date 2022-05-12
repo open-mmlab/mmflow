@@ -1,0 +1,28 @@
+{
+    "metainfo": {
+        "dataset": "FlyingChairs",
+        "subset": "train"
+    },
+    "data_list": [
+        {
+            "img1_path": "pseudo_flyingchairs/data/00001_img1.ppm",
+            "img2_path": "pseudo_flyingchairs/data/00001_img2.ppm",
+            "flow_fw_path": "pseudo_flyingchairs/data/00001_flow.flo"
+        },
+        {
+            "img1_path": "pseudo_flyingchairs/data/00003_img1.ppm",
+            "img2_path": "pseudo_flyingchairs/data/00003_img2.ppm",
+            "flow_fw_path": "pseudo_flyingchairs/data/00003_flow.flo"
+        },
+        {
+            "img1_path": "pseudo_flyingchairs/data/00004_img1.ppm",
+            "img2_path": "pseudo_flyingchairs/data/00004_img2.ppm",
+            "flow_fw_path": "pseudo_flyingchairs/data/00004_flow.flo"
+        },
+        {
+            "img1_path": "pseudo_flyingchairs/data/00005_img1.ppm",
+            "img2_path": "pseudo_flyingchairs/data/00005_img2.ppm",
+            "flow_fw_path": "pseudo_flyingchairs/data/00005_flow.flo"
+        }
+    ]
+}

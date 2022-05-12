@@ -1,0 +1,44 @@
+{
+    "data_list": [
+        {
+            "pass_style": "clean",
+            "scene": "alley_1",
+            "img1_path": "pseudo_sintel/training/clean/alley_1/frame_0001.png",
+            "img2_path": "pseudo_sintel/training/clean/alley_1/frame_0002.png",
+            "flow_fw_path": "pseudo_sintel/training/flow/alley_1/frame_0001.flo",
+            "invalid_path": "pseudo_sintel/training/invalid/alley_1/frame_0001.png",
+            "occ_fw_path": "pseudo_sintel/training/occlusions/alley_1/frame_0001.png"
+        },
+        {
+            "pass_style": "clean",
+            "scene": "alley_1",
+            "img1_path": "pseudo_sintel/training/clean/alley_1/frame_0002.png",
+            "img2_path": "pseudo_sintel/training/clean/alley_1/frame_0003.png",
+            "flow_fw_path": "pseudo_sintel/training/flow/alley_1/frame_0002.flo",
+            "invalid_path": "pseudo_sintel/training/invalid/alley_1/frame_0002.png",
+            "occ_fw_path": "pseudo_sintel/training/occlusions/alley_1/frame_0002.png"
+        },
+        {
+            "pass_style": "final",
+            "scene": "alley_1",
+            "img1_path": "pseudo_sintel/training/final/alley_1/frame_0001.png",
+            "img2_path": "pseudo_sintel/training/final/alley_1/frame_0002.png",
+            "flow_fw_path": "pseudo_sintel/training/flow/alley_1/frame_0001.flo",
+            "invalid_path": "pseudo_sintel/training/invalid/alley_1/frame_0001.png",
+            "occ_fw_path": "pseudo_sintel/training/occlusions/alley_1/frame_0001.png"
+        },
+        {
+            "pass_style": "final",
+            "scene": "alley_1",
+            "img1_path": "pseudo_sintel/training/final/alley_1/frame_0002.png",
+            "img2_path": "pseudo_sintel/training/final/alley_1/frame_0003.png",
+            "flow_fw_path": "pseudo_sintel/training/flow/alley_1/frame_0002.flo",
+            "invalid_path": "pseudo_sintel/training/invalid/alley_1/frame_0002.png",
+            "occ_fw_path": "pseudo_sintel/training/occlusions/alley_1/frame_0002.png"
+        }
+    ],
+    "metainfo": {
+        "dataset": "Sintel",
+        "subset": "train"
+    }
+}
