@@ -26,7 +26,7 @@ def test_dataset_wrapper():
 
     concat_dataset = build_dataset(concat_dataset_cfg)
 
-    assert len(concat_dataset) == 4 * 2
+    assert len(concat_dataset) == 2 * 2
 
     # TODO test separate_eval arguments
 
@@ -36,4 +36,4 @@ def test_dataset_wrapper():
         type='RepeatDataset', times=5, dataset=dataset_B_cfg)
 
     repeat_datset = build_dataset([dataset_A_repeat, dataset_B_repeat])
-    assert len(repeat_datset) == 4 * 15
+    assert len(repeat_datset) == 2 * 15

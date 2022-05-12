@@ -1,0 +1,80 @@
+{
+    "metainfo": {
+        "dataset": "FlyingThings3D_subset",
+        "subset": "test"
+    },
+    "data_list": [
+        {
+            "scene": "left",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000000.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000001.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_future/0000000.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_past/0000001.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_future/0000000.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_past/0000001.png"
+        },
+        {
+            "scene": "left",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000001.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000002.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_future/0000001.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_past/0000002.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_future/0000001.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_past/0000002.png"
+        },
+        {
+            "scene": "left",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000002.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000003.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_future/0000002.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_past/0000003.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_future/0000002.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_past/0000003.png"
+        },
+        {
+            "scene": "left",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000003.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/left/0000004.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_future/0000003.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/left/into_past/0000004.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_future/0000003.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/left/into_past/0000004.png"
+        },
+        {
+            "scene": "right",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000000.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000001.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_future/0000000.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_past/0000001.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_future/0000000.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_past/0000001.png"
+        },
+        {
+            "scene": "right",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000001.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000002.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_future/0000001.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_past/0000002.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_future/0000001.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_past/0000002.png"
+        },
+        {
+            "scene": "right",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000002.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000003.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_future/0000002.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_past/0000003.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_future/0000002.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_past/0000003.png"
+        },
+        {
+            "scene": "right",
+            "img1_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000003.png",
+            "img2_path": "pseudo_flyingthings3d_subset/val/image_clean/right/0000004.png",
+            "flow_fw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_future/0000003.flo",
+            "flow_bw_path": "pseudo_flyingthings3d_subset/val/flow/right/into_past/0000004.flo",
+            "occ_fw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_future/0000003.png",
+            "occ_bw_path": "pseudo_flyingthings3d_subset/val/flow_occlusions/right/into_past/0000004.png"
+        }
+    ]
+}

@@ -21,6 +21,12 @@ def parse_args():
         default='data/FlyingChairs_release/FlyingChairs_train_val.txt',
         help='File name of '
         'train-validation split file for FlyingChairs.')
+
+    parser.add_argument(
+        '--save-dir',
+        type=str,
+        default='.',
+        help='Directory to save the annotation files for FlyingChairs dataset')
     args = parser.parse_args()
 
     return args
@@ -55,22 +61,21 @@ def main():
     for i, flag in enumerate(split):
 
         data_info = dict(
-            img1_dir='data',
-            img2_dir='data',
-            flow_dir='data',
-            img_info=dict(
-                filename1=img1_filenames[i], filename2=img2_filenames[i]),
-            ann_info=dict(filename_flow=flow_filenames[i]))
+            img1_path=osp.join(img1_dir, img1_filenames[i]),
+            img2_path=osp.join(img2_dir, img2_filenames[i]),
+            flow_fw_path=osp.join(flow_dir, flow_filenames[i]))
 
         if flag == 1:
             train_list.append(data_info)
         else:
             test_list.append(data_info)
-
-    with open('FlyingChairs_train.json', 'w') as jsonfile:
+    mmcv.mkdir_or_exist(args.save_dir)
+    with open(osp.join(args.save_dir, 'FlyingChairs_train.json'),
+              'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
 
-    with open('FlyingChairs_test.json', 'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'FlyingChairs_test.json'),
+              'w') as jsonfile:
         json.dump({'data_list': test_list, 'metainfo': test_meta}, jsonfile)
 
 

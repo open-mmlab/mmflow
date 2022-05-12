@@ -48,7 +48,7 @@ def test_build_dataset():
 
     # test using list of cfg
     dataset = build_dataset([dataset_A_cfg, dataset_B_cfg])
-    assert len(dataset) == 8
+    assert len(dataset) == 4
 
 
 def test_build_dataloader():

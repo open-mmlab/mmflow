@@ -1,0 +1,13 @@
+{
+    "data_list": [
+        {
+            "img1_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2015/training/image_2/000000_10.png",
+            "img2_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2015/training/image_2/000000_11.png",
+            "flow_fw_path": "/media/SENSETIME\\zhengmiao/DATA/kitti2015/training/flow_occ/000000_10.png"
+        }
+    ],
+    "metainfo": {
+        "dataset": "KITTI2015",
+        "subset": "train"
+    }
+}
