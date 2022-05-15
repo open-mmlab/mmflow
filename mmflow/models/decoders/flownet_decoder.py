@@ -8,7 +8,8 @@ import torch.nn.functional as F
 from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmcv.runner import BaseModule
 
-from ..builder import DECODERS, build_loss
+from mmflow.registry import MODELS
+from ..builder import build_loss
 from .base_decoder import BaseDecoder
 
 
@@ -185,7 +186,7 @@ class BasicBlock(BaseModule):
         return flow, upflow, upfeat
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class FlowNetSDecoder(BaseDecoder):
     """The decoder of FlowNetS.
 
@@ -386,7 +387,7 @@ class FlowNetSDecoder(BaseDecoder):
         return loss
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class FlowNetCDecoder(FlowNetSDecoder):
     """The decoder of FlowNetS."""
 

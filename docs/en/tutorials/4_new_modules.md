@@ -9,9 +9,9 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 ```python
 from mmcv.runner import BaseModule
 
-from ..builder import ENCODERS
+from mmflow.registry import MODELS
 
-@ENCODERS.register_module()
+@MODELS.register_module()
 class MyModel(BaseModule):
 
     def __init__(self, arg1, arg2):
@@ -41,10 +41,10 @@ you can use `init_cfg` to specify the initialization function and arguments,
 or overwrite `init_weigths` if you prefer customized initialization.
 
 ```python
-from ..builder import DECODERS
+from mmflow.registry import MODELS
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class MyDecoder(BaseModule):
 
     def __init__(self, arg1, arg2):
@@ -85,7 +85,7 @@ from ..builder import FLOW_ESTIMATORS
 from .base import FlowEstimator
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class MyEstimator(FlowEstimator):
 
     def __init__(self, arg1, arg2):
@@ -135,7 +135,7 @@ from mmflow.models import LOSSES
 def my_loss(pred, target):
     pass
 
-@LOSSES.register_module()
+@MODELS.register_module()
 class MyLoss(nn.Module):
 
     def __init__(self, arg1):

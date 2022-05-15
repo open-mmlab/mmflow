@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from mmcv.runner import BaseModule
 
-from ..builder import DECODERS
+from mmflow.registry import MODELS
 from .raft_decoder import ConvGRU, RAFTDecoder
 
 
@@ -206,7 +206,7 @@ class Aggregate(BaseModule):
         return out
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class GMADecoder(RAFTDecoder):
     """The decoder of GMA.
 

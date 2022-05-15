@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from ..builder import LOSSES
+from mmflow.registry import MODELS
 
 
 def sequence_loss(preds, flow_gt, gamma, valid=None, max_flow=400):
@@ -39,7 +39,7 @@ def sequence_loss(preds, flow_gt, gamma, valid=None, max_flow=400):
     return flow_loss
 
 
-@LOSSES.register_module()
+@MODELS.register_module()
 class SequenceLoss(nn.Module):
     """Sequence Loss for RAFT.
 

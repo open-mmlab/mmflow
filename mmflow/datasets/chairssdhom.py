@@ -2,8 +2,8 @@
 import os.path as osp
 from typing import Any, Sequence
 
+from mmflow.registry import DATASETS
 from .base_dataset import BaseDataset
-from .builder import DATASETS
 
 # these files contain nan, so exclude them.
 exclude_files = ['08755.pfm']

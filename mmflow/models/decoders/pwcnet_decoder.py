@@ -7,8 +7,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.runner import BaseModule
 
-from mmflow.ops.builder import build_operators
-from ..builder import DECODERS, build_components, build_loss
+from mmflow.registry import MODELS
+from ..builder import build_components, build_loss
 from ..utils import BasicDenseBlock, CorrBlock
 from .base_decoder import BaseDecoder
 
@@ -88,7 +88,7 @@ class PWCModule(BaseModule):
         return flow, feat, upflow, upfeat
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class PWCNetDecoder(BaseDecoder):
     """The Decoder of PWC-Net.
 
@@ -226,7 +226,7 @@ class PWCNetDecoder(BaseDecoder):
         Args:
             warp_cfg (dict): Config for warp operation.
         """
-        self.warp = build_operators(warp_cfg)
+        self.warp = build_components(warp_cfg)
 
     def forward(self, feat1: Dict[str, torch.Tensor],
                 feat2: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:

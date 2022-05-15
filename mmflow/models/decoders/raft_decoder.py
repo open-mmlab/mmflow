@@ -9,8 +9,8 @@ import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
-from mmflow.ops import build_operators
-from ..builder import DECODERS, build_loss
+from mmflow.registry import MODELS
+from ..builder import build_components, build_loss
 from .base_decoder import BaseDecoder
 
 
@@ -290,7 +290,7 @@ class XHead(BaseModule):
         return self.predict_layer(x)
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class RAFTDecoder(BaseDecoder):
     """The decoder of RAFT Net.
 
@@ -349,7 +349,7 @@ class RAFTDecoder(BaseDecoder):
         self.iters = iters
         self.mask_channels = mask_channels * (2 * radius + 1)
         corr_op_cfg['radius'] = radius
-        self.corr_lookup = build_operators(corr_op_cfg)
+        self.corr_lookup = build_components(corr_op_cfg)
         self.encoder = MotionEncoder(
             num_levels=num_levels,
             radius=radius,

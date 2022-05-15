@@ -7,11 +7,11 @@ import torch.distributed as dist
 from numpy import ndarray
 from torch import Tensor
 
-from ..builder import FLOW_ESTIMATORS
+from mmflow.registry import MODELS
 from .pwcnet import PWCNet
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class IRRPWC(PWCNet):
     """IRR-PWC model."""
 

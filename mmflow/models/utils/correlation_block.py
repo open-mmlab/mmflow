@@ -5,7 +5,7 @@ import torch
 from mmcv.cnn import build_activation_layer
 from mmcv.runner import BaseModule
 
-from mmflow.ops import build_operators
+from mmflow.models import build_operators
 
 
 class CorrBlock(BaseModule):

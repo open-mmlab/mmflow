@@ -9,8 +9,10 @@ from torch.utils.data import DistributedSampler as _DistributedSampler
 from torch.utils.data import Sampler
 
 from mmflow.core.utils import sync_random_seed
+from mmflow.registry import DATA_SAMPLERS
 
 
+@DATA_SAMPLERS.register_module()
 class DistributedSampler(_DistributedSampler):
     """DistributedSampler inheriting from
     `torch.utils.data.DistributedSampler`.
@@ -76,6 +78,7 @@ class DistributedSampler(_DistributedSampler):
         return iter(indices)
 
 
+@DATA_SAMPLERS.register_module()
 class MixedBatchDistributedSampler(Sampler):
     """Distributed Sampler for mixed data batch.
 

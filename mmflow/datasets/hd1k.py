@@ -2,8 +2,8 @@
 import os.path as osp
 from glob import glob
 
+from mmflow.registry import DATASETS
 from .base_dataset import BaseDataset
-from .builder import DATASETS
 
 
 @DATASETS.register_module()

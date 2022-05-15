@@ -5,9 +5,10 @@ import torch
 from numpy import ndarray
 from torch import Tensor
 
-from mmflow.ops import Warp
-from ..builder import FLOW_ESTIMATORS, build_flow_estimator
+from mmflow.registry import MODELS
+from ..builder import build_flow_estimator
 from ..decoders.maskflownet_decoder import Upsample
+from ..utils import Warp
 from .pwcnet import PWCNet
 
 
@@ -28,7 +29,7 @@ def centralize(img1: Tensor, img2: Tensor) -> Tuple[Tensor, Tensor]:
     return img1 - rgb_mean, img2 - rgb_mean, rgb_mean
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class MaskFlowNetS(PWCNet):
     """MaskFlowNetS model."""
 
@@ -53,7 +54,7 @@ class MaskFlowNetS(PWCNet):
         return self.encoder(img1), self.encoder(img2)
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class MaskFlowNet(MaskFlowNetS):
     """MaskFlowNet model."""
 

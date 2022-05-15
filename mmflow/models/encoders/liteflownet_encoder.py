@@ -1,11 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from typing import Optional, Sequence, Union
 
-from ..builder import ENCODERS
+from mmflow.registry import MODELS
 from ..utils import BasicEncoder
 
 
-@ENCODERS.register_module()
+@MODELS.register_module()
 class NetC(BasicEncoder):
     """The feature extraction sub-module in LiteFlowNet.
 

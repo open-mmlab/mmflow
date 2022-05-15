@@ -5,11 +5,11 @@ import mmcv
 import numpy as np
 from mmcv import sparse_flow_from_bytes
 
-from ..builder import PIPELINES
+from mmflow.registry import TRANSFORMS
 from ..utils import flow_from_bytes
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class LoadImageFromFile:
     """Load image1 and image2 from file.
 
@@ -104,7 +104,7 @@ class LoadImageFromFile:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class LoadAnnotations:
     """Load optical flow from file.
 
@@ -238,7 +238,7 @@ class LoadAnnotations:
         return results
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class LoadImageFromWebcam(LoadImageFromFile):
     """Load an image from webcam.
 

@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 import torch
 import torch.nn as nn
 
-from ..builder import LOSSES
+from mmflow.registry import MODELS
 from .multilevel_flow_loss import multi_level_flow_loss
 
 
@@ -52,7 +52,7 @@ def endpoint_error(pred: torch.Tensor,
     return epe_map
 
 
-@LOSSES.register_module()
+@MODELS.register_module()
 class MultiLevelEPE(nn.Module):
     """Multi-level end point error loss.
 

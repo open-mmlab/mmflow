@@ -6,11 +6,11 @@ import torch.nn as nn
 from mmcv.cnn import build_conv_layer, build_norm_layer
 from mmcv.runner import BaseModule
 
-from ..builder import ENCODERS
+from mmflow.registry import MODELS
 from ..utils import BasicBlock, Bottleneck, ResLayer
 
 
-@ENCODERS.register_module()
+@MODELS.register_module()
 class RAFTEncoder(BaseModule):
     """The feature extraction sub-module in RAFT.
 

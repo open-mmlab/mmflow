@@ -3,8 +3,8 @@ import os.path as osp
 
 import numpy as np
 
+from mmflow.registry import DATASETS
 from .base_dataset import BaseDataset
-from .builder import DATASETS
 
 DATASET_SIZE = 22872
 VALIDATE_INDICES = [

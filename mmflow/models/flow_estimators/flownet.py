@@ -5,11 +5,12 @@ from mmcv.utils import Config
 from numpy import ndarray
 from torch import Tensor
 
-from ..builder import FLOW_ESTIMATORS, build_encoder
+from mmflow.registry import MODELS
+from ..builder import build_encoder
 from .pwcnet import PWCNet
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class FlowNetS(PWCNet):
     """FlowNetS flow estimator."""
 
@@ -71,7 +72,7 @@ class FlowNetS(PWCNet):
             img_metas=img_metas)
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class FlowNetC(PWCNet):
     """FlowNetC flow estimator.
 

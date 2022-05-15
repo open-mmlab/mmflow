@@ -5,7 +5,7 @@ from typing import Callable, List, Optional, Sequence, Union
 import numpy as np
 from mmengine.dataset import BaseDataset as MME_BaseDataset
 
-from .builder import DATASETS
+from mmflow.registry import DATASETS
 from .utils import get_data_filename
 
 
