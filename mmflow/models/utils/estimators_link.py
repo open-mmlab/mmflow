@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from mmflow.ops import build_operators
+from ..builder import build_components
 
 
 class LinkOutput:
@@ -40,7 +40,7 @@ class BasicLink(nn.Module):
                      type='Warp', padding_mode='border', align_corners=True)):
         super(BasicLink, self).__init__()
 
-        self.warp = build_operators(warp_cfg)
+        self.warp = build_components(warp_cfg)
         self.upSample = nn.Upsample(scale_factor=scale_factor, mode=mode)
 
     def __call__(self, img1: Tensor, img2: Tensor, flow: Tensor,

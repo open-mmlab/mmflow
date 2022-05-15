@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..builder import LOSSES
+from mmflow.registry import MODELS
 
 
 def binary_cross_entropy(pred: torch.Tensor, target: torch.Tensor,
@@ -138,7 +138,7 @@ def multi_levels_binary_cross_entropy(
     return loss / num_preds
 
 
-@LOSSES.register_module()
+@MODELS.register_module()
 class MultiLevelBCE(nn.Module):
     """Multi-level binary cross entropy.
 

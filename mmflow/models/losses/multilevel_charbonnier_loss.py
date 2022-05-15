@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 import torch
 import torch.nn as nn
 
-from ..builder import LOSSES
+from mmflow.registry import MODELS
 from .multilevel_flow_loss import multi_level_flow_loss
 
 
@@ -44,7 +44,7 @@ def charbonnier_loss(pred: torch.Tensor,
     return loss_map
 
 
-@LOSSES.register_module()
+@MODELS.register_module()
 class MultiLevelCharbonnierLoss(nn.Module):
     """Multi-level Generalized Charbonnier loss.
 

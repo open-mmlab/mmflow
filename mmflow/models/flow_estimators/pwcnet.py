@@ -4,11 +4,12 @@ from typing import Dict, Optional, Sequence, Union
 from numpy import ndarray
 from torch import Tensor
 
-from ..builder import FLOW_ESTIMATORS, build_decoder, build_encoder
+from mmflow.registry import MODELS
+from ..builder import build_decoder, build_encoder
 from .base import FlowEstimator
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class PWCNet(FlowEstimator):
     """PWC-Net model.
 

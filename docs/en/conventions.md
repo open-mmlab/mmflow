@@ -20,7 +20,7 @@ is `Dict[str=ndarray]`.
 For example in `PWCNetDecoder`,
 
 ```python
-@DECODERS.register_module()
+@MODELS.register_module()
 class PWCNetDecoder(BaseDecoder):
 
     def forward_test(

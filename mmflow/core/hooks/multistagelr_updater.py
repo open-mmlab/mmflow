@@ -1,7 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from typing import Any, Sequence
 
-from mmcv.runner import HOOKS, IterBasedRunner, LrUpdaterHook
+from mmcv.runner import IterBasedRunner, LrUpdaterHook
+
+from mmflow.registry import HOOKS
 
 
 @HOOKS.register_module()

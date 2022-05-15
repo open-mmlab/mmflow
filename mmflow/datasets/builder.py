@@ -9,9 +9,9 @@ import numpy as np
 import torch
 from mmcv.parallel import collate
 from mmcv.runner import get_dist_info
-from mmcv.utils import Registry, build_from_cfg
 from torch.utils.data import DataLoader, Dataset
 
+from mmflow.registry import DATASETS
 from .samplers import DistributedSampler, MixedBatchDistributedSampler
 
 if platform.system() != 'Windows':
@@ -22,9 +22,6 @@ if platform.system() != 'Windows':
     hard_limit = rlimit[1]
     soft_limit = min(max(4096, base_soft_limit), hard_limit)
     resource.setrlimit(resource.RLIMIT_NOFILE, (soft_limit, hard_limit))
-
-DATASETS = Registry('dataset')
-PIPELINES = Registry('pipeline')
 
 
 def build_dataset(cfg: Union[mmcv.Config, Sequence[mmcv.Config]],
@@ -53,7 +50,7 @@ def build_dataset(cfg: Union[mmcv.Config, Sequence[mmcv.Config]],
         dataset = RepeatDataset(
             build_dataset(cfg['dataset'], default_args), cfg['times'])
     else:
-        dataset = build_from_cfg(cfg, DATASETS, default_args)
+        dataset = DATASETS.build(cfg, default_args=default_args)
 
     return dataset
 

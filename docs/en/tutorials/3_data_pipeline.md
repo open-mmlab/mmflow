@@ -114,7 +114,7 @@ For each operation, we list the related dict fields that are added/updated/remov
     ```python
     from mmflow.datasets import PIPELINES
 
-    @PIPELINES.register_module()
+    @TRANSFORMS.register_module()
     class MyTransform:
 
         def __call__(self, results):

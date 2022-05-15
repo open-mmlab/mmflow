@@ -9,8 +9,8 @@ import torch.nn.functional as F
 from mmcv.cnn.bricks.conv_module import ConvModule
 from mmcv.runner import BaseModule
 
-from mmflow.ops import build_operators
-from ..builder import DECODERS, build_loss
+from mmflow.registry import MODELS
+from ..builder import build_components, build_loss
 from ..utils import CorrBlock
 from .base_decoder import BaseDecoder
 
@@ -136,7 +136,7 @@ class MatchingBlock(BasicBlock):
 
         super().__init__(*args)
         self.corr_cfg = corr_cfg
-        self.warp_op = build_operators(warp_cfg)
+        self.warp_op = build_components(warp_cfg)
         self.pred_flow = nn.Conv2d(
             self.feat_out_channels,
             2,
@@ -199,7 +199,7 @@ class SubpixelBlock(BasicBlock):
 
         super().__init__(*args)
 
-        self.warp_op = build_operators(warp_cfg)
+        self.warp_op = build_components(warp_cfg)
         self.pred_flow = nn.Conv2d(
             self.feat_out_channels,
             2,
@@ -244,7 +244,7 @@ class RegularizationBlock(BasicBlock):
                  out_channels: int, warp_cfg: dict) -> None:
         super().__init__(*args)
 
-        self.warp_op = build_operators(warp_cfg)
+        self.warp_op = build_components(warp_cfg)
         in_channels = self.feat_out_channels
 
         if isinstance(last_kernel_size, (list, tuple)):
@@ -313,7 +313,7 @@ class RegularizationBlock(BasicBlock):
         return torch.cat((flow_x, flow_y), dim=1)
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class NetE(BaseDecoder):
     """NetE of LiteFlowNet.
 

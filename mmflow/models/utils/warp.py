@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .builder import OPERATORS
+from mmflow.registry import MODELS
 
 
 def coords_grid(flow: Tensor) -> Tensor:
@@ -29,7 +29,7 @@ def coords_grid(flow: Tensor) -> Tensor:
     return grid
 
 
-@OPERATORS.register_module()
+@MODELS.register_module()
 class Warp(nn.Module):
     """Warping layer to warp feature using optical flow.
 

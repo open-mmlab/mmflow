@@ -7,11 +7,11 @@ import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
-from mmflow.ops import build_operators
-from ..builder import COMPONENTS
+from mmflow.registry import MODELS
+from ..builder import build_components
 
 
-@COMPONENTS.register_module()
+@MODELS.register_module()
 class FlowRefine(BaseModule):
     """Bilateral refinement module for flow in IRR.
 
@@ -52,7 +52,7 @@ class FlowRefine(BaseModule):
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
         self.act_cfg = act_cfg
-        self.warp_op = build_operators(warp_cfg)
+        self.warp_op = build_components(warp_cfg)
 
         layers = []
         for ch in self.feat_channels:
@@ -140,7 +140,7 @@ class FlowRefine(BaseModule):
         return torch.cat((flow_x, flow_y), dim=1)
 
 
-@COMPONENTS.register_module()
+@MODELS.register_module()
 class OccRefine(FlowRefine):
     """Bilateral refinement module for occlusion in IRR.
 
@@ -215,7 +215,7 @@ class OccRefine(FlowRefine):
         return occ
 
 
-@COMPONENTS.register_module()
+@MODELS.register_module()
 class OccShuffleUpsample(BaseModule):
     """Refine module for upsampled occlusion output.
 
@@ -300,7 +300,7 @@ class OccShuffleUpsample(BaseModule):
             norm_cfg=norm_cfg,
             act_cfg=act_cfg)
         self.mul_const = 0.1
-        self.warp_op = build_operators(warp_cfg)
+        self.warp_op = build_components(warp_cfg)
         self.conv_1x1 = ConvModule(
             in_channels=infeat_channels,
             out_channels=3,

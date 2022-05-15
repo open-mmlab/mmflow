@@ -1,7 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from mmcv.parallel import is_module_wrapper
-from mmcv.runner import HOOKS, IterBasedRunner, load_state_dict
+from mmcv.runner import IterBasedRunner, load_state_dict
 from mmcv.runner.hooks import Hook
+
+from mmflow.registry import HOOKS
 
 
 @HOOKS.register_module()

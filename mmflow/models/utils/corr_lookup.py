@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .builder import OPERATORS
+from mmflow.registry import MODELS
 
 
 def coords_grid(batch: int, xx: Tensor, yy: Tensor) -> Tensor:
@@ -68,7 +68,7 @@ def bilinear_sample(feat: Tensor,
     return F.grid_sample(feat, grid, mode, padding_mode, align_corners)
 
 
-@OPERATORS.register_module()
+@MODELS.register_module()
 class CorrLookup(nn.Module):
     """Correlation lookup operator.
 

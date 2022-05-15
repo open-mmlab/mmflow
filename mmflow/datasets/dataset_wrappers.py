@@ -6,7 +6,7 @@ from mmcv.utils import print_log
 from torch.utils.data import Dataset
 from torch.utils.data.dataset import ConcatDataset as _ConcatDataset
 
-from .builder import DATASETS
+from mmflow.registry import DATASETS
 
 
 @DATASETS.register_module()

@@ -4,12 +4,13 @@ from typing import Dict, Optional, Sequence, Union
 import torch
 from numpy import ndarray
 
-from ..builder import FLOW_ESTIMATORS, build_flow_estimator
+from mmflow.registry import MODELS
+from ..builder import build_flow_estimator
 from ..utils import BasicLink
 from .base import FlowEstimator
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class FlowNetCSS(FlowEstimator):
     """FlowNet2CSS model.
 
@@ -208,7 +209,7 @@ class FlowNetCSS(FlowEstimator):
         return self.flownetS2.decoder(self.flownetS2.encoder(concat2))
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class FlowNet2(FlowEstimator):
     """FlowNet2 model.
 

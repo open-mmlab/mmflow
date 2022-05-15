@@ -6,10 +6,10 @@ import torch.nn as nn
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
-from ..builder import COMPONENTS
+from mmflow.registry import MODELS
 
 
-@COMPONENTS.register_module()
+@MODELS.register_module()
 class ContextNet(BaseModule):
     """The Context network to exploit contextual information for PWC to refine
     the optical flow.

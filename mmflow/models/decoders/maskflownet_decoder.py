@@ -9,7 +9,7 @@ from mmcv.cnn.bricks.activation import build_activation_layer
 from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
 
-from ..builder import DECODERS
+from mmflow.registry import MODELS
 from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
 
@@ -302,7 +302,7 @@ class MaskModule(PWCModule):
         return flow, mask, feat, upflow, upmask, upfeat
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class MaskFlowNetSDecoder(PWCNetDecoder):
     """The decoder module of MaskFlowNetS.
 
@@ -467,7 +467,7 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
             return flow_pred
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class MaskFlowNetDecoder(MaskFlowNetSDecoder):
     """The decoder module of MaskFlowNet."""
 

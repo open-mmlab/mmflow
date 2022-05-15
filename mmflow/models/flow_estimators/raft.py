@@ -5,11 +5,12 @@ import torch
 import torch.nn as nn
 from numpy import ndarray
 
-from ..builder import FLOW_ESTIMATORS, build_encoder
+from mmflow.registry import MODELS
+from ..builder import build_encoder
 from .pwcnet import PWCNet
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class RAFT(PWCNet):
     """RAFT model.
 

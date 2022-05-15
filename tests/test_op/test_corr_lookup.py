@@ -1,9 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 
+from mmflow.models import build_components
 from mmflow.models.decoders.raft_decoder import CorrelationPyramid
-from mmflow.ops.builder import build_operators
-from mmflow.ops.corr_lookup import bilinear_sample, coords_grid
+from mmflow.models.utils.corr_lookup import bilinear_sample, coords_grid
 
 
 def test_coords_grid():
@@ -52,7 +52,7 @@ def test_corr_lookup():
         mode='bilinear',
         padding_mode='zeros',
         align_corners=True)
-    corr_lookup_op = build_operators(corr_lookup_cfg)
+    corr_lookup_op = build_components(corr_lookup_cfg)
 
     corr_lpt = corr_lookup_op(corr_pyramid, torch.randn(1, 2, H, W))
     assert corr_lpt.shape == torch.Size((1, 81 * 4, H, W))

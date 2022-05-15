@@ -4,11 +4,11 @@ from typing import Dict, Optional, Sequence, Tuple
 from numpy import ndarray
 from torch import Tensor
 
-from ..builder import FLOW_ESTIMATORS
+from mmflow.registry import MODELS
 from .pwcnet import PWCNet
 
 
-@FLOW_ESTIMATORS.register_module()
+@MODELS.register_module()
 class LiteFlowNet(PWCNet):
     """LiteFlowNet model."""
 

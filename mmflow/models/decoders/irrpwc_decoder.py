@@ -9,8 +9,8 @@ from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
 from mmflow.models.decoders.base_decoder import BaseDecoder
-from mmflow.ops import build_operators
-from ..builder import DECODERS, build_components, build_loss
+from mmflow.registry import MODELS
+from ..builder import build_components, build_loss
 from ..utils import BasicDenseBlock, CorrBlock
 
 
@@ -53,7 +53,7 @@ class IRRCorrBlock(BaseModule):
         self.corr = CorrBlock(
             corr_cfg=corr_cfg, act_cfg=act_cfg, scaled=scaled)
 
-        self.warp = build_operators(warp_cfg)
+        self.warp = build_components(warp_cfg)
 
     def forward(
         self,
@@ -187,7 +187,7 @@ class IRROccDecoder(BasicDenseBlock):
         return feat, self.predict_layer(feat)
 
 
-@DECODERS.register_module()
+@MODELS.register_module()
 class IRRPWCDecoder(BaseDecoder):
     """The decoder module of IRRPWC.
 

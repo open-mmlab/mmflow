@@ -1,41 +1,29 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Optional, Sequence, Union
-
-import torch.nn as nn
-from mmcv.cnn import MODELS as MMCV_MODELS
-from mmcv.utils import Registry, build_from_cfg
+from mmcv.ops import Correlation
 from torch.nn import Module
 
-MODELS = Registry('models', parent=MMCV_MODELS)
+from mmflow.registry import MODELS
+
 ENCODERS = MODELS
 DECODERS = MODELS
 FLOW_ESTIMATORS = MODELS
 LOSSES = MODELS
 COMPONENTS = MODELS
+OPERATORS = MODELS
+
+OPERATORS.register_module(module=Correlation)
 
 
-def build(cfg: Union[Sequence[dict], dict],
-          registry: Registry,
-          default_args: Optional[dict] = None):
-    """Build a module.
+def build_operators(cfg: dict) -> Module:
+    """build opterator with config dict.
 
     Args:
-        cfg (dict, list[dict]): The config of modules, is is either a dict
-            or a list of configs.
-        registry (:obj:`Registry`): A registry the module belongs to.
-        default_args (dict, optional): Default arguments to build the module.
-            Defaults to None.
+        cfg (dict): The config dict of operator.
 
     Returns:
-        nn.Module: A built nn module.
+        Module: The built operator.
     """
-    if isinstance(cfg, list):
-        modules = [
-            build_from_cfg(cfg_, registry, default_args) for cfg_ in cfg
-        ]
-        return nn.Sequential(*modules)
-    else:
-        return build_from_cfg(cfg, registry, default_args)
+    return OPERATORS.build(cfg)
 
 
 def build_encoder(cfg: dict) -> Module:
@@ -47,7 +35,7 @@ def build_encoder(cfg: dict) -> Module:
     Returns:
         Module: Encoder module.
     """
-    return build(cfg, ENCODERS)
+    return ENCODERS.build(cfg)
 
 
 def build_decoder(cfg: dict) -> Module:
@@ -59,7 +47,7 @@ def build_decoder(cfg: dict) -> Module:
     Returns:
         Module: Decoder module.
     """
-    return build(cfg, DECODERS)
+    return DECODERS.build(cfg)
 
 
 def build_components(cfg: dict) -> Module:
@@ -71,7 +59,7 @@ def build_components(cfg: dict) -> Module:
     Returns:
         Module: Component of model.
     """
-    return build(cfg, COMPONENTS)
+    return COMPONENTS.build(cfg)
 
 
 def build_loss(cfg: dict) -> Module:
@@ -83,7 +71,7 @@ def build_loss(cfg: dict) -> Module:
     Returns:
         Module: Loss function.
     """
-    return build(cfg, LOSSES)
+    return LOSSES.build(cfg)
 
 
 def build_flow_estimator(cfg: dict) -> Module:
@@ -95,4 +83,4 @@ def build_flow_estimator(cfg: dict) -> Module:
     Returns:
         Module: Flow estimator.
     """
-    return build(cfg, FLOW_ESTIMATORS)
+    return FLOW_ESTIMATORS.build(cfg)

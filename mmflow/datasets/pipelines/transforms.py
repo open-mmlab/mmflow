@@ -10,7 +10,7 @@ import numpy as np
 from mmcv.image import adjust_brightness, adjust_color, adjust_contrast
 from numpy import random
 
-from ..builder import PIPELINES
+from mmflow.registry import TRANSFORMS
 from ..utils import adjust_gamma, adjust_hue
 
 
@@ -89,7 +89,7 @@ def get_valid_keys(results: dict) -> list:
         return valid_keys
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class SpacialTransform:
     """Spacial Transform API for RAFT
     Args:
@@ -287,7 +287,7 @@ class SpacialTransform:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class Validation:
     """This Validation transform from RAFT is for return a mask for the flow is
     less than max_flow.
@@ -330,7 +330,7 @@ class Validation:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class Erase:
     """Erase transform from RAFT is randomly erasing rectangular regions in
     img2 to simulate occlusions.
@@ -398,7 +398,7 @@ class Erase:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class InputResize:
     """Resize images such that dimensions are divisible by 2^n
     Args:
@@ -456,7 +456,7 @@ class InputResize:
         return imgs_resize, scale_factor
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class InputPad:
     """Pad images such that dimensions are divisible by 2^n used in test.
 
@@ -519,7 +519,7 @@ class InputPad:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomFlip:
     """Flip the image and flow map.
 
@@ -580,7 +580,7 @@ class RandomFlip:
         return self.__class__.__name__ + f'(prob={self.prob})'
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class Normalize:
     """Normalize the image.
 
@@ -627,7 +627,7 @@ class Normalize:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class BGR2RGB:
     """Convert image channels from BGR to RGB order.
 
@@ -646,7 +646,7 @@ class BGR2RGB:
         return results
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class Rerange:
     """Rerange the image pixel value.
 
@@ -692,7 +692,7 @@ class Rerange:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomCrop:
     """Random crop the image & flow.
 
@@ -749,7 +749,7 @@ class RandomCrop:
         return self.__class__.__name__ + f'(crop_size={self.crop_size})'
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class ColorJitter:
     """Randomly change the brightness, contrast, saturation and hue of an image.
     Args:
@@ -897,7 +897,7 @@ class ColorJitter:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class PhotoMetricDistortion:
     """Apply photometric distortion to image sequentially, every transformation
     is applied with a probability of 0.5.
@@ -1038,7 +1038,7 @@ class PhotoMetricDistortion:
         return repr_str
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomRotation:
     """Random rotation of the image from -angle to angle (in degrees).
 
@@ -1104,7 +1104,7 @@ class RandomRotation:
         return self.__class__.__name__ + f'(angle={self.angle})'
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class GaussianNoise:
     """Add Gaussian Noise to images.
 
@@ -1169,7 +1169,7 @@ class GaussianNoise:
         return self.__class__.__name__ + f'(sigma_range={self.sigma_range})'
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomTranslate:
     """Random translation of the images and flow map.
 
@@ -1227,7 +1227,7 @@ class RandomTranslate:
         return results
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomGamma:
     """Random gamma correction of images.
 

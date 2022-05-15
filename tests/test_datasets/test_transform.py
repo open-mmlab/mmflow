@@ -6,11 +6,10 @@ import cv2
 import mmcv
 import numpy as np
 import pytest
-from mmcv.utils import build_from_cfg
 
 from mmflow.datasets import Compose
-from mmflow.datasets.builder import PIPELINES
 from mmflow.datasets.utils import read_flow
+from mmflow.registry import TRANSFORMS
 
 img1_ = '../data/0000000-img_0.png'
 img2_ = '../data/0000000-img_1.png'
@@ -77,19 +76,19 @@ def test_flip():
     # test assertion for invalid prob
     with pytest.raises(AssertionError):
         transform = dict(type='RandomFlip', prob=1.5)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test assertion for invalid direction
     with pytest.raises(AssertionError):
         transform = dict(type='RandomFlip', prob=1, direction='horizonta')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
 
     transform = dict(type='RandomFlip', prob=1)
-    flip_module = build_from_cfg(transform, PIPELINES)
+    flip_module = TRANSFORMS.build(transform)
     results = flip_module(results)
     assert np.equal(original_img1[:, ::-1, :], results['img1']).all()
     assert np.equal(original_img2[:, ::-1, :], results['img2']).all()
@@ -125,7 +124,7 @@ def test_random_crop():
     # test assertion for invalid random crop
     with pytest.raises(AssertionError):
         transform = dict(type='RandomCrop', crop_size=(-1, 0))
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
@@ -133,7 +132,7 @@ def test_random_crop():
 
     h, w, _ = original_img1.shape
     transform = dict(type='RandomCrop', crop_size=(h - 20, w - 20))
-    crop_module = build_from_cfg(transform, PIPELINES)
+    crop_module = TRANSFORMS.build(transform)
     results = crop_module(results)
     assert results['img1'].shape == (h - 20, w - 20, 3)
     assert results['img_shape'] == (h - 20, w - 20, 3)
@@ -174,14 +173,14 @@ def test_validation(max_flow):
     # test assertion for invalid max_flow
     with pytest.raises(AssertionError):
         transform = dict(type='Validation', max_flow='10')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
 
     transform = dict(type='Validation', max_flow=max_flow)
-    val_module = build_from_cfg(transform, PIPELINES)
+    val_module = TRANSFORMS.build(transform)
     results = val_module(results)
     assert results['valid_fw'].shape == original_flow_fw.shape[:2]
     assert results['valid_bw'].shape == original_flow_fw.shape[:2]
@@ -212,21 +211,21 @@ def test_erase(max_num):
     # test assertion for invalid prob
     with pytest.raises(AssertionError):
         transform = dict(type='Erase', prob='1')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
         transform = dict(type='Erase', prob=-1)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test invalid erase
     with pytest.raises(AssertionError):
         transform = dict(type='Erase', prob=1., max_num=1.4)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
 
     transform = dict(type='Erase', prob=1., max_num=max_num)
-    erase_module = build_from_cfg(transform, PIPELINES)
+    erase_module = TRANSFORMS.build(transform)
     results = erase_module(results)
     assert results['erase_num'] == len(results['erase_bounds'])
     num_pixels = 0
@@ -254,10 +253,10 @@ def test_input_resize():
     with pytest.raises(AssertionError):
         # test invalid exponent
         transform = dict(type='InputResize', exponent=3.2)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     transform = dict(type='InputResize', exponent=9)
-    resize_module = build_from_cfg(transform, PIPELINES)
+    resize_module = TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
@@ -293,10 +292,10 @@ def test_input_pad():
     with pytest.raises(AssertionError):
         # test invalid exponent
         transform = dict(type='InputResize', exponent=3.2)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
         # test invalid position
         transform = dict(type='InputPad', exponent=2, position=None)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     transform = dict(
         type='InputPad',
@@ -308,7 +307,7 @@ def test_input_pad():
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
-    pad_module = build_from_cfg(transform, PIPELINES)
+    pad_module = TRANSFORMS.build(transform)
     results = pad_module(results)
     assert results['pad_shape'][0] % 2**9 == 0
     assert results['pad_shape'][1] % 2**9 == 0
@@ -351,7 +350,7 @@ def test_rgb2bgr():
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
     transform = dict(type='BGR2RGB')
-    bgr2rgb_module = build_from_cfg(transform, PIPELINES)
+    bgr2rgb_module = TRANSFORMS.build(transform)
     results = bgr2rgb_module(results)
     assert results['channels_order'] == 'RGB'
     assert np.all(results['img1'][:, :, 0] == original_img1[:, :, 2])
@@ -378,7 +377,7 @@ def test_normalize():
         std=[58.395, 57.12, 57.375],
         to_rgb=False)
     transform = dict(type='Normalize', **img_norm_cfg)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
@@ -410,17 +409,17 @@ def test_rerange():
     # test assertion if min_value or max_value is illegal
     with pytest.raises(AssertionError):
         transform = dict(type='Rerange', min_value=[0], max_value=[255])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test assertion if min_value >= max_value
     with pytest.raises(AssertionError):
         transform = dict(type='Rerange', min_value=1, max_value=1)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test assertion if img_min_value == img_max_value
     with pytest.raises(AssertionError):
         transform = dict(type='Rerange', min_value=0, max_value=1)
-        transform = build_from_cfg(transform, PIPELINES)
+        transform = TRANSFORMS.build(transform)
         results = dict()
         results['img1'] = np.array([[1, 1], [1, 1]])
         results['img2'] = np.array([[1, 1], [1, 1]])
@@ -432,7 +431,7 @@ def test_rerange():
         make_testdata_for_train()
     img_rerange_cfg = dict()
     transform = dict(type='Rerange', **img_rerange_cfg)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = transform(results)
 
     min_value1 = np.min(original_img1)
@@ -471,13 +470,13 @@ def test_randomrotation(prob):
     # tets invalid prob angle
     with pytest.raises(AssertionError):
         transform = dict(type='RandomRotation', prob=1.2, angle=90.)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
         transform = dict(type='RandomRotation', prob=0, angle=270.)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test prob = 0
     transform = dict(type='RandomRotation', prob=prob, angle=180.)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
@@ -511,7 +510,7 @@ def test_randomrotation(prob):
 
 def test_photometricdistortion():
     transform = dict(type='PhotoMetricDistortion')
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = dict()
     img1 = mmcv.imread(osp.join(osp.dirname(__file__), img1_), 'color')
     img2 = mmcv.imread(osp.join(osp.dirname(__file__), img1_), 'color')
@@ -532,11 +531,11 @@ def test_colorjitter():
             contrast=0.,
             saturation=0.,
             hue=0.)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     with pytest.raises(ValueError):
         # test arguments range
         transform = dict(type='ColorJitter', hue=1.)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     with pytest.raises(TypeError):
         # test arguments type
         transform = dict(
@@ -545,7 +544,7 @@ def test_colorjitter():
             contrast=0.,
             saturation=0.,
             hue='0.')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     transform = dict(
         type='ColorJitter',
@@ -553,7 +552,7 @@ def test_colorjitter():
         contrast=0.3,
         saturation=0.1,
         hue=0.2)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = dict()
     img1 = mmcv.imread(osp.join(osp.dirname(__file__), img1_), 'color')
     img2 = mmcv.imread(osp.join(osp.dirname(__file__), img1_), 'color')
@@ -573,14 +572,14 @@ def test_spacialtransform():
             spacial_prob=1.1,
             stretch_prob=0.1,
             crop_size=(100, 100))
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     with pytest.raises(AssertionError):
         transform = dict(
             type='SpacialTransform',
             spacial_prob=0.1,
             stretch_prob=11.1,
             crop_size=(100, 100))
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test invalid cropsize
     with pytest.raises(AssertionError):
         transform = dict(
@@ -588,7 +587,7 @@ def test_spacialtransform():
             spacial_prob=0.1,
             stretch_prob=0.1,
             crop_size=1)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test invalid min_scale
     with pytest.raises(AssertionError):
         transform = dict(
@@ -597,7 +596,7 @@ def test_spacialtransform():
             stretch_prob=0.1,
             crop_size=(100, 100),
             min_scale='1.')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test invalid max_scale
     with pytest.raises(AssertionError):
         transform = dict(
@@ -606,7 +605,7 @@ def test_spacialtransform():
             stretch_prob=0.1,
             crop_size=(100, 100),
             max_scale='1.')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test invalid max_stretch
     with pytest.raises(AssertionError):
         transform = dict(
@@ -615,7 +614,7 @@ def test_spacialtransform():
             stretch_prob=0.1,
             crop_size=(100, 100),
             max_stretch='1.')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
@@ -627,7 +626,7 @@ def test_spacialtransform():
         stretch_prob=1.,
         crop_size=[100, 100],
     )
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = transform(results)
 
     assert np.all(results['img1'] == original_img1)
@@ -644,7 +643,7 @@ def test_spacialtransform():
         spacial_prob=1.,
         stretch_prob=0.,
         crop_size=[100, 120])
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = transform(results)
 
     assert results['img_shape'][:2] == (100, 120)
@@ -663,24 +662,24 @@ def test_gaussiannoise(sigma_range, clamp_range):
     # test sigma_range type
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise', sigma_range=0.0)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test sigma_range < 0
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise', sigma_range=[-1, 1])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test sigma[0] > sigma[1]
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise', sigma_range=[2, 1])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     # test clamp_range type
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise', clamp_range=0.0)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test clamp[0] > clamp[1]
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise', clamp_range=[2, 1])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
@@ -689,7 +688,7 @@ def test_gaussiannoise(sigma_range, clamp_range):
     # add gaussian noise on uint8 image
     with pytest.raises(AssertionError):
         transform = dict(type='GaussianNoise')
-        transform = build_from_cfg(transform, PIPELINES)
+        transform = TRANSFORMS.build(transform)
         results = transform(results)
 
     img_norm_cfg = dict(mean=[0., 0., 0.], std=[1., 1., 1.], to_rgb=True)
@@ -725,17 +724,17 @@ def test_translate():
     # test prob
     with pytest.raises(AssertionError):
         transform = dict(type='RandomTranslate', prob=-1)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test offset
     with pytest.raises(AssertionError):
         transform = dict(type='RandomTranslate', prob=0., x_offset=1.1)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     with pytest.raises(TypeError):
         transform = dict(type='RandomTranslate', x_offset='st')
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     transform = dict(type='RandomTranslate', prob=0.)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
         make_testdata_for_train()
@@ -750,7 +749,7 @@ def test_translate():
     assert not results['translate']
 
     transform = dict(type='RandomTranslate', prob=1., x_offset=0., y_offset=0.)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = transform(results)
     assert np.all(results['img1'] == original_img1)
     assert np.all(results['img2'] == original_img2)
@@ -761,7 +760,7 @@ def test_translate():
     assert results['translate']
     transform = dict(
         type='RandomTranslate', prob=1., x_offset=0.05, y_offset=0.1)
-    transform = build_from_cfg(transform, PIPELINES)
+    transform = TRANSFORMS.build(transform)
     results = transform(results)
     x_offset, y_offset = results['translate_offset']
     M = np.float32([[1, 0, x_offset * org_W], [0, 1, y_offset * org_H]])
@@ -785,15 +784,15 @@ def test_random_gamma(gamma_range):
     # test gamma_range type
     with pytest.raises(AssertionError):
         transform = dict(type='RandomGamma', gamma_range=0.0)
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test gamma_range < 0
     with pytest.raises(AssertionError):
         transform = dict(type='RandomGamma', gamma_range=[-1, 1])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
     # test gamma[0] > gamma[1]
     with pytest.raises(AssertionError):
         transform = dict(type='RandomGamma', gamma_range=[2, 1])
-        build_from_cfg(transform, PIPELINES)
+        TRANSFORMS.build(transform)
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \

@@ -1,7 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from .builder import (COMPONENTS, DECODERS, ENCODERS, FLOW_ESTIMATORS,
-                      build_components, build_decoder, build_encoder,
-                      build_flow_estimator)
+from .builder import (build_components, build_decoder, build_encoder,
+                      build_flow_estimator, build_operators)
 from .decoders import (FlowNetCDecoder, FlowNetSDecoder, FlowRefine,
                        GMADecoder, IRRPWCDecoder, MaskFlowNetDecoder,
                        MaskFlowNetSDecoder, NetE, OccRefine,
@@ -17,10 +16,10 @@ __all__ = [
     'FlowNetEncoder', 'PWCNetEncoder', 'RAFTEncoder', 'NetC',
     'FlowNetSDEncoder', 'CorrEncoder', 'FlowNetCDecoder', 'FlowNetSDecoder',
     'PWCNetDecoder', 'MaskFlowNetSDecoder', 'NetE', 'FlowNetC', 'FlowNetS',
-    'LiteFlowNet', 'PWCNet', 'MaskFlowNetS', 'ENCODERS', 'DECODERS',
-    'build_encoder', 'build_decoder', 'FLOW_ESTIMATORS',
-    'build_flow_estimator', 'COMPONENTS', 'build_components', 'MultiLevelBCE',
+    'LiteFlowNet', 'PWCNet', 'MaskFlowNetS', 'build_encoder', 'build_decoder',
+    'build_flow_estimator', 'build_components', 'MultiLevelBCE',
     'MultiLevelEPE', 'MultiLevelCharbonnierLoss', 'SequenceLoss', 'IRRPWC',
     'IRRPWCDecoder', 'FlowRefine', 'OccRefine', 'OccShuffleUpsample',
-    'FlowNet2', 'FlowNetCSS', 'MaskFlowNetDecoder', 'MaskFlowNet', 'GMADecoder'
+    'FlowNet2', 'FlowNetCSS', 'MaskFlowNetDecoder', 'MaskFlowNet',
+    'GMADecoder', 'build_operators'
 ]

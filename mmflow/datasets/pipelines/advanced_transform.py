@@ -5,7 +5,7 @@ from typing import Optional, Sequence
 import cv2
 import numpy as np
 
-from ..builder import PIPELINES
+from mmflow.registry import TRANSFORMS
 from .transforms import get_flow_keys, get_img_keys, get_valid_keys
 
 
@@ -155,7 +155,7 @@ def transform_flow(flow: np.ndarray, valid: np.ndarray, theta1: np.ndarray,
     return flow_final[:, :, :2]
 
 
-@PIPELINES.register_module()
+@TRANSFORMS.register_module()
 class RandomAffine:
     """Random affine transformation of images, flow map and occlusion map (if
     available).
