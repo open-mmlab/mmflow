@@ -2,12 +2,12 @@
 
 <!-- TOC -->
 
-- [安装](#安装)
-  - [依赖](#依赖)
-  - [准备环境](#准备环境)
-  - [安装 MMFlow](#安装-mmflow)
-  - [从零开始安装](#从零开始安装)
-  - [安装验证](#安装验证)
+- [安装](#%E5%AE%89%E8%A3%85)
+  - [依赖](#%E4%BE%9D%E8%B5%96)
+  - [准备环境](#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83)
+  - [安装 MMFlow](#%E5%AE%89%E8%A3%85-mmflow)
+  - [从零开始安装](#%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AE%89%E8%A3%85)
+  - [安装验证](#%E5%AE%89%E8%A3%85%E9%AA%8C%E8%AF%81)
 
 <!-- TOC -->
 
@@ -54,7 +54,7 @@ c. 安装 MMCV，我们推荐按照如下方式安装预编译的 MMCV
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/{cu_version}/{torch_version}/index.html
 ```
 
-请按照 CUDA 和 Pytorch 的版本 替换链接中的 ``{cu_version}`` and ``{torch_version}``， 例如，当环境中已安装 CUDA 10.2 和 PyTorch 1.10.0 时安装最新版本的 ``mmcv-full``，可以使用以下命令：
+请按照 CUDA 和 Pytorch 的版本 替换链接中的 `{cu_version}` and `{torch_version}`， 例如，当环境中已安装 CUDA 10.2 和 PyTorch 1.10.0 时安装最新版本的 `mmcv-full`，可以使用以下命令：
 
 ```shell
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.10.0/index.html

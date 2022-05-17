@@ -19,12 +19,12 @@
 
 ### Documents
 
-- Add zh-cn doc 0_config_.md ([#126](https://github.com/open-mmlab/mmflow/pull/126))
+- Add zh-cn doc 0_config\_.md ([#126](https://github.com/open-mmlab/mmflow/pull/126))
 
 ## New Contributors
 
-* @HiiiXinyiii made their first contribution in https://github.com/open-mmlab/mmflow/pull/118
-* @SheffieldCao made their first contribution in https://github.com/open-mmlab/mmflow/pull/126
+- @HiiiXinyiii made their first contribution in https://github.com/open-mmlab/mmflow/pull/118
+- @SheffieldCao made their first contribution in https://github.com/open-mmlab/mmflow/pull/126
 
 ## v0.4.0(04/01/2022)
 

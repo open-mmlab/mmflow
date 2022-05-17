@@ -3,13 +3,15 @@
 本文介绍 MMFlow 的基本使用，安装指引请参看[安装文档](install.md)
 
 <!--- TOC --->
-- [快速入门](#快速入门)
-  - [准备数据集](#准备数据集)
-  - [模型推理](#模型推理)
-    - [演示样例](#演示样例)
-    - [数据集上测试](#数据集上测试)
-  - [模型训练](#模型训练)
-  - [其他教程](#其他教程)
+
+- [快速入门](#%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8)
+  - [准备数据集](#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE%E9%9B%86)
+  - [模型推理](#%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86)
+    - [演示样例](#%E6%BC%94%E7%A4%BA%E6%A0%B7%E4%BE%8B)
+    - [数据集上测试](#%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8A%E6%B5%8B%E8%AF%95)
+  - [模型训练](#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83)
+  - [其他教程](#%E5%85%B6%E4%BB%96%E6%95%99%E7%A8%8B)
+
 <!--- TOC --->
 
 ## 准备数据集
@@ -36,49 +38,49 @@
 
 1. [图像推理样例](../demo/image_demo.py)
 
-    ```shell
-    python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
-        [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
+       [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
+   ```
 
-    可选参数：
+   可选参数：
 
-    - `--out_prefix`: 输出结果的前缀，包括光流文件和可视化后的光流图片。
-    - `--device`: 用于推理的设备
+   - `--out_prefix`: 输出结果的前缀，包括光流文件和可视化后的光流图片。
+   - `--device`: 用于推理的设备
 
-    例子：
+   例子：
 
-    假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存在 `raft_demo`
+   假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存在 `raft_demo`
 
-    ```shell
-    python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
-        configs/raft/raft_8x2_100k_mixed_368x768.pth \
-        checkpoints/raft_8x2_100k_TSKH_368x768.pth raft_demo
-    ```
+   ```shell
+   python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
+       configs/raft/raft_8x2_100k_mixed_368x768.pth \
+       checkpoints/raft_8x2_100k_TSKH_368x768.pth raft_demo
+   ```
 
 2. [视频推理样例](../demo/video_demo.py)
 
-    ```shell
-    python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
-        [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
+       [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
+   ```
 
-    可选参数：
+   可选参数：
 
-    - `--gt`: 输入视频的 ground truth 视频文件。如果指定，可视化结果将会把 ground truth
-        与预测结果连接在一起输出作为比较。
-    - `--device`: 用于推理的设备
+   - `--gt`: 输入视频的 ground truth 视频文件。如果指定，可视化结果将会把 ground truth
+     与预测结果连接在一起输出作为比较。
+   - `--device`: 用于推理的设备
 
-    例子：
+   例子：
 
-    假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存为 `raft_demo.mp4`
+   假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存为 `raft_demo.mp4`
 
-    ```shell
-    python demo/video_demo.py demo/demo.mp4 \
-        configs/raft/raft_8x2_100k_mixed_368x768.py \
-        checkpoints/raft_8x2_100k_mixed_368x768.pth \
-        raft_demo.mp4 --gt demo/demo_gt.mp4
-    ```
+   ```shell
+   python demo/video_demo.py demo/demo.mp4 \
+       configs/raft/raft_8x2_100k_mixed_368x768.py \
+       checkpoints/raft_8x2_100k_mixed_368x768.pth \
+       raft_demo.mp4 --gt demo/demo_gt.mp4
+   ```
 
 ### 数据集上测试
 
