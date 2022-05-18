@@ -78,7 +78,7 @@ from .my_decoder import MyDecoder
 
 1. Create a new file `mmflow/models/flow_estimators/my_estimator.py`
 
-You can write a new flow estimator inherit from `FlowEstimator` like PWC-Net, and implement ``forward_train`` and ``forward_test``
+You can write a new flow estimator inherit from `FlowEstimator` like PWC-Net, and implement `forward_train` and `forward_test`
 
 ```python
 from ..builder import FLOW_ESTIMATORS

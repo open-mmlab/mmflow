@@ -4,6 +4,7 @@ This page provides basic tutorials about the usage of MMFlow.
 For installation instructions, please see [install.md](install.md).
 
 <!-- TOC -->
+
 - [Getting Started](#getting-started)
   - [Prepare datasets](#prepare-datasets)
   - [Inference with Pre-trained Models](#inference-with-pre-trained-models)
@@ -11,6 +12,7 @@ For installation instructions, please see [install.md](install.md).
     - [Test a dataset](#test-a-dataset)
   - [Train a model](#train-a-model)
   - [Tutorials](#tutorials)
+
 <!-- TOC -->
 
 ## Prepare datasets
@@ -39,50 +41,51 @@ We provide scripts to run demos. Here is an example to predict the optical flow 
 
 1. [image demo](../demo/image_demo.py)
 
-    ```shell
-    python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
-        [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
+       [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
+   ```
 
-    Optional arguments:
+   Optional arguments:
 
-    - `--out_prefix`: The prefix for the output results including flow file and visualized flow map.
-    - `--device`: Device used for inference.
+   - `--out_prefix`: The prefix for the output results including flow file and visualized flow map.
+   - `--device`: Device used for inference.
 
-    Example:
+   Example:
 
-    Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
-    and output will be saved in the directory `raft_demo`.
+   Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
+   and output will be saved in the directory `raft_demo`.
 
-    ```shell
-    python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
-        configs/raft/raft_8x2_100k_mixed_368x768.py \
-        checkpoints/raft_8x2_100k_mixed_368x768.pth raft_demo
-    ```
+   ```shell
+   python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
+       configs/raft/raft_8x2_100k_mixed_368x768.py \
+       checkpoints/raft_8x2_100k_mixed_368x768.pth raft_demo
+   ```
 
 2. [video demo](../demo/video_demo.py)
 
-    ```shell
-    python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
-        [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
+       [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
+   ```
 
-    Optional arguments:
-    - `--gt`: The video file of ground truth for input video.
-    If specified, the ground truth will be concatenated predicted result as a comparison.
-    - `--device`: Device used for inference.
+   Optional arguments:
 
-    Example:
+   - `--gt`: The video file of ground truth for input video.
+     If specified, the ground truth will be concatenated predicted result as a comparison.
+   - `--device`: Device used for inference.
 
-    Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
-    and output will be save as `raft_demo.mp4`.
+   Example:
 
-    ```shell
-    python demo/video_demo.py demo/demo.mp4 \
-        configs/raft/raft_8x2_100k_mixed_368x768.py \
-        checkpoints/raft_8x2_100k_mixed_368x768.pth \
-        raft_demo.mp4 --gt demo/demo_gt.mp4
-    ```
+   Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
+   and output will be save as `raft_demo.mp4`.
+
+   ```shell
+   python demo/video_demo.py demo/demo.mp4 \
+       configs/raft/raft_8x2_100k_mixed_368x768.py \
+       checkpoints/raft_8x2_100k_mixed_368x768.pth \
+       raft_demo.mp4 --gt demo/demo_gt.mp4
+   ```
 
 ### Test a dataset
 
@@ -100,7 +103,7 @@ Optional arguments:
 - `--show_dir`: Directory to save the visualized flow maps. If not specified, the flow maps will not be saved.
 - `--eval`: Evaluation metrics, e.g., "EPE".
 - `--cfg-option`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
-For example, '--cfg-option model.encoder.in_channels=6'.
+  For example, '--cfg-option model.encoder.in_channels=6'.
 
 Examples:
 
@@ -131,7 +134,7 @@ Optional arguments:
 - `--seed`: Seed id for random state in python, numpy and pytorch to generate random numbers.
 - `--deterministic`: If specified, it will set deterministic options for CUDNN backend.
 - `--cfg-options`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
-For example, '--cfg-option model.encoder.in_channels=6'.
+  For example, '--cfg-option model.encoder.in_channels=6'.
 
 Difference between `resume-from` and `load-from`:
 `resume-from` loads both the model weights and optimizer status, and the epoch/iter is also inherited from the specified checkpoint. It is usually used for resuming the training process that is interrupted accidentally.

@@ -121,4 +121,4 @@ is available at https://github.com/princeton-vl/RAFT.
 }
 ```
 
-[1] The mixed dataset consisted of FlyingChairs, FlyingThing3d, Sintel, KITTI2015, and HD1K.
+\[1\] The mixed dataset consisted of FlyingChairs, FlyingThing3d, Sintel, KITTI2015, and HD1K.
