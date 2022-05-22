@@ -1,7 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import mmcv
 import pytest
 import torch
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.irrpwc_decoder import (IRRCorrBlock,
                                                    IRRFlowDecoder,
                                                    IRROccDecoder,
@@ -18,13 +21,21 @@ def _get_test_data(
             level6=1024),
         w=32,
         h=32):
-    feat = dict()
+    metainfo = dict(img_shape=(h, w, 3), ori_shape=(h, w))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, h, w)))
+    data_sample.gt_flow_bw = PixelData(**dict(data=torch.randn(2, h, w)))
+    data_sample.gt_occ_fw = PixelData(**dict(data=torch.randn(1, h, w)))
+    data_sample.gt_occ_bw = PixelData(**dict(data=torch.randn(1, h, w)))
 
+    batch_data_samples = [data_sample.cuda()]
+
+    feat = dict()
     for level, ch in _channels.items():
         feat[level] = torch.randn(1, ch, h, w).cuda()
         w = w // 2
         h = h // 2
-    return feat
+    return feat, batch_data_samples, metainfo
 
 
 def test_irr_flow_decoder():
@@ -184,57 +195,48 @@ def test_irr_pwc_decoder():
                 level0=0.0003125)),
         act_cfg=dict(type='LeakyReLU', negative_slope=0.1)).cuda()
 
+    h = 32
+    w = 32
     input_channels = dict(
         level1=16, level2=32, level3=64, level4=96, level5=128, level6=196)
-    feat1 = _get_test_data(input_channels)
-    feat2 = _get_test_data(input_channels)
+    feat1, batch_data_samples, metainfo = _get_test_data(input_channels)
+    feat2, batch_data_samples, metainfo = _get_test_data(input_channels)
 
     feat1['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
     feat2['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
 
-    flow_fw_gt = torch.randn(1, 2, 64, 64).cuda()
-    flow_bw_gt = torch.randn(1, 2, 64, 64).cuda()
-    occ_fw_gt = torch.randn(1, 1, 64, 64).cuda()
-    occ_bw_gt = torch.randn(1, 1, 64, 64).cuda()
-
     # test forward_train out with flow_fw_gt, flow_bw_gt, occ_fw_gt, occ_bw_gt
-    loss = model.forward_train(
-        feat1,
-        feat2,
-        flow_fw_gt=flow_fw_gt,
-        flow_bw_gt=flow_bw_gt,
-        occ_fw_gt=occ_fw_gt,
-        occ_bw_gt=occ_bw_gt,
-    )
+    loss = model.forward_train(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
     # test forward_train out with flow_gt
-    loss = model.forward_train(
-        feat1,
-        feat2,
-        flow_fw_gt=None,
-        flow_bw_gt=None,
-        occ_fw_gt=None,
-        occ_bw_gt=None,
-        flow_gt=flow_fw_gt,
-    )
+    del batch_data_samples[0].gt_flow_bw
+    del batch_data_samples[0].gt_occ_fw
+    del batch_data_samples[0].gt_occ_bw
+
+    loss = model.forward_train(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
-    assert loss.get('loss_occ', None) is None
+    assert float(loss['loss_occ']) == 0.
 
     # test forward_train out with flow_fw_gt, flow_bw_gt
-    loss = model.forward_train(
-        feat1, feat2, flow_fw_gt=flow_fw_gt, flow_bw_gt=flow_bw_gt)
+    batch_data_samples[0].gt_flow_bw = PixelData(**dict(
+        data=torch.randn(2, h, w))).cuda()
+    loss = model.forward_train(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
-    assert loss.get('loss_occ', None) is None
+    assert float(loss['loss_occ']) == 0.
 
     # test forward_train out with flow_gt, occ_gt
-    loss = model.forward_train(
-        feat1, feat2, flow_gt=flow_fw_gt, occ_gt=occ_fw_gt)
+    del batch_data_samples[0].gt_flow_bw
+    batch_data_samples[0].gt_occ_fw = PixelData(**dict(
+        data=torch.randn(1, h, w))).cuda()
+    loss = model.forward_train(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
     # test forward_test
-    flow_result = model.forward_test(feat1, feat2, 64, 64)
-    assert flow_result[0]['flow_fw'].shape == (64, 64, 2)
-    assert flow_result[0]['flow_bw'].shape == (64, 64, 2)
+    flow_result = model.forward_test(feat1, feat2, [metainfo])
+    assert isinstance(flow_result, list) and mmcv.is_list_of(
+        flow_result, FlowDataSample)
+    assert flow_result[0].pred_flow_fw.shape == (h, w)
+    assert flow_result[0].pred_flow_bw.shape == (h, w)

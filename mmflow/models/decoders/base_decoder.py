@@ -5,6 +5,9 @@ from typing import Dict, Optional, Sequence, Union
 import mmcv
 import numpy as np
 from mmcv.runner import BaseModule
+from mmengine.data import PixelData
+
+from mmflow.core.data_structures.flow_data_sample import FlowDataSample
 
 
 class BaseDecoder(BaseModule):
@@ -39,50 +42,46 @@ class BaseDecoder(BaseModule):
         """Placeholder for model computing losses."""
         pass
 
-    def get_flow(
-            self,
-            flow_result: Sequence[Dict[str, np.ndarray]],
-            img_metas: Sequence[dict] = None
-    ) -> Sequence[Dict[str, np.ndarray]]:
+    def get_flow(self, results: Sequence[Dict[str, np.ndarray]],
+                 batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
         """Reverted flow as original size of ground truth.
 
         Args:
             flow_result (Sequence[Dict[str, ndarray]]): predicted results of
                 optical flow.
-            img_metas (Sequence[dict], optional): meta data of image to revert
+            batch_img_metas (Sequence[dict]): meta data of image to revert
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
             Sequence[Dict[str, ndarray]]: the reverted predicted optical flow.
         """
-        if img_metas is not None:
-            ori_shapes = [img_meta['ori_shape'] for img_meta in img_metas]
-            img_shapes = [img_meta['img_shape'] for img_meta in img_metas]
-            pad_shapes = [img_meta['pad_shape'] for img_meta in img_metas]
+        assert len(results) == len(batch_img_metas)
 
-        if (img_metas is None
-                or ori_shapes[0] == img_shapes[0] == pad_shapes[0]):
-            return flow_result
+        data_samples = []
+        for result, img_meta in zip(results, batch_img_metas):
+            ori_H, ori_W = img_meta['ori_shape']
 
-        for i in range(len(flow_result)):
+            pad = img_meta.get('pad', None)
+            w_scale, h_scale = img_meta.get('scale_factor', (None, None))
+            data_sample = FlowDataSample(**{'metainfo': img_meta})
+            for key, f in result.items():
+                if f is not None:
+                    H, W = f.shape[1:]
+                    if pad is not None:
+                        f = f[pad[0][0]:(H - pad[0][1]),
+                              pad[1][0]:(W - pad[1][1])]
 
-            pad = img_metas[i].get('pad', None)
-            w_scale, h_scale = img_metas[i].get('scale_factor', (None, None))
-            ori_shape = img_metas[i]['ori_shape']
+                    elif (w_scale is not None and h_scale is not None):
+                        f = mmcv.imresize(
+                            f,
+                            (ori_W, ori_H),  # size(w, h)
+                            interpolation='bilinear',
+                            return_scale=False)
+                        f[:, :, 0] = f[:, :, 0] / w_scale
+                        f[:, :, 1] = f[:, :, 1] / h_scale
+                flow_data = PixelData(**{'data': f})
+                data_sample.set_data({'pred_' + key: flow_data})
 
-            for key, f in flow_result[i].items():
-                H, W = f.shape[:2]
-                if pad is not None:
-                    f = f[pad[0][0]:(H - pad[0][1]), pad[1][0]:(W - pad[1][1])]
+            data_samples.append(data_sample)
 
-                elif (w_scale is not None and h_scale is not None):
-                    f = mmcv.imresize(
-                        f,
-                        (ori_shape[1], ori_shape[0]),  # size(w, h)
-                        interpolation='bilinear',
-                        return_scale=False)
-                    f[:, :, 0] = f[:, :, 0] / w_scale
-                    f[:, :, 1] = f[:, :, 1] / h_scale
-                flow_result[i][key] = f
-
-        return flow_result
+        return data_samples

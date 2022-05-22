@@ -2,15 +2,16 @@
 import math
 from typing import Dict, Optional, Sequence, Union
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
+from mmflow.core import FlowDataSample
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
+from ..utils import unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 
@@ -396,7 +397,7 @@ class RAFTDecoder(BaseDecoder):
             new_size = (scale * H, scale * W)
             return scale * F.interpolate(
                 flow, size=new_size, mode='bilinear', align_corners=True)
-        # predict a (Nx8×8×9xHxW) mask
+        # predict a (Nx8x8x9xHxW) mask
         mask = mask.view(N, 1, grid_size, scale, scale, H, W)
         mask = torch.softmax(mask, dim=2)
 
@@ -451,14 +452,14 @@ class RAFTDecoder(BaseDecoder):
         return upflow_preds
 
     def forward_train(
-            self,
-            feat1: torch.Tensor,
-            feat2: torch.Tensor,
-            flow: torch.Tensor,
-            h_feat: torch.Tensor,
-            cxt_feat: torch.Tensor,
-            flow_gt: torch.Tensor,
-            valid: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+        self,
+        feat1: torch.Tensor,
+        feat2: torch.Tensor,
+        flow: torch.Tensor,
+        h_feat: torch.Tensor,
+        cxt_feat: torch.Tensor,
+        batch_data_samples: FlowDataSample,
+    ) -> Dict[str, torch.Tensor]:
         """Forward function when model training.
 
         Args:
@@ -467,9 +468,9 @@ class RAFTDecoder(BaseDecoder):
             flow (Tensor): The last estimated flow from GRU cell.
             h (Tensor): The hidden state for GRU cell.
             cxt_feat (Tensor): The contextual feature from the first image.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
 
         Returns:
             Dict[str, Tensor]: The losses of model.
@@ -477,15 +478,17 @@ class RAFTDecoder(BaseDecoder):
 
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
-        return self.losses(flow_pred, flow_gt, valid=valid)
+        return self.losses(flow_pred, batch_data_samples)
 
-    def forward_test(self,
-                     feat1: torch.Tensor,
-                     feat2: torch.Tensor,
-                     flow: torch.Tensor,
-                     h_feat: torch.Tensor,
-                     cxt_feat: torch.Tensor,
-                     img_metas=None) -> Sequence[Dict[str, np.ndarray]]:
+    def forward_test(
+        self,
+        feat1: torch.Tensor,
+        feat2: torch.Tensor,
+        flow: torch.Tensor,
+        h_feat: torch.Tensor,
+        cxt_feat: torch.Tensor,
+        batch_img_metas: Sequence[dict],
+    ) -> Sequence[FlowDataSample]:
         """Forward function when model training.
 
         Args:
@@ -504,17 +507,16 @@ class RAFTDecoder(BaseDecoder):
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
         flow_result = flow_pred[-1]
-        # flow maps with the shape [H, W, 2]
-        flow_result = flow_result.permute(0, 2, 3, 1).cpu().data.numpy()
+        flow_result = flow_result.cpu().data.numpy()
         # unravel batch dim
         flow_result = list(flow_result)
-        flow_result = [dict(flow=f) for f in flow_result]
-        return self.get_flow(flow_result, img_metas=img_metas)
+        flow_result = [dict(flow_fw=f) for f in flow_result]
+        return self.get_flow(flow_result, batch_img_metas)
 
-    def losses(self,
-               flow_pred: Sequence[torch.Tensor],
-               flow_gt: torch.Tensor,
-               valid: torch.Tensor = None) -> Dict[str, torch.Tensor]:
+    def losses(
+        self, flow_pred: Sequence[torch.Tensor],
+        batch_data_samples: Sequence[FlowDataSample]
+    ) -> Dict[str, torch.Tensor]:
         """Compute optical flow loss.
 
         Args:
@@ -527,5 +529,8 @@ class RAFTDecoder(BaseDecoder):
         """
 
         loss = dict()
-        loss['loss_flow'] = self.flow_loss(flow_pred, flow_gt, valid)
+        batch_gt_flow_fw, _, _, _, batch_gt_valid = unpack_flow_data_samples(
+            batch_data_samples)
+        loss['loss_flow'] = self.flow_loss(flow_pred, batch_gt_flow_fw,
+                                           batch_gt_valid)
         return loss

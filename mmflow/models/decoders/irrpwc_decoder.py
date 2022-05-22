@@ -1,17 +1,18 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from collections import defaultdict
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import BasicDenseBlock, CorrBlock
+from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
 
 
 class IRRCorrBlock(BaseModule):
@@ -378,20 +379,18 @@ class IRRPWCDecoder(BaseDecoder):
 
         B, _, H_img, W_img = img1.shape
 
-        # flow_preds is the output of optical flow, includes keys:
-        #   - flow_fw
-        #       - levelx: [Tensor]
-        #   - flow_bw
-        #       - levelx: [Tensor]
+        # pred_flow_fw and pred_flow_bw are the output of optical flow,
+        # includes keys:
+        #   - levelx: [Tensor]
+        #
+        # pred_occ_fw and pred_occ_bw are the output of occlusion,
+        # includes keys:
+        #   - levelx: [Tensor]
 
-        # occ_preds is the output of occlusion, includes keys:
-        #   - flow_fw
-        #       - levelx: [Tensor]
-        #   - flow_bw
-        #       - levelx: [Tensor]
-
-        flow_preds = dict(flow_fw=dict(), flow_bw=dict())
-        occ_preds = dict(occ_fw=dict(), occ_bw=dict())
+        pred_flow_fw = defaultdict(torch.Tensor)
+        pred_flow_bw = defaultdict(torch.Tensor)
+        pred_occ_fw = defaultdict(torch.Tensor)
+        pred_occ_bw = defaultdict(torch.Tensor)
 
         for level in self.flow_levels[::-1]:
 
@@ -420,10 +419,10 @@ class IRRPWCDecoder(BaseDecoder):
 
             if level in self.occ_refined_levels:
 
-                flow_preds['flow_fw'][level] = [
+                pred_flow_fw[level] = [
                     self._scale_flow_as_gt(flow_fw, H_img=H_img, W_img=W_img)
                 ]
-                flow_preds['flow_bw'][level] = [
+                pred_flow_bw[level] = [
                     self._scale_flow_as_gt(flow_bw, H_img=H_img, W_img=W_img)
                 ]
 
@@ -450,8 +449,8 @@ class IRRPWCDecoder(BaseDecoder):
                     H_img,
                     W_img,
                 )
-                occ_preds['occ_fw'][level] = [occ_fw]
-                occ_preds['occ_bw'][level] = [occ_bw]
+                pred_occ_fw[level] = [occ_fw]
+                pred_occ_bw[level] = [occ_bw]
 
             else:
                 corr_f, feat1_1by1, corr_b, feat2_1by1 = self.corr_block[
@@ -502,23 +501,23 @@ class IRRPWCDecoder(BaseDecoder):
 
                 # scale flow as gt scale and divided by flow_div
                 # just rescale flow not reshape map
-                flow_preds['flow_fw'][level] = [
+                pred_flow_fw[level] = [
                     self._scale_flow_as_gt(flow_fw, H_img, W_img),
                     self._scale_flow_as_gt(flow_refined_f, H_img, W_img)
                 ]
-                flow_preds['flow_bw'][level] = [
+                pred_flow_bw[level] = [
                     self._scale_flow_as_gt(flow_bw, H_img, W_img),
                     self._scale_flow_as_gt(flow_refined_b, H_img, W_img)
                 ]
-                occ_preds['occ_fw'][level] = [occ_fw, occ_refined_f]
-                occ_preds['occ_bw'][level] = [occ_bw, occ_refined_b]
+                pred_occ_fw[level] = [occ_fw, occ_refined_f]
+                pred_occ_bw[level] = [occ_bw, occ_refined_b]
 
                 flow_fw = flow_refined_f
                 flow_bw = flow_refined_b
                 occ_fw = occ_refined_f
                 occ_bw = occ_refined_b
 
-        return flow_preds, occ_preds
+        return pred_flow_fw, pred_flow_bw, pred_occ_fw, pred_occ_bw
 
     def _scale_img(self, img: torch.Tensor, h: int, w: int) -> torch.Tensor:
         """Scale image function.
@@ -567,16 +566,11 @@ class IRRPWCDecoder(BaseDecoder):
         return torch.einsum('b c h w, c -> b c h w', flow, scale)
 
     def forward_train(
-            self,
-            feat1: Dict[str, torch.Tensor],
-            feat2: Dict[str, torch.Tensor],
-            flow_fw_gt: Optional[torch.Tensor] = None,
-            flow_bw_gt: Optional[torch.Tensor] = None,
-            occ_fw_gt: Optional[torch.Tensor] = None,
-            occ_bw_gt: Optional[torch.Tensor] = None,
-            flow_gt: Optional[torch.Tensor] = None,
-            occ_gt: Optional[torch.Tensor] = None,
-            valid: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+        self,
+        feat1: Dict[str, torch.Tensor],
+        feat2: Dict[str, torch.Tensor],
+        batch_data_samples: FlowDataSample,
+    ) -> Dict[str, torch.Tensor]:
         """Forward function when model training.
 
         Args:
@@ -584,101 +578,25 @@ class IRRPWCDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            flow_fw_gt (Tensor, optional): The ground truth of optical flow
-                from image1 to image2. Defaults to None.
-            flow_bw_gt (Tensor, optional): The ground truth of optical flow
-                from image2 to image1. Defaults to None.
-            occ_fw_gt (Tensor, optional): The ground truth of occlusion mask
-                from image1 to image2. Defaults to None.
-            occ_bw_gt (Tensor, optional): The ground truth of occlusion mask
-                from image2 to image1. Defaults to None.
-            flow_gt (Tensor, optional): The ground truth of optical flow
-                from image1 to image2. Defaults to None.
-            occ_gt (Tensor, optional): The ground truth of occlusion mask from
-                image1 to image2. Defaults to None.
-            valid (Tensor, optional): The valid mask of optical flow ground
-                truth. Defaults to None.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
         """
 
-        flow_preds, occ_preds = self.forward(feat1, feat2)
-
-        flow_fw = flow_preds['flow_fw']
-        flow_bw = flow_preds['flow_bw']
-        occ_fw = occ_preds['occ_fw']
-        occ_bw = occ_preds['occ_bw']
-
-        losses = dict()
-
-        if (flow_fw_gt is not None and flow_bw_gt is not None
-                and occ_fw_gt is not None and occ_bw_gt is not None):
-
-            loss_fw = self.losses(
-                flow_pred=flow_fw,
-                flow_gt=flow_fw_gt,
-                occ_pred=occ_fw,
-                occ_gt=occ_fw_gt,
-                valid=valid)
-            loss_bw = self.losses(
-                flow_pred=flow_bw,
-                flow_gt=flow_bw_gt,
-                occ_pred=occ_bw,
-                occ_gt=occ_bw_gt,
-                valid=valid)
-
-            losses['loss_flow'] = (loss_fw['loss_flow'] +
-                                   loss_bw['loss_flow']) / 2
-            losses['loss_occ'] = (loss_fw['loss_occ'] +
-                                  loss_bw['loss_occ']) / 2
-
-        elif (flow_gt is not None and occ_gt is not None):
-
-            losses = self.losses(
-                flow_pred=flow_fw,
-                flow_gt=flow_gt,
-                occ_pred=occ_fw,
-                occ_gt=occ_gt,
-                valid=valid)
-
-            self._detach_unused_preds(flow_bw)
-            self._detach_unused_preds(occ_bw)
-
-        elif (flow_fw_gt is not None and flow_bw_gt is not None
-              and occ_fw_gt is None and occ_bw_gt is None and flow_gt is None
-              and occ_gt is None):
-
-            loss_fw = self.losses(
-                flow_pred=flow_fw, flow_gt=flow_fw_gt, valid=valid)
-            loss_bw = self.losses(
-                flow_pred=flow_bw, flow_gt=flow_bw_gt, valid=valid)
-            losses['loss_flow'] = (loss_fw['loss_flow'] +
-                                   loss_bw['loss_flow']) / 2
-
-            self._detach_unused_preds(occ_fw)
-            self._detach_unused_preds(occ_bw)
-
-        elif (flow_fw_gt is None and flow_bw_gt is None and occ_fw_gt is None
-              and occ_bw_gt is None and occ_gt is None
-              and flow_gt is not None):
-            losses = self.losses(
-                flow_pred=flow_fw, flow_gt=flow_gt, valid=valid)
-
-            self._detach_unused_preds(flow_bw)
-            self._detach_unused_preds(occ_fw)
-            self._detach_unused_preds(occ_bw)
-
-        return losses
+        pred_flow_fw, pred_flow_bw, pred_occ_fw, pred_occ_bw = self.forward(
+            feat1, feat2)
+        return self.losses(pred_flow_fw, pred_flow_bw, pred_occ_fw,
+                           pred_occ_bw, batch_data_samples)
 
     def forward_test(
         self,
         feat1: Dict[str, torch.Tensor],
         feat2: Dict[str, torch.Tensor],
-        H: int,
-        W: int,
-        img_metas: Optional[Sequence[dict]] = None
-    ) -> Sequence[Dict[str, np.ndarray]]:
+        batch_img_metas: Sequence[dict],
+    ) -> Sequence[FlowDataSample]:
         """Forward function when model testing.
 
         Args:
@@ -686,70 +604,110 @@ class IRRPWCDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            H (int): The height of images after data augmentation.
-            W (int): The width of images after data augmentation.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            batch_img_metas (Sequence[dict]): meta data of image to revert
+                the flow to original ground truth size.
 
         Returns:
             Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
-        flow_result = []
-        flow_preds, _ = self.forward(feat1, feat2)
+        results = []
+        pred_flow_fw, pred_flow_bw, _, _ = self.forward(feat1, feat2)
 
-        flow_result_fw = flow_preds['flow_fw'][self.end_level][-1]
+        H, W = batch_img_metas[0]['img_shape'][:2]
+        flow_results_fw = pred_flow_fw[self.end_level][-1]
 
-        flow_result_fw = F.interpolate(
-            flow_result_fw, size=(H, W), mode='bilinear', align_corners=False)
-        flow_result_fw = flow_result_fw.permute(
-            0, 2, 3, 1).cpu().data.numpy() * self.flow_div
+        flow_results_fw = F.interpolate(
+            flow_results_fw, size=(H, W), mode='bilinear', align_corners=False)
+        flow_results_fw = flow_results_fw.cpu().data.numpy() * self.flow_div
         # unravel batch dim
-        flow_result_fw = list(flow_result_fw)
+        flow_results_fw = list(flow_results_fw)
 
-        flow_result_bw = flow_preds['flow_bw'][self.end_level][-1]
+        flow_results_bw = pred_flow_bw[self.end_level][-1]
 
-        flow_result_bw = F.interpolate(
-            flow_result_bw, size=(H, W), mode='bilinear', align_corners=False)
-        flow_result_bw = flow_result_bw.permute(
-            0, 2, 3, 1).cpu().data.numpy() * self.flow_div
-
+        flow_results_bw = F.interpolate(
+            flow_results_bw, size=(H, W), mode='bilinear', align_corners=False)
+        flow_result_bw = flow_results_bw.cpu().data.numpy() * self.flow_div
         # unravel batch dim
         flow_result_bw = list(flow_result_bw)
 
         # collect forward and backward flow
-        flow_result = [
+        results = [
             dict(flow_fw=flow_fw, flow_bw=flow_bw)
-            for flow_fw, flow_bw in zip(flow_result_fw, flow_result_bw)
+            for flow_fw, flow_bw in zip(flow_results_fw, flow_results_bw)
         ]
 
-        return self.get_flow(flow_result, img_metas=img_metas)
+        return self.get_flow(results, batch_img_metas=batch_img_metas)
 
-    def losses(self,
-               flow_pred: Dict[str, Sequence[torch.Tensor]],
-               flow_gt: torch.Tensor,
-               occ_pred: Optional[Dict[str, Sequence[torch.Tensor]]] = None,
-               occ_gt: torch.Tensor = None,
-               valid: Optional[torch.Tensor] = None):
+    def losses(
+        self,
+        pred_flow_fw: Dict[str, Sequence[torch.Tensor]],
+        pred_flow_bw: Dict[str, Sequence[torch.Tensor]],
+        pred_occ_fw: Dict[str, Sequence[torch.Tensor]],
+        pred_occ_bw: Dict[str, Sequence[torch.Tensor]],
+        batch_data_samples: Sequence[FlowDataSample],
+    ):
         """Compute optical flow loss and occlusion mask loss.
 
         Args:
-            flow_pred (dict): multi-level predicted optical flow.
-            flow_gt (Tensor): The ground truth of optical flow.
-            occ_pred (dict): multi-level predicted occlusion mask.
-            occ_gt (Tensor): The ground truth of occlusion mask.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            pred_flow_fw (dict): multi-level predicted forward optical flow.
+            pred_flow_bw (dict): multi-level predicted backward optical flow.
+            pred_occ_fw (dict): multi-level predicted forward occlusion mask.
+            pred_occ_bw (dict): multi-level predicted backward occlusion mask.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
         """
-        loss = dict()
-        loss['loss_flow'] = self.flow_loss(flow_pred, flow_gt, valid)
-        if (occ_pred is not None and occ_gt is not None
-                and self.occ_loss is not None):
-            loss['loss_occ'] = self.occ_loss(occ_pred, occ_gt)
-        return loss
+        batch_gt_flow_fw, batch_gt_flow_bw, batch_gt_occ_fw, \
+            batch_gt_occ_bw, batch_gt_valid = \
+            unpack_flow_data_samples(batch_data_samples)
+
+        losses = dict()
+
+        def _flow_loss_or_detach(preds, gts):
+            if gts is None:
+                self._detach_unused_preds(preds)
+                return None
+            else:
+                # only sintel and kitti dataset have valid mask, neither of
+                # them don't have backward flow ground truth
+                return self.flow_loss(preds, gts, valid=batch_gt_valid)
+
+        def _occ_loss_or_detach(preds, gts):
+            if gts is None:
+                self._detach_unused_preds(preds)
+                return None
+            else:
+                return self.occ_loss(preds, gts)
+
+        n_flow_loss = 0
+        losses['loss_flow'] = 0
+        for pred_flow, gt_flow in zip((pred_flow_fw, pred_flow_bw),
+                                      (batch_gt_flow_fw, batch_gt_flow_bw)):
+
+            loss_flow = _flow_loss_or_detach(pred_flow, gt_flow)
+            if loss_flow is not None:
+                losses['loss_flow'] += loss_flow
+                n_flow_loss += 1
+        if n_flow_loss > 0:
+            losses['loss_flow'] = losses['loss_flow'] / n_flow_loss
+
+        n_occ_loss = 0
+        losses['loss_occ'] = 0
+        for pred_occ, gt_occ in zip((pred_occ_fw, pred_occ_bw),
+                                    (batch_gt_occ_fw, batch_gt_occ_bw)):
+            loss_occ = _occ_loss_or_detach(pred_occ, gt_occ)
+            if loss_occ is not None:
+                losses['loss_occ'] += loss_occ
+                n_occ_loss += 1
+        if n_occ_loss > 0:
+            losses['loss_occ'] = losses['loss_occ'] / n_occ_loss
+
+        return losses
 
     @staticmethod
     def _detach_unused_preds(preds: Dict[str, torch.Tensor]) -> None:

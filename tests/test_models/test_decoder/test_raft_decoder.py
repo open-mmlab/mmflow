@@ -1,7 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import mmcv
 import pytest
 import torch
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.raft_decoder import (ConvGRU, CorrelationPyramid,
                                                  MotionEncoder, RAFTDecoder,
                                                  XHead)
@@ -110,18 +113,24 @@ def test_raft_decoder():
     h_feat = torch.randn(1, 128, 8, 8)
     cxt_feat = torch.randn(1, 128, 8, 8)
     flow = torch.zeros((1, 2, 8, 8))
+    h = 64
+    w = 64
+    metainfo = dict(img_shape=(h, w, 3), ori_shape=(h, w))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, h, w)))
+    batch_data_samples = [data_sample]
 
-    flow_gt = torch.randn(1, 2, 64, 64)
     # test forward function
     out = model(feat1, feat2, flow, h_feat, cxt_feat)
     assert isinstance(out, list)
     assert out[0].shape == torch.Size((1, 2, 64, 64))
 
     # test forward train
-    loss = model.forward_train(
-        feat1, feat2, flow, h_feat, cxt_feat, flow_gt=flow_gt)
+    loss = model.forward_train(feat1, feat2, flow, h_feat, cxt_feat,
+                               batch_data_samples)
     assert float(loss['loss_flow']) > 0.
 
     # test forward test
-    out = model.forward_test(feat1, feat2, flow, h_feat, cxt_feat)
-    assert out[0]['flow'].shape == (64, 64, 2)
+    out = model.forward_test(feat1, feat2, flow, h_feat, cxt_feat, [metainfo])
+    assert out[0].pred_flow_fw.shape == (64, 64)
+    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
