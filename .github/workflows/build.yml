@@ -207,8 +207,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
-      - name: Upgrade pip
-        run: pip install pip --upgrade --user
+      # - name: Upgrade pip
+      #   run: pip install pip --upgrade --user
       - name: Install OpenCV
         run: pip install opencv-python>=3
       - name: Install PyTorch
