@@ -2,6 +2,7 @@
 import os.path as osp
 
 import mmcv
+import numpy as np
 import pytest
 import torch
 from mmcv.utils import Config
@@ -27,14 +28,16 @@ def test_init_model():
     '../../configs/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.py',
     '../../configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py'
 ])
-def test_inference_model(cfg_file):
+@pytest.mark.parametrize('valid', [None, np.ones((50, 50, 1))])
+def test_inference_model(cfg_file, valid):
     cfg_file = osp.join(osp.dirname(__file__), cfg_file)
     model = init_model(config=cfg_file).cuda()
 
     img1_file = osp.join(osp.dirname(__file__), '../data/0000000-img_0.png')
     img2_file = osp.join(osp.dirname(__file__), '../data/0000000-img_1.png')
 
-    flow_from_file = inference_model(model, img1s=img1_file, img2s=img2_file)
+    flow_from_file = inference_model(
+        model, img1s=img1_file, img2s=img2_file, valids=valid)
 
     img1 = mmcv.imread(img1_file)
     img2 = mmcv.imread(img2_file)

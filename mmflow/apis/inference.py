@@ -67,7 +67,7 @@ def inference_model(
         img2s (str/ndarray or sequence[str/ndarray]): Either image files or
             loaded images.
         valids (str/ndarray or list[str/ndarray], optional): Either mask files
-            or loaded mask. If the predicted flow it sparse, valid mask will
+            or loaded mask. If the predicted flow is sparse, valid mask will
             filter the output flow map.
     Returns:
         If img-pairs is a list or tuple, the same length list type results
