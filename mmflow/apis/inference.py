@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import copy
-from typing import List, Optional, Union
+from typing import List, Optional, Sequence, Union
 
 import mmcv
 import numpy as np
@@ -52,16 +52,23 @@ def init_model(config: Union[str, mmcv.Config],
 
 
 def inference_model(
-        model: torch.nn.Module, img1s: Union[str, np.ndarray],
-        img2s: Union[str, np.ndarray]) -> Union[List[np.ndarray], np.ndarray]:
+    model: torch.nn.Module,
+    img1s: Union[str, np.ndarray, Sequence[str], Sequence[np.ndarray]],
+    img2s: Union[str, np.ndarray, Sequence[str], Sequence[np.ndarray]],
+    valids: Optional[Union[str, np.ndarray, Sequence[str],
+                           Sequence[np.ndarray]]] = None
+) -> Union[List[np.ndarray], np.ndarray]:
     """Inference images pairs with the flow estimator.
 
     Args:
         model (nn.Module): The loaded flow estimator.
-        img1s (str/ndarray or list[str/ndarray] or tuple[str/ndarray]):
-           Either image files or loaded images.
-        img2s (str/ndarray or list[str/ndarray] or tuple[str/ndarray]):
-           Either image files or loaded images.
+        img1s (str/ndarray or sequence[str/ndarray]): Either image files or
+            loaded images.
+        img2s (str/ndarray or sequence[str/ndarray]): Either image files or
+            loaded images.
+        valids (str/ndarray or list[str/ndarray], optional): Either mask files
+            or loaded mask. If the predicted flow is sparse, valid mask will
+            filter the output flow map.
     Returns:
         If img-pairs is a list or tuple, the same length list type results
         will be returned, otherwise return the flow map from image1 to image2
@@ -72,6 +79,7 @@ def inference_model(
     else:
         img1s = [img1s]
         img2s = [img2s]
+        valids = [valids]
         is_batch = False
     cfg = model.cfg
     device = next(model.parameters()).device  # model device
@@ -89,6 +97,8 @@ def inference_model(
     # there is no need to load annotation.
     if dict(type='LoadAnnotations') in cfg.pipeline:
         cfg.pipeline.remove(dict(type='LoadAnnotations'))
+    if dict(type='LoadAnnotations', sparse=True) in cfg.pipeline:
+        cfg.pipeline.remove(dict(type='LoadAnnotations', sparse=True))
 
     if 'flow_gt' in cfg.pipeline[-1]['meta_keys']:
         cfg.pipeline[-1]['meta_keys'].remove('flow_gt')
@@ -99,21 +109,28 @@ def inference_model(
 
     test_pipeline = Compose(cfg.pipeline)
     datas = []
-    for img1, img2 in zip(img1s, img2s):
+    valid_masks = []
+    for img1, img2, valid in zip(img1s, img2s, valids):
         # prepare data
+        if isinstance(valid, str):
+            # there is no real example to test the function for loading valid
+            # masks
+            valid = mmcv.imread(valid, flag='grayscale')
         if isinstance(img1, np.ndarray) and isinstance(img2, np.ndarray):
-            # directly add img
-            data = dict(img1=img1, img2=img2)
+            # directly add img and valid mask
+            data = dict(img1=img1, img2=img2, valid=valid)
         else:
             # add information into dict
             data = dict(
                 img_info=dict(filename1=img1, filename2=img2),
                 img1_prefix=None,
-                img2_prefix=None)
+                img2_prefix=None,
+                valid=valid)
         data['img_fields'] = ['img1', 'img2']
         # build the data pipeline
         data = test_pipeline(data)
         datas.append(data)
+        valid_masks.append(valid)
 
     data = collate(datas, samples_per_gpu=len(img1s))
     # just get the actual data from DataContainer
@@ -132,6 +149,14 @@ def inference_model(
     # forward the model
     with torch.no_grad():
         results = model(test_mode=True, **data)
+
+    if valid_masks[0] is not None:
+        # filter the output flow map
+        for result, valid in zip(results, valid_masks):
+            if result.get('flow', None) is not None:
+                result['flow'] *= valid
+            elif result.get('flow_fw', None) is not None:
+                result['flow_fw'] *= valid
 
     if not is_batch:
         # only can inference flow of forward direction

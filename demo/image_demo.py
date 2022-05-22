@@ -12,6 +12,10 @@ def parse_args():
     parser = ArgumentParser()
     parser.add_argument('img1', help='Image1 file')
     parser.add_argument('img2', help='Image2 file')
+    parser.add_argument(
+        '--valid',
+        help='Valid file. If the predicted flow is'
+        'sparse, valid mask will filter the output flow map.')
     parser.add_argument('config', help='Config file')
     parser.add_argument('checkpoint', help='Checkpoint file')
     parser.add_argument(
@@ -31,7 +35,7 @@ def main(args):
     # build the model from a config file and a checkpoint file
     model = init_model(args.config, args.checkpoint, device=args.device)
     # test a single image
-    result = inference_model(model, args.img1, args.img2)
+    result = inference_model(model, args.img1, args.img2, valids=args.valid)
     # save the results
     mmcv.mkdir_or_exist(args.out_dir)
     visualize_flow(result, osp.join(args.out_dir, f'{args.out_prefix}.png'))
