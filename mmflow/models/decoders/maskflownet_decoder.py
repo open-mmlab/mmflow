@@ -1,7 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from typing import Dict, Optional, Sequence, Tuple, Union
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -9,6 +8,7 @@ from mmcv.cnn.bricks.activation import build_activation_layer
 from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
 
+from mmflow.core import FlowDataSample
 from mmflow.registry import MODELS
 from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
@@ -550,14 +550,11 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         return flows_pred
 
     def forward_train(
-            self,
-            feat1: Dict[str, torch.Tensor],
-            feat2: Dict[str, torch.Tensor],
-            feat3: Dict[str, torch.Tensor],
-            feat4: Dict[str, torch.Tensor],
-            flows_stage1: Dict[str, torch.Tensor],
-            flow_gt: torch.Tensor,
-            valid: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+        self, feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
+        feat3: Dict[str, torch.Tensor], feat4: Dict[str, torch.Tensor],
+        flows_stage1: Dict[str, torch.Tensor],
+        batch_data_samples: Sequence[FlowDataSample]
+    ) -> Dict[str, torch.Tensor]:
         """Forward function when model training.
 
         Args:
@@ -571,17 +568,17 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
                 image from stage2 of MaskFlowNet.
             flows_stage1 (Dict[str, Tensor]): Estimated multi-level flow from
                 the stage1.
-            flow_gt (Tensor): The ground truth of optical flow from image1 to
-                image2.
-            valid (Tensor, optional): The valid mask of optical flow ground
-                truth. Defaults to None.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
         """
 
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
-        return self.losses(flow_pred, flow_gt, valid=valid)
+
+        return self.losses(flow_pred, batch_data_samples)
 
     def forward_test(
         self,
@@ -590,10 +587,8 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         feat3: Dict[str, torch.Tensor],
         feat4: Dict[str, torch.Tensor],
         flows_stage1: Dict[str, torch.Tensor],
-        H: int,
-        W: int,
-        img_metas: Optional[Sequence[dict]] = None
-    ) -> Sequence[Dict[str, np.ndarray]]:
+        batch_img_metas: Sequence[dict],
+    ) -> Sequence[FlowDataSample]:
         """Forward function when model testing.
 
         Args:
@@ -601,10 +596,14 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            H (int): The height of images after data augmentation.
-            W (int): The width of images after data augmentation.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            feat3 (Dict[str, Tensor]): The feature pyramid from the first
+                image from stage2 of MaskFlowNet.
+            feat4 (Dict[str, Tensor]): The feature pyramid from the second
+                image from stage2 of MaskFlowNet.
+            flows_stage1 (Dict[str, Tensor]): Estimated multi-level flow from
+                the stage1.
+            batch_img_metas (Sequence[dict]): meta data of image to revert
+                the flow to original ground truth size.
         Returns:
             Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
                 with the same size of images before augmentation.
@@ -613,6 +612,7 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
         flow_result = flow_pred[self.end_level]
 
+        H, W = batch_img_metas[0]['img_shape'][:2]
         # resize flow to the size of images after augmentation.
         flow_result = F.interpolate(
             flow_result, size=(H, W), mode='bilinear', align_corners=False)
@@ -624,4 +624,4 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         flow_result = list(flow_result)
         flow_result = [dict(flow=f) for f in flow_result]
 
-        return self.get_flow(flow_result, img_metas=img_metas)
+        return self.get_flow(flow_result, batch_img_metas=batch_img_metas)

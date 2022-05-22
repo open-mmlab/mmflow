@@ -1,8 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import mmcv
 import pytest
 import torch
 import torch.nn as nn
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.liteflownet_decoder import (BasicBlock,
                                                         MatchingBlock, NetE,
                                                         RegularizationBlock,
@@ -191,14 +194,17 @@ def test_nete(extra_training_loss, regularized_flow):
     img1 = torch.randn(1, 3, 16, 16).cuda()
     img2 = torch.randn(1, 3, 16, 16).cuda()
 
-    flow_gt = torch.randn(1, 2, 16, 16).cuda()
+    metainfo = dict(img_shape=(16, 16, 3), ori_shape=(16, 16))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, 16, 16)))
+    batch_data_samples = [data_sample.cuda()]
 
-    loss = nete.forward_train(img1, img2, feat1, feat2, flow_gt)
+    loss = nete.forward_train(img1, img2, feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    out = nete.forward_test(img1, img2, feat1, feat2)
-    assert isinstance(out, list)
-    assert out[0]['flow'].shape == (16, 16, 2)
+    out = nete.forward_test(img1, img2, feat1, feat2, [metainfo])
+    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert out[0].pred_flow_fw.shape == (16, 16)
 
     # test forward
     flow_pred = nete.forward(img1, img2, feat1, feat2)

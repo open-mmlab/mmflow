@@ -1,7 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import mmcv
 import pytest
 import torch
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.flownet_decoder import (BasicBlock, DeconvModule,
                                                     FlowNetCDecoder,
                                                     FlowNetSDecoder)
@@ -17,14 +20,18 @@ def _get_test_data_cuda(
             level6=1024),
         w=64,
         h=64):
-    feat = dict()
 
+    metainfo = dict(img_shape=(h, w, 3), ori_shape=(h, w))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, h, w)))
+    batch_data_samples = [data_sample.cuda()]
+
+    feat = dict()
     for level, ch in _channels.items():
         feat[level] = torch.randn(1, ch, h, w).cuda()
         w = w // 2
         h = h // 2
-    flow_gt = torch.randn(1, 2, h, w).cuda()
-    return feat, flow_gt
+    return feat, batch_data_samples, metainfo
 
 
 def _get_test_data_cpu(
@@ -37,14 +44,17 @@ def _get_test_data_cpu(
             level6=1024),
         w=64,
         h=64):
-    feat = dict()
+    metainfo = dict(img_shape=(h, w, 3), ori_shape=(h, w))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, h, w)))
+    batch_data_samples = [data_sample]
 
+    feat = dict()
     for level, ch in _channels.items():
         feat[level] = torch.randn(1, ch, h, w)
         w = w // 2
         h = h // 2
-    flow_gt = torch.randn(1, 2, h, w)
-    return feat, flow_gt
+    return feat, batch_data_samples, metainfo
 
 
 def test_deconv_module():
@@ -123,10 +133,13 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
                 'level6': 0.32
             }))
 
-    feat, flow_gt = _get_test_data_cpu()
+    feat, batch_data_samples, metainfo = _get_test_data_cpu()
 
     # test multi-levels flow
-    out = model.forward_train(feat, return_multi_level_flow=True)
+    out = model.forward_train(
+        feat,
+        batch_data_samples=batch_data_samples,
+        return_multi_level_flow=True)
 
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
@@ -136,7 +149,8 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
     assert out['level2'].shape == torch.Size((1, 2, 32, 32))
 
     # test multi-levels flow
-    out = model.forward_test(feat, H=64, W=64, return_multi_level_flow=True)
+    out = model.forward_test(
+        feat, batch_img_metas=[metainfo], return_multi_level_flow=True)
 
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
@@ -145,13 +159,13 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
     assert out['level3'].shape == torch.Size((1, 2, 16, 16))
     assert out['level2'].shape == torch.Size((1, 2, 32, 32))
 
-    loss = model.forward_train(feat, flow_gt=flow_gt)
+    loss = model.forward_train(feat, batch_data_samples=batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
     # test forward test
-    out = model.forward_test(feat, H=64, W=64)
-    assert isinstance(out, list)
-    assert out[0]['flow'].shape == (64, 64, 2)
+    out = model.forward_test(feat, batch_img_metas=[metainfo])
+    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert out[0].pred_flow_fw.shape == (64, 64)
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
@@ -172,13 +186,17 @@ def test_flownetc_decoder():
                 'level6': 0.32
             })).cuda()
 
-    feat1, flow_gt = _get_test_data_cuda(
+    feat1, batch_data_samples, metainfo = _get_test_data_cuda(
         dict(level1=64, level2=128, level3=256))
-    corr_feat, _ = _get_test_data_cuda(
+    corr_feat, _, _ = _get_test_data_cuda(
         dict(level3=256, level4=512, level5=512, level6=1024), w=16, h=16)
 
     # test multi-levels flow
-    out = model.forward_train(feat1, corr_feat, return_multi_level_flow=True)
+    out = model.forward_train(
+        feat1,
+        corr_feat,
+        batch_data_samples=batch_data_samples,
+        return_multi_level_flow=True)
 
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
@@ -189,7 +207,10 @@ def test_flownetc_decoder():
 
     # test multi-levels flow
     out = model.forward_test(
-        feat1, corr_feat, H=64, W=64, return_multi_level_flow=True)
+        feat1,
+        corr_feat,
+        batch_img_metas=[metainfo],
+        return_multi_level_flow=True)
 
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
@@ -198,11 +219,12 @@ def test_flownetc_decoder():
     assert out['level3'].shape == torch.Size((1, 2, 16, 16))
     assert out['level2'].shape == torch.Size((1, 2, 32, 32))
 
-    loss = model.forward_train(feat1, corr_feat, flow_gt=flow_gt)
+    loss = model.forward_train(
+        feat1, corr_feat, batch_data_samples=batch_data_samples)
 
     assert float(loss['loss_flow']) > 0
 
     # test forward test
-    out = model.forward_test(feat1, corr_feat, H=64, W=64)
-    assert isinstance(out, list)
-    assert out[0]['flow'].shape == (64, 64, 2)
+    out = model.forward_test(feat1, corr_feat, batch_img_metas=[metainfo])
+    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert out[0].pred_flow_fw.shape == (64, 64)

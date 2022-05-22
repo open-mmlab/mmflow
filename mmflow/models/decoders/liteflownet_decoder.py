@@ -2,16 +2,16 @@
 import math
 from typing import Dict, Optional, Sequence, Union
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn.bricks.conv_module import ConvModule
 from mmcv.runner import BaseModule
 
+from mmflow.core import FlowDataSample
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import CorrBlock
+from ..utils import CorrBlock, unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 
@@ -645,13 +645,9 @@ class NetE(BaseDecoder):
             img, size=(h, w), mode='bilinear', align_corners=False)
 
     def forward_train(
-            self,
-            img1: torch.Tensor,
-            img2: torch.Tensor,
-            feat1: Dict[str, torch.Tensor],
-            feat2: Dict[str, torch.Tensor],
-            flow_gt: torch.Tensor,
-            valid: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+            self, img1: torch.Tensor, img2: torch.Tensor,
+            feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
+            batch_data_samples: FlowDataSample) -> Dict[str, torch.Tensor]:
         """Forward function when model training.
 
         Args:
@@ -659,9 +655,9 @@ class NetE(BaseDecoder):
             img2 (Tensor): The second input image.
             feat1 (Dict[str, Tensor]): The feature pyramid from first image.
             feat2 (Dict[str, Tensor]): The feature pyramid from second image.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
 
         Returns:
             Dict[str, Tensor]: The losses of model.
@@ -675,16 +671,12 @@ class NetE(BaseDecoder):
         if self.extra_training_loss:
             flow_pred['level0'] = self._scale_img(flow_pred[self.end_level], H,
                                                   W)
-        return self.losses(flow_pred=flow_pred, flow_gt=flow_gt, valid=valid)
+        return self.losses(flow_pred, batch_data_samples)
 
     def forward_test(
-            self,
-            img1: torch.Tensor,
-            img2: torch.Tensor,
-            feat1: Dict[str, torch.Tensor],
-            feat2: Dict[str, torch.Tensor],
-            img_metas: Optional[dict] = None
-    ) -> Sequence[Dict[str, np.ndarray]]:
+            self, img1: torch.Tensor, img2: torch.Tensor,
+            feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
+            batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
         """Forward function when model testing.
 
         Args:
@@ -692,37 +684,36 @@ class NetE(BaseDecoder):
             img2 (Tensor): The second input image.
             feat1 (Dict[str, Tensor]): The feature pyramid from first image.
             feat2 (Dict[str, Tensor]): The feature pyramid from second image.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            batch_img_metas (Sequence[dict]): meta data of image to revert
+                the flow to original ground truth size.
 
         Returns:
             Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
-        H, W = img1.shape[2:]
+        H, W = batch_img_metas[0]['img_shape'][:2]
 
         flow_pred = self.forward(
             img1=img1, img2=img2, feat1=feat1, feat2=feat2)
 
-        flow_result = flow_pred[self.end_level]
+        flow_results = flow_pred[self.end_level]
         # flow to the size of images after augmentation.
-        flow_result = F.interpolate(
-            flow_result, size=(H, W), mode='bilinear', align_corners=False)
+        flow_results = F.interpolate(
+            flow_results, size=(H, W), mode='bilinear', align_corners=False)
 
-        # unravel batch dim, reshape [2, H, W] to [H, W, 2], and resize
-        flow_result = flow_result.permute(0, 2, 3,
-                                          1).cpu().data.numpy() * self.flow_div
+        flow_results = flow_results.cpu().data.numpy() * self.flow_div
 
-        flow_result = list(flow_result)
-        flow_result = [dict(flow=f) for f in flow_result]
+        # unravel batch dim
+        flow_results = list(flow_results)
+        results = [dict(flow_fw=f) for f in flow_results]
 
-        return self.get_flow(flow_result, img_metas=img_metas)
+        return self.get_flow(results, batch_img_metas=batch_img_metas)
 
-    def losses(self,
-               flow_pred: Dict[str, torch.Tensor],
-               flow_gt: torch.Tensor,
-               valid: torch.Tensor = None) -> Dict[str, torch.Tensor]:
+    def losses(
+        self, flow_pred: Dict[str, torch.Tensor],
+        batch_data_samples: Sequence[FlowDataSample]
+    ) -> Dict[str, torch.Tensor]:
         """Compute optical flow loss.
 
         Args:
@@ -735,5 +726,8 @@ class NetE(BaseDecoder):
         """
 
         loss = dict()
-        loss['loss_flow'] = self.flow_loss(flow_pred, flow_gt, valid)
+        batch_gt_flow_fw, _, _, _, batch_gt_valid = unpack_flow_data_samples(
+            batch_data_samples)
+        loss['loss_flow'] = self.flow_loss(flow_pred, batch_gt_flow_fw,
+                                           batch_gt_valid)
         return loss

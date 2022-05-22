@@ -1,7 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import mmcv
 import pytest
 import torch
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.models.decoders.pwcnet_decoder import PWCModule, PWCNetDecoder
 
 
@@ -70,12 +73,14 @@ def test_pwcnet_decoder():
             })).cuda()
 
     feat1, feat2 = _get_test_data()
+    metainfo = dict(img_shape=(32, 32, 3), ori_shape=(32, 32))
+    data_sample = FlowDataSample(metainfo=metainfo)
+    data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, 32, 32)))
+    batch_data_samples = [data_sample.cuda()]
 
-    flow_gt = torch.randn(1, 2, 32, 32).cuda()
-
-    loss = model.forward_train(feat1, feat2, flow_gt)
+    loss = model.forward_train(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    out = model.forward_test(feat1, feat2, H=32, W=32)
-    assert isinstance(out, list)
-    assert out[0]['flow'].shape == (32, 32, 2)
+    out = model.forward_test(feat1, feat2, [metainfo])
+    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert out[0].pred_flow_fw.shape == (32, 32)
