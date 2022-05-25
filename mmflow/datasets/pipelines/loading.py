@@ -1,112 +1,61 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import os.path as osp
+from typing import Dict
 
 import mmcv
 import numpy as np
 from mmcv import sparse_flow_from_bytes
+from mmcv.transforms import BaseTransform, LoadImageFromFile
 
 from mmflow.registry import TRANSFORMS
 from ..utils import flow_from_bytes
 
 
 @TRANSFORMS.register_module()
-class LoadImageFromFile:
-    """Load image1 and image2 from file.
-
-    Required keys are "img1_info" (dict that must contain the key "filename"
-    and "filename2"). Added or updated keys are "img1", "img2", "img_shape",
-    "ori_shape" (same as `img_shape`), "pad_shape" (same as `img_shape`),
-    "scale_factor" (1.0, 1.0) and "img_norm_cfg" (means=0 and stds=1).
-
-    Args:
-        to_float32 (bool): Whether to convert the loaded image to a float32
-            numpy array. If set to False, the loaded image is an uint8 array.
-            Defaults to False.
-        color_type (str): The flag argument for :func:`mmcv.imfrombytes`.
-            Defaults to 'color'.
-        file_client_args (dict): Arguments to instantiate a FileClient.
-            See :class:`mmcv.fileio.FileClient` for details.
-            Defaults to ``dict(backend='disk')``.
-        imdecode_backend (str): Backend for :func:`mmcv.imdecode`. Default:
-            'cv2'
-    """
-
-    def __init__(self,
-                 to_float32: bool = False,
-                 color_type: str = 'color',
-                 file_client_args: dict = dict(backend='disk'),
-                 imdecode_backend: str = 'cv2') -> None:
-        super().__init__()
-        self.to_float32 = to_float32
-        self.color_type = color_type
-        self.file_client_args = file_client_args
-        self.file_client = None
-        self.imdecode_backend = imdecode_backend
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to load image and get image meta information.
-
-        Args:
-            results (dict): Result dict from :obj:`mmflow.BaseDataset`.
-
-        Returns:
-            dict: The dict contains loaded image and meta information.
-        """
-        if self.file_client is None:
-            self.file_client = mmcv.FileClient(**self.file_client_args)
-
-        filename1 = results['img_info']['filename1']
-        filename2 = results['img_info']['filename2']
-        if (not osp.isfile(filename1)) or (not osp.isfile(filename2)):
-
-            raise RuntimeError(
-                f'Cannot load file from {filename1} or {filename2}')
-
-        img1_bytes = self.file_client.get(filename1)
-        img2_bytes = self.file_client.get(filename2)
-
-        img1 = mmcv.imfrombytes(
-            img1_bytes, flag=self.color_type, backend=self.imdecode_backend)
-        img2 = mmcv.imfrombytes(
-            img2_bytes, flag=self.color_type, backend=self.imdecode_backend)
-
-        assert img1 is not None
-
-        if self.to_float32:
-            img1 = img1.astype(np.float32)
-            img2 = img2.astype(np.float32)
-
-        results['filename1'] = filename1
-        results['filename2'] = filename2
-        results['ori_filename1'] = osp.split(filename1)[-1]
-        results['ori_filename2'] = osp.split(filename2)[-1]
-
-        results['img1'] = img1
-        results['img2'] = img2
-
-        results['img_shape'] = img1.shape
-        results['ori_shape'] = img1.shape
-        # Set initial values for default meta_keys
-        results['pad_shape'] = img1.shape
-        results['scale_factor'] = np.array([1.0, 1.0])
-        num_channels = 1 if len(img1.shape) < 3 else img1.shape[2]
-        results['img_norm_cfg'] = dict(
-            mean=np.zeros(num_channels, dtype=np.float32),
-            std=np.ones(num_channels, dtype=np.float32),
-            to_rgb=False)
-        return results
-
-    def __repr__(self) -> str:
-        repr_str = self.__class__.__name__
-        repr_str += f'(to_float32={self.to_float32},'
-        repr_str += f"color_type='{self.color_type}',"
-        repr_str += f"imdecode_backend='{self.imdecode_backend}')"
-        return repr_str
-
-
-@TRANSFORMS.register_module()
-class LoadAnnotations:
+class LoadAnnotations(BaseTransform):
     """Load optical flow from file.
+
+    The annotation format is as the following:
+
+    .. code-block:: python
+
+        {
+            # Filename of optical flow ground truth file.
+            'flow_fw_path': 'a/b/c',
+            'flow_bw_path': 'a/b/c',
+            'occ_bw_path': 'a/b/c',
+            'occ_fw_path': 'a/b/c',
+
+        }
+
+    After this module, the annotation has been changed to the format below:
+
+    .. code-block:: python
+
+        {
+
+            'gt_flow_fw': np.ndarray (H, W, 2)
+            'gt_flow_bw': np.ndarray (H, W, 2)
+            'gt_occ_fw': np.ndarray (H, W)
+            'gt_occ_bw': np.ndarray (H, W)
+            'gt_valid': np.ndarray (H, W)
+             # in np.float32 type.
+
+        }
+
+    Required Keys:
+
+    - flow_fw_path
+    - flow_bw_path (optional)
+    - occ_fw_path (optional)
+    - occ_bw_path (optional)
+
+    Added Keys:
+
+    - gt_flow_fw (np.float32)
+    - gt_flow_bw (np.int64, optional)
+    - gt_occ_fw (np.uint8, optional)
+    - gt_occ_bw (np.float32, optional)
+    - gt_valid (np.float32, optional)
 
     Args:
         with_occ (bool): whether to parse and load occlusion mask.
@@ -129,11 +78,11 @@ class LoadAnnotations:
         self.file_client_args = file_client_args
         self.file_client = None
 
-    def __call__(self, results: dict) -> dict:
+    def transform(self, results: Dict) -> Dict:
         """Call function to load optical flow and occlusion mask (optional).
 
         Args:
-            results (dict): Result dict from :obj:`mmflow.BaseDataset`.
+            results (dict): Result dict from :obj:`mmflow.Dataset`.
 
         Returns:
             dict: The dict contains loaded annotation data.
@@ -159,22 +108,23 @@ class LoadAnnotations:
         Returns:
             dict: The dict contains loaded annotation data.
         """
-        filenames = list(results['ann_info'].keys())
-        skip_len = len('filename_')
 
-        for filename in filenames:
+        flow_fw_filename = results.get('flow_fw_path', None)
+        flow_bw_filename = results.get('flow_bw_path', None)
 
-            if filename.find('flow') > -1:
+        if flow_fw_filename is not None:
+            flow_fw_bytes = self.file_client.get(flow_fw_filename)
+            flow_fw = flow_from_bytes(flow_fw_bytes, flow_fw_filename[-3:])
+        else:
+            flow_fw = None
 
-                filename_flow = results['ann_info'][filename]
-                flow_bytes = self.file_client.get(filename_flow)
-                flow = flow_from_bytes(flow_bytes, filename_flow[-3:])
-
-                results[filename] = filename_flow
-                results['ori_' + filename] = osp.split(filename_flow)[-1]
-                ann_key = filename[skip_len:] + '_gt'
-                results[ann_key] = flow
-                results['ann_fields'].append(ann_key)
+        if flow_bw_filename is not None:
+            flow_bw_bytes = self.file_client.get(flow_bw_filename)
+            flow_bw = flow_from_bytes(flow_bw_bytes, flow_bw_filename[-3:])
+        else:
+            flow_bw = None
+        results['gt_flow_fw'] = flow_fw
+        results['gt_flow_bw'] = flow_bw
 
         return results
 
@@ -187,24 +137,18 @@ class LoadAnnotations:
         Returns:
             dict: The dict contains loaded annotation data.
         """
-        filenames = list(results['ann_info'].keys())
-        skip_len = len('filename_')
+        flow_fw_filename = results.get('flow_fw_path', None)
 
-        for filename in filenames:
+        if flow_fw_filename is not None:
+            flow_fw_bytes = self.file_client.get(flow_fw_filename)
+            flow_fw, valid = sparse_flow_from_bytes(flow_fw_bytes)
+        else:
+            flow_fw = None
 
-            if filename.find('flow') > -1:
-
-                filename_flow = results['ann_info'][filename]
-                flow_bytes = self.file_client.get(filename_flow)
-                flow, valid = sparse_flow_from_bytes(flow_bytes)
-
-                results[filename] = filename_flow
-                results['ori_' + filename] = osp.split(filename_flow)[-1]
-                ann_key = filename[skip_len:] + '_gt'
-                # sparse flow dataset don't include backward flow
-                results['valid'] = valid
-                results[ann_key] = flow
-                results['ann_fields'].append(ann_key)
+        results['gt_flow_fw'] = flow_fw
+        results['gt_flow_bw'] = None
+        # sparse flow dataset don't include backward flow
+        results['gt_valid'] = valid
 
         return results
 
@@ -217,25 +161,34 @@ class LoadAnnotations:
         Returns:
             dict: The dict contains loaded annotation data.
         """
-        filenames = list(results['ann_info'].keys())
-        skip_len = len('filename_')
+        occ_fw_filename = results.get('occ_fw_path', None)
+        occ_bw_filename = results.get('occ_bw_path', None)
 
-        for filename in filenames:
-
-            if filename.find('occ') > -1:
-
-                filename_occ = results['ann_info'][filename]
-                occ_bytes = self.file_client.get(filename_occ)
-                occ = (mmcv.imfrombytes(occ_bytes, flag='grayscale') /
-                       255).astype(np.float32)
-
-                results[filename] = filename_occ
-                results['ori_' + filename] = osp.split(filename_occ)[-1]
-                ann_key = filename[skip_len:] + '_gt'
-                results[ann_key] = occ
-                results['ann_fields'].append(ann_key)
+        if occ_fw_filename is not None:
+            occ_fw_bytes = self.file_client.get(occ_fw_filename)
+            occ_fw = (mmcv.imfrombytes(occ_fw_bytes, flag='grayscale') /
+                      255).astype(np.float32)
+        else:
+            occ_fw = None
+        if occ_bw_filename is not None:
+            occ_bw_bytes = self.file_client.get(occ_bw_filename)
+            occ_bw = (mmcv.imfrombytes(occ_bw_bytes, flag='grayscale') /
+                      255).astype(np.float32)
+        else:
+            occ_bw = None
+        results['gt_occ_fw'] = occ_fw
+        results['gt_occ_bw'] = occ_bw
 
         return results
+
+    def __repr__(self) -> str:
+
+        repr_str = self.__class__.__name__
+        repr_str += f'(with_occ={self.with_occ},'
+        repr_str += f"sparse='{self.sparse}',"
+        repr_str += f"file_client_args='{self.file_client_args}')"
+
+        return repr_str
 
 
 @TRANSFORMS.register_module()
@@ -262,17 +215,11 @@ class LoadImageFromWebcam(LoadImageFromFile):
             img1 = img1.astype(np.float32)
             img2 = img2.astype(np.float32)
 
-        results['filename1'] = None
-        results['ori_filename1'] = None
-        results['filename2'] = None
-        results['ori_filename2'] = None
+        results['img1_path'] = None
+        results['img2_path'] = None
         results['img1'] = img1
         results['img2'] = img2
         results['img_shape'] = img1.shape
         results['ori_shape'] = img1.shape
-        results['img_fields'] = ['img1', 'img2']
-        # Set initial values for default meta_keys
-        results['pad_shape'] = img1.shape
-        results['scale_factor'] = np.array([1.0, 1.0])
 
         return results

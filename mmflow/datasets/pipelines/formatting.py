@@ -1,5 +1,4 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import copy
 from collections.abc import Sequence
 from typing import Union
 
@@ -7,7 +6,10 @@ import mmcv
 import numpy as np
 import torch
 from mmcv.parallel import DataContainer as DC
+from mmcv.transforms import BaseTransform
+from mmengine.data import PixelData
 
+from mmflow.core import FlowDataSample
 from mmflow.registry import TRANSFORMS
 
 
@@ -36,200 +38,6 @@ def to_tensor(
         return torch.FloatTensor([data])
     else:
         raise TypeError(f'type {type(data)} cannot be converted to tensor.')
-
-
-@TRANSFORMS.register_module()
-class ToTensor:
-    """Convert some results to :obj:`torch.Tensor` by given keys.
-
-    Args:
-        keys (Sequence[str]): Keys that need to be converted to Tensor.
-    """
-
-    def __init__(self, keys: Sequence) -> None:
-        self.keys = keys
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to convert data in results to :obj:`torch.Tensor`.
-
-        Args:
-            results (dict): Result dict contains the data to convert.
-
-        Returns:
-            dict: The result dict contains the data converted
-                to :obj:`torch.Tensor`.
-        """
-
-        for key in self.keys:
-            results[key] = to_tensor(results[key])
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__ + f'(keys={self.keys})'
-
-
-@TRANSFORMS.register_module()
-class ImageToTensor:
-    """Convert image to :obj:`torch.Tensor` by given keys.
-
-    The dimension order of input image is (H, W, C). The pipeline will convert
-    it to (C, H, W). If only 2 dimension (H, W) is given, the output would be
-    (1, H, W).
-
-    Args:
-        keys (Sequence[str]): Key of images to be converted to Tensor.
-    """
-
-    def __init__(self, keys: Sequence) -> None:
-        self.keys = keys
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to convert image in results to :obj:`torch.Tensor` and
-        transpose the channel order.
-
-        Args:
-            results (dict): Result dict contains the image data to convert.
-
-        Returns:
-            dict: The result dict contains the image converted
-                to :obj:`torch.Tensor` and transposed to (C, H, W) order.
-        """
-
-        for key in self.keys:
-            img = results[key]
-            if len(img.shape) < 3:
-                img = np.expand_dims(img, -1)
-            results[key] = to_tensor(img.transpose(2, 0, 1))
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__ + f'(keys={self.keys})'
-
-
-@TRANSFORMS.register_module()
-class Transpose:
-    """Transpose some results by given keys.
-
-    Args:
-        keys (Sequence[str]): Keys of results to be transposed.
-        order (Sequence[int]): Order of transpose.
-    """
-
-    def __init__(self, keys: Sequence, order: Sequence) -> None:
-        self.keys = keys
-        self.order = order
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to convert image in results to :obj:`torch.Tensor` and
-        transpose the channel order.
-
-        Args:
-            results (dict): Result dict contains the image data to convert.
-
-        Returns:
-            dict: The result dict contains the image converted
-                to :obj:`torch.Tensor` and transposed to (C, H, W) order.
-        """
-
-        for key in self.keys:
-            results[key] = results[key].transpose(self.order)
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__ + \
-               f'(keys={self.keys}, order={self.order})'
-
-
-@TRANSFORMS.register_module()
-class ToDataContainer:
-    """Convert results to :obj:`mmcv.DataContainer` by given fields.
-
-    Args:
-        fields (Sequence[dict]): Each field is a dict like
-            ``dict(key='xxx', **kwargs)``. The ``key`` in result will
-            be converted to :obj:`mmcv.DataContainer` with ``**kwargs``.
-            Default: ``(dict(key='img1', stack=True),
-            dict(key='img2', stack=True), dict(key='flow_gt'))``.
-    """
-
-    def __init__(
-        self,
-        fields: Sequence = (dict(key='img1', stack=True),
-                            dict(key='img2', stack=True), dict(key='flow_gt'))
-    ) -> None:
-        self.fields = fields
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to convert data in results to
-        :obj:`mmcv.DataContainer`.
-
-        Args:
-            results (dict): Result dict contains the data to convert.
-
-        Returns:
-            dict: The result dict contains the data converted to
-                :obj:`mmcv.DataContainer`.
-        """
-
-        for field in self.fields:
-            field = field.copy()
-            key = field.pop('key')
-            results[key] = DC(results[key], **field)
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__ + f'(fields={self.fields})'
-
-
-@TRANSFORMS.register_module()
-class DefaultFormatBundle:
-    """Default formatting bundle.
-
-    It simplifies the pipeline of formatting common fields, including "img"
-    and "flow_gt". These fields are formatted as follows.
-
-    - img1: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
-    - img2: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
-    - flow_gt: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
-    """
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to transform and format common fields in results.
-
-        Args:
-            results (dict): Result dict contains the data to convert.
-
-        Returns:
-            dict: The result dict contains the data that is formatted with
-                default bundle.
-        """
-
-        if 'img1' in results:
-            img1 = results['img1']
-            img1 = np.expand_dims(img1, -1) if len(img1.shape) < 3 else img1
-            img1 = img1.transpose(2, 0, 1)
-
-        if 'img2' in results:
-            img2 = results['img2']
-            img2 = np.expand_dims(img2, -1) if len(img2.shape) < 3 else img2
-            img2 = img2.transpose(2, 0, 1)
-
-        results['imgs'] = DC(
-            to_tensor(np.concatenate((img1, img2), axis=0)), stack=True)
-
-        if 'ann_fields' in results:
-            ann_fields = copy.deepcopy(results['ann_fields'])
-            for ann_key in ann_fields:
-                if ann_key in results:
-                    gt = results[ann_key]
-                    gt = np.expand_dims(gt, -1) if len(gt.shape) < 3 else gt
-                    gt = np.ascontiguousarray(gt.transpose(2, 0, 1))
-                    results[ann_key] = DC(
-                        to_tensor(gt.astype(np.float32)), stack=True)
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__
 
 
 @TRANSFORMS.register_module()
@@ -274,84 +82,97 @@ class TestFormatBundle:
 
 
 @TRANSFORMS.register_module()
-class Collect:
-    """Collect data from the loader relevant to the specific task.
+class PackFlowInputs(BaseTransform):
+    """Pack the inputs data for the optical flow model.
 
-    This is usually the last stage of the data loader pipeline. Typically keys
-    is set to some subset of "img", "flow_gt".
+     The ``img_meta`` item is always populated.  The contents of the
+    ``img_meta`` dictionary depends on ``meta_keys``. By default this includes:
 
-    The "img_meta" item is always populated.  The contents of the "img_meta"
-    dictionary depends on "meta_keys". By default this includes:
+        - ``img1_path``: path to the first image file
 
-        - "img_shape": shape of the image input to the network as a tuple
-            (h, w, c).  Note that images may be zero padded on the bottom/right
-            if the batch tensor is larger than this shape.
+        - ``img2_path``: path to the first image file
 
-        - "scale_factor": a float indicating the preprocessing scale
+        - ``ori_shape``: original shape of the image as a tuple (h, w, c)
 
-        - "flip": a boolean indicating if image flip transform was used
+        - ``img_shape``: shape of the image input to the network as a tuple \
+            (h, w, c).  Note that images may be zero padded on the \
+            bottom/right if the batch tensor is larger than this shape.
 
-        - "filename1": path to the image1 file
+        - ``scale_factor``: a float indicating the preprocessing scale
 
-        - "filename2": path to the image2 file
+        - ``flip``: a boolean indicating if image flip transform was used
 
-        - "ori_filename1": image1 file name
-
-        - "ori_filename2": image2 file name
-
-        - "ori_shape": original shape of the image as a tuple (h, w, c)
-
-        - "pad_shape": image shape after padding
-
-        - "img_norm_cfg": a dict of normalization information:
-            - mean - per channel mean subtraction
-            - std - per channel std divisor
-            - to_rgb - bool indicating if bgr was converted to rgb
+        - ``flip_direction``: the flipping direction
 
     Args:
-        keys (Sequence[str]): Keys of results to be collected in ``data``.
         meta_keys (Sequence[str], optional): Meta keys to be converted to
             ``mmcv.DataContainer`` and collected in ``data[img_metas]``.
-            Default: ``('filename1', 'filename2', 'ori_filename1',
-            'ori_filename2', 'ori_shape', 'img_shape', 'pad_shape',
-            'scale_factor', 'flip', 'flip_direction', 'img_norm_cfg')``
+            Default: ``('img1_path', 'img2_path', 'ori_shape', 'img_shape',
+            'scale_factor', 'flip', 'flip_direction')``
+
+    Args:
+        BaseTransform (_type_): _description_
+
+    Returns:
+        _type_: _description_
     """
+    data_keys = ('gt_flow_fw', 'gt_flow_bw', 'gt_occ_fw', 'gt_occ_bw',
+                 'gt_valid')
 
     def __init__(
         self,
-        keys: Sequence,
-        meta_keys: Sequence = ('filename1', 'filename2', 'ori_filename1',
-                               'ori_filename2', 'filename_flow',
-                               'ori_filename_flow', 'ori_shape', 'img_shape',
-                               'pad_shape', 'scale_factor', 'flip',
-                               'flip_direction', 'img_norm_cfg')
+        meta_keys=('img1_path', 'img2_path', 'ori_shape', 'img_shape',
+                   'scale_factor', 'flip', 'flip_direction')
     ) -> None:
-        self.keys = keys
+
         self.meta_keys = meta_keys
 
-    def __call__(self, results: dict) -> dict:
-        """Call function to collect keys in results. The keys in ``meta_keys``
-        will be converted to :obj:mmcv.DataContainer.
+    def transform(self, results: dict) -> dict:
+        """Method to pack the input data.
 
         Args:
-            results (dict): Result dict contains the data to collect.
+            results (dict): Result dict from the data pipeline.
 
         Returns:
-            dict: The result dict contains the following keys
-                - keys in``self.keys``
-                - ``img_metas``
+            dict:
+            - 'img1' (obj:`torch.Tensor`): The first image data for models.
+            - 'img2' (obj:`torch.Tensor`): The second image data for models.
+            - 'data_sample' (obj:`FlowDataSample`): The annotation info of the
+                sample.
         """
+        packed_results = dict()
+        data_sample = FlowDataSample()
+        if 'img1' in results:
+            img1 = results['img1']
+            img1 = np.expand_dims(img1, -1) if len(img1.shape) < 3 else img1
+            img1 = to_tensor(np.ascontiguousarray(img1.transpose(2, 0, 1)))
+            packed_results['img1'] = img1
+        if 'img2' in results:
+            img2 = results['img2']
+            img2 = np.expand_dims(img2, -1) if len(img2.shape) < 3 else img2
+            img2 = to_tensor(np.ascontiguousarray(img2.transpose(2, 0, 1)))
+            packed_results['img2'] = img2
 
-        data = {}
-        img_meta = {}
+        for key in self.data_keys:
+            if results.get(key, None) is not None:
+                ann_data = results[key]
+                if len(ann_data.shape) < 3:
+                    ann_data = to_tensor(ann_data[None, ...])
+                else:
+                    ann_data = to_tensor(
+                        np.ascontiguousarray(ann_data.transpose(2, 0, 1)))
+                data = PixelData(**dict(data=ann_data))
+                data_sample.set_data({key: data})
 
+        img_meta = dict()
         for key in self.meta_keys:
-            img_meta[key] = results[key]
-        data['img_metas'] = DC(img_meta, cpu_only=True)
-        for key in self.keys:
-            data[key] = results[key]
-        return data
+            if key in results:
+                img_meta[key] = results[key]
+        data_sample.set_metainfo(img_meta)
+        packed_results['data_sample'] = data_sample
+        return packed_results
 
     def __repr__(self) -> str:
-        return self.__class__.__name__ + \
-               f'(keys={self.keys}, meta_keys={self.meta_keys})'
+        repr_str = self.__class__.__name__
+        repr_str += f'(meta_keys={self.meta_keys})'
+        return repr_str
