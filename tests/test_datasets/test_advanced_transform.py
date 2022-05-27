@@ -116,12 +116,9 @@ def test_RandomAffine():
     results = dict()
     results['img1'] = img1
     results['img2'] = img2
-    results['flow_gt'] = flow
+    results['gt_flow_fw'] = flow
 
     results['img_shape'] = img1.shape
-    results['img_fields'] = ['img1', 'img2']
-    results['ann_fields'] = ['flow_gt']
-
     new_results = random_affine(results)
 
     assert new_results
