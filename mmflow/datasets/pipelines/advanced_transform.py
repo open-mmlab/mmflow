@@ -1,29 +1,20 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import copy
 from typing import Optional, Sequence
 
 import cv2
 import numpy as np
+from mmcv.transforms import BaseTransform
+from mmcv.transforms.utils import cache_randomness
 
 from mmflow.registry import TRANSFORMS
-from .transforms import get_flow_keys, get_img_keys, get_valid_keys
 
+img_keys = ['img1', 'img2']
 
-def get_occ_keys(results: dict) -> Sequence[str]:
-    """Get occlusion key in result.
+flow_keys = ['gt_flow_fw', 'gt_flow_bw']
 
-    Args:
-        results (dict): data with dict type in data augmentation pipeline.
-    Returns:
-        list: [description]
-    """
-    occ_keys = []
-    if 'ann_fields' in results:
-        ann_keys = copy.deepcopy(results['ann_fields'])
-        for k in ann_keys:
-            if k.find('occ') > -1:
-                occ_keys.append(k)
-    return occ_keys
+occ_keys = ['gt_occ_fw', 'gt_occ_bw']
+
+valid_keys = ['gt_valid']
 
 
 def theta_is_valid(theta: np.ndarray) -> bool:
@@ -156,9 +147,34 @@ def transform_flow(flow: np.ndarray, valid: np.ndarray, theta1: np.ndarray,
 
 
 @TRANSFORMS.register_module()
-class RandomAffine:
+class RandomAffine(BaseTransform):
     """Random affine transformation of images, flow map and occlusion map (if
     available).
+
+    Required Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+    Added Keys:
+
+    - global_ndc_affine_mat
+    - relative_ndc_affine_mat
 
     Keys of global_transform and relative_transform should be the subset of
     ('translates', 'zoom', 'shear', 'rotate'). And also, each key and its
@@ -234,7 +250,7 @@ class RandomAffine:
 
         return ret
 
-    def __call__(self, results: dict) -> dict:
+    def transform(self, results: dict) -> dict:
         """
 
         Args:
@@ -274,25 +290,31 @@ class RandomAffine:
         theta2_world = T_inv @ theta2_ndc @ T
         theta_world_li = [theta1_world, theta2_world]
 
-        img_keys = get_img_keys(results)
-        flow_keys = get_flow_keys(results)
-        occ_keys = get_occ_keys(results)
-        valid_keys = get_valid_keys(results)
-
         # transform img1 and img2
         for i in range(len(img_keys)):
             results[img_keys[i]] = transform_img(results[img_keys[i]],
                                                  theta_world_li[i], h, w)
-
-        # transform flows
-        for i in range(len(flow_keys)):
-            if len(valid_keys) == len(flow_keys):
-                valid = results[valid_keys[i]]
+        flow_keys_in = []
+        for k in flow_keys:
+            if results.get(k, None) is not None:
+                flow_keys_in.append(k)
+        occ_keys_in = []
+        for k in occ_keys:
+            if results.get(k, None) is not None:
+                occ_keys_in.append(k)
+        valid_keys_in = []
+        for k in valid_keys:
+            if results.get(k, None) is not None:
+                valid_keys_in.append(k)
+        # transform flows and valid
+        for i in range(len(flow_keys_in)):
+            if len(valid_keys_in) == len(flow_keys_in):
+                valid = results[valid_keys_in[i]]
 
                 results[valid_keys[i]] = transform_img(results[valid_keys[i]],
                                                        theta_world_li[i], h, w)
-                results[flow_keys[i]] = transform_flow(
-                    flow=results[flow_keys[i]] * valid[:, :, None],
+                results[flow_keys_in[i]] = transform_flow(
+                    flow=results[flow_keys_in[i]] * valid[:, :, None],
                     valid=results[valid_keys[i]],
                     theta1=theta_world_li[i],
                     theta2=theta_world_li[1 - i],
@@ -300,8 +322,8 @@ class RandomAffine:
                     width=w)
 
             else:
-                results[flow_keys[i]] = transform_flow(
-                    flow=results[flow_keys[i]],
+                results[flow_keys_in[i]] = transform_flow(
+                    flow=results[flow_keys_in[i]],
                     valid=None,
                     theta1=theta_world_li[i],
                     theta2=theta_world_li[1 - i],
@@ -309,12 +331,12 @@ class RandomAffine:
                     width=w)
 
         # transform occlusion if available
-        for i in range(len(occ_keys)):
-            results[occ_keys[i]] = transform_img(results[occ_keys[i]],
-                                                 theta_world_li[i], h, w)
+        for i in range(len(occ_keys_in)):
+            results[occ_keys_in[i]] = transform_img(results[occ_keys_in[i]],
+                                                    theta_world_li[i], h, w)
             if self.check_bound:
                 results[occ_keys[i]] = check_out_of_bound(
-                    results[flow_keys[i]], results[occ_keys[i]])
+                    results[flow_keys_in[i]], results[occ_keys_in[i]])
 
         # create new meta 'global_ndc_affine_mat'
         results['global_ndc_affine_mat'] = theta1_ndc
@@ -324,6 +346,7 @@ class RandomAffine:
 
         return results
 
+    @cache_randomness
     def _apply_random_affine_to_theta(self, theta: np.ndarray,
                                       translates: Sequence[float],
                                       zoom: Sequence[float],

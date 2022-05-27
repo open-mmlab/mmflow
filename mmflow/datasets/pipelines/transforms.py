@@ -8,10 +8,20 @@ import cv2
 import mmcv
 import numpy as np
 from mmcv.image import adjust_brightness, adjust_color, adjust_contrast
+from mmcv.transforms import BaseTransform
+from mmcv.transforms.utils import cache_randomness
 from numpy import random
 
 from mmflow.registry import TRANSFORMS
 from ..utils import adjust_gamma, adjust_hue
+
+img_keys = ['img1', 'img2']
+
+flow_keys = ['gt_flow_fw', 'gt_flow_bw']
+
+occ_keys = ['gt_occ_fw', 'gt_occ_bw']
+
+valid_keys = ['gt_valid']
 
 
 def get_flow_keys(results: dict) -> List[str]:
@@ -90,8 +100,33 @@ def get_valid_keys(results: dict) -> list:
 
 
 @TRANSFORMS.register_module()
-class SpacialTransform:
-    """Spacial Transform API for RAFT
+class SpacialTransform(BaseTransform):
+    """Spacial Transform API for RAFT.
+
+    Required Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+    Added Keys:
+
+    - scale
+
     Args:
         spacial_prob (float): probability to do spacial transform.
         stretch_prob (float): probability to do stretch.
@@ -127,7 +162,11 @@ class SpacialTransform:
         self.max_scale = max_scale
         self.max_stretch = max_stretch
 
-    def __call__(self, results: dict) -> dict:
+    @cache_randomness
+    def _do_spacial_transform(self):
+        return np.random.rand() < self.spacial_prob
+
+    def transform(self, results: dict) -> dict:
         """Call function to do spacial transform to images and annotation,
         including optical flow, occlusion mask and valid mask.
 
@@ -138,39 +177,62 @@ class SpacialTransform:
             dict: The dict contains transformed data and transform information.
         """
 
-        if np.random.rand() < self.spacial_prob:
+        if self._do_spacial_transform():
 
-            img_keys = get_img_keys(results)
-            flow_keys = get_flow_keys(results)
-            if results.get('valid') is None:
-                map_keys = get_map_keys(results)
-                flow_inds = [map_keys.index(k) for k in flow_keys]
-                maps = [results[k] for k in map_keys]
-                maps, scale_x, scale_y, _, _ = self.spacial_transform(maps)
-                for idx in flow_inds:
-                    maps[idx] *= [scale_x, scale_y]
+            if results.get('gt_valid') is None:
+
+                # transform images
+                imgs = [results[k] for k in img_keys]
+                imgs, scale_x, scale_y, _, _ = self.spacial_transform(imgs)
+                for i, k in enumerate(img_keys):
+                    results[k] = imgs[i]
                 results['scale'] = (scale_x, scale_y)
-                results['img_shape'] = maps[0].shape
-                for i, k in enumerate(map_keys):
-                    results[k] = maps[i]
+                results['img_shape'] = imgs[0].shape
+
+                # transform flows
+                flows = []
+                flow_keys_in = []
+                for k in flow_keys:
+                    if results.get(k, None) is not None:
+                        flows.append(results[k])
+                        flow_keys_in.append(k)
+                flows, scale_x, scale_y, _, _ = self.spacial_transform(flows)
+                for flow, k in zip(flows, flow_keys_in):
+                    flow *= [scale_x, scale_y]
+                    results[k] = flow
+
+                # transform occ
+                occs = []
+                occ_keys_in = []
+                for k in occ_keys:
+                    if results.get(k, None) is not None:
+                        occs.append(results[k])
+                        occ_keys_in.append(k)
+                occs, _, _, _, _ = self.spacial_transform(occs)
+                for occ, k in zip(occs, occ_keys_in):
+                    results[k] = occ
+
             else:
                 # sparse spacial_transform
+                # transform images
                 imgs = [results[k] for k in img_keys]
                 imgs, scale_x, scale_y, x0, y0 = self.spacial_transform(imgs)
                 for i, k in enumerate(img_keys):
                     results[k] = imgs[i]
                 results['scale'] = (scale_x, scale_y)
                 results['img_shape'] = imgs[0].shape
+
+                # transform flow_fw and valid
                 flow, valid = self.resize_sparse_flow_map(
-                    results['flow_gt'],
-                    results['valid'],
+                    results['gt_flow_fw'],
+                    results['gt_valid'],
                     fx=scale_x,
                     fy=scale_y,
                     x0=x0,
                     y0=y0)
 
-                results['flow_gt'] = flow
-                results['valid'] = valid.astype(np.float32)
+                results['gt_flow_fw'] = flow
+                results['gt_valid'] = valid.astype(np.float32)
 
         else:
             results['scale'] = (1., 1.)
@@ -331,9 +393,24 @@ class Validation:
 
 
 @TRANSFORMS.register_module()
-class Erase:
+class Erase(BaseTransform):
     """Erase transform from RAFT is randomly erasing rectangular regions in
     img2 to simulate occlusions.
+
+    Required Keys:
+
+    - img1
+    - img2
+
+    Modified Keys:
+
+    - img1
+    - img2
+
+    Added  Keys:
+
+    - erase_num
+    - erase_bounds
 
     Args:
         prob (float): the probability for erase transform.
@@ -359,7 +436,11 @@ class Erase:
         self.bounds = bounds
         self.max_num = max_num
 
-    def __call__(self, results: dict) -> dict:
+    @cache_randomness
+    def _do_erase(self):
+        return np.random.rand() < self.prob
+
+    def transform(self, results: dict) -> dict:
         """Call function to do erase on images.
 
         Args:
@@ -373,7 +454,7 @@ class Erase:
         H, W, _ = img2.shape
         erase_bounds = []
         num = 0
-        if np.random.rand() < self.prob:
+        if self._do_erase():
             mean_color = np.mean(img2.reshape(-1, 3), axis=0)
             num = np.random.randint(1, self.max_num)
             for _ in range(num):
@@ -399,8 +480,25 @@ class Erase:
 
 
 @TRANSFORMS.register_module()
-class InputResize:
-    """Resize images such that dimensions are divisible by 2^n
+class InputResize(BaseTransform):
+    """Resize images such that dimensions are divisible by 2^n.
+
+    Required Keys:
+
+    - img1
+    - img2
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - img_shape
+
+    Added Keys:
+
+    - scale_factor
+
+
     Args:
         exponent(int): the exponent n of 2^n
 
@@ -409,12 +507,12 @@ class InputResize:
             into result dict.
     """
 
-    def __init__(self, exponent) -> None:
+    def __init__(self, exponent: int) -> None:
         super().__init__()
         assert isinstance(exponent, int)
         self.exponent = exponent
 
-    def __call__(self, results):
+    def transform(self, results: dict) -> dict:
         """Call function to resize images and flow map.
 
         Args:
@@ -423,42 +521,54 @@ class InputResize:
             dict: Resized results, 'img_shape', 'scale_factor' keys are added
                 into result dict.
         """
-        img_keys = get_img_keys(results)
-        imgs = [results[k] for k in img_keys]
-        imgs, scale_factor = self._resize_img(imgs)
-
-        for i, k in enumerate(img_keys):
-            results[k] = imgs[i]
-        results['scale_factor'] = scale_factor
-        results['img_shape'] = imgs[0].shape
+        self._resize_img(results)
 
         return results
+
+    def _resize_img(self, results: dict) -> None:
+        """Resize images with ``results['scale']``."""
+        img1 = results['img1']
+        times = int(2**self.exponent)
+        H, W = img1.shape[:2]
+        newH = int(ceil(H / times) * times)
+        newW = int(ceil(W / times) * times)
+        resized_img1 = mmcv.imresize(img1, (newW, newH), return_scale=False)
+
+        w_scale = newW / W
+        h_scale = newH / H
+        scale_factor = np.array([w_scale, h_scale], dtype=np.float32)
+        results['img1'] = resized_img1
+        resized_img2 = mmcv.imresize(
+            results['img2'], (newW, newH), return_scale=False)
+        results['img2'] = resized_img2
+        results['scale_factor'] = scale_factor
+        results['img_shape'] = resized_img1.shape
 
     def __repr__(self):
         repr_str = self.__class__.__name__
         repr_str += (f'(exponent={self.exponent})')
         return repr_str
 
-    def _resize_img(self, imgs):
-        """Resize images with ``results['scale']``."""
-        times = int(2**self.exponent)
-        H, W = imgs[0].shape[:2]
-        newH = int(ceil(H / times) * times)
-        newW = int(ceil(W / times) * times)
-        imgs_resize = []
-        for img in imgs:
-            img_ = mmcv.imresize(img, (newW, newH), return_scale=False)
-            imgs_resize.append(img_)
-        w_scale = newW / W
-        h_scale = newH / H
-
-        scale_factor = np.array([w_scale, h_scale], dtype=np.float32)
-        return imgs_resize, scale_factor
-
 
 @TRANSFORMS.register_module()
-class InputPad:
+class InputPad(BaseTransform):
     """Pad images such that dimensions are divisible by 2^n used in test.
+
+    Required Keys:
+
+    - img1
+    - img2
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - img_shape
+
+    Added Keys:
+
+    - pad_shape
+    - pad
 
     Args:
         exponent(int): the exponent n of 2^n
@@ -467,7 +577,11 @@ class InputPad:
             'center', 'left', 'right', 'top' and 'down'. Defaults to 'center'
     """
 
-    def __init__(self, exponent, mode='edge', position='center', **kwargs):
+    def __init__(self,
+                 exponent: int,
+                 mode: str = 'edge',
+                 position: str = 'center',
+                 **kwargs) -> None:
         assert position in ('center', 'left', 'right', 'top', 'down')
         assert isinstance(exponent, int)
         self.exponent = exponent
@@ -475,21 +589,25 @@ class InputPad:
         self.position = position
         self.kwargs = kwargs
 
-    def __call__(self, results):
-        img_keys = get_img_keys(results)
-        imgs = [results[k] for k in img_keys]
-        imgs = self.pad(imgs)
-        for i, k in enumerate(img_keys):
-            results[k] = imgs[i]
-        results['pad_shape'] = imgs[0].shape
-        results['pad'] = self._pad[:2]
+    def transform(self, results: dict) -> dict:
+        """Call function to pad image.
+
+        Args:
+            results (dict): Result dict from loading pipeline.
+
+        Returns:
+            dict: Updated result dict.
+        """
+        self._pad_img(results)
 
         return results
 
-    def pad(self, imgs):
+    def _pad_img(self, results: dict) -> None:
+        """Pad images according to ``self.exponent``."""
 
+        img1 = results['img1']
         times = int(2**self.exponent)
-        H, W = imgs[0].shape[:2]
+        H, W = img1.shape[:2]
         pad_h = (((H // times) + 1) * times - H) % times
         pad_w = (((W // times) + 1) * times - W) % times
         if self.position == 'center':
@@ -503,15 +621,18 @@ class InputPad:
             self._pad = [[0, pad_h, pad_w // 2], [pad_w - pad_w // 2]]
         elif self.position == 'down':
             self._pad = [[pad_h, 0], [pad_w // 2, pad_w - pad_w // 2]]
-        if len(imgs[0].shape) > 2:
+        if len(img1.shape) > 2:
             self._pad.append([0, 0])
-        imgs = [
-            np.pad(img, self._pad, mode=self.mode, **self.kwargs)
-            for img in imgs
-        ]
-        return imgs
+        padded_img1 = np.pad(img1, self._pad, mode=self.mode, **self.kwargs)
+        results['img1'] = padded_img1
+        padded_img2 = np.pad(
+            results['img2'], self._pad, mode=self.mode, **self.kwargs)
+        results['img2'] = padded_img2
+        results['pad_shape'] = padded_img1.shape
+        results['img_shape'] = padded_img1.shape
+        results['pad'] = self._pad[:2]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         repr_str = self.__class__.__name__
         repr_str += (f'(exponent={self.exponent} '
                      f'mode={self.mode} '
@@ -520,8 +641,34 @@ class InputPad:
 
 
 @TRANSFORMS.register_module()
-class RandomFlip:
+class RandomFlip(BaseTransform):
     """Flip the image and flow map.
+
+    Required Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+    Added Keys:
+
+    - flip
+    - flip_direction
 
     Args:
         prob (float): The flipping probability.
@@ -535,7 +682,11 @@ class RandomFlip:
         self.prob = prob
         self.direction = direction
 
-    def __call__(self, results):
+    @cache_randomness
+    def do_flip(self):
+        return np.random.rand() < self.prob
+
+    def transform(self, results):
         """Call function to flip optical flow map.
 
         Args:
@@ -545,39 +696,59 @@ class RandomFlip:
             dict: Flipped results, 'flip', 'flip_direction' keys are added into
                 result dict.
         """
-        flip = True if np.random.rand() < self.prob else False
-        if flip:
-            # flip image
-            map_keys = get_map_keys(results)
-            flow_keys = get_flow_keys(results)
-            valid_keys = get_valid_keys(results)
-
-            for k in map_keys:
-                results[k] = mmcv.imflip(results[k], direction=self.direction)
-
-            for valid_key in valid_keys:
-                results[valid_key] = mmcv.imflip(
-                    results[valid_key], direction=self.direction).copy()
-
-            # flip flow
-            if self.direction == 'horizontal':
-                coeff = [-1, 1]
+        if self.do_flip():
+            self._flip(results)
+            if 'flip' in results and 'flip_direction' in results:
+                results['flip'].append(True)
+                results['flip_direction'].append(self.direction)
             else:
-                coeff = [1, -1]
-            for fk in flow_keys:
-                results[fk] = results[fk] * coeff
-
-        if 'flip' in results and 'flip_direction' in results:
-            results['flip'].append(flip)
-            results['flip_direction'].append(self.direction)
+                results['flip'] = [True]
+                results['flip_direction'] = [self.direction]
         else:
-            results['flip'] = [flip]
-            results['flip_direction'] = [self.direction]
+            if 'flip' in results and 'flip_direction' in results:
+                results['flip'].append(False)
+                results['flip_direction'].append(None)
+            else:
+                results['flip'] = [False]
+                results['flip_direction'] = None
 
         return results
 
-    def __repr__(self):
-        return self.__class__.__name__ + f'(prob={self.prob})'
+    def _flip(self, results: dict) -> None:
+        """Flip function for images and annotations.
+
+        Args:
+            results (dict): Result dict from loading pipeline.
+        """
+
+        # flip img
+        for k in img_keys:
+            results[k] = mmcv.imflip(results[k], direction=self.direction)
+
+        # flip flow
+        if self.direction == 'horizontal':
+            coeff = [-1, 1]
+        else:
+            coeff = [1, -1]
+        for k in flow_keys:
+            if results.get(k, None) is not None:
+                results[k] = mmcv.imflip(
+                    results[k], direction=self.direction) * coeff
+        # flip occ
+        for k in occ_keys:
+            if results.get(k, None) is not None:
+                results[k] = mmcv.imflip(results[k], direction=self.direction)
+
+        # flip valid mask
+        for k in valid_keys:
+            if results.get(k, None) is not None:
+                results[k] = mmcv.imflip(
+                    results[k], direction=self.direction).copy()
+
+    def __repr__(self) -> str:
+        repr_str = self.__class__.__name__ + f'(prob={self.prob}), '
+        repr_str += f'(direction={self.direction})'
+        return repr_str
 
 
 @TRANSFORMS.register_module()
@@ -693,8 +864,34 @@ class Rerange:
 
 
 @TRANSFORMS.register_module()
-class RandomCrop:
+class RandomCrop(BaseTransform):
     """Random crop the image & flow.
+
+    Required Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_occ_fw (optional)
+    - gt_occ_bw (optional)
+    - gt_valid (optional)
+    - img_shape
+
+    Added Keys:
+
+    - crop_bbox
 
     Args:
         crop_size (tuple): Expected size after cropping, (h, w).
@@ -704,8 +901,16 @@ class RandomCrop:
         assert crop_size[0] > 0 and crop_size[1] > 0
         self.crop_size = crop_size
 
-    def get_crop_bbox(self, img_shape):
-        """Randomly get a crop bounding box."""
+    @cache_randomness
+    def get_crop_bbox(self, img_shape: tuple) -> tuple:
+        """Randomly get a crop bounding box.
+
+        Args:
+            img_shape (tuple): The shape of images
+
+        Returns:
+            tuple: The crop box for images cropping.s
+        """
         margin_h = max(img_shape[0] - self.crop_size[0], 0)
         margin_w = max(img_shape[1] - self.crop_size[1], 0)
         offset_h = np.random.randint(0, margin_h + 1)
@@ -721,7 +926,7 @@ class RandomCrop:
         img = img[crop_y1:crop_y2, crop_x1:crop_x2, ...]
         return img
 
-    def __call__(self, results):
+    def transform(self, results):
         """Call function to randomly crop images, flow maps.
 
         Args:
@@ -730,16 +935,29 @@ class RandomCrop:
             dict: Randomly cropped results, 'img_shape' key in result dict is
                 updated according to crop size.
         """
-        map_keys = get_map_keys(results)
         img_shape = copy.deepcopy(results['img_shape'])
-        valid_keys = get_valid_keys(results)
         crop_bbox = self.get_crop_bbox(img_shape)
 
-        for k in map_keys:
-            results[k] = self.crop(results[k], crop_bbox=crop_bbox)
+        # crop imgs
+        for k in img_keys:
+            if results.get(k, None) is not None:
+                results[k] = self.crop(results[k], crop_bbox=crop_bbox)
 
+        # crop flow
+        for k in flow_keys:
+            if results.get(k, None) is not None:
+                results[k] = self.crop(results[k], crop_bbox=crop_bbox)
+
+        # crop occ
+        for k in occ_keys:
+            if results.get(k, None) is not None:
+                results[k] = self.crop(results[k], crop_bbox=crop_bbox)
+
+        # crop valid
         for k in valid_keys:
-            results[k] = self.crop(results[k], crop_bbox=crop_bbox)
+            if results.get(k, None) is not None:
+                results[k] = self.crop(results[k], crop_bbox=crop_bbox)
+
         results['img_shape'] = results['img1'].shape
         results['crop_bbox'] = crop_bbox
 
@@ -750,8 +968,20 @@ class RandomCrop:
 
 
 @TRANSFORMS.register_module()
-class ColorJitter:
-    """Randomly change the brightness, contrast, saturation and hue of an image.
+class ColorJitter(BaseTransform):
+    """Randomly change the brightness, contrast, saturation and hue of an
+    image.
+
+    Required Keys:
+
+    - img1
+    - img2
+
+    Modified Keys:
+
+    - img1
+    - img2
+
     Args:
         asymmetric_prob (float): the probability to do color jitter for two
             images asymmetrically.
@@ -858,7 +1088,17 @@ class ColorJitter:
             return img[0]
         return img
 
-    def __call__(self, results):
+    @cache_randomness
+    def _do_asymmetric(self) -> bool:
+        """Random function for asymmetric.
+
+        Returns:
+            bool: Whether do color jitter for images asymmetrically.
+        """
+
+        return np.random.rand() < self.asymmetric_prob
+
+    def transform(self, results):
         """Call function to perform photometric distortion on images.
 
         Args:
@@ -867,13 +1107,12 @@ class ColorJitter:
             dict: Result dict with images distorted.
         """
 
-        img_keys = get_img_keys(results)
         imgs = []
         for k in img_keys:
             imgs.append(results[k])
-        asym = np.random.rand()
+
         # asymmetric
-        if asym < self.asymmetric_prob:
+        if self._do_asymmetric():
             imgs_ = []
             for i in imgs:
                 i = self.color_jitter(i)
@@ -1228,8 +1467,22 @@ class RandomTranslate:
 
 
 @TRANSFORMS.register_module()
-class RandomGamma:
+class RandomGamma(BaseTransform):
     """Random gamma correction of images.
+
+    Required Keys:
+
+    - img1
+    - img2
+
+    Modified Keys:
+
+    - img1
+    - img2
+
+    Added Keys:
+
+    - gamma
 
     Note: gamma larger than 1 make the shadows darker, while gamma smaller than
     1 make dark regions lighter.
@@ -1239,7 +1492,7 @@ class RandomGamma:
             sample gamma from gamma_range. Defaults to (0.7, 1.5).
     """
 
-    def __init__(self, gamma_range=(0.7, 1.5)):
+    def __init__(self, gamma_range: Sequence = (0.7, 1.5)):
 
         assert isinstance(gamma_range, (list, tuple))
 
@@ -1249,7 +1502,11 @@ class RandomGamma:
 
         self.gamma_range = gamma_range
 
-    def __call__(self, results):
+    @cache_randomness
+    def _random_gamma(self):
+        return random.uniform(*self.gamma_range)
+
+    def transform(self, results: dict) -> dict:
         """Call function to process images using gamma correction.
 
         Args:
@@ -1261,12 +1518,12 @@ class RandomGamma:
         img_keys = get_img_keys(results)
 
         # create new meta 'gamma'
-        results['gamma'] = random.uniform(*self.gamma_range)
+        results['gamma'] = self._random_gamma()
 
         for k in img_keys:
             results[k] = adjust_gamma(results[k], results['gamma'])
 
         return results
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__class__.__name__ + f'(gamma_range={self.gamma_range})'
