@@ -27,9 +27,16 @@
 [![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
 
-文档: https://mmflow.readthedocs.io/
+[📘使用文档](https://mmflow.readthedocs.io/en/latest/) |
+[🛠️安装教程](https://mmflow.readthedocs.io/en/latest/install.html) |
+[👀模型库](https://mmflow.readthedocs.io/en/latest/model_zoo.html) |
+[🤔报告问题](https://mmflow.readthedocs.io/en/latest/issues/new/choose)
+
+<div align="center">
 
 [English](README.md) | 简体中文
+
+</div>
 
 ## 简介
 
@@ -146,10 +153,11 @@ MMFlow 也提供了其他更详细的教程，包括：
 
 ## 欢迎加入 OpenMMLab 社区
 
-扫描下方的二维码可关注 OpenMMLab 团队的 [知乎官方账号](https://www.zhihu.com/people/openmmlab)，加入 OpenMMLab 团队的 [官方交流 QQ 群](https://jq.qq.com/?_wv=1027&k=aCvMxdr3)
+扫描下方的二维码可关注 OpenMMLab 团队的 [知乎官方账号](https://www.zhihu.com/people/openmmlab)，加入 OpenMMLab 团队的 [官方交流 QQ 群](https://jq.qq.com/?_wv=1027&k=aCvMxdr3)或联络 OpenMMLab 官方微信小助手
 
 <div align="center">
 <img src="resources/zhihu_qrcode.jpg" height="400" />  <img src="resources/qq_group_qrcode.jpg" height="400" />
+<img src="resources/wechat.png" height="400" />
 </div>
 
 我们会在 OpenMMLab 社区为大家

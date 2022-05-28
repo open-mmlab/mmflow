@@ -1,11 +1,11 @@
-# Getting Started
+# Get Started
 
 This page provides basic tutorials about the usage of MMFlow.
 For installation instructions, please see [install.md](install.md).
 
 <!-- TOC -->
 
-- [Getting Started](#getting-started)
+- [Get Started](#get-started)
   - [Prepare datasets](#prepare-datasets)
   - [Inference with Pre-trained Models](#inference-with-pre-trained-models)
     - [Run a demo](#run-a-demo)

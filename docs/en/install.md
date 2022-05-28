@@ -1,140 +1,100 @@
-# Installation
+# Prerequisites
 
-<!-- TOC -->
+In this section we demonstrate how to prepare an environment with PyTorch.
 
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Prepare environment](#prepare-environment)
-  - [Install MMFlow](#install-mmflow)
-  - [A from-scratch setup script](#a-from-scratch-setup-script)
-  - [Verification](#verification)
+MMFlow works on Linux, Windows and macOS. It requires Python 3.6+, CUDA 9.2+ and PyTorch 1.5+.
 
-<!-- TOC -->
+```{note}
+If you are experienced with PyTorch and have already installed it, just skip this part and jump to the [next section](#installation). Otherwise, you can follow these steps for the preparation.
+```
 
-## Prerequisites
+**Step 0.** Download and install Miniconda from the [official website](https://docs.conda.io/en/latest/miniconda.html).
 
-- Linux
-- Python 3.6+
-- PyTorch 1.5 or higher
-- CUDA 9.0 or higher
-- NCCL 2
-- GCC 5.4 or higher
-- [mmcv](https://github.com/open-mmlab/mmcv) 1.3.15 or higher
-
-## Prepare environment
-
-a. Create a conda virtual environment and activate it.
+**Step 1.** Create a conda environment and activate it.
 
 ```shell
-conda create -n openmmlab python=3.7 -y
+conda create --name openmmlab python=3.8 -y
 conda activate openmmlab
 ```
 
-b. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/)
+**Step 2.** Install PyTorch following [official instructions](https://pytorch.org/get-started/locally/), e.g.
 
-Note: Make sure that your compilation CUDA version and runtime CUDA version match.
-You can check the supported CUDA version for pre-compiled packages on the [PyTorch website](https://pytorch.org/).
-
-`E.g.1` If you have CUDA 10.2 installed under `/usr/local/cuda` and would like to install the latest PyTorch,
-you can run this command.
+On GPU platforms:
 
 ```shell
-conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
+conda install pytorch torchvision -c pytorch
 ```
 
-`E.g.2` If you have CUDA 9.2 installed under `/usr/local/cuda` and would like to install PyTorch 1.7.0.,
-you can run this command.
+On CPU platforms:
 
 ```shell
-conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 cudatoolkit=9.2 -c pytorch
+conda install pytorch torchvision cpuonly -c pytorch
 ```
 
-If you build PyTorch from source instead of installing the pre-built package, you can use more CUDA versions such as 9.0.
+# Installation
 
-c. Install MMCV, we recommend you to install the pre-built mmcv as below.
+We recommend that users follow our best practices to install MMFlow. However, the whole process is highly customizable. See [Customize Installation](#customize-installation) section for more information.
+
+## Best Practices
+
+**Step 0.** Install [MMCV](https://github.com/open-mmlab/mmcv) using [MIM](https://github.com/open-mmlab/mim).
 
 ```shell
-pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/{cu_version}/{torch_version}/index.html
+pip install -U openmim
+mim install mmcv-full
 ```
 
-Please replace `{cu_version}` and `{torch_version}` in the url to your desired one. mmcv-full is only compiled on
-PyTorch 1.x.0 because the compatibility usually holds between 1.x.0 and 1.x.1. If your PyTorch version is 1.x.1,
-you can install mmcv-full compiled with PyTorch 1.x.0 and it usually works well.
-For example, to install the latest `mmcv-full` with `CUDA 10.2` and `PyTorch 1.10.0`, use the following command:
+**Step 1.** Install MMFlow.
 
-```shell
-pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.10/index.html
-```
-
-See [here](https://github.com/open-mmlab/mmcv#installation) for different versions of MMCV compatible to different PyTorch and CUDA versions.
-
-Optionally you can choose to compile mmcv from source by the following command
-
-```shell
-git clone https://github.com/open-mmlab/mmcv.git
-cd mmcv
-MMCV_WITH_OPS=1 pip install -e .  # package mmcv-full, which contains cuda ops, will be installed after this step
-# OR pip install -e .  # package mmcv, which contains no cuda ops, will be installed after this step
-cd ..
-```
-
-**Important:** You need to run `pip uninstall mmcv` first if you have mmcv installed. If `mmcv` and `mmcv-full` are both installed, there will be `ModuleNotFoundError`.
-
-## Install MMFlow
-
-a. Clone the MMFlow repository.
+Case a: If you develop and run mmflow directly, install it from source:
 
 ```shell
 git clone https://github.com/open-mmlab/mmflow.git
 cd mmflow
-```
-
-b. Install build requirements and then install mmflow.
-
-```shell
-pip install -r requirements/build.txt
-pip install -v -e .  # or "python setup.py develop"
-```
-
-Note:
-
-1. The git commit id will be written to the version number, e.g. 0.6.0+2e7045c. The version will also be saved in trained models.
-
-2. Following the above instructions, MMFlow is installed on `dev` mode, any local modifications made to the code will take effect without the need to reinstall it (unless you submit some commits and want to update the version number).
-
-3. If you would like to use `opencv-python-headless` instead of `opencv-python`, you can install it before installing MMCV.
-
-## A from-scratch setup script
-
-Assuming that you already have CUDA 10.1 installed, here is a full script for setting up mmflow with conda.
-
-```shell
-conda create -n open-mmlab python=3.7 -y
-conda activate open-mmlab
-
-conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch -y
-
-# install latest mmcv
-pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html
-
-# install mmflow
-git clone https://github.com/open-mmlab/mmflow.git
-cd mmflow
-pip install -r requirements/build.txt
 pip install -v -e .
+# "-v" means verbose, or more output
+# "-e" means installing a project in editable mode,
+# thus any local modifications made to the code will take effect without reinstallation.
 ```
 
-## Verification
+Case b: If you use mmflow as a dependency or third-party package, install it with pip:
 
-To verify whether MMFlow is installed correctly, we can run the following sample code to initialize a model and inference a demo image.
+```shell
+pip install mmflow
+```
+
+## Verify the installation
+
+To verify whether MMFlow is installed correctly, we provide some sample codes to run an inference demo.
+
+**Step 1.** We need to download config and checkpoint files.
+
+```shell
+mim download mmflow --config pwcnet_ft_4x1_300k_sintel_final_384x768
+```
+
+The downloading will take several seconds or more, depending on your network environment. When it is done, you will find two files
+`pwcnet_ft_4x1_300k_sintel_final_384x768.py` and `pwcnet_ft_4x1_300k_sintel_final_384x768.pth` in your current folder.
+
+**Step 2.** Verify the inference demo.
+
+Option (a). If you install mmflow from source, just run the following command.
+
+```shell
+   python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
+       configs/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.py \
+       checkpoints/pwcnet_ft_4x1_300k_sintel_final_384x768.pth results
+```
+
+Output will be saved in the directory `results` including a rendered flow map `flow.png` and flow file `flow.flo`
+
+Option (b). If you install mmflow with pip, open you python interpreter and copy&paste the following codes.
 
 ```python
 from mmflow.apis import inference_model, init_model
 
-config_file = 'configs/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.py'
-# download the checkpoint from model zoo and put it in `checkpoints/`
-# url: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.pth
-checkpoint_file = 'checkpoints/pwcnet_ft_4x1_300k_sintel_final_384x768.pth'
+config_file = 'pwcnet_ft_4x1_300k_sintel_final_384x768.py'
+checkpoint_file = 'pwcnet_ft_4x1_300k_sintel_final_384x768.pth'
 device = 'cuda:0'
 # init a model
 model = init_model(config_file, checkpoint_file, device=device)
@@ -142,4 +102,66 @@ model = init_model(config_file, checkpoint_file, device=device)
 inference_model(model, 'demo/frame_0001.png', 'demo/frame_0002.png')
 ```
 
-The above code is supposed to run successfully upon you finish the installation.
+You will see a array printed, which is the flow data.
+
+## Customize Installation
+
+### CUDA versions
+
+When installing PyTorch, you need to specify the version of CUDA. If you are not clear on which to choose, follow our recommendations:
+
+- For Ampere-based NVIDIA GPUs, such as GeForce 30 series and NVIDIA A100, CUDA 11 is a must.
+- For older NVIDIA GPUs, CUDA 11 is backward compatible, but CUDA 10.2 offers better compatibility and is more lightweight.
+
+Please make sure the GPU driver satisfies the minimum version requirements. See [this table](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#cuda-major-component-versions__table-cuda-toolkit-driver-versions) for more information.
+
+```{note}
+Installing CUDA runtime libraries is enough if you follow our best practices, because no CUDA code will be compiled locally. However if you hope to compile MMCV from source or develop other CUDA operators, you need to install the complete CUDA toolkit from NVIDIA's [website](https://developer.nvidia.com/cuda-downloads), and its version should match the CUDA version of PyTorch. i.e., the specified version of cudatoolkit in `conda install` command.
+```
+
+### Install MMCV without MIM
+
+MMCV contains C++ and CUDA extensions, thus depending on PyTorch in a complex way. MIM solves such dependencies automatically and makes the installation easier. However, it is not a must.
+
+To install MMCV with pip instead of MIM, please follow [MMCV installation guides](https://mmcv.readthedocs.io/en/latest/get_started/installation.html). This requires manually specifying a find-url based on PyTorch version and its CUDA version.
+
+For example, the following command install mmcv-full built for PyTorch 1.10.x and CUDA 11.3.
+
+```shell
+pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10/index.html
+```
+
+### Install on CPU-only platforms
+
+MMFlow can be built for CPU only environment. In CPU mode you can train (requires MMCV version >= 1.4.4), test or inference a model.
+
+However some functionalities are gone in this mode:
+
+- Correlation
+
+If you try to train/test/inference a model containing above ops, an error will be raised. The following table lists affected algorithms.
+
+|  Operator   |                                    Model                                     |
+| :---------: | :--------------------------------------------------------------------------: |
+| Correlation | PWC-Net, FlowNetC, FlowNet2, IRR-PWC, LiteFlowNet, LiteFlowNet2, MaskFlowNet |
+
+### Using MMFlow with Docker
+
+We provide a [Dockerfile](https://github.com/open-mmlab/mmflow/blob/master/docker/Dockerfile) to build an image. Ensure that your [docker version](https://docs.docker.com/engine/install/) >=19.03.
+
+```shell
+# build an image with PyTorch 1.6, CUDA 10.1
+# If you prefer other versions, just modified the Dockerfile
+docker build -t mmflow docker/
+```
+
+Run it with
+
+```shell
+docker run --gpus all --shm-size=8g -it -v {DATA_DIR}:/mmflow/data mmflow
+```
+
+## Trouble shooting
+
+If you have some issues during the installation, please first view the [FAQ](faq.md) page.
+You may [open an issue](https://github.com/open-mmlab/mmflow/issues/new/choose) on GitHub if no solution is found.

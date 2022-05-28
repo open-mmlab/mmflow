@@ -17,7 +17,8 @@ Welcome to MMFlow's documentation!
    :maxdepth: 1
    :caption: Get Started
 
-   getting_started.md
+   get_started.md
+   model_zoo.md
 
 .. toctree::
    :maxdepth: 1
@@ -32,9 +33,11 @@ Welcome to MMFlow's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Conventions
+   :caption: Notes
 
    conventions.md
+   changelog.md
+   faq.md
 
 .. toctree::
    :maxdepth: 2
