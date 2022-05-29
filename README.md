@@ -17,25 +17,23 @@
     </sup>
   </div>
   <div>&nbsp;</div>
-</div>
-
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
-[![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
-[![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
-[![codecov](https://codecov.io/gh/open-mmlab/mmflow/branch/master/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmflow)
-[![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
-[![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
+  [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
+  [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
+  [![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
+  [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
+  [![codecov](https://codecov.io/gh/open-mmlab/mmflow/branch/master/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmflow)
+  [![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
+  [![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
 
 [📘Documentation](https://mmflow.readthedocs.io/en/latest/) |
 [🛠️Installation](https://mmflow.readthedocs.io/en/latest/install.html) |
 [👀Model Zoo](https://mmflow.readthedocs.io/en/latest/model_zoo.html) |
 [🤔Reporting Issues](https://mmflow.readthedocs.io/en/latest/issues/new/choose)
 
+</div>
+
 <div align="center">
-
 English | [简体中文](README_zh-CN.md)
-
 </div>
 
 ## Introduction
