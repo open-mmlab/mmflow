@@ -26,10 +26,10 @@
 [![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
 
-[📘Documentation](https://mmflow.readthedocs.io/en/latest/) |
-[🛠️Installation](https://mmflow.readthedocs.io/en/latest/install.html) |
-[👀Model Zoo](https://mmflow.readthedocs.io/en/latest/model_zoo.html) |
-[🤔Reporting Issues](https://mmflow.readthedocs.io/en/latest/issues/new/choose)
+[📘使用文档](https://mmflow.readthedocs.io/en/latest/) |
+[🛠️安装教程](https://mmflow.readthedocs.io/en/latest/install.html) |
+[👀模型库](https://mmflow.readthedocs.io/en/latest/model_zoo.html) |
+[🤔报告问题](https://mmflow.readthedocs.io/en/latest/issues/new/choose)
 
 </div>
 
