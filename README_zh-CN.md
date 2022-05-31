@@ -62,33 +62,11 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
   MMFlow 支持了众多主流经典的光流算法，例如 FlowNet, PWC-Net, RAFT 等，
   以及多种数据集的准备和构建，如 FlyingChairs, FlyingThings3D, Sintel, KITTI 等。
 
-## 开源许可证
-
-该项目采用 [Apache 2.0 开源许可证](LICENSE)。
-
 ## 更新日志
 
-最新的 v0.4.1 版本已经在 2022.04.29 发布:
-
-- 支持三种遮挡估计的方法，包括 flow forward-backward consistency，range map of the backward flow，和 flow forward-backward abstract difference
+最新的 v0.4.2 版本已经在 2022.05.31 发布:
 
 如果想了解更多版本更新细节和历史信息，请参考[更新日志](docs/en/changelog.md)。
-
-## 基准测试和模型库
-
-测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
-
-已支持的算法：
-
-- [x] [FlowNet (ICCV'2015)](configs/flownet/README.md)
-- [x] [FlowNet2 (CVPR'2017)](configs/flownet2/README.md)
-- [x] [PWC-Net (CVPR'2018)](configs/pwcnet/README.md)
-- [x] [LiteFlowNet (CVPR'2018)](configs/liteflownet/README.md)
-- [x] [LiteFlowNet2 (TPAMI'2020)](configs/liteflownet2/README.md)
-- [x] [IRR (CVPR'2019)](configs/irr/README.md)
-- [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
-- [x] [RAFT (ECCV'2020)](configs/raft/README.md)
-- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
 
 ## 安装
 
@@ -113,6 +91,22 @@ MMFlow 也提供了其他更详细的教程，包括：
 
 - [自定义模型运行参数](docs/en/tutorials/5_customize_runtime.md)。
 
+## 基准测试和模型库
+
+测试结果和模型可以在[模型库](docs/zh_cn/model_zoo.md)中找到。
+
+已支持的算法：
+
+- [x] [FlowNet (ICCV'2015)](configs/flownet/README.md)
+- [x] [FlowNet2 (CVPR'2017)](configs/flownet2/README.md)
+- [x] [PWC-Net (CVPR'2018)](configs/pwcnet/README.md)
+- [x] [LiteFlowNet (CVPR'2018)](configs/liteflownet/README.md)
+- [x] [LiteFlowNet2 (TPAMI'2020)](configs/liteflownet2/README.md)
+- [x] [IRR (CVPR'2019)](configs/irr/README.md)
+- [x] [MaskFlownet (CVPR'2020)](configs/maskflownet/README.md)
+- [x] [RAFT (ECCV'2020)](configs/raft/README.md)
+- [x] [GMA (ICCV' 2021)](configs/gma/README.md)
+
 ## 贡献指南
 
 我们感谢所有的贡献者为改进和提升 MMFlow 所作出的努力。请参考[贡献指南](https://github.com/open-mmlab/mmcv/blob/master/CONTRIBUTING.md)来了解参与项目贡献的相关指引。
@@ -129,6 +123,10 @@ MMFlow 也提供了其他更详细的教程，包括：
     year={2021}
 }
 ```
+
+## 开源许可证
+
+该项目采用 [Apache 2.0 开源许可证](LICENSE)。
 
 ## OpenMMLab 的其他项目
 
