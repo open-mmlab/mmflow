@@ -29,7 +29,7 @@
 [📘Documentation](https://mmflow.readthedocs.io/en/latest/) |
 [🛠️Installation](https://mmflow.readthedocs.io/en/latest/install.html) |
 [👀Model Zoo](https://mmflow.readthedocs.io/en/latest/model_zoo.html) |
-[🤔Reporting Issues](https://mmflow.readthedocs.io/en/latest/issues/new/choose)
+[🤔Reporting Issues](https://github.com/open-mmlab/mmflow/issues/new/choose)
 
 </div>
 
