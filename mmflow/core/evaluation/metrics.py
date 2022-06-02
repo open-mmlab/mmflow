@@ -92,7 +92,7 @@ def eval_metrics(
     """Calculate evaluation metrics.
 
     Args:
-        results (list): list of predictedflow maps.
+        results (list): list of predicted flow maps.
         flow_gt (list): list of ground truth flow maps
         metrics (list, str): metrics to be evaluated.
             Defaults to ['EPE'], end-point error.
