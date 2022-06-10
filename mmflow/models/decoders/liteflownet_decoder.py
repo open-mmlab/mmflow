@@ -7,11 +7,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn.bricks.conv_module import ConvModule
 from mmcv.runner import BaseModule
+from torch import Tensor
 
 from mmflow.core import FlowDataSample
+from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
+                               unpack_flow_data_samples)
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import CorrBlock, unpack_flow_data_samples
+from ..utils import CorrBlock
 from .base_decoder import BaseDecoder
 
 
@@ -32,7 +35,7 @@ class Upsample(nn.Module):
         self.register_buffer('weight', self.bilinear_upsampling_filter())
 
     # caffe::BilinearFilter
-    def bilinear_upsampling_filter(self) -> torch.Tensor:
+    def bilinear_upsampling_filter(self) -> Tensor:
         """Generate the weights for caffe::BilinearFilter.
 
         Returns:
@@ -48,7 +51,7 @@ class Upsample(nn.Module):
         return weight.view(1, 1, self.kernel_size,
                            self.kernel_size).repeat(self.channels, 1, 1, 1)
 
-    def forward(self, data: torch.Tensor) -> torch.Tensor:
+    def forward(self, data: Tensor) -> Tensor:
         """Forward function for upsample.
 
         Args:
@@ -154,10 +157,10 @@ class MatchingBlock(BasicBlock):
             self.corr_up = nn.Sequential()
 
     def forward(self,
-                feat1: torch.Tensor,
-                feat2: torch.Tensor,
-                upflow: Optional[torch.Tensor] = None,
-                multiplier: float = 1.) -> torch.Tensor:
+                feat1: Tensor,
+                feat2: Tensor,
+                upflow: Optional[Tensor] = None,
+                multiplier: float = 1.) -> Tensor:
         """Forward function for MatchingBlock.
 
         Args:
@@ -207,8 +210,8 @@ class SubpixelBlock(BasicBlock):
             stride=1,
             padding=last_kernel_size // 2)
 
-    def forward(self, feat1: torch.Tensor, feat2: torch.Tensor,
-                flow: torch.Tensor, multiplier: float) -> torch.Tensor:
+    def forward(self, feat1: Tensor, feat2: Tensor, flow: Tensor,
+                multiplier: float) -> Tensor:
         """Forward function for SubpixelBlock.
 
         Args:
@@ -269,9 +272,8 @@ class RegularizationBlock(BasicBlock):
                 padding=last_kernel_size // 2)
         self.patch_size = int(float(out_channels)**(0.5))
 
-    def forward(self, img1: torch.Tensor, img2: torch.Tensor,
-                feat: torch.Tensor, flow: torch.Tensor,
-                multiplier: float) -> torch.Tensor:
+    def forward(self, img1: Tensor, img2: Tensor, feat: Tensor, flow: Tensor,
+                multiplier: float) -> Tensor:
         """Forward function for RegularizationBlock.
 
         Args:
@@ -419,7 +421,7 @@ class NetE(BaseDecoder):
                  regularized_flow: bool = True,
                  flow_loss: Optional[dict] = None,
                  extra_training_loss: bool = False,
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
 
         super().__init__(init_cfg)
 
@@ -583,19 +585,18 @@ class NetE(BaseDecoder):
                 'upflow_layer': upflow_layer
             })
 
-    def forward(self, img1: torch.Tensor, img2: torch.Tensor,
-                feat1: Dict[str, torch.Tensor],
-                feat2: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def forward(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+                feat2: TensorDict) -> TensorDict:
         """Forward function for LiteFlownet Decoder.
 
         Args:
             img1 (Tensor): The first input image.
             img2 (Tensor): The second input image.
-            feat1 (Dict[str, Tensor]): The feature pyramid from first image.
-            feat2 (Dict[str, Tensor]): The feature pyramid from second image.
+            feat1 (TensorDict): The feature pyramid from first image.
+            feat2 (TensorDict): The feature pyramid from second image.
 
         Returns:
-            Dict[str, Tensor]: The predicted multi-level optical flow.
+            TensorDict: The predicted multi-level optical flow.
         """
 
         flow_pred = dict()
@@ -640,27 +641,26 @@ class NetE(BaseDecoder):
         return flow_pred
 
     @staticmethod
-    def _scale_img(img: torch.Tensor, h: int, w: int) -> torch.Tensor:
+    def _scale_img(img: Tensor, h: int, w: int) -> Tensor:
         return F.interpolate(
             img, size=(h, w), mode='bilinear', align_corners=False)
 
-    def forward_train(
-            self, img1: torch.Tensor, img2: torch.Tensor,
-            feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
-            batch_data_samples: FlowDataSample) -> Dict[str, torch.Tensor]:
+    def forward_train(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+                      feat2: TensorDict,
+                      batch_data_samples: FlowDataSample) -> TensorDict:
         """Forward function when model training.
 
         Args:
             img1 (Tensor): The first input image.
             img2 (Tensor): The second input image.
-            feat1 (Dict[str, Tensor]): The feature pyramid from first image.
-            feat2 (Dict[str, Tensor]): The feature pyramid from second image.
+            feat1 (TensorDict): The feature pyramid from first image.
+            feat2 (TensorDict): The feature pyramid from second image.
             batch_data_samples (list[:obj:`FlowDataSample`]): Each item
                 contains the meta information of each image and corresponding
                 annotations.
 
         Returns:
-            Dict[str, Tensor]: The losses of model.
+            TensorDict: The losses of model.
         """
 
         H, W = img1.shape[2:]
@@ -673,17 +673,16 @@ class NetE(BaseDecoder):
                                                   W)
         return self.losses(flow_pred, batch_data_samples)
 
-    def forward_test(
-            self, img1: torch.Tensor, img2: torch.Tensor,
-            feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
-            batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
+    def forward_test(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+                     feat2: TensorDict,
+                     batch_img_metas: Sequence[dict]) -> SampleList:
         """Forward function when model testing.
 
         Args:
             img1 (Tensor): The first input image.
             img2 (Tensor): The second input image.
-            feat1 (Dict[str, Tensor]): The feature pyramid from first image.
-            feat2 (Dict[str, Tensor]): The feature pyramid from second image.
+            feat1 (TensorDict): The feature pyramid from first image.
+            feat2 (TensorDict): The feature pyramid from second image.
             batch_img_metas (Sequence[dict]): meta data of image to revert
                 the flow to original ground truth size.
 
@@ -702,27 +701,26 @@ class NetE(BaseDecoder):
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
 
-        flow_results = flow_results.cpu().data.numpy() * self.flow_div
+        flow_results = flow_results * self.flow_div
 
         # unravel batch dim
         flow_results = list(flow_results)
         results = [dict(flow_fw=f) for f in flow_results]
 
-        return self.get_flow(results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(
+            results, batch_img_metas=batch_img_metas)
 
-    def losses(
-        self, flow_pred: Dict[str, torch.Tensor],
-        batch_data_samples: Sequence[FlowDataSample]
-    ) -> Dict[str, torch.Tensor]:
+    def losses(self, flow_pred: TensorDict,
+               batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:
-            flow_pred (Dict[str, Tensor]): multi-level predicted optical flow.
+            flow_pred (TensorDict): multi-level predicted optical flow.
             flow_gt (Tensor): The ground truth of optical flow.
             valid (Tensor, optional): The valid mask. Defaults to None.
 
         Returns:
-            Dict[str, Tensor]: The dict of losses.
+            TensorDict: The dict of losses.
         """
 
         loss = dict()

@@ -1,10 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, Sequence, Tuple, Union
 
 from mmcv.utils import Config
 from numpy import ndarray
 from torch import Tensor
 
+from mmflow.core.utils import SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..builder import build_encoder
 from .pwcnet import PWCNet
@@ -17,12 +18,8 @@ class FlowNetS(PWCNet):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def forward_train(
-            self,
-            imgs: Tensor,
-            flow_gt: Tensor,
-            valid: Optional[Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Dict[str, Tensor]:
+    def forward_train(self, imgs: Tensor,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function for FlowNetS when model training.
 
         Args:
@@ -34,22 +31,19 @@ class FlowNetS(PWCNet):
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Dict[str, Tensor]: The losses of output.
+            TensorDict: The losses of output.
         """
 
         feat = self.encoder(imgs)
 
         return self.decoder.forward_train(
             feat,
-            flow_gt=flow_gt,
-            valid=valid,
+            batch_data_samples=batch_data_samples,
             return_multi_level_flow=self.freeze_net)
 
     def forward_test(
-        self,
-        imgs: Tensor,
-        img_metas: Optional[Sequence[dict]] = None
-    ) -> Sequence[Dict[str, ndarray]]:
+            self, imgs: Tensor,
+            batch_data_samples: SampleList) -> Sequence[Dict[str, ndarray]]:
         """Forward function for FlowNetS when model testing.
 
         Args:
@@ -63,13 +57,13 @@ class FlowNetS(PWCNet):
         """
         H, W = imgs.shape[2:]
         feat = self.encoder(imgs)
-
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+            batch_img_metas.append(data_sample.metainfo)
         return self.decoder.forward_test(
             feat,
-            H=H,
-            W=W,
-            return_multi_level_flow=self.freeze_net,
-            img_metas=img_metas)
+            batch_img_metas=batch_img_metas,
+            return_multi_level_flow=self.freeze_net)
 
 
 @MODELS.register_module()
@@ -88,15 +82,14 @@ class FlowNetC(PWCNet):
         self.corr_level = corr_level
         self.corr_encoder = build_encoder(corr_encoder)
 
-    def extract_feat(
-            self, imgs: Tensor) -> Tuple[Dict[str, Tensor], Dict[str, Tensor]]:
+    def extract_feat(self, imgs: Tensor) -> Tuple[TensorDict, TensorDict]:
         """Extract features from images.
 
         Args:
             imgs (Tensor): The concatenated input images.
 
         Returns:
-            Tuple[Dict[str, Tensor], Dict[str, Tensor]]: The feature pyramid
+            Tuple[TensorDict, TensorDict]: The feature pyramid
                 from the first image and the feature pyramid from feature
                 correlation.
         """
@@ -109,12 +102,8 @@ class FlowNetC(PWCNet):
         return feat1, self.corr_encoder(feat1[self.corr_level],
                                         feat2[self.corr_level])
 
-    def forward_train(
-            self,
-            imgs: Tensor,
-            flow_gt: Tensor,
-            valid: Optional[Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Dict[str, Tensor]:
+    def forward_train(self, imgs: Tensor,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function for FlowNetC when model training.
 
         Args:
@@ -126,7 +115,7 @@ class FlowNetC(PWCNet):
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Dict[str, Tensor]: The losses of output.
+            TensorDict: The losses of output.
         """
 
         feat1, corr_feat = self.extract_feat(imgs)
@@ -134,15 +123,12 @@ class FlowNetC(PWCNet):
         return self.decoder.forward_train(
             feat1,
             corr_feat,
-            flow_gt=flow_gt,
-            valid=valid,
+            batch_data_samples=batch_data_samples,
             return_multi_level_flow=self.freeze_net)
 
     def forward_test(
-        self,
-        imgs: Tensor,
-        img_metas: Optional[Sequence[dict]] = None
-    ) -> Union[Dict[str, Tensor], Sequence[ndarray]]:
+        self, imgs: Tensor, batch_data_samples: SampleList
+    ) -> Union[TensorDict, Sequence[ndarray]]:
         """Forward function for FlowNetC when model testing.
 
         Args:
@@ -155,13 +141,12 @@ class FlowNetC(PWCNet):
                 with the same size of images after augmentation.
         """
 
-        H, W = imgs.shape[2:]
         feat1, corr_feat = self.extract_feat(imgs)
-
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+            batch_img_metas.append(data_sample.metainfo)
         return self.decoder.forward_test(
             feat1,
             corr_feat,
-            H=H,
-            W=W,
-            return_multi_level_flow=self.freeze_net,
-            img_metas=img_metas)
+            batch_img_metas=batch_img_metas,
+            return_multi_level_flow=self.freeze_net)

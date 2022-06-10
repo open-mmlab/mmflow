@@ -1,10 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Dict, Sequence, Tuple
 
 import torch
 from numpy import ndarray
 from torch import Tensor
 
+from mmflow.core.utils import SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..builder import build_flow_estimator
 from ..decoders.maskflownet_decoder import Upsample
@@ -36,14 +37,14 @@ class MaskFlowNetS(PWCNet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def extract_feat(self, imgs: Tensor) -> Tuple[Dict[str, Tensor]]:
+    def extract_feat(self, imgs: Tensor) -> Sequence[TensorDict]:
         """Extract features from images.
 
         Args:
             imgs (Tensor): The concatenated input images.
 
         Returns:
-            Tuple[Dict[str, Tensor], Dict[str, Tensor]]: The feature pyramid of
+            Tuple[TensorDict, TensorDict]: The feature pyramid of
                 the first input image and the feature pyramid of secode input
                 image.
         """
@@ -69,18 +70,15 @@ class MaskFlowNet(MaskFlowNetS):
         self.out_level = out_level
         self.flow_div = self.decoder.flow_div
 
-    def extract_feat(
-        self, imgs: Tensor
-    ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, Tensor], Dict[
-            str, Tensor], Dict[str, Tensor]]:
+    def extract_feat(self, imgs: Tensor) -> Sequence[TensorDict]:
         """Extract features from images.
 
         Args:
             imgs (Tensor): The concatenated input images.
 
         Returns:
-            Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, Tensor],
-                Dict[str, Tensor], Dict[str, Tensor]]: The feature pyramid of
+            Tuple[TensorDict, TensorDict, TensorDict,
+                TensorDict, TensorDict]: The feature pyramid of
                 the first input image and the feature pyramid of secode input
                 image in stage1 and stage2 of MaskFlownet, and estimated
                 multi-level flow from the stage1.
@@ -102,12 +100,8 @@ class MaskFlowNet(MaskFlowNetS):
         return feat1, feat2, self.encoder(img1), self.encoder(
             img2), flows_stage1
 
-    def forward_train(
-            self,
-            imgs: Tensor,
-            flow_gt: Tensor,
-            valid: Optional[Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Dict[str, Tensor]:
+    def forward_train(self, imgs: Tensor,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function for PWCNet when model training.
 
         Args:
@@ -119,7 +113,7 @@ class MaskFlowNet(MaskFlowNetS):
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Dict[str, Tensor]: The losses of output.
+            TensorDict: The losses of output.
         """
         feat1, feat2, feat3, feat4, flows_stage1 = self.extract_feat(imgs)
         return self.decoder.forward_train(
@@ -127,15 +121,11 @@ class MaskFlowNet(MaskFlowNetS):
             feat2=feat2,
             feat3=feat3,
             feat4=feat4,
-            flows_stage1=flows_stage1,
-            flow_gt=flow_gt,
-            valid=valid)
+            batch_data_samples=batch_data_samples)
 
     def forward_test(
-        self,
-        imgs: Tensor,
-        img_metas: Optional[Sequence[dict]] = None
-    ) -> Sequence[Dict[str, ndarray]]:
+            self, imgs: Tensor,
+            batch_data_samples: SampleList) -> Sequence[Dict[str, ndarray]]:
         """Forward function for PWCNet when model testing.
 
         Args:
@@ -150,5 +140,8 @@ class MaskFlowNet(MaskFlowNetS):
 
         H, W = imgs.shape[2:]
         feat1, feat2, feat3, feat4, flows_stage1 = self.extract_feat(imgs)
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+            batch_img_metas.append(data_sample.metainfo)
         return self.decoder.forward_test(feat1, feat2, feat3, feat4,
-                                         flows_stage1, H, W, img_metas)
+                                         flows_stage1, batch_img_metas)

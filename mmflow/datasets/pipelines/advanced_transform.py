@@ -261,7 +261,7 @@ class RandomAffine(BaseTransform):
             dict: transformed data.
         """
 
-        h, w, _ = results['img_shape']
+        h, w = results['img_shape']
 
         # theta0_ndc, theta1_ndc and theta2_ndc are 3 x 3 affine transformation
         # matrix in normal device coordinates, with origin at the center of

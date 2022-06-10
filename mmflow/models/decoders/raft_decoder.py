@@ -1,17 +1,18 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import math
-from typing import Dict, Optional, Sequence, Union
+from typing import Optional, Sequence, Union
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
+from torch import Tensor
 
-from mmflow.core import FlowDataSample
+from mmflow.core.utils import TensorDict, TensorList, unpack_flow_data_samples
+from mmflow.core.utils.typing import SampleList
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 
@@ -31,8 +32,7 @@ class CorrelationPyramid(BaseModule):
         self.pool = nn.AvgPool2d(kernel_size=2, stride=2)
         self.num_levels = num_levels
 
-    def forward(self, feat1: torch.Tensor,
-                feat2: torch.Tensor) -> Sequence[torch.Tensor]:
+    def forward(self, feat1: Tensor, feat2: Tensor) -> TensorList:
         """Forward function for Correlation pyramid.
 
         Args:
@@ -375,9 +375,7 @@ class RAFTDecoder(BaseDecoder):
             self.encoder.out_channels[0] + 2 + self.cxt_channels,
             net_type=self.gru_type)
 
-    def _upsample(self,
-                  flow: torch.Tensor,
-                  mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+    def _upsample(self, flow: Tensor, mask: Optional[Tensor] = None) -> Tensor:
         """Upsample flow field [H/8, W/8, 2] -> [H, W, 2] using convex
         combination.
 
@@ -412,9 +410,8 @@ class RAFTDecoder(BaseDecoder):
         upflow = upflow.permute(0, 1, 4, 2, 5, 3)
         return upflow.reshape(N, 2, scale * H, scale * W)
 
-    def forward(self, feat1: torch.Tensor, feat2: torch.Tensor,
-                flow: torch.Tensor, h: torch.Tensor,
-                cxt_feat: torch.Tensor) -> Sequence[torch.Tensor]:
+    def forward(self, feat1: Tensor, feat2: Tensor, flow: Tensor, h: Tensor,
+                cxt_feat: Tensor) -> TensorList:
         """Forward function for RAFTDecoder.
 
         Args:
@@ -453,13 +450,13 @@ class RAFTDecoder(BaseDecoder):
 
     def forward_train(
         self,
-        feat1: torch.Tensor,
-        feat2: torch.Tensor,
-        flow: torch.Tensor,
-        h_feat: torch.Tensor,
-        cxt_feat: torch.Tensor,
-        batch_data_samples: FlowDataSample,
-    ) -> Dict[str, torch.Tensor]:
+        feat1: Tensor,
+        feat2: Tensor,
+        flow: Tensor,
+        h_feat: Tensor,
+        cxt_feat: Tensor,
+        batch_data_samples: SampleList,
+    ) -> TensorList:
         """Forward function when model training.
 
         Args:
@@ -482,13 +479,13 @@ class RAFTDecoder(BaseDecoder):
 
     def forward_test(
         self,
-        feat1: torch.Tensor,
-        feat2: torch.Tensor,
-        flow: torch.Tensor,
-        h_feat: torch.Tensor,
-        cxt_feat: torch.Tensor,
+        feat1: Tensor,
+        feat2: Tensor,
+        flow: Tensor,
+        h_feat: Tensor,
+        cxt_feat: Tensor,
         batch_img_metas: Sequence[dict],
-    ) -> Sequence[FlowDataSample]:
+    ) -> SampleList:
         """Forward function when model training.
 
         Args:
@@ -507,16 +504,14 @@ class RAFTDecoder(BaseDecoder):
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
         flow_result = flow_pred[-1]
-        flow_result = flow_result.cpu().data.numpy()
+        flow_result = flow_result
         # unravel batch dim
         flow_result = list(flow_result)
         flow_result = [dict(flow_fw=f) for f in flow_result]
-        return self.get_flow(flow_result, batch_img_metas)
+        return self.postprocess_result(flow_result, batch_img_metas)
 
-    def losses(
-        self, flow_pred: Sequence[torch.Tensor],
-        batch_data_samples: Sequence[FlowDataSample]
-    ) -> Dict[str, torch.Tensor]:
+    def losses(self, flow_pred: TensorList,
+               batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:

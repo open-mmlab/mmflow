@@ -1,15 +1,16 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Sequence, Tuple
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.runner import BaseModule
 
-from mmflow.core import FlowDataSample
+from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
+                               unpack_flow_data_samples)
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
+from ..utils import BasicDenseBlock, CorrBlock
 from .base_decoder import BaseDecoder
 
 
@@ -39,7 +40,7 @@ class PWCModule(BaseModule):
                  conv_cfg: Optional[dict] = None,
                  norm_cfg: Optional[dict] = None,
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
-                 init_cfg: Optional[Union[dict, list]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(init_cfg=init_cfg)
 
         self.up_flow = up_flow
@@ -132,7 +133,7 @@ class PWCNetDecoder(BaseDecoder):
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
                  post_processor: dict = None,
                  flow_loss: Optional[dict] = None,
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
 
         assert isinstance(in_channels, dict)
 
@@ -228,8 +229,7 @@ class PWCNetDecoder(BaseDecoder):
         """
         self.warp = build_components(warp_cfg)
 
-    def forward(self, feat1: Dict[str, torch.Tensor],
-                feat2: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def forward(self, feat1: TensorDict, feat2: TensorDict) -> TensorDict:
         """Forward function for PWCNetDecoder.
 
         Args:
@@ -268,10 +268,8 @@ class PWCNetDecoder(BaseDecoder):
 
         return flow_pred
 
-    def forward_train(
-        self, feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
-        batch_data_samples: Sequence[FlowDataSample]
-    ) -> Dict[str, torch.Tensor]:
+    def forward_train(self, feat1: TensorDict, feat2: TensorDict,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -292,10 +290,10 @@ class PWCNetDecoder(BaseDecoder):
 
     def forward_test(
         self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
+        feat1: TensorDict,
+        feat2: TensorDict,
         batch_img_metas: Sequence[dict],
-    ) -> Sequence[FlowDataSample]:
+    ) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -318,18 +316,17 @@ class PWCNetDecoder(BaseDecoder):
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
 
-        flow_results = flow_results.cpu().data.numpy() * self.flow_div
+        flow_results = flow_results * self.flow_div
 
         # unravel batch dim,
         flow_results = list(flow_results)
         results = [dict(flow_fw=f) for f in flow_results]
 
-        return self.get_flow(results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(
+            results, batch_img_metas=batch_img_metas)
 
-    def losses(
-        self, flow_pred: Dict[str, torch.Tensor],
-        batch_data_samples: Sequence[FlowDataSample]
-    ) -> Dict[str, torch.Tensor]:
+    def losses(self, flow_pred: TensorDict,
+               batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:

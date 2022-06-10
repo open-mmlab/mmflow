@@ -68,6 +68,7 @@ def register_all_modules(init_default_scope: bool = True) -> None:
     """  # noqa
     import mmflow.core  # noqa: F401,F403
     import mmflow.datasets  # noqa: F401,F403
+    import mmflow.metrics  # noqa: F401,F403
     import mmflow.models  # noqa: F401,F403
 
     if init_default_scope:

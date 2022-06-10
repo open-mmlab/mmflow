@@ -1,13 +1,95 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict
+from typing import Dict, List, Optional, Tuple, Union
 
 import mmcv
 import numpy as np
 from mmcv import sparse_flow_from_bytes
-from mmcv.transforms import BaseTransform, LoadImageFromFile
+from mmcv.transforms import BaseTransform
 
 from mmflow.registry import TRANSFORMS
 from ..utils import flow_from_bytes
+
+
+@TRANSFORMS.register_module()
+class LoadImageFromFile(BaseTransform):
+    """Load image1 and image2 from file.
+
+    Required Keys:
+
+    - img1_path
+    - img2_path
+
+    Modified Keys:
+
+    - img1
+    - img2
+    - img_shape
+    - ori_shape
+
+    Args:
+        to_float32 (bool): Whether to convert the loaded image to a float32
+            numpy array. If set to False, the loaded image is an uint8 array.
+            Defaults to False.
+        color_type (str): The flag argument for :func:``mmcv.imfrombytes``.
+            Defaults to 'color'.
+        imdecode_backend (str): The image decoding backend type. The backend
+            argument for :func:``mmcv.imfrombytes``.
+            See :func:``mmcv.imfrombytes`` for details.
+            Defaults to 'cv2'.
+        file_client_args (dict): Arguments to instantiate a FileClient.
+            See :class:`mmcv.fileio.FileClient` for details.
+            Defaults to ``dict(backend='disk')``.
+    """
+
+    def __init__(self,
+                 to_float32: bool = False,
+                 color_type: str = 'color',
+                 file_client_args: dict = dict(backend='disk'),
+                 imdecode_backend: str = 'cv2') -> None:
+        super().__init__()
+        self.to_float32 = to_float32
+        self.color_type = color_type
+        self.file_client_args = file_client_args.copy()
+        self.file_client = mmcv.FileClient(**self.file_client_args)
+        self.imdecode_backend = imdecode_backend
+
+    def transform(self,
+                  results: Dict) -> Optional[Union[Dict, Tuple[List, List]]]:
+        """Call function to load image and get image meta information.
+
+        Args:
+            results (dict): Result dict from :obj:`mmflow.BaseDataset`.
+
+        Returns:
+            dict: The dict contains loaded image and meta information.
+        """
+        filename1 = results['img1_path']
+        img1_bytes = self.file_client.get(filename1)
+        img1 = mmcv.imfrombytes(
+            img1_bytes, flag=self.color_type, backend=self.imdecode_backend)
+
+        filename2 = results['img2_path']
+        img2_bytes = self.file_client.get(filename2)
+        img2 = mmcv.imfrombytes(
+            img2_bytes, flag=self.color_type, backend=self.imdecode_backend)
+
+        if self.to_float32:
+            img1 = img1.astype(np.float32)
+            img2 = img2.astype(np.float32)
+
+        results['img1'] = img1
+        results['img2'] = img2
+        results['img_shape'] = img1.shape[:2]
+        results['ori_shape'] = img1.shape[:2]
+
+        return results
+
+    def __repr__(self) -> str:
+        repr_str = self.__class__.__name__
+        repr_str += f'(to_float32={self.to_float32},'
+        repr_str += f"color_type='{self.color_type}',"
+        repr_str += f"imdecode_backend='{self.imdecode_backend}')"
+        return repr_str
 
 
 @TRANSFORMS.register_module()

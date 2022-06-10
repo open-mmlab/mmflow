@@ -16,11 +16,15 @@ class TestFlMetric(TestCase):
     def _create_toy_data_batch(self):
         flow = torch.from_numpy(self.flow_gt.transpose(2, 0, 1))
         valid = torch.from_numpy(self.valid_gt[None, ...])
-        return [dict(data_sample=dict(gt_flow_fw=flow, gt_valid=valid))]
+        return [
+            dict(
+                data_sample=dict(
+                    gt_flow_fw=dict(data=flow), gt_valid=dict(data=valid)))
+        ]
 
     def _create_toy_predictions(self):
         flow = torch.from_numpy(self.flow_pred.transpose(2, 0, 1))
-        return [dict(pred_flow_fw=flow)]
+        return [dict(pred_flow_fw=dict(data=flow))]
 
     def test_evaluate(self):
         fl_metric = FlowOutliers()

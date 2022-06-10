@@ -1,5 +1,7 @@
 model = dict(
     type='RAFT',
+    preprocess_cfg=dict(
+        mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False),
     num_levels=4,
     radius=4,
     cxt_channels=128,

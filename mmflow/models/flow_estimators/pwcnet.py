@@ -1,9 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Union
-
-from numpy import ndarray
 from torch import Tensor
 
+from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
+                               TensorList)
 from mmflow.registry import MODELS
 from ..builder import build_decoder, build_encoder
 from .base import FlowEstimator
@@ -23,14 +22,14 @@ class PWCNet(FlowEstimator):
     def __init__(self,
                  encoder: dict,
                  decoder: dict,
-                 init_cfg: Optional[Union[dict, list]] = None,
+                 init_cfg: OptMultiConfig = None,
                  **kwargs):
 
         super().__init__(init_cfg=init_cfg, **kwargs)
         self.encoder = build_encoder(encoder)
         self.decoder = build_decoder(decoder)
 
-    def extract_feat(self, imgs: Tensor) -> Dict[str, Tensor]:
+    def extract_feat(self, imgs: Tensor) -> TensorDict:
         """Extract features from images.
 
         Args:
@@ -38,7 +37,7 @@ class PWCNet(FlowEstimator):
 
         Returns:
             Tuple[Dict[str, Tensor], Dict[str, Tensor]]: The feature pyramid of
-                the first input image and the feature pyramid of secode input
+                the first input image and the feature pyramid of second input
                 image.
         """
 
@@ -47,12 +46,8 @@ class PWCNet(FlowEstimator):
         img2 = imgs[:, in_channels:, ...]
         return self.encoder(img1), self.encoder(img2)
 
-    def forward_train(
-            self,
-            imgs: Tensor,
-            flow_gt: Tensor,
-            valid: Optional[Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Dict[str, Tensor]:
+    def forward_train(self, imgs: Tensor,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function for PWCNet when model training.
 
         Args:
@@ -68,12 +63,10 @@ class PWCNet(FlowEstimator):
         """
         feat1, feat2 = self.extract_feat(imgs)
         return self.decoder.forward_train(
-            feat1=feat1, feat2=feat2, flow_gt=flow_gt, valid=valid)
+            feat1=feat1, feat2=feat2, batch_data_samples=batch_data_samples)
 
-    def forward_test(
-            self,
-            imgs: Tensor,
-            img_metas: Optional[Sequence[dict]] = None) -> Sequence[ndarray]:
+    def forward_test(self, imgs: Tensor,
+                     batch_data_samples: SampleList) -> TensorList:
         """Forward function for PWCNet when model testing.
 
         Args:
@@ -86,6 +79,8 @@ class PWCNet(FlowEstimator):
                 with the same size of images after augmentation.
         """
 
-        H, W = imgs.shape[2:]
         feat1, feat2 = self.extract_feat(imgs)
-        return self.decoder.forward_test(feat1, feat2, H, W, img_metas)
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+            batch_img_metas.append(data_sample.metainfo)
+        return self.decoder.forward_test(feat1, feat2, batch_img_metas)

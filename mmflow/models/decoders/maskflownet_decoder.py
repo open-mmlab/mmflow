@@ -7,14 +7,16 @@ import torch.nn.functional as F
 from mmcv.cnn.bricks.activation import build_activation_layer
 from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
+from torch import Tensor
 
 from mmflow.core import FlowDataSample
+from mmflow.core.utils import OptMultiConfig, SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
 
 
-def Upsample(img, factor) -> torch.Tensor:
+def Upsample(img, factor) -> Tensor:
     """Upsampling function.
 
     Args:
@@ -53,7 +55,7 @@ class BasicDeformWarpBlock(BaseModule):
                  channels: int,
                  act_cfg: dict,
                  with_deform_bias: bool = True,
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(init_cfg)
         self.channels = channels
         self.deconv = DeformConv2d(channels, channels, 3, padding=1)
@@ -62,7 +64,7 @@ class BasicDeformWarpBlock(BaseModule):
         if self.with_deform_bias:
             self.deconv_bias = nn.Parameter(torch.zeros(channels, 1, 1))
 
-    def forward(self, feat2: torch.Tensor, flow: torch.Tensor) -> torch.Tensor:
+    def forward(self, feat2: Tensor, flow: Tensor) -> Tensor:
         """Forward function for BasicDeformWarpBlock.
 
         Args:
@@ -102,7 +104,7 @@ class DeformWarpBlock(BaseModule):
                  up_channels: int,
                  act_cfg: dict,
                  with_deform_bias: bool = True,
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(init_cfg)
         self.channels = channels
         self.deconv = DeformConv2d(channels, channels, 3, padding=1)
@@ -112,9 +114,8 @@ class DeformWarpBlock(BaseModule):
         if self.with_deform_bias:
             self.deconv_bias = nn.Parameter(torch.zeros(channels, 1, 1))
 
-    def forward(self, feat2: torch.Tensor, flow: torch.Tensor,
-                mask_feat: torch.Tensor,
-                up_feat: torch.Tensor) -> torch.Tensor:
+    def forward(self, feat2: Tensor, flow: Tensor, mask_feat: Tensor,
+                up_feat: Tensor) -> Tensor:
         """Forward function for DeformWarpBlock.
 
         Args:
@@ -174,7 +175,7 @@ class WarpCorrBlock(BaseModule):
                  act_cfg=dict(type='LeakyReLU', negative_slope=0.1),
                  scaled: bool = False,
                  with_deform_bias: bool = True,
-                 init_cfg: Optional[Union[dict, list]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
 
         super().__init__(init_cfg=init_cfg)
 
@@ -205,11 +206,11 @@ class WarpCorrBlock(BaseModule):
         self.corr = CorrBlock(self.corr_cfg, self.act_cfg, scaled=self.scaled)
 
     def forward(self,
-                feat1: torch.Tensor,
-                feat2: torch.Tensor,
-                up_flow: torch.Tensor,
-                up_mask: Optional[torch.Tensor] = None,
-                up_feat: Optional[torch.Tensor] = None) -> torch.Tensor:
+                feat1: Tensor,
+                feat2: Tensor,
+                up_flow: Tensor,
+                up_mask: Optional[Tensor] = None,
+                up_feat: Optional[Tensor] = None) -> Tensor:
         """Forward function for WarpCorrBlock.
 
         Args:
@@ -267,9 +268,8 @@ class MaskModule(PWCModule):
                     padding=1), build_activation_layer(self.act_cfg))
 
     def forward(
-        self, x: torch.Tensor, upflow: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor,
-               torch.Tensor, torch.Tensor]:
+        self, x: Tensor, upflow: Tensor
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         """Forward function for MaskModule.
 
         Args:
@@ -407,13 +407,11 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
                     scaled=scaled,
                     with_deform_bias=self.with_deform_bias)
 
-    def forward(
-        self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
-        return_mask: bool = False
-    ) -> Union[Dict[str, torch.Tensor], Tuple[Dict[str, torch.Tensor],
-                                              torch.Tensor]]:
+    def forward(self,
+                feat1: TensorDict,
+                feat2: TensorDict,
+                return_mask: bool = False
+                ) -> Union[TensorDict, Tuple[TensorDict, Tensor]]:
         """Forward function for MaskFlownet decoder.
 
         Args:
@@ -492,12 +490,12 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
     def forward(
         self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
-        feat3: Dict[str, torch.Tensor],
-        feat4: Dict[str, torch.Tensor],
-        flows_stage1: Dict[str, torch.Tensor],
-    ) -> Dict[str, torch.Tensor]:
+        feat1: TensorDict,
+        feat2: TensorDict,
+        feat3: TensorDict,
+        feat4: TensorDict,
+        flows_stage1: TensorDict,
+    ) -> TensorDict:
         """Forward function for MaskFlowNetDecoder.
 
         Args:
@@ -549,12 +547,10 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
         return flows_pred
 
-    def forward_train(
-        self, feat1: Dict[str, torch.Tensor], feat2: Dict[str, torch.Tensor],
-        feat3: Dict[str, torch.Tensor], feat4: Dict[str, torch.Tensor],
-        flows_stage1: Dict[str, torch.Tensor],
-        batch_data_samples: Sequence[FlowDataSample]
-    ) -> Dict[str, torch.Tensor]:
+    def forward_train(self, feat1: TensorDict, feat2: TensorDict,
+                      feat3: TensorDict, feat4: TensorDict,
+                      flows_stage1: TensorDict,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -582,11 +578,11 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
     def forward_test(
         self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
-        feat3: Dict[str, torch.Tensor],
-        feat4: Dict[str, torch.Tensor],
-        flows_stage1: Dict[str, torch.Tensor],
+        feat1: TensorDict,
+        feat2: TensorDict,
+        feat3: TensorDict,
+        feat4: TensorDict,
+        flows_stage1: TensorDict,
         batch_img_metas: Sequence[dict],
     ) -> Sequence[FlowDataSample]:
         """Forward function when model testing.
@@ -617,11 +613,11 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         flow_result = F.interpolate(
             flow_result, size=(H, W), mode='bilinear', align_corners=False)
         # reshape [2, H, W] to [H, W, 2]
-        flow_result = flow_result.permute(0, 2, 3,
-                                          1).cpu().data.numpy() * self.flow_div
+        flow_result = flow_result.permute(0, 2, 3, 1) * self.flow_div
 
         # unravel batch dim,
         flow_result = list(flow_result)
         flow_result = [dict(flow=f) for f in flow_result]
 
-        return self.get_flow(flow_result, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(
+            flow_result, batch_img_metas=batch_img_metas)

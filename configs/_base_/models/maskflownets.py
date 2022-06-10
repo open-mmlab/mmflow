@@ -1,5 +1,11 @@
 model = dict(
     type='MaskFlowNetS',
+    preprocess_cfg=dict(
+        mean=[0., 0., 0.],
+        std=[255., 255., 255.],
+        to_rgb=False,
+        sigma_range=(0, 0.04),
+        clamp_range=(0., 1.)),
     freeze_net=False,
     encoder=dict(
         type='PWCNetEncoder',
