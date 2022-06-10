@@ -6,11 +6,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmcv.runner import BaseModule
+from torch import Tensor
 
-from mmflow.core import FlowDataSample
+from mmflow.core.utils import SampleList, TensorDict, unpack_flow_data_samples
 from mmflow.registry import MODELS
 from ..builder import build_loss
-from ..utils import unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 
@@ -66,7 +66,7 @@ class DeconvModule(BaseModule):
 
         self.deconvs = nn.Sequential(*deconvs)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         """Forward function for deconvolution module.
 
         Args:
@@ -165,9 +165,7 @@ class BasicBlock(BaseModule):
                 padding=1,
                 bias=upsample_bias)
 
-    def forward(
-            self, x: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         """Forward function for basic block of FlowNetDecoder.
 
         Args:
@@ -265,8 +263,7 @@ class FlowNetSDecoder(BaseDecoder):
             ])
         self.decoders = nn.ModuleDict(layers)
 
-    def forward(self, feat: Dict[str,
-                                 torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def forward(self, feat: Dict[str, torch.Tensor]) -> TensorDict:
         """Forward function for decoder of FlowNetS.
 
         Args:
@@ -293,11 +290,10 @@ class FlowNetSDecoder(BaseDecoder):
 
         return flow_pred
 
-    def forward_train(
-            self,
-            *args,
-            batch_data_samples: Optional[Sequence[FlowDataSample]] = None,
-            return_multi_level_flow: bool = False) -> Dict[str, torch.Tensor]:
+    def forward_train(self,
+                      *args,
+                      batch_data_samples: Optional[SampleList] = None,
+                      return_multi_level_flow: bool = False) -> TensorDict:
         """Forward function for decoder of FlowNetS when model training.
 
         Args:
@@ -327,7 +323,7 @@ class FlowNetSDecoder(BaseDecoder):
         *args,
         batch_img_metas: Optional[Sequence[dict]] = None,
         return_multi_level_flow: bool = False,
-    ) -> Union[Dict[str, torch.Tensor], Sequence[FlowDataSample]]:
+    ) -> Union[TensorDict, SampleList]:
         """Forward function for decoder of FlowNetS when model testint.
 
         Args:
@@ -356,15 +352,16 @@ class FlowNetSDecoder(BaseDecoder):
         # resize flow to the size of images after augmentation.
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
-        flow_results = flow_results.cpu().data.numpy() * self.flow_div
+        flow_results = flow_results * self.flow_div
         # unravel batch dim
         flow_results = list(flow_results)
         results = [dict(flow_fw=f) for f in flow_results]
 
-        return self.get_flow(results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(
+            results, batch_img_metas=batch_img_metas)
 
-    def losses(self, flow_pred: Dict[str, torch.Tensor],
-               batch_data_samples: FlowDataSample) -> Dict[str, torch.Tensor]:
+    def losses(self, flow_pred: TensorDict,
+               batch_data_samples: SampleList) -> TensorDict:
         """The loss function for Flownet.
 
         Args:
@@ -390,8 +387,7 @@ class FlowNetCDecoder(FlowNetSDecoder):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def forward(self, feat1: Dict[str, torch.Tensor],
-                corr_feat: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def forward(self, feat1: TensorDict, corr_feat: TensorDict) -> TensorDict:
         """Forward function for decoder of FlowNetS.
 
         Args:

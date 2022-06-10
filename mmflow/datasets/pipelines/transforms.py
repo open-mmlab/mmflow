@@ -163,7 +163,7 @@ class SpacialTransform(BaseTransform):
         self.max_stretch = max_stretch
 
     @cache_randomness
-    def _do_spacial_transform(self):
+    def _do_spacial_transform(self) -> bool:
         return np.random.rand() < self.spacial_prob
 
     def transform(self, results: dict) -> dict:
@@ -710,7 +710,7 @@ class RandomFlip(BaseTransform):
                 results['flip_direction'].append(None)
             else:
                 results['flip'] = [False]
-                results['flip_direction'] = None
+                results['flip_direction'] = [None]
 
         return results
 
@@ -1515,7 +1515,6 @@ class RandomGamma(BaseTransform):
         Returns:
             dict: Processed results.
         """
-        img_keys = get_img_keys(results)
 
         # create new meta 'gamma'
         results['gamma'] = self._random_gamma()

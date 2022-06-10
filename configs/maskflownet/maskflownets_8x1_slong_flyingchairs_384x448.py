@@ -5,3 +5,5 @@ _base_ = [
 ]
 
 optimizer = dict(type='Adam', lr=0.0001, weight_decay=0., betas=(0.9, 0.999))
+optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
+custom_hooks = [dict(type='SyncBuffersHook')]

@@ -1,10 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Optional, Tuple
 
 import torch
 import torch.nn as nn
-from numpy import ndarray
+from torch import Tensor
 
+from mmflow.core.utils import SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..builder import build_encoder
 from .pwcnet import PWCNet
@@ -53,9 +54,8 @@ class RAFT(PWCNet):
             if isinstance(m, nn.BatchNorm2d):
                 m.eval()
 
-    def extract_feat(
-        self, imgs: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    def extract_feat(self,
+                     imgs: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Extract features from images.
 
         Args:
@@ -82,13 +82,11 @@ class RAFT(PWCNet):
         return feat1, feat2, h_feat, cxt_feat
 
     def forward_train(
-            self,
-            imgs: torch.Tensor,
-            flow_gt: torch.Tensor,
-            valid: torch.Tensor,
-            flow_init: Optional[torch.Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None
-    ) -> Dict[str, torch.Tensor]:
+        self,
+        imgs: Tensor,
+        batch_data_samples: SampleList,
+        flow_init: Optional[Tensor] = None,
+    ) -> TensorDict:
         """Forward function for RAFT when model training.
 
         Args:
@@ -117,14 +115,12 @@ class RAFT(PWCNet):
             flow=flow_init,
             h_feat=h_feat,
             cxt_feat=cxt_feat,
-            flow_gt=flow_gt,
-            valid=valid)
+            batch_data_samples=batch_data_samples)
 
-    def forward_test(
-            self,
-            imgs: torch.Tensor,
-            flow_init: Optional[torch.Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Sequence[ndarray]:
+    def forward_test(self,
+                     imgs: Tensor,
+                     batch_data_samples,
+                     flow_init: Optional[Tensor] = None) -> SampleList:
         """Forward function for RAFT when model testing.
 
         Args:
@@ -149,13 +145,17 @@ class RAFT(PWCNet):
         if flow_init is None:
             flow_init = torch.zeros((B, 2, H, W), device=feat1.device)
 
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+
+            batch_img_metas.append(data_sample.metainfo)
         results = self.decoder.forward_test(
             feat1=feat1,
             feat2=feat2,
             flow=flow_init,
             h_feat=h_feat,
             cxt_feat=cxt_feat,
-            img_metas=img_metas)
+            batch_img_metas=batch_img_metas)
         # recover iter in train
         self.decoder.iters = train_iter
 

@@ -1,13 +1,13 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from abc import abstractmethod
-from typing import Dict, Optional, Sequence, Union
+from typing import Optional, Sequence, Union
 
-import mmcv
-import numpy as np
+import torch.nn.functional as F
 from mmcv.runner import BaseModule
 from mmengine.data import PixelData
 
 from mmflow.core.data_structures.flow_data_sample import FlowDataSample
+from mmflow.core.utils.typing import TensorDict
 
 
 class BaseDecoder(BaseModule):
@@ -42,18 +42,19 @@ class BaseDecoder(BaseModule):
         """Placeholder for model computing losses."""
         pass
 
-    def get_flow(self, results: Sequence[Dict[str, np.ndarray]],
-                 batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
+    def postprocess_result(
+            self, results: Sequence[TensorDict],
+            batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
         """Reverted flow as original size of ground truth.
 
         Args:
-            flow_result (Sequence[Dict[str, ndarray]]): predicted results of
+            flow_result (Sequence[Dict[str, Tensor]]): predicted results of
                 optical flow.
             batch_img_metas (Sequence[dict]): meta data of image to revert
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the reverted predicted optical flow.
+            Sequence[FlowDataSample]: the reverted predicted optical flow.
         """
         assert len(results) == len(batch_img_metas)
 
@@ -72,11 +73,11 @@ class BaseDecoder(BaseModule):
                               pad[1][0]:(W - pad[1][1])]
 
                     elif (w_scale is not None and h_scale is not None):
-                        f = mmcv.imresize(
-                            f,
-                            (ori_W, ori_H),  # size(w, h)
-                            interpolation='bilinear',
-                            return_scale=False)
+                        f = F.interpolate(
+                            f[None],
+                            size=(ori_H, ori_W),
+                            mode='bilinear',
+                            align_corners=False).squeeze(0)
                         f[:, :, 0] = f[:, :, 0] / w_scale
                         f[:, :, 1] = f[:, :, 1] / h_scale
                 flow_data = PixelData(**{'data': f})

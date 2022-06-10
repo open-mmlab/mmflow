@@ -118,7 +118,7 @@ def test_RandomAffine():
     results['img2'] = img2
     results['gt_flow_fw'] = flow
 
-    results['img_shape'] = img1.shape
+    results['img_shape'] = img1.shape[:2]
     new_results = random_affine(results)
 
     assert new_results

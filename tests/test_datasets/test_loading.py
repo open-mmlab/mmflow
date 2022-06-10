@@ -24,17 +24,7 @@ class TestLoading:
 
     @pytest.mark.parametrize('to_float32', (False, True))
     def test_load_img(self, to_float32):
-        transform_img = dict(
-            type='mmengine.TransformBroadcaster',
-            mapping=dict(
-                img=['img1', 'img2'],
-                img_path=['img1_path', 'img2_path'],
-                ori_shape=['ori_shape', ...],
-                img_shape=['img_shape', ...]),
-            auto_remap=True,
-            transforms=[
-                dict(type='mmengine.LoadImageFromFile', to_float32=to_float32)
-            ])
+        transform_img = dict(type='LoadImageFromFile', to_float32=to_float32)
         results = dict(img1_path=img1_, img2_path=img2_)
         transform = TRANSFORMS.build(transform_img)
         results = transform(results)

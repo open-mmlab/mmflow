@@ -1,9 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Sequence, Tuple
 
 from numpy import ndarray
 from torch import Tensor
 
+from mmflow.core.utils import SampleList, TensorDict
 from mmflow.registry import MODELS
 from .pwcnet import PWCNet
 
@@ -16,15 +17,15 @@ class LiteFlowNet(PWCNet):
         super().__init__(*args, **kwargs)
 
     def extract_feat(
-        self, imgs: Tensor
-    ) -> Tuple[Tensor, Tensor, Dict[str, Tensor], Dict[str, Tensor]]:
+            self,
+            imgs: Tensor) -> Tuple[Tensor, Tensor, TensorDict, TensorDict]:
         """Extract features from images.
 
         Args:
             imgs (Tensor): The concatenated input images.
 
         Returns:
-            Tuple[Tensor, Tensor, Dict[str, Tensor], Dict[str, Tensor]]: The
+            Tuple[Tensor, Tensor, TensorDict, TensorDict]: The
                 first input image, the second input image, the feature pyramid
                 of the first input image and the feature pyramid of secode
                 input image.
@@ -45,12 +46,8 @@ class LiteFlowNet(PWCNet):
 
         return img1, img2, self.encoder(img1), self.encoder(img2)
 
-    def forward_train(
-            self,
-            imgs: Tensor,
-            flow_gt: Tensor,
-            valid: Optional[Tensor] = None,
-            img_metas: Optional[Sequence[dict]] = None) -> Dict[str, Tensor]:
+    def forward_train(self, imgs: Tensor,
+                      batch_data_samples: SampleList) -> TensorDict:
         """Forward function for LiteFlowNet when model training.
 
         Args:
@@ -62,18 +59,16 @@ class LiteFlowNet(PWCNet):
                 the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Dict[str, Tensor]: The losses of output.
+            TensorDict: The losses of output.
         """
 
         img1, img2, feat1, feat2 = self.extract_feat(imgs)
 
         return self.decoder.forward_train(
-            img1, img2, feat1, feat2, flow_gt=flow_gt, valid=valid)
+            img1, img2, feat1, feat2, batch_data_samples=batch_data_samples)
 
-    def forward_test(
-            self,
-            imgs: Tensor,
-            img_metas: Optional[Sequence[dict]] = None) -> Sequence[ndarray]:
+    def forward_test(self, imgs: Tensor,
+                     batch_data_samples: SampleList) -> Sequence[ndarray]:
         """Forward function for LiteFlowNet when model testing.
 
         Args:
@@ -87,6 +82,8 @@ class LiteFlowNet(PWCNet):
         """
 
         img1, img2, feat1, feat2 = self.extract_feat(imgs)
-
-        return self.decoder.forward_test(
-            img1, img2, feat1, feat2, img_metas=img_metas)
+        batch_img_metas = []
+        for data_sample in batch_data_samples:
+            batch_img_metas.append(data_sample.metainfo)
+        return self.decoder.forward_test(img1, img2, feat1, feat2,
+                                         batch_img_metas)

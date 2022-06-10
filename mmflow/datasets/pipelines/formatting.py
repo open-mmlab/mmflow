@@ -122,7 +122,7 @@ class PackFlowInputs(BaseTransform):
     def __init__(
         self,
         meta_keys=('img1_path', 'img2_path', 'ori_shape', 'img_shape',
-                   'scale_factor', 'flip', 'flip_direction')
+                   'scale_factor', 'pad_shape', 'flip', 'flip_direction')
     ) -> None:
 
         self.meta_keys = meta_keys
@@ -146,12 +146,12 @@ class PackFlowInputs(BaseTransform):
             img1 = results['img1']
             img1 = np.expand_dims(img1, -1) if len(img1.shape) < 3 else img1
             img1 = to_tensor(np.ascontiguousarray(img1.transpose(2, 0, 1)))
-            packed_results['img1'] = img1
         if 'img2' in results:
             img2 = results['img2']
             img2 = np.expand_dims(img2, -1) if len(img2.shape) < 3 else img2
             img2 = to_tensor(np.ascontiguousarray(img2.transpose(2, 0, 1)))
-            packed_results['img2'] = img2
+        # inputs shape 2,3,H,W for image1 and image2
+        packed_results['inputs'] = torch.stack((img1, img2), dim=0)
 
         for key in self.data_keys:
             if results.get(key, None) is not None:

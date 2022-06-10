@@ -1,18 +1,21 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from collections import defaultdict
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
+from torch import Tensor
 
 from mmflow.core import FlowDataSample
+from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
+                               TensorList, unpack_flow_data_samples)
 from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
-from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
+from ..utils import BasicDenseBlock, CorrBlock
 
 
 class IRRCorrBlock(BaseModule):
@@ -38,7 +41,7 @@ class IRRCorrBlock(BaseModule):
                  scaled: bool,
                  warp_cfg: dict,
                  act_cfg: dict,
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(init_cfg)
 
         if in_channels == out_channels:
@@ -58,11 +61,11 @@ class IRRCorrBlock(BaseModule):
 
     def forward(
         self,
-        feat1: torch.Tensor,
-        feat2: torch.Tensor,
-        flow_f: Optional[torch.Tensor] = None,
-        flow_b: Optional[torch.Tensor] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        feat1: Tensor,
+        feat2: Tensor,
+        flow_f: Optional[Tensor] = None,
+        flow_b: Optional[Tensor] = None
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Forward function for IRRCorrBlock.
 
         Args:
@@ -131,7 +134,7 @@ class IRRFlowDecoder(BasicDenseBlock):
         self.predict_layer = nn.Conv2d(
             self.last_channels, 2, kernel_size=3, padding=1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         """Forward function for IRRFlowDecoder.
 
         Args:
@@ -175,7 +178,7 @@ class IRROccDecoder(BasicDenseBlock):
         self.predict_layer = nn.Conv2d(
             self.last_channels, 1, kernel_size=3, padding=1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         """Forward function for IRROccDecoder.
 
         Args:
@@ -270,7 +273,7 @@ class IRRPWCDecoder(BaseDecoder):
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
                  flow_loss: Optional[dict] = None,
                  occ_loss: Optional[dict] = None,
-                 init_cfg: Optional[Union[dict, list]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
 
         super().__init__(init_cfg=init_cfg)
 
@@ -355,12 +358,8 @@ class IRRPWCDecoder(BaseDecoder):
             ])
         self.corr_block = nn.ModuleDict(layers)
 
-    def forward(
-        self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
-    ) -> Tuple[Dict[str, Dict[str, List[torch.Tensor]]], Dict[str, Dict[
-            str, List[torch.Tensor]]]]:
+    def forward(self, feat1: TensorDict,
+                feat2: TensorDict) -> Tuple[Dict[str, TensorList]]:
         """Forward function for IRR-PWC decoder.
 
         Args:
@@ -567,10 +566,10 @@ class IRRPWCDecoder(BaseDecoder):
 
     def forward_train(
         self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
+        feat1: TensorDict,
+        feat2: TensorDict,
         batch_data_samples: FlowDataSample,
-    ) -> Dict[str, torch.Tensor]:
+    ) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -593,10 +592,10 @@ class IRRPWCDecoder(BaseDecoder):
 
     def forward_test(
         self,
-        feat1: Dict[str, torch.Tensor],
-        feat2: Dict[str, torch.Tensor],
+        feat1: TensorDict,
+        feat2: TensorDict,
         batch_img_metas: Sequence[dict],
-    ) -> Sequence[FlowDataSample]:
+    ) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -620,7 +619,7 @@ class IRRPWCDecoder(BaseDecoder):
 
         flow_results_fw = F.interpolate(
             flow_results_fw, size=(H, W), mode='bilinear', align_corners=False)
-        flow_results_fw = flow_results_fw.cpu().data.numpy() * self.flow_div
+        flow_results_fw = flow_results_fw * self.flow_div
         # unravel batch dim
         flow_results_fw = list(flow_results_fw)
 
@@ -628,7 +627,7 @@ class IRRPWCDecoder(BaseDecoder):
 
         flow_results_bw = F.interpolate(
             flow_results_bw, size=(H, W), mode='bilinear', align_corners=False)
-        flow_result_bw = flow_results_bw.cpu().data.numpy() * self.flow_div
+        flow_result_bw = flow_results_bw * self.flow_div
         # unravel batch dim
         flow_result_bw = list(flow_result_bw)
 
@@ -638,7 +637,8 @@ class IRRPWCDecoder(BaseDecoder):
             for flow_fw, flow_bw in zip(flow_results_fw, flow_results_bw)
         ]
 
-        return self.get_flow(results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(
+            results, batch_img_metas=batch_img_metas)
 
     def losses(
         self,
@@ -646,8 +646,8 @@ class IRRPWCDecoder(BaseDecoder):
         pred_flow_bw: Dict[str, Sequence[torch.Tensor]],
         pred_occ_fw: Dict[str, Sequence[torch.Tensor]],
         pred_occ_bw: Dict[str, Sequence[torch.Tensor]],
-        batch_data_samples: Sequence[FlowDataSample],
-    ):
+        batch_data_samples: SampleList,
+    ) -> TensorDict:
         """Compute optical flow loss and occlusion mask loss.
 
         Args:
@@ -710,7 +710,7 @@ class IRRPWCDecoder(BaseDecoder):
         return losses
 
     @staticmethod
-    def _detach_unused_preds(preds: Dict[str, torch.Tensor]) -> None:
+    def _detach_unused_preds(preds: TensorDict) -> None:
         """Detach unused predicted output.
 
         As some datasets do not include ground truth of backward optical flow

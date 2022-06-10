@@ -1,13 +1,17 @@
+# training schedule for Slong schedule
+train_cfg = dict(by_epoch=False, max_iters=1200000, val_interval=100000)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
 # optimizer
-optimizer = dict(
-    type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999)))
+
 # learning policy
 lr_config = dict(
-    policy='step',
+    type='MultiStepLR',
     by_epoch=False,
     gamma=0.5,
-    step=[400000, 600000, 800000, 1000000])
-runner = dict(type='IterBasedRunner', max_iters=1200000)
-checkpoint_config = dict(by_epoch=False, interval=100000)
-evaluation = dict(interval=100000, metric='EPE')
+    milestones=[400000, 600000, 800000, 1000000])

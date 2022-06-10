@@ -1,12 +1,14 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
+from torch import Tensor
 
+from mmflow.core.utils import OptMultiConfig
 from mmflow.registry import MODELS
 from ..builder import build_components
 
@@ -43,7 +45,7 @@ class FlowRefine(BaseModule):
                  conv_cfg: Optional[dict] = None,
                  norm_cfg: Optional[dict] = None,
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(init_cfg)
 
         self.in_channels = in_channels
@@ -84,11 +86,11 @@ class FlowRefine(BaseModule):
 
     def forward(
         self,
-        img1: torch.Tensor,
-        img2: torch.Tensor,
-        feat: torch.Tensor,
-        flow: torch.Tensor,
-    ) -> torch.Tensor:
+        img1: Tensor,
+        img2: Tensor,
+        feat: Tensor,
+        flow: Tensor,
+    ) -> Tensor:
         """Forward function for IRR-PWC.
 
         Args:
@@ -169,7 +171,7 @@ class OccRefine(FlowRefine):
                  conv_cfg: Optional[dict] = None,
                  norm_cfg: Optional[dict] = None,
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
         super().__init__(
             in_channels=in_channels,
             feat_channels=feat_channels,
@@ -182,11 +184,11 @@ class OccRefine(FlowRefine):
 
     def forward(
         self,
-        feat1: torch.Tensor,
-        feat2: torch.Tensor,
-        occ: torch.Tensor,
-        flow: torch.Tensor,
-    ) -> torch.Tensor:
+        feat1: Tensor,
+        feat2: Tensor,
+        occ: Tensor,
+        flow: Tensor,
+    ) -> Tensor:
         """Forward function of OccRefine.
 
         Args:
@@ -246,7 +248,7 @@ class OccShuffleUpsample(BaseModule):
                  conv_cfg: Optional[dict] = None,
                  norm_cfg: Optional[dict] = None,
                  act_cfg: dict = dict(type='LeakyReLU', negative_slope=0.1),
-                 init_cfg: Optional[Union[list, dict]] = None) -> None:
+                 init_cfg: OptMultiConfig = None) -> None:
 
         super().__init__(init_cfg=init_cfg)
 
@@ -312,15 +314,15 @@ class OccShuffleUpsample(BaseModule):
 
     def forward(
         self,
-        occ: torch.Tensor,
-        feat1: torch.Tensor,
-        feat2: torch.Tensor,
-        flow_f: torch.Tensor,
-        flow_b: torch.Tensor,
-        flow_div: torch.Tensor,
-        H_img: torch.Tensor,
-        W_img: torch.Tensor,
-    ) -> torch.Tensor:
+        occ: Tensor,
+        feat1: Tensor,
+        feat2: Tensor,
+        flow_f: Tensor,
+        flow_b: Tensor,
+        flow_div: Tensor,
+        H_img: Tensor,
+        W_img: Tensor,
+    ) -> Tensor:
         """Forward function of OccShuffleUpsample.
 
         Args:

@@ -81,10 +81,9 @@ class TestPackFlowInputs(unittest.TestCase):
         results = transform(copy.deepcopy(self.result1))
 
         self.assertIn('data_sample', results)
-        self.assertIn('img1', results)
-        self.assertIn('img2', results)
-        self.assertIsInstance(results['img1'], torch.Tensor)
-        self.assertEqual(results['img1'].shape, (3, 30, 40))
+        self.assertIn('inputs', results)
+        self.assertIsInstance(results['inputs'], torch.Tensor)
+        self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
         self.assertIsInstance(results['data_sample'], FlowDataSample)
         self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
         self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
@@ -101,10 +100,9 @@ class TestPackFlowInputs(unittest.TestCase):
         results = transform(copy.deepcopy(self.result2))
 
         self.assertIn('data_sample', results)
-        self.assertIn('img1', results)
-        self.assertIn('img2', results)
-        self.assertIsInstance(results['img1'], torch.Tensor)
-        self.assertEqual(results['img1'].shape, (3, 30, 40))
+        self.assertIn('inputs', results)
+        self.assertIsInstance(results['inputs'], torch.Tensor)
+        self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
         self.assertIsInstance(results['data_sample'], FlowDataSample)
         self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
         self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
@@ -126,10 +124,9 @@ class TestPackFlowInputs(unittest.TestCase):
         results = transform(copy.deepcopy(self.result3))
 
         self.assertIn('data_sample', results)
-        self.assertIn('img1', results)
-        self.assertIn('img2', results)
-        self.assertIsInstance(results['img1'], torch.Tensor)
-        self.assertEqual(results['img1'].shape, (3, 30, 40))
+        self.assertIn('inputs', results)
+        self.assertIsInstance(results['inputs'], torch.Tensor)
+        self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
         self.assertIsInstance(results['data_sample'], FlowDataSample)
         self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
         self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
