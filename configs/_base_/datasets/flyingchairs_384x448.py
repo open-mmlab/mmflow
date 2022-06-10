@@ -61,7 +61,7 @@ flyingchairs_test = dict(
 
 train_dataloader = dict(
     batch_size=1,
-    sampler=dict(type='DefaultSampler', shuffle=False),
+    sampler=dict(type='InfiniteSampler', shuffle=False),
     num_workers=2,
     drop_last=True,
     persistent_workers=True,

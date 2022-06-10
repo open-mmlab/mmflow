@@ -52,7 +52,7 @@ flyingchairs_test = dict(
     split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt')
 train_dataloader = dict(
     batch_size=2,
-    sampler=dict(type='DefaultSampler', shuffle=False),
+    sampler=dict(type='InfiniteSampler', shuffle=False),
     num_workers=2,
     drop_last=True,
     persistent_workers=True,
