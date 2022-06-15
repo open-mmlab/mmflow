@@ -16,6 +16,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Install pre-commit hook
+        run: |
           pip install pre-commit
           pre-commit install
       - name: Linting
