@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.4.2(05/31/2022)
+
+### Bug Fixes
+
+- Inference bug for sparse flow map ([133](https://github.com/open-mmlab/mmflow/pull/133))
+- H and W input images must be divisible by 2\*\*6 ([136](https://github.com/open-mmlab/mmflow/pull/136))
+
+### Documents
+
+- Configure Myst-parser to parse anchor tag ([129](https://github.com/open-mmlab/mmflow/pull/129))
+- Replace markdownlint with mdformat for avoiding installing ruby ([130](https://github.com/open-mmlab/mmflow/pull/130))
+- Rewrite install and README by ([139](https://github.com/open-mmlab/mmflow/pull/139), [140](https://github.com/open-mmlab/mmflow/pull/140),
+  [141](https://github.com/open-mmlab/mmflow/pull/141), [144](https://github.com/open-mmlab/mmflow/pull/144), [145](https://github.com/open-mmlab/mmflow/pull/145))
+
 ## v0.4.1(04/29/2022)
 
 ### Feature

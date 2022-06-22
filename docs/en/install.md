@@ -145,6 +145,38 @@ If you try to train/test/inference a model containing above ops, an error will b
 | :---------: | :--------------------------------------------------------------------------: |
 | Correlation | PWC-Net, FlowNetC, FlowNet2, IRR-PWC, LiteFlowNet, LiteFlowNet2, MaskFlowNet |
 
+### Install on Google Colab
+
+[Google Colab](https://research.google.com/) usually has PyTorch installed,
+thus we only need to install MMCV and MMFlow with the following commands.
+
+**Step 1.** Install [MMCV](https://github.com/open-mmlab/mmcv) using [MIM](https://github.com/open-mmlab/mim).
+
+```shell
+!pip3 install openmim
+!mim install mmcv-full
+```
+
+**Step 2.** Install MMFlow from the source.
+
+```shell
+!git clone https://github.com/open-mmlab/mmflow.git
+%cd mmflow
+!pip install -e .
+```
+
+**Step 3.** Verification.
+
+```python
+import mmflow
+print(mmflow.__version__)
+# Example output: 0.4.1
+```
+
+```{note}
+Within Jupyter, the exclamation mark `!` is used to call external executables and `%cd` is a [magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-cd) to change the current working directory of Python.
+```
+
 ### Using MMFlow with Docker
 
 We provide a [Dockerfile](https://github.com/open-mmlab/mmflow/blob/master/docker/Dockerfile) to build an image. Ensure that your [docker version](https://docs.docker.com/engine/install/) >=19.03.
