@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from mmflow.core.utils import SampleList, TensorDict
+from mmflow.core.utils import OptSampleList, SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..builder import build_encoder
 from .pwcnet import PWCNet
@@ -81,16 +81,16 @@ class RAFT(PWCNet):
 
         return feat1, feat2, h_feat, cxt_feat
 
-    def forward_train(
+    def loss(
         self,
-        imgs: Tensor,
+        batch_inputs: Tensor,
         batch_data_samples: SampleList,
         flow_init: Optional[Tensor] = None,
     ) -> TensorDict:
         """Forward function for RAFT when model training.
 
         Args:
-            imgs (Tensor): The concatenated input images.
+            batch_inputs (Tensor): The concatenated input images.
             flow_gt (Tensor): The ground truth of optical flow.
                 Defaults to None.
             valid (Tensor, optional): The valid mask. Defaults to None.
@@ -103,13 +103,13 @@ class RAFT(PWCNet):
             Dict[str, Tensor]: The losses of output.
         """
 
-        feat1, feat2, h_feat, cxt_feat = self.extract_feat(imgs)
+        feat1, feat2, h_feat, cxt_feat = self.extract_feat(batch_inputs)
         B, _, H, W = feat1.shape
 
         if flow_init is None:
             flow_init = torch.zeros((B, 2, H, W), device=feat1.device)
 
-        return self.decoder.forward_train(
+        return self.decoder.loss(
             feat1,
             feat2,
             flow=flow_init,
@@ -117,10 +117,23 @@ class RAFT(PWCNet):
             cxt_feat=cxt_feat,
             batch_data_samples=batch_data_samples)
 
-    def forward_test(self,
-                     imgs: Tensor,
-                     batch_data_samples,
-                     flow_init: Optional[Tensor] = None) -> SampleList:
+    def _forward(self,
+                 batch_inputs: Tensor,
+                 batch_data_samples: OptSampleList = None,
+                 flow_init=None) -> TensorDict:
+        feat1, feat2, h_feat, cxt_feat = self.extract_feat(batch_inputs)
+        B, _, H, W = feat1.shape
+
+        if flow_init is None:
+            flow_init = torch.zeros((B, 2, H, W), device=feat1.device)
+
+        return self.decoder(
+            feat1, feat2, flow=flow_init, h_feat=h_feat, cxt_feat=cxt_feat)
+
+    def predict(self,
+                imgs: Tensor,
+                batch_data_samples,
+                flow_init: Optional[Tensor] = None) -> SampleList:
         """Forward function for RAFT when model testing.
 
         Args:
@@ -149,7 +162,7 @@ class RAFT(PWCNet):
         for data_sample in batch_data_samples:
 
             batch_img_metas.append(data_sample.metainfo)
-        results = self.decoder.forward_test(
+        results = self.decoder.predict(
             feat1=feat1,
             feat2=feat2,
             flow=flow_init,

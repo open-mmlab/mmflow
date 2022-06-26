@@ -136,7 +136,7 @@ def test_maskflownets_decoder():
             reduction='sum',
             weights=dict(level6=0.32, level5=0.08)),
         scaled=False,
-    ).cuda()
+        with_mask=True).cuda()
 
     feat1, feat2 = _get_test_data()
     metainfo = dict(img_shape=(16, 16, 3), ori_shape=(16, 16))
@@ -144,16 +144,16 @@ def test_maskflownets_decoder():
     data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, 16, 16)))
     batch_data_samples = [data_sample.cuda()]
 
-    # test forward train
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    # test loss forward
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    # test forward test
-    out = model.forward_test(feat1, feat2, [metainfo])
+    # test predict forward
+    out = model.predict(feat1, feat2, [metainfo])
     assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (16, 16)
 
     # test forward function
-    out = model(feat1, feat2)
+    out, _ = model(feat1, feat2)
     assert out['level6'].shape == torch.Size((1, 2, 4, 4))
     assert out['level5'].shape == torch.Size((1, 2, 8, 8))

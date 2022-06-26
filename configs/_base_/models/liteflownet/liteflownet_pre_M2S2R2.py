@@ -1,12 +1,12 @@
 model = dict(
     type='LiteFlowNet',
-    preprocess_cfg=dict(
+    data_preprocessor=dict(
+        type='FlowDataPreprocessor',
         mean=[0., 0., 0.],
         std=[255., 255., 255.],
-        to_rgb=False,
+        bgr_to_rgb=False,
         sigma_range=(0, 0.04),
-        clamp_range=(0., 1.),
-    ),
+        clamp_range=(0., 1.)),
     encoder=dict(
         type='NetC',
         in_channels=3,

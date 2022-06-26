@@ -27,7 +27,6 @@ test_cfg = dict(type='TestLoop')
 # Weights are initialized from model of previous stage
 # load_from = 'https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M3S3R3_8x1_flyingchairs_320x448.pth'  # noqa
 default_hooks = dict(
-    optimizer=dict(type='OptimizerHook', grad_clip=None),
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=50),
     param_scheduler=dict(type='ParamSchedulerHook'),

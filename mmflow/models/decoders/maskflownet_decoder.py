@@ -9,7 +9,6 @@ from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
 from torch import Tensor
 
-from mmflow.core import FlowDataSample
 from mmflow.core.utils import OptMultiConfig, SampleList, TensorDict
 from mmflow.registry import MODELS
 from ..utils import CorrBlock
@@ -30,13 +29,13 @@ def Upsample(img, factor) -> Tensor:
         return img
     _, _, H, W = img.shape
     img = F.pad(img, [0, 1, 0, 1], mode='replicate')
-    upsamp_img = F.interpolate(
+    upsample_img = F.interpolate(
         img, (H * factor + 1, W * factor + 1),
         mode='bilinear',
         align_corners=True)
-    upsamp_img = upsamp_img[:, :, :-1, :-1]
+    upsample_img = upsample_img[:, :, :-1, :-1]
 
-    return upsamp_img
+    return upsample_img
 
 
 class BasicDeformWarpBlock(BaseModule):
@@ -314,7 +313,7 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
             If not define, decoder predicts mask depending on whether upsample
             feat from the last level. Default: None.
         warp_type (str): Type of Warp block, it has 2 options 'Basic' and
-            'AsyOFMM'. Default: "Basic".
+            'AsymOFMM'. Default: "Basic".
         with_deform_bias (bool): Whether to use bias in DeformConv2d or not.
             Default: True.
     """
@@ -407,12 +406,10 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
                     scaled=scaled,
                     with_deform_bias=self.with_deform_bias)
 
-    def forward(self,
-                feat1: TensorDict,
-                feat2: TensorDict,
-                return_mask: bool = False
-                ) -> Union[TensorDict, Tuple[TensorDict, Tensor]]:
-        """Forward function for MaskFlownet decoder.
+    def forward(
+            self, feat1: TensorDict,
+            feat2: TensorDict) -> Union[TensorDict, Tuple[TensorDict, Tensor]]:
+        """Forward function for MaskFlowNet decoder.
 
         Args:
             feat1 (Dict[str, Tensor]): The feature pyramid from the first
@@ -428,6 +425,7 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
         flow = None
         upmask = None
         upfeat = None
+        last_mask = None
         upflow = torch.zeros(1, 2, minH, minW).to(feat1[self.start_level])
 
         for level in self.flow_levels[::-1]:
@@ -457,12 +455,40 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
             post_flow = self.post_processor(feat)
             flow_pred[self.end_level] = flow_pred[
                 self.flow_levels[0]] + post_flow.flip(1)
+        if last_mask is not None:
+            last_mask = Upsample(last_mask, 4)
+        # Stage2 of MaskFlowNet need input mask.
+        return flow_pred, last_mask
 
-        if return_mask:
-            # Stage2 of MaskFlowNet need input mask.
-            return flow_pred, Upsample(last_mask, 4)
-        else:
-            return flow_pred
+    def predict(
+        self,
+        feat1: TensorDict,
+        feat2: TensorDict,
+        batch_img_metas: Sequence[dict],
+    ) -> SampleList:
+        flow_pred, _ = self.forward(feat1, feat2)
+        flow_results = flow_pred[self.end_level]
+        return self.predict_by_feat(flow_results, batch_img_metas)
+
+    def loss(self, feat1: TensorDict, feat2: TensorDict,
+             batch_data_samples: SampleList) -> TensorDict:
+        """Forward function when model training.
+
+        Args:
+            feat1 (Dict[str, Tensor]): The feature pyramid from the first
+                image.
+            feat2 (Dict[str, Tensor]): The feature pyramid from the second
+                image.
+            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
+                contains the meta information of each image and corresponding
+                annotations.
+
+        Returns:
+            Dict[str, Tensor]: The dict of losses.
+        """
+
+        flow_pred, _ = self.forward(feat1, feat2)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
 
 @MODELS.register_module()
@@ -547,10 +573,9 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
         return flows_pred
 
-    def forward_train(self, feat1: TensorDict, feat2: TensorDict,
-                      feat3: TensorDict, feat4: TensorDict,
-                      flows_stage1: TensorDict,
-                      batch_data_samples: SampleList) -> TensorDict:
+    def loss(self, feat1: TensorDict, feat2: TensorDict, feat3: TensorDict,
+             feat4: TensorDict, flows_stage1: TensorDict,
+             batch_data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -574,9 +599,9 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
 
-        return self.losses(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(
+    def predict(
         self,
         feat1: TensorDict,
         feat2: TensorDict,
@@ -584,7 +609,7 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
         feat4: TensorDict,
         flows_stage1: TensorDict,
         batch_img_metas: Sequence[dict],
-    ) -> Sequence[FlowDataSample]:
+    ) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -607,17 +632,4 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
         flow_result = flow_pred[self.end_level]
-
-        H, W = batch_img_metas[0]['img_shape'][:2]
-        # resize flow to the size of images after augmentation.
-        flow_result = F.interpolate(
-            flow_result, size=(H, W), mode='bilinear', align_corners=False)
-        # reshape [2, H, W] to [H, W, 2]
-        flow_result = flow_result.permute(0, 2, 3, 1) * self.flow_div
-
-        # unravel batch dim,
-        flow_result = list(flow_result)
-        flow_result = [dict(flow=f) for f in flow_result]
-
-        return self.postprocess_result(
-            flow_result, batch_img_metas=batch_img_metas)
+        return self.predict_by_feat(flow_result, batch_img_metas)

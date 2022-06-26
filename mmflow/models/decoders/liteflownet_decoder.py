@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import math
-from typing import Dict, Optional, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import torch
 import torch.nn as nn
@@ -587,7 +587,7 @@ class NetE(BaseDecoder):
 
     def forward(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
                 feat2: TensorDict) -> TensorDict:
-        """Forward function for LiteFlownet Decoder.
+        """Forward function for LiteFlowNet Decoder.
 
         Args:
             img1 (Tensor): The first input image.
@@ -645,9 +645,9 @@ class NetE(BaseDecoder):
         return F.interpolate(
             img, size=(h, w), mode='bilinear', align_corners=False)
 
-    def forward_train(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
-                      feat2: TensorDict,
-                      batch_data_samples: FlowDataSample) -> TensorDict:
+    def loss(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+             feat2: TensorDict,
+             batch_data_samples: FlowDataSample) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -671,11 +671,11 @@ class NetE(BaseDecoder):
         if self.extra_training_loss:
             flow_pred['level0'] = self._scale_img(flow_pred[self.end_level], H,
                                                   W)
-        return self.losses(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
-                     feat2: TensorDict,
-                     batch_img_metas: Sequence[dict]) -> SampleList:
+    def predict(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+                feat2: TensorDict,
+                batch_img_metas: Sequence[dict]) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -691,27 +691,30 @@ class NetE(BaseDecoder):
                 with the same size of images before augmentation.
         """
 
-        H, W = batch_img_metas[0]['img_shape'][:2]
-
         flow_pred = self.forward(
             img1=img1, img2=img2, feat1=feat1, feat2=feat2)
 
         flow_results = flow_pred[self.end_level]
-        # flow to the size of images after augmentation.
+        return self.predict_by_feat(flow_results, batch_img_metas)
+
+    def predict_by_feat(self, flow_results: Tensor,
+                        batch_img_metas: List[dict]) -> SampleList:
+        H, W = batch_img_metas[0]['img_shape'][:2]
+        # resize flow to the size of images after augmentation.
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
 
         flow_results = flow_results * self.flow_div
 
-        # unravel batch dim
+        # unravel batch dim,
         flow_results = list(flow_results)
         results = [dict(flow_fw=f) for f in flow_results]
 
         return self.postprocess_result(
             results, batch_img_metas=batch_img_metas)
 
-    def losses(self, flow_pred: TensorDict,
-               batch_data_samples: SampleList) -> TensorDict:
+    def loss_by_feat(self, flow_pred: TensorDict,
+                     batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:

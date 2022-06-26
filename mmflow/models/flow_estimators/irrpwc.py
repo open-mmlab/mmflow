@@ -6,7 +6,7 @@ import torch
 import torch.distributed as dist
 from torch import Tensor
 
-from mmflow.core.utils import SampleList, TensorDict, TensorList
+from mmflow.core.utils import TensorDict
 from mmflow.registry import MODELS
 from .pwcnet import PWCNet
 
@@ -37,41 +37,6 @@ class IRRPWC(PWCNet):
         feat1['level0'] = img1
         feat2['level0'] = img2
         return feat1, feat2
-
-    def forward_train(self, imgs: Tensor,
-                      batch_data_samples: SampleList) -> TensorDict:
-        """Forward function for IRR-PWC when model training.
-
-        Args:
-            imgs (Tensor): The concatenated input images.
-
-
-        Returns:
-            Dict[str, Tensor]: The dict of losses.
-        """
-        feat1, feat2 = self.extract_feat(imgs)
-        return self.decoder.forward_train(
-            feat1, feat2, batch_data_samples=batch_data_samples)
-
-    def forward_test(self, imgs: Tensor,
-                     batch_data_samples: SampleList) -> TensorList:
-        """Forward function for IRR-PWC when model testing.
-
-        Args:
-            imgs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
-
-        Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
-        """
-
-        feat1, feat2 = self.extract_feat(imgs)
-        batch_img_metas = []
-        for data_sample in batch_data_samples:
-            batch_img_metas.append(data_sample.metainfo)
-        return self.decoder.forward_test(feat1, feat2, batch_img_metas)
 
     @staticmethod
     def _parse_losses(losses):

@@ -45,7 +45,7 @@ class MaskFlowNetS(PWCNet):
 
         Returns:
             Tuple[TensorDict, TensorDict]: The feature pyramid of
-                the first input image and the feature pyramid of secode input
+                the first input image and the feature pyramid of seconde input
                 image.
         """
         in_channels = self.encoder.in_channels
@@ -89,8 +89,7 @@ class MaskFlowNet(MaskFlowNetS):
         img1, img2, _ = centralize(img1, img2)
 
         feat1, feat2 = self.maskflownetS.extract_feat(imgs)
-        flows_stage1, mask_stage1 = self.maskflownetS.decoder(
-            feat1, feat2, return_mask=True)
+        flows_stage1, mask_stage1 = self.maskflownetS.decoder(feat1, feat2)
 
         img1 = torch.cat((img1, torch.zeros_like(mask_stage1)), dim=1)
         warped_img2 = Warp(align_corners=True)(
@@ -100,8 +99,7 @@ class MaskFlowNet(MaskFlowNetS):
         return feat1, feat2, self.encoder(img1), self.encoder(
             img2), flows_stage1
 
-    def forward_train(self, imgs: Tensor,
-                      batch_data_samples: SampleList) -> TensorDict:
+    def loss(self, imgs: Tensor, batch_data_samples: SampleList) -> TensorDict:
         """Forward function for PWCNet when model training.
 
         Args:
@@ -116,14 +114,15 @@ class MaskFlowNet(MaskFlowNetS):
             TensorDict: The losses of output.
         """
         feat1, feat2, feat3, feat4, flows_stage1 = self.extract_feat(imgs)
-        return self.decoder.forward_train(
+        return self.decoder.loss(
             feat1=feat1,
             feat2=feat2,
             feat3=feat3,
             feat4=feat4,
+            flows_stage1=flows_stage1,
             batch_data_samples=batch_data_samples)
 
-    def forward_test(
+    def predict(
             self, imgs: Tensor,
             batch_data_samples: SampleList) -> Sequence[Dict[str, ndarray]]:
         """Forward function for PWCNet when model testing.
@@ -137,11 +136,9 @@ class MaskFlowNet(MaskFlowNetS):
             Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
                 with the same size of images after augmentation.
         """
-
-        H, W = imgs.shape[2:]
         feat1, feat2, feat3, feat4, flows_stage1 = self.extract_feat(imgs)
         batch_img_metas = []
         for data_sample in batch_data_samples:
             batch_img_metas.append(data_sample.metainfo)
-        return self.decoder.forward_test(feat1, feat2, feat3, feat4,
-                                         flows_stage1, batch_img_metas)
+        return self.decoder.predict(feat1, feat2, feat3, feat4, flows_stage1,
+                                    batch_img_metas)

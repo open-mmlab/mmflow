@@ -1,13 +1,14 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from abc import abstractmethod
-from typing import Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import torch.nn.functional as F
 from mmcv.runner import BaseModule
 from mmengine.data import PixelData
+from torch import Tensor
 
 from mmflow.core.data_structures.flow_data_sample import FlowDataSample
-from mmflow.core.utils.typing import TensorDict
+from mmflow.core.utils.typing import SampleList, TensorDict
 
 
 class BaseDecoder(BaseModule):
@@ -28,17 +29,17 @@ class BaseDecoder(BaseModule):
         pass
 
     @abstractmethod
-    def forward_train(self, *args, **kwargs):
+    def loss(self, *args, **kwargs):
         """Placeholder of forward function when model training."""
         pass
 
     @abstractmethod
-    def forward_test(self, *args, **kwargs):
+    def predict(self, *args, **kwargs):
         """Placeholder of forward function when model testing."""
         pass
 
     @abstractmethod
-    def losses(self):
+    def loss_by_feat(self, *args, **kwargs) -> TensorDict:
         """Placeholder for model computing losses."""
         pass
 
@@ -86,3 +87,19 @@ class BaseDecoder(BaseModule):
             data_samples.append(data_sample)
 
         return data_samples
+
+    def predict_by_feat(self, flow_results: Tensor,
+                        batch_img_metas: List[dict]) -> SampleList:
+        H, W = batch_img_metas[0]['img_shape'][:2]
+        # resize flow to the size of images after augmentation.
+        flow_results = F.interpolate(
+            flow_results, size=(H, W), mode='bilinear', align_corners=False)
+
+        flow_results = flow_results * self.flow_div
+
+        # unravel batch dim,
+        flow_results = list(flow_results)
+        results = [dict(flow_fw=f) for f in flow_results]
+
+        return self.postprocess_result(
+            results, batch_img_metas=batch_img_metas)

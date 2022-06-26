@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from collections import defaultdict
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -16,6 +16,9 @@ from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.registry import MODELS
 from ..builder import build_components, build_loss
 from ..utils import BasicDenseBlock, CorrBlock
+
+IRRForwardOutput = Tuple[Dict[str, TensorList], Dict[str, TensorList],
+                         Dict[str, TensorList], Dict[str, TensorList]]
 
 
 class IRRCorrBlock(BaseModule):
@@ -359,7 +362,7 @@ class IRRPWCDecoder(BaseDecoder):
         self.corr_block = nn.ModuleDict(layers)
 
     def forward(self, feat1: TensorDict,
-                feat2: TensorDict) -> Tuple[Dict[str, TensorList]]:
+                feat2: TensorDict) -> IRRForwardOutput:
         """Forward function for IRR-PWC decoder.
 
         Args:
@@ -368,9 +371,8 @@ class IRRPWCDecoder(BaseDecoder):
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
         Returns:
-            Tuple[Dict[str, Dict[str, List[Tensor]]], Dict[str, Dict[str,
-                List[Tensor]]]] : The predicted multi-level optical flow and
-                the predicted multi-level occlusion mask.
+            IRRForwardOutput : The predicted multi-level optical flow and the
+                predicted multi-level occlusion mask.
         """
 
         img1 = feat1['level0']
@@ -564,7 +566,7 @@ class IRRPWCDecoder(BaseDecoder):
                               float(H_img / h_org)]).to(flow) / self.flow_div
         return torch.einsum('b c h w, c -> b c h w', flow, scale)
 
-    def forward_train(
+    def loss(
         self,
         feat1: TensorDict,
         feat2: TensorDict,
@@ -587,10 +589,10 @@ class IRRPWCDecoder(BaseDecoder):
 
         pred_flow_fw, pred_flow_bw, pred_occ_fw, pred_occ_bw = self.forward(
             feat1, feat2)
-        return self.losses(pred_flow_fw, pred_flow_bw, pred_occ_fw,
-                           pred_occ_bw, batch_data_samples)
+        return self.loss_by_feat(pred_flow_fw, pred_flow_bw, pred_occ_fw,
+                                 pred_occ_bw, batch_data_samples)
 
-    def forward_test(
+    def predict(
         self,
         feat1: TensorDict,
         feat2: TensorDict,
@@ -611,19 +613,23 @@ class IRRPWCDecoder(BaseDecoder):
                 with the same size of images before augmentation.
         """
 
-        results = []
         pred_flow_fw, pred_flow_bw, _, _ = self.forward(feat1, feat2)
 
-        H, W = batch_img_metas[0]['img_shape'][:2]
         flow_results_fw = pred_flow_fw[self.end_level][-1]
+        flow_results_bw = pred_flow_bw[self.end_level][-1]
+        return self.predict_by_feat(flow_results_fw, flow_results_bw,
+                                    batch_img_metas)
 
+    def predict_by_feat(self, flow_results_fw: Tensor, flow_results_bw: Tensor,
+                        batch_img_metas: List[dict]) -> SampleList:
+
+        results = []
+        H, W = batch_img_metas[0]['img_shape'][:2]
         flow_results_fw = F.interpolate(
             flow_results_fw, size=(H, W), mode='bilinear', align_corners=False)
         flow_results_fw = flow_results_fw * self.flow_div
         # unravel batch dim
         flow_results_fw = list(flow_results_fw)
-
-        flow_results_bw = pred_flow_bw[self.end_level][-1]
 
         flow_results_bw = F.interpolate(
             flow_results_bw, size=(H, W), mode='bilinear', align_corners=False)
@@ -640,7 +646,7 @@ class IRRPWCDecoder(BaseDecoder):
         return self.postprocess_result(
             results, batch_img_metas=batch_img_metas)
 
-    def losses(
+    def loss_by_feat(
         self,
         pred_flow_fw: Dict[str, Sequence[torch.Tensor]],
         pred_flow_bw: Dict[str, Sequence[torch.Tensor]],

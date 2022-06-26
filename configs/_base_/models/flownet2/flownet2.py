@@ -3,6 +3,13 @@ FlowNet2sd_checkpoint = 'https://download.openmmlab.com/mmflow/flownet2/flownet2
 
 model = dict(
     type='FlowNet2',
+    data_preprocessor=dict(
+        type='FlowDataPreprocessor',
+        mean=[0., 0., 0.],
+        std=[255., 255., 255.],
+        bgr_to_rgb=False,
+        sigma_range=(0, 0.04),
+        clamp_range=(0., 1.)),
     flownetCSS=dict(
         type='FlowNetCSS',
         freeze_net=True,

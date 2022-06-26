@@ -78,9 +78,12 @@ def test_pwcnet_decoder():
     data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, 32, 32)))
     batch_data_samples = [data_sample.cuda()]
 
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    out = model.forward_test(feat1, feat2, [metainfo])
+    out = model.predict(feat1, feat2, [metainfo])
     assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (32, 32)
+
+    out = model(feat1, feat2)
+    assert isinstance(out, dict)

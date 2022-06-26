@@ -1,9 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Optional
+from typing import List, Optional
 
 import torch
 import torch.nn as nn
 from mmcv.runner import BaseModule
+from torch import Tensor
 
 from mmflow.registry import MODELS
 from .raft_decoder import ConvGRU, RAFTDecoder
@@ -75,7 +76,7 @@ class Attention(BaseModule):
             it denotes the position-only attention module.
             2. If `position_only` is False and `max_pos_size` is defined,
             it denotes the joint position and content-wise attention module.
-            3. If `postion_only` is False and `max_pos_size` is not defined,
+            3. If `position_only` is False and `max_pos_size` is not defined,
             it denotes the content-only self-similarity attention module.
     """
 
@@ -227,7 +228,7 @@ class GMADecoder(RAFTDecoder):
             it denotes the position-only attention module.
             2. If `position_only` is False and `max_pos_size` is defined,
             it denotes the joint position and content-wise attention module.
-            3. If `postion_only` is False and `max_pos_size` is not defined,
+            3. If `position_only` is False and `max_pos_size` is not defined,
             it denotes the content-only self-similarity attention module.
     """
 
@@ -262,14 +263,15 @@ class GMADecoder(RAFTDecoder):
             self.cxt_channels + self.motion_channels * 2,
             net_type=self.gru_type)
 
-    def forward(self, feat1, feat2, flow, h, cxt_feat):
+    def forward(self, feat1: Tensor, feat2: Tensor, flow: Tensor,
+                h_feat: Tensor, cxt_feat: Tensor) -> List[Tensor]:
         """Forward function for RAFTDecoder.
 
         Args:
             feat1 (Tensor): The feature from the first input image.
             feat2 (Tensor): The feature from the second input image.
             flow (Tensor): The initialized flow when warm start.
-            h (Tensor): The hidden state for GRU cell.
+            h_feat (Tensor): The hidden state for GRU cell.
             cxt_feat (Tensor): The contextual feature from the first image.
 
         Returns:
@@ -289,13 +291,13 @@ class GMADecoder(RAFTDecoder):
             motion_features_global = self.aggregator(attention, motion_feat)
             x = torch.cat([cxt_feat, motion_feat, motion_features_global],
                           dim=1)
-            h = self.gru(h, x)
+            h_feat = self.gru(h_feat, x)
 
-            delta_flow = self.flow_pred(h)
+            delta_flow = self.flow_pred(h_feat)
             flow = flow + delta_flow
 
             if hasattr(self, 'mask_pred'):
-                mask = .25 * self.mask_pred(h)
+                mask = .25 * self.mask_pred(h_feat)
             else:
                 mask = None
 
