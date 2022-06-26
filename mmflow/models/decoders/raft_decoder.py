@@ -368,6 +368,7 @@ class RAFTDecoder(BaseDecoder):
 
         if flow_loss is not None:
             self.flow_loss = build_loss(flow_loss)
+        self.flow_div = 1.
 
     def make_gru_block(self):
         return ConvGRU(
@@ -410,15 +411,15 @@ class RAFTDecoder(BaseDecoder):
         upflow = upflow.permute(0, 1, 4, 2, 5, 3)
         return upflow.reshape(N, 2, scale * H, scale * W)
 
-    def forward(self, feat1: Tensor, feat2: Tensor, flow: Tensor, h: Tensor,
-                cxt_feat: Tensor) -> TensorList:
+    def forward(self, feat1: Tensor, feat2: Tensor, flow: Tensor,
+                h_feat: Tensor, cxt_feat: Tensor) -> TensorList:
         """Forward function for RAFTDecoder.
 
         Args:
             feat1 (Tensor): The feature from the first input image.
             feat2 (Tensor): The feature from the second input image.
             flow (Tensor): The initialized flow when warm start.
-            h (Tensor): The hidden state for GRU cell.
+            h_feat (Tensor): The hidden state for GRU cell.
             cxt_feat (Tensor): The contextual feature from the first image.
 
         Returns:
@@ -433,13 +434,13 @@ class RAFTDecoder(BaseDecoder):
             corr = self.corr_lookup(corr_pyramid, flow)
             motion_feat = self.encoder(corr, flow)
             x = torch.cat([cxt_feat, motion_feat], dim=1)
-            h = self.gru(h, x)
+            h_feat = self.gru(h_feat, x)
 
-            delta_flow = self.flow_pred(h)
+            delta_flow = self.flow_pred(h_feat)
             flow = flow + delta_flow
 
             if hasattr(self, 'mask_pred'):
-                mask = .25 * self.mask_pred(h)
+                mask = .25 * self.mask_pred(h_feat)
             else:
                 mask = None
 
@@ -448,7 +449,7 @@ class RAFTDecoder(BaseDecoder):
 
         return upflow_preds
 
-    def forward_train(
+    def loss(
         self,
         feat1: Tensor,
         feat2: Tensor,
@@ -475,9 +476,9 @@ class RAFTDecoder(BaseDecoder):
 
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
-        return self.losses(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(
+    def predict(
         self,
         feat1: Tensor,
         feat2: Tensor,
@@ -504,14 +505,10 @@ class RAFTDecoder(BaseDecoder):
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
         flow_result = flow_pred[-1]
-        flow_result = flow_result
-        # unravel batch dim
-        flow_result = list(flow_result)
-        flow_result = [dict(flow_fw=f) for f in flow_result]
-        return self.postprocess_result(flow_result, batch_img_metas)
+        return self.predict_by_feat(flow_result, batch_img_metas)
 
-    def losses(self, flow_pred: TensorList,
-               batch_data_samples: SampleList) -> TensorDict:
+    def loss_by_feat(self, flow_pred: TensorList,
+                     batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:

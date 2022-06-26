@@ -130,13 +130,12 @@ def test_gmadecoder(max_pos_size, position_only):
         assert isinstance(out, list)
         assert out[0].shape == torch.Size((1, 2, 64, 64))
 
-        # test forward train
-        loss = model.forward_train(feat1, feat2, flow, h_feat, cxt_feat,
-                                   batch_data_samples)
+        # test loss forward
+        loss = model.loss(feat1, feat2, flow, h_feat, cxt_feat,
+                          batch_data_samples)
         assert float(loss['loss_flow']) > 0.
 
-        # test forward test
-        out = model.forward_test(feat1, feat2, flow, h_feat, cxt_feat,
-                                 [metainfo])
+        # test predict forward
+        out = model.predict(feat1, feat2, flow, h_feat, cxt_feat, [metainfo])
         assert out[0].pred_flow_fw.shape == (64, 64)
         assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)

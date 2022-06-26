@@ -11,27 +11,20 @@ optimizer = dict(
     eps=1e-08,
     weight_decay=0.0001,
     amsgrad=False)
-optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
+optim_wrapper = dict(
+    type='OptimWrapper', optimizer=optimizer, clip_grad=dict(max_norm=1.))
 
-# toy learning policy
 lr_config = dict(
-    type='MultiStepLR',
-    by_epoch=False,
-    gamma=0.5,
-    milestones=[400000, 600000, 800000, 1000000])
-# lr_config = dict(
-#     policy='OneCycle',
-#     max_lr=0.00025,
-#     total_steps=120100,
-#     pct_start=0.05,
-#     anneal_strategy='linear')
+    policy='OneCycle',
+    max_lr=0.00025,
+    total_steps=120100,
+    pct_start=0.05,
+    anneal_strategy='linear')
 
 train_cfg = dict(by_epoch=False, max_iters=120000, val_interval=10000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
-    optimizer=dict(
-        type='OptimizerHook', grad_clip=dict(max_norm=1.), _delete_=True),
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=50),
     param_scheduler=dict(type='ParamSchedulerHook'),

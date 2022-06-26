@@ -1,8 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from typing import Union
+
 from torch import Tensor
 
-from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
-                               TensorList)
+from mmflow.core.utils import (OptMultiConfig, OptSampleList, SampleList,
+                               TensorDict)
 from mmflow.registry import MODELS
 from ..builder import build_decoder, build_encoder
 from .base import FlowEstimator
@@ -23,7 +25,7 @@ class PWCNet(FlowEstimator):
                  encoder: dict,
                  decoder: dict,
                  init_cfg: OptMultiConfig = None,
-                 **kwargs):
+                 **kwargs) -> None:
 
         super().__init__(init_cfg=init_cfg, **kwargs)
         self.encoder = build_encoder(encoder)
@@ -46,41 +48,73 @@ class PWCNet(FlowEstimator):
         img2 = imgs[:, in_channels:, ...]
         return self.encoder(img1), self.encoder(img2)
 
-    def forward_train(self, imgs: Tensor,
-                      batch_data_samples: SampleList) -> TensorDict:
-        """Forward function for PWCNet when model training.
+    def loss(self, batch_inputs: Tensor,
+             batch_data_samples: SampleList) -> Union[dict, list]:
+        """Calculate losses from a batch of inputs and data samples.
 
         Args:
-            imgs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is batch_inputs[N, :3, H, W] and img2 is
+                batch_inputs[N, 3:, H, W]. These should usually be mean
+                centered and std scaled.
+            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
+                data samples. It usually includes information such
+                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
+                ``gt_occ_bw``.
 
         Returns:
-            Dict[str, Tensor]: The losses of output.
+            dict: A dictionary of loss components.
         """
-        feat1, feat2 = self.extract_feat(imgs)
-        return self.decoder.forward_train(
-            feat1=feat1, feat2=feat2, batch_data_samples=batch_data_samples)
 
-    def forward_test(self, imgs: Tensor,
-                     batch_data_samples: SampleList) -> TensorList:
-        """Forward function for PWCNet when model testing.
+        return self.decoder.loss(
+            *self.extract_feat(batch_inputs),
+            batch_data_samples=batch_data_samples)
+
+    def predict(self, batch_inputs: Tensor,
+                batch_data_samples: SampleList) -> SampleList:
+        """Predict results from a batch of inputs and data samples with post-
+        processing.
 
         Args:
-            imgs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is batch_inputs[N, :3, H, W] and img2 is
+                batch_inputs[N, 3:, H, W]. These should usually be mean
+                centered and std scaled.
+            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
+                data samples. It usually includes information such
+                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
+                ``gt_occ_bw``.
+
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            list[:obj:`FlowDataSample`]: Optical Flow results of the
+            input images. Each FlowDataSample usually contain
+            ``pred_flow_fw``.
         """
 
-        feat1, feat2 = self.extract_feat(imgs)
         batch_img_metas = []
         for data_sample in batch_data_samples:
             batch_img_metas.append(data_sample.metainfo)
-        return self.decoder.forward_test(feat1, feat2, batch_img_metas)
+        return self.decoder.predict(*self.extract_feat(batch_inputs),
+                                    batch_img_metas)
+
+    def _forward(self,
+                 batch_inputs: Tensor,
+                 data_samples: OptSampleList = None) -> TensorDict:
+        """Network forward process. Usually includes backbone, neck and head
+        forward without any post-processing.
+
+        Args:
+            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is batch_inputs[N, :3, H, W] and img2 is
+                batch_inputs[N, 3:, H, W]. These should usually be mean
+                centered and std scaled.
+            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
+                data samples. It usually includes information such
+                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
+                ``gt_occ_bw``. Default to None.
+        Returns:
+            Dict[str, :obj:`FlowDataSample`]: The predicted optical flow
+            from level6 to level2.
+        """
+        return self.decoder(*self.extract_feat(batch_inputs))

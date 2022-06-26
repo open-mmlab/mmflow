@@ -135,11 +135,8 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
 
     feat, batch_data_samples, metainfo = _get_test_data_cpu()
 
-    # test multi-levels flow
-    out = model.forward_train(
-        feat,
-        batch_data_samples=batch_data_samples,
-        return_multi_level_flow=True)
+    # test multi-levels flow forward
+    out = model(feat)
 
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
@@ -148,22 +145,12 @@ def test_flownets_decoder(in_channels, out_channels, inter_channels):
     assert out['level3'].shape == torch.Size((1, 2, 16, 16))
     assert out['level2'].shape == torch.Size((1, 2, 32, 32))
 
-    # test multi-levels flow
-    out = model.forward_test(
-        feat, batch_img_metas=[metainfo], return_multi_level_flow=True)
-
-    assert isinstance(out, dict)
-    assert out['level6'].shape == torch.Size((1, 2, 2, 2))
-    assert out['level5'].shape == torch.Size((1, 2, 4, 4))
-    assert out['level4'].shape == torch.Size((1, 2, 8, 8))
-    assert out['level3'].shape == torch.Size((1, 2, 16, 16))
-    assert out['level2'].shape == torch.Size((1, 2, 32, 32))
-
-    loss = model.forward_train(feat, batch_data_samples=batch_data_samples)
+    # test loss forward
+    loss = model.loss(feat, batch_data_samples=batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    # test forward test
-    out = model.forward_test(feat, batch_img_metas=[metainfo])
+    # test predict forward
+    out = model.predict(feat, batch_img_metas=[metainfo])
     assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (64, 64)
 
@@ -192,12 +179,7 @@ def test_flownetc_decoder():
         dict(level3=256, level4=512, level5=512, level6=1024), w=16, h=16)
 
     # test multi-levels flow
-    out = model.forward_train(
-        feat1,
-        corr_feat,
-        batch_data_samples=batch_data_samples,
-        return_multi_level_flow=True)
-
+    out = model(feat1, corr_feat)
     assert isinstance(out, dict)
     assert out['level6'].shape == torch.Size((1, 2, 2, 2))
     assert out['level5'].shape == torch.Size((1, 2, 4, 4))
@@ -205,26 +187,11 @@ def test_flownetc_decoder():
     assert out['level3'].shape == torch.Size((1, 2, 16, 16))
     assert out['level2'].shape == torch.Size((1, 2, 32, 32))
 
-    # test multi-levels flow
-    out = model.forward_test(
-        feat1,
-        corr_feat,
-        batch_img_metas=[metainfo],
-        return_multi_level_flow=True)
-
-    assert isinstance(out, dict)
-    assert out['level6'].shape == torch.Size((1, 2, 2, 2))
-    assert out['level5'].shape == torch.Size((1, 2, 4, 4))
-    assert out['level4'].shape == torch.Size((1, 2, 8, 8))
-    assert out['level3'].shape == torch.Size((1, 2, 16, 16))
-    assert out['level2'].shape == torch.Size((1, 2, 32, 32))
-
-    loss = model.forward_train(
-        feat1, corr_feat, batch_data_samples=batch_data_samples)
-
+    # test loss forward
+    loss = model.loss(feat1, corr_feat, batch_data_samples=batch_data_samples)
     assert float(loss['loss_flow']) > 0
 
-    # test forward test
-    out = model.forward_test(feat1, corr_feat, batch_img_metas=[metainfo])
+    # test predict forward
+    out = model.predict(feat1, corr_feat, batch_img_metas=[metainfo])
     assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (64, 64)

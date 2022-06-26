@@ -3,7 +3,6 @@ from typing import Dict, Optional, Sequence, Tuple
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from mmcv.runner import BaseModule
 
 from mmflow.core.utils import (OptMultiConfig, SampleList, TensorDict,
@@ -268,8 +267,8 @@ class PWCNetDecoder(BaseDecoder):
 
         return flow_pred
 
-    def forward_train(self, feat1: TensorDict, feat2: TensorDict,
-                      batch_data_samples: SampleList) -> TensorDict:
+    def loss(self, feat1: TensorDict, feat2: TensorDict,
+             batch_data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -286,9 +285,9 @@ class PWCNetDecoder(BaseDecoder):
         """
 
         flow_pred = self.forward(feat1, feat2)
-        return self.losses(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(
+    def predict(
         self,
         feat1: TensorDict,
         feat2: TensorDict,
@@ -310,23 +309,10 @@ class PWCNetDecoder(BaseDecoder):
 
         flow_pred = self.forward(feat1, feat2)
         flow_results = flow_pred[self.end_level]
+        return self.predict_by_feat(flow_results, batch_img_metas)
 
-        H, W = batch_img_metas[0]['img_shape'][:2]
-        # resize flow to the size of images after augmentation.
-        flow_results = F.interpolate(
-            flow_results, size=(H, W), mode='bilinear', align_corners=False)
-
-        flow_results = flow_results * self.flow_div
-
-        # unravel batch dim,
-        flow_results = list(flow_results)
-        results = [dict(flow_fw=f) for f in flow_results]
-
-        return self.postprocess_result(
-            results, batch_img_metas=batch_img_metas)
-
-    def losses(self, flow_pred: TensorDict,
-               batch_data_samples: SampleList) -> TensorDict:
+    def loss_by_feat(self, flow_pred: TensorDict,
+                     batch_data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:

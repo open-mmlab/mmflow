@@ -1,6 +1,13 @@
 MaskflownetS_checkpoint = 'https://download.openmmlab.com/mmflow/maskflownet/maskflownets_8x1_sfine_flyingthings3d_subset_384x768.pth'  # noqa
 model = dict(
     type='MaskFlowNet',
+    data_preprocessor=dict(
+        type='FlowDataPreprocessor',
+        mean=[0., 0., 0.],
+        std=[255., 255., 255.],
+        bgr_to_rgb=False,
+        sigma_range=(0, 0.04),
+        clamp_range=(0., 1.)),
     maskflownetS=dict(
         type='MaskFlowNetS',
         freeze_net=True,

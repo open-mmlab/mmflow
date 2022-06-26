@@ -205,37 +205,37 @@ def test_irr_pwc_decoder():
     feat1['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
     feat2['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
 
-    # test forward_train out with flow_fw_gt, flow_bw_gt, occ_fw_gt, occ_bw_gt
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    # test loss forward with flow_fw_gt, flow_bw_gt, occ_fw_gt, occ_bw_gt
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
-    # test forward_train out with flow_gt
+    # test loss forward with flow_gt
     del batch_data_samples[0].gt_flow_bw
     del batch_data_samples[0].gt_occ_fw
     del batch_data_samples[0].gt_occ_bw
 
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) == 0.
 
-    # test forward_train out with flow_fw_gt, flow_bw_gt
+    # test loss forward with flow_fw_gt, flow_bw_gt
     batch_data_samples[0].gt_flow_bw = PixelData(**dict(
         data=torch.randn(2, h, w))).cuda()
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) == 0.
 
-    # test forward_train out with flow_gt, occ_gt
+    # test loss forward with flow_gt, occ_gt
     del batch_data_samples[0].gt_flow_bw
     batch_data_samples[0].gt_occ_fw = PixelData(**dict(
         data=torch.randn(1, h, w))).cuda()
-    loss = model.forward_train(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, batch_data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
-    # test forward_test
-    flow_result = model.forward_test(feat1, feat2, [metainfo])
+    # test predict forward
+    flow_result = model.predict(feat1, feat2, [metainfo])
     assert isinstance(flow_result, list) and mmcv.is_list_of(
         flow_result, FlowDataSample)
     assert flow_result[0].pred_flow_fw.shape == (h, w)
