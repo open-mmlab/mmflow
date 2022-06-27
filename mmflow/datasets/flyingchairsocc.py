@@ -1,10 +1,12 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import os.path as osp
+from typing import Callable, List, Optional, Sequence, Union
 
 import numpy as np
+from mmengine.dataset import BaseDataset as MME_BaseDataset
 
 from mmflow.registry import DATASETS
-from .base_dataset import BaseDataset
+from .utils import get_data_filename
 
 DATASET_SIZE = 22872
 VALIDATE_INDICES = [
@@ -66,15 +68,62 @@ VALIDATE_INDICES = [
 
 
 @DATASETS.register_module()
-class FlyingChairsOcc(BaseDataset):
-    """FlyingChairsOcc dataset."""
+class FlyingChairsOcc(MME_BaseDataset):
+    """FlyingChairsOcc dataset.
 
-    def __init__(self, *args, **kwargs):
+    Args:
+        split_file (str): File name of train-validation split file for
+        FlyingChairs.
+    """
+    METAINFO = dict(dataset='FlyingChairsOcc')
 
-        self.split = np.ones(DATASET_SIZE)
-        self.split[VALIDATE_INDICES] = 2
+    def __init__(self,
+                 split_file: Optional[str] = None,
+                 ann_file: str = '',
+                 metainfo: Optional[dict] = None,
+                 data_root: Optional[str] = None,
+                 data_prefix: dict = dict(),
+                 filter_cfg: Optional[dict] = None,
+                 indices: Optional[Union[int, Sequence[int]]] = None,
+                 serialize_data: bool = True,
+                 pipeline: List[Union[dict, Callable]] = [],
+                 test_mode: bool = False,
+                 lazy_init: bool = False,
+                 max_refetch: int = 1000):
+        if metainfo is None:
+            metainfo = dict(subset='test') if test_mode else dict(
+                subset='train')
+        else:
+            if test_mode:
+                metainfo.update(dict(subset='test'))
+            else:
+                metainfo.update(dict(subset='train'))
+        if split_file is not None:
+            self.split = np.loadtxt(split_file, dtype=np.int32).tolist()
+        else:
+            self.split = np.ones(DATASET_SIZE)
+            self.split[VALIDATE_INDICES] = 2
 
-        super().__init__(*args, **kwargs)
+        super().__init__(ann_file, metainfo, data_root, data_prefix,
+                         filter_cfg, indices, serialize_data, pipeline,
+                         test_mode, lazy_init, max_refetch)
+
+    def load_data_list(self) -> List[dict]:
+        """Load ``data_list``
+
+        ``data_list`` can be load from an annotation file named as
+        ``self.ann_file`` or by parsing dataset path.
+
+        Returns:
+            list[dict]: A list of annotation.
+        """
+        if self.ann_file.endswith('json'):
+            # load data_list with annotation file
+            return super().load_data_list()
+        else:
+            # load data_list by path parsing
+            self.load_data_info()
+            return self.data_list
 
     def load_img_info(self, img1_filename, img2_filename):
         """Load information of image1 and image2.
@@ -90,11 +139,10 @@ class FlyingChairsOcc(BaseDataset):
                     and self.split[i] == 1) or (self.test_mode
                                                 and self.split[i] == 2):
                 data_info = dict(
-                    img_info=dict(
-                        filename1=img1_filename[i],
-                        filename2=img2_filename[i]),
-                    ann_info=dict())
-                self.data_infos.append(data_info)
+                    img1_path=img1_filename[i],
+                    img2_path=img2_filename[i],
+                )
+                self.data_list.append(data_info)
 
     def load_ann_info(self, filename, filename_key):
         """Load information of optical flow.
@@ -113,7 +161,7 @@ class FlyingChairsOcc(BaseDataset):
         for i in range(num_files):
             if (not self.test_mode and self.split[i] == 1) \
                     or (self.test_mode and self.split[i] == 2):
-                self.data_infos[count]['ann_info'][filename_key] = filename[i]
+                self.data_list[count][filename_key] = filename[i]
                 count += 1
 
     def load_data_info(self):
@@ -134,25 +182,21 @@ class FlyingChairsOcc(BaseDataset):
         self.occ_fw_suffix = '_occ1.png'
         self.occ_bw_suffix = '_occ2.png'
 
-        img1_filenames = self.get_data_filename(self.img1_dir,
-                                                self.img1_suffix)
-        img2_filenames = self.get_data_filename(self.img2_dir,
-                                                self.img2_suffix)
-        flow_fw_filenames = self.get_data_filename(self.flow_dir,
-                                                   self.flow_fw_suffix)
-        flow_bw_filenames = self.get_data_filename(self.flow_dir,
-                                                   self.flow_bw_suffix)
-        occ_fw_filenames = self.get_data_filename(self.occ_dir,
-                                                  self.occ_fw_suffix)
-        occ_bw_filenames = self.get_data_filename(self.occ_dir,
-                                                  self.occ_bw_suffix)
+        img1_filenames = get_data_filename(self.img1_dir, self.img1_suffix)
+        img2_filenames = get_data_filename(self.img2_dir, self.img2_suffix)
+        flow_fw_filenames = get_data_filename(self.flow_dir,
+                                              self.flow_fw_suffix)
+        flow_bw_filenames = get_data_filename(self.flow_dir,
+                                              self.flow_bw_suffix)
+        occ_fw_filenames = get_data_filename(self.occ_dir, self.occ_fw_suffix)
+        occ_bw_filenames = get_data_filename(self.occ_dir, self.occ_bw_suffix)
 
         assert len(img1_filenames) == len(img2_filenames) == len(
             flow_fw_filenames) == len(flow_bw_filenames) == len(
                 occ_fw_filenames) == len(occ_bw_filenames)
 
         self.load_img_info(img1_filenames, img2_filenames)
-        self.load_ann_info(flow_fw_filenames, 'filename_flow_fw')
-        self.load_ann_info(flow_bw_filenames, 'filename_flow_bw')
-        self.load_ann_info(occ_fw_filenames, 'filename_occ_fw')
-        self.load_ann_info(occ_bw_filenames, 'filename_occ_bw')
+        self.load_ann_info(flow_fw_filenames, 'flow_fw_path')
+        self.load_ann_info(flow_bw_filenames, 'flow_bw_path')
+        self.load_ann_info(occ_fw_filenames, 'occ_fw_path')
+        self.load_ann_info(occ_bw_filenames, 'occ_bw_path')

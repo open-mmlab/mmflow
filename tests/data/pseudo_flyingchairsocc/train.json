@@ -1,0 +1,16 @@
+{
+    "metainfo": {
+        "dataset": "FlyingChairsOcc",
+        "subset": "train"
+    },
+    "data_list": [
+        {
+            "img1_path": "pseudo_flyingchairsocc/data/00001_img1.png",
+            "img2_path": "pseudo_flyingchairsocc/data/00001_img2.png",
+            "flow_fw_path": "pseudo_flyingchairsocc/data/00001_flow.flo",
+            "flow_bw_path": "pseudo_flyingchairsocc/data/00001_flow_b.flo",
+            "occ_fw_path": "pseudo_flyingchairsocc/data/00001_occ1.png",
+            "occ_bw_path": "pseudo_flyingchairsocc/data/00001_occ2.png"
+        }
+    ]
+}

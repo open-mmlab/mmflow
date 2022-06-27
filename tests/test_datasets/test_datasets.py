@@ -5,7 +5,8 @@ import numpy as np
 import pytest
 
 from mmflow.datasets import (KITTI2012, KITTI2015, FlyingChairs,
-                             FlyingThings3D, FlyingThings3DSubset, Sintel)
+                             FlyingChairsOcc, FlyingThings3D,
+                             FlyingThings3DSubset, Sintel)
 
 
 class TestFlyingChiars:
@@ -371,3 +372,83 @@ class TestKITTI2012:
         dataset_cfg = dict(data_root=self.data_root, test_mode=False)
 
         return KITTI2012(**dataset_cfg)
+
+
+class TestFlyingChairsOcc:
+    data_root = osp.join(
+        osp.dirname(__file__), '../data/pseudo_flyingchairsocc')
+
+    @pytest.mark.parametrize('init_function', ('ann_file', 'path_parse'))
+    def test_load_data_list(self, init_function):
+
+        if init_function == 'ann_file':
+            train_dataset, test_dataset = self._load_annotation_file()
+        else:
+            train_dataset, test_dataset = self._load_path_pasing()
+
+        assert len(train_dataset) == 1
+        assert len(test_dataset) == 1
+        assert train_dataset.metainfo['subset'] == 'train'
+        assert test_dataset.metainfo['subset'] == 'test'
+
+        split = np.loadtxt(
+            osp.join(self.data_root, 'FlyingChairsOcc_train_val.txt'),
+            dtype=np.int32).tolist()
+
+        for idx, i_split in enumerate(split):
+            if i_split == 1:
+                # test train datasets
+                others = [i for i, val in enumerate(split[:idx]) if val == 2]
+                others_nums = len(others)
+                data_info = train_dataset[idx - others_nums]
+
+            else:
+                # test test datasets
+                others = [i for i, val in enumerate(split[:idx]) if val == 1]
+                others_nums = len(others)
+                data_info = test_dataset[idx - others_nums]
+            keys = list(data_info.keys())
+            set(['img1_path', 'img2_path', 'flow_fw_path']).issubset(set(keys))
+
+            assert osp.split(
+                data_info['img1_path'])[-1] == f'{(idx+1):05}_img1.png'
+            assert osp.split(
+                data_info['img2_path'])[-1] == f'{(idx+1):05}_img2.png'
+            assert osp.split(
+                data_info['flow_fw_path'])[-1] == f'{(idx+1):05}_flow.flo'
+            assert osp.split(
+                data_info['flow_bw_path'])[-1] == f'{(idx+1):05}_flow_b.flo'
+            assert osp.split(
+                data_info['occ_fw_path'])[-1] == f'{(idx+1):05}_occ1.png'
+            assert osp.split(
+                data_info['occ_bw_path'])[-1] == f'{(idx+1):05}_occ2.png'
+
+    def _load_annotation_file(self):
+        train_ann_file = osp.join(self.data_root, 'train.json')
+        test_ann_file = osp.join(self.data_root, 'test.json')
+        train_cfg = dict(
+            pipeline=[], data_root=self.data_root, ann_file=train_ann_file)
+        train_dataset = FlyingChairs(**train_cfg)
+
+        test_cfg = dict(
+            pipeline=[],
+            test_mode=True,
+            data_root=self.data_root,
+            ann_file=test_ann_file)
+        test_dataset = FlyingChairs(**test_cfg)
+        return train_dataset, test_dataset
+
+    def _load_path_pasing(self):
+
+        split_file = osp.join(self.data_root, 'FlyingChairsOcc_train_val.txt')
+        train_cfg = dict(
+            pipeline=[], data_root=self.data_root, split_file=split_file)
+        train_dataset = FlyingChairsOcc(**train_cfg)
+
+        test_cfg = dict(
+            pipeline=[],
+            test_mode=True,
+            data_root=self.data_root,
+            split_file=split_file)
+        test_dataset = FlyingChairsOcc(**test_cfg)
+        return train_dataset, test_dataset
