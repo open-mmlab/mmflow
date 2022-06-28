@@ -1,10 +1,17 @@
+# training schedule for S_short schedule
+train_cfg = dict(by_epoch=False, max_iters=600000, val_interval=50000)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
 # optimizer
-optimizer = dict(
-    type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999)))
+
 # learning policy
 lr_config = dict(
-    policy='step', by_epoch=False, gamma=0.5, step=[300000, 400000, 500000])
-runner = dict(type='IterBasedRunner', max_iters=600000)
-checkpoint_config = dict(by_epoch=False, interval=50000)
-evaluation = dict(interval=50000, metric='EPE')
+    type='MultiStepLR',
+    by_epoch=False,
+    gamma=0.5,
+    milestones=[300000, 400000, 500000])
