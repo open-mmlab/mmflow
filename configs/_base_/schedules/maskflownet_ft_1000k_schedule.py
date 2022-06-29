@@ -1,6 +1,14 @@
+# training schedule for maskflownet_ft schedule
+train_cfg = dict(by_epoch=False, max_iters=1000000, val_interval=50000)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
 # optimizer
-optimizer = dict(type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
+optimizer_config = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999)))
+
 # learning policy
 lr_config = dict(
     policy='MultiStage',
@@ -10,7 +18,3 @@ lr_config = dict(
     milestone_iters=[0, 200000, 400000, 600000, 800000],
     steps=[[100000, 150000], [300000, 350000], [500000, 550000],
            [700000, 750000], [850000, 875000, 900000, 950000, 975000]])
-
-runner = dict(type='IterBasedRunner', max_iters=1000000)
-checkpoint_config = dict(by_epoch=False, interval=100000)
-evaluation = dict(interval=100000, metric='EPE')
