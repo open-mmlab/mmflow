@@ -5,4 +5,4 @@ _base_ = [
 ]
 
 # Train on FlyingChairs and finetune on FlyingThings3D subset
-load_from = 'https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.pth'  # noqa
+load_from = 'https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.pth'  # noqa
