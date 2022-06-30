@@ -58,19 +58,19 @@ flyingchairsocc_test = dict(
 train_dataloader = dict(
     batch_size=1,
     sampler=dict(type='InfiniteSampler', shuffle=False),
-    num_workers=2,
+    num_workers=5,
     drop_last=True,
     persistent_workers=True,
     dataset=flyingchairsocc_train)
 
 val_dataloader = dict(
     batch_size=1,
-    num_workers=2,
+    num_workers=5,
     sampler=dict(type='DefaultSampler', shuffle=False),
     drop_last=False,
     shuffle=False,
     persistent_workers=True,
-    dataset=flyingchairsocc_train)
+    dataset=flyingchairsocc_test)
 
 test_dataloader = val_dataloader
 val_evaluator = dict(type='EndPointError')
