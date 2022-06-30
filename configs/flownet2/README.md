@@ -63,7 +63,7 @@ computation at up to 140fps with accuracy matching the original FlowNet.
             <th>-</th>
             <th>-</th>
             <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.log.json'>log</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/flownet2/'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.py'>Config</a></th>
             <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.pth'>Model</a></th>
         </tr>
         <tr>
@@ -120,8 +120,21 @@ computation at up to 140fps with accuracy matching the original FlowNet.
         </tr>
         <tr>
             <th>FlowNet2</th>
+            <th>FlyingChairs</th>
+            <th>1.15</th>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+            <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2_8x1_slong_flyingchairs_384x448_20220625_212801-88d61800.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2_8x1_slong_flyingchairs_384x448_20220625_212801-88d61800.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/flownet2/flownet2_8x1_slong_flyingchairs_384x448_20220625_212801-88d61800.pth'>Model</a></th>
+        </tr>
+        <tr>
+            <th>FlowNet2</th>
             <th>FlyingThing3d subset</th>
-            <th></th>
+            <th>-</th>
             <th>1.78</th>
             <th>3.31</th>
             <th>3.02</th>

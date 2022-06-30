@@ -146,3 +146,15 @@ Models:
           EPE: 8.02
           Fl-all: 25.18%
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2_8x1_sfine_flyingthings3d_subset_384x768.pth
+
+  - Name: flownet2_8x1_slong_flyingchairs_384x448
+    In Collection: FlowNet2
+    Config: configs/flownet2/flownet2_8x1_slong_flyingchairs_384x448
+    Metadata:
+      Training Data: FlyingChairs
+    Results:
+      - Task: Optical flow estimation
+        Dataset: FlyingChairs
+        Metrics:
+          EPE: 1.15
+    Weights: https://openmmlab-share.oss-cn-hangzhou.aliyuncs.com/mmflow/flownet2/flownet2_8x1_slong_flyingchairs_384x448_20220625_212801-88d61800.pth
