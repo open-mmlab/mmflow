@@ -65,7 +65,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## What's New
 
-**v0.4.2** was released in 05/31/2022:
+**v0.4.3** was released in 07/01/2022:
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
 
