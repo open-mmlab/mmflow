@@ -1,8 +1,8 @@
 # Changelog
 
-## v0.4.3(07/01/2022)
+## v0.5.0(07/01/2022)
 
-### Features
+### Highlights
 
 - Add config and pre-trained model for FlowNet2 on FlyingChairs ([163](https://github.com/open-mmlab/mmflow/pull/163))
 

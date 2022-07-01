@@ -65,7 +65,9 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## What's New
 
-**v0.4.3** was released in 07/01/2022:
+**v0.5.0** was released in 07/01/2022:
+
+- Add config and pre-trained model for FlowNet2 on FlyingChairs
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
 
