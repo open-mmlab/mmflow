@@ -31,9 +31,9 @@ def setup_multi_processes(cfg):
         logger.info(f'OpenCV num_threads is `{cv2.getNumThreads()}')
 
     if cfg.data.get('train_dataloader') is not None:
-        workers_per_gpu = cfg.data.train_dataloader.get('workers_per_gpu', 1)
+        workers_per_gpu = cfg.data.train_dataloader.get('workers_per_gpu', 0)
     elif cfg.data.get('test_dataloader') is not None:
-        workers_per_gpu = cfg.data.test_dataloader.get('workers_per_gpu', 1)
+        workers_per_gpu = cfg.data.test_dataloader.get('workers_per_gpu', 0)
     else:
         workers_per_gpu = 0
     if workers_per_gpu > 1:
