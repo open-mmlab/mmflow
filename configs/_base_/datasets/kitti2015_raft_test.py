@@ -1,4 +1,5 @@
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False)
+img_norm_cfg = dict(
+    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
 
 kitti_test_pipeline = [
     dict(type='LoadImageFromFile'),
