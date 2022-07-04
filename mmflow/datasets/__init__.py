@@ -1,6 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from .builder import build_dataloader, build_dataset
-from .dataset_wrappers import ConcatDataset, RepeatDataset
 from .flyingchairs import FlyingChairs
 from .flyingchairsocc import FlyingChairsOcc
 from .flyingthings3d import FlyingThings3D
@@ -18,10 +17,9 @@ from .utils import (read_flow, read_flow_kitti, render_color_wheel,
                     visualize_flow, write_flow, write_flow_kitti)
 
 __all__ = [
-    'build_dataloader', 'build_dataset', 'ConcatDataset', 'RepeatDataset',
-    'FlyingChairs', 'SpacialTransform', 'Validation', 'Erase', 'RandomFlip',
-    'Normalize', 'Rerange', 'RandomCrop', 'ColorJitter',
-    'PhotoMetricDistortion', 'RandomRotation', 'RandomAffine',
+    'build_dataloader', 'build_dataset', 'FlyingChairs', 'SpacialTransform',
+    'Validation', 'Erase', 'RandomFlip', 'Normalize', 'Rerange', 'RandomCrop',
+    'ColorJitter', 'PhotoMetricDistortion', 'RandomRotation', 'RandomAffine',
     'MixedBatchDistributedSampler', 'DistributedSampler', 'read_flow',
     'visualize_flow', 'write_flow', 'InputResize', 'write_flow_kitti',
     'read_flow_kitti', 'GaussianNoise', 'RandomTranslate', 'Compose',

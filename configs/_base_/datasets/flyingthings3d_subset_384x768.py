@@ -15,6 +15,14 @@ relative_transform = dict(
     shear=(1.0, 1.0),
     rotate=(-1.0, 1.0))
 
+# file_client_args = dict(
+#     backend='petrel',
+#     path_mapping=dict({
+#         './data/': 's3://openmmlab/datasets/mmflow/',
+#         'data/': 's3://openmmlab/datasets/mmflow/'
+#     }))
+file_client_args = dict(backend='disk')
+
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
@@ -25,8 +33,6 @@ train_pipeline = [
         saturation=0.5,
         hue=0.5),
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.5, direction='vertical'),
     dict(
@@ -34,31 +40,14 @@ train_pipeline = [
         global_transform=global_transform,
         relative_transform=relative_transform),
     dict(type='RandomCrop', crop_size=(384, 768)),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt'],
-        meta_keys=[
-            'img_fields', 'ann_fields', 'filename1', 'filename2',
-            'ori_filename1', 'ori_filename2', 'filename_flow',
-            'ori_filename_flow', 'ori_shape', 'img_shape', 'img_norm_cfg'
-        ]),
+    dict(type='PackFlowInputs')
 ]
 
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=6),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs'],
-        meta_keys=[
-            'flow_gt', 'filename1', 'filename2', 'ori_filename1',
-            'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-            'scale_factor', 'pad_shape'
-        ])
+    dict(type='PackFlowInputs')
 ]
 
 flyingthings3d_subset_train = dict(
@@ -66,7 +55,6 @@ flyingthings3d_subset_train = dict(
     pipeline=train_pipeline,
     data_root='data/FlyingThings3D_subset',
     test_mode=False,
-    direction='forward',
     scene='left')
 
 test_data_cleanpass = dict(
@@ -83,24 +71,22 @@ test_data_finalpass = dict(
     test_mode=True,
     pass_style='final')
 
-data = dict(
-    train_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=5,
-        drop_last=True,
-        persistent_workers=True),
-    val_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=5,
-        shuffle=False,
-        persistent_workers=True),
-    test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
-    train=flyingthings3d_subset_train,
-    val=dict(
-        type='ConcatDataset',
-        datasets=[test_data_cleanpass, test_data_finalpass],
-        separate_eval=True),
-    test=dict(
-        type='ConcatDataset',
-        datasets=[test_data_cleanpass, test_data_finalpass],
-        separate_eval=True))
+train_dataloader = dict(
+    batch_size=1,
+    sampler=dict(type='InfiniteSampler', shuffle=True),
+    num_workers=2,
+    drop_last=True,
+    persistent_workers=True,
+    dataset=flyingthings3d_subset_train)
+
+val_dataloader = dict(
+    batch_size=1,
+    num_workers=2,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    drop_last=False,
+    persistent_workers=True,
+    dataset=test_data_cleanpass)
+
+test_dataloader = val_dataloader
+val_evaluator = dict(type='EndPointError')
+test_evaluator = val_evaluator
