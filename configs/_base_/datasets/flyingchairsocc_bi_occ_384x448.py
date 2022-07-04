@@ -1,8 +1,6 @@
 dataset_type = 'FlyingChairsOcc'
 data_root = 'data/FlyingChairsOcc/'
 
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=True)
-
 global_transform = dict(
     translates=(0.05, 0.05),
     zoom=(1.0, 1.5),
@@ -57,8 +55,8 @@ flyingchairsocc_test = dict(
 
 train_dataloader = dict(
     batch_size=1,
-    sampler=dict(type='InfiniteSampler', shuffle=False),
     num_workers=5,
+    sampler=dict(type='InfiniteSampler', shuffle=True),
     drop_last=True,
     persistent_workers=True,
     dataset=flyingchairsocc_train)
@@ -68,7 +66,6 @@ val_dataloader = dict(
     num_workers=5,
     sampler=dict(type='DefaultSampler', shuffle=False),
     drop_last=False,
-    shuffle=False,
     persistent_workers=True,
     dataset=flyingchairsocc_test)
 

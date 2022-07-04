@@ -208,9 +208,10 @@ class SpacialTransform(BaseTransform):
                     if results.get(k, None) is not None:
                         occs.append(results[k])
                         occ_keys_in.append(k)
-                occs, _, _, _, _ = self.spacial_transform(occs)
-                for occ, k in zip(occs, occ_keys_in):
-                    results[k] = occ
+                if len(occs) > 0:
+                    occs, _, _, _, _ = self.spacial_transform(occs)
+                    for occ, k in zip(occs, occ_keys_in):
+                        results[k] = occ
 
             else:
                 # sparse spacial_transform
