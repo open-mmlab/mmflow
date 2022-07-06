@@ -39,6 +39,7 @@ class KITTI2012(MME_BaseDataset):
             None img. The maximum extra number of cycles to get a valid
             image. Defaults to 1000.
     """
+    METAINFO = dict(dataset='KITTI2012', sparse=True)
 
     def __init__(self,
                  ann_file: str = '',
