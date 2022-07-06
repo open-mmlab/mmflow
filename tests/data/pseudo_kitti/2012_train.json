@@ -8,6 +8,7 @@
     ],
     "metainfo": {
         "dataset": "KITTI2012",
-        "subset": "train"
+        "subset": "train",
+        "sparse": true
     }
 }

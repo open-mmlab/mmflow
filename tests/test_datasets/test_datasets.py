@@ -4,7 +4,7 @@ import os.path as osp
 import numpy as np
 import pytest
 
-from mmflow.datasets import (KITTI2012, KITTI2015, FlyingChairs,
+from mmflow.datasets import (HD1K, KITTI2012, KITTI2015, FlyingChairs,
                              FlyingChairsOcc, FlyingThings3D,
                              FlyingThings3DSubset, Sintel)
 
@@ -19,7 +19,7 @@ class TestFlyingChiars:
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_pasing()
+            train_dataset, test_dataset = self._load_path_parsing()
 
         assert len(train_dataset) == 4
         assert len(test_dataset) == 1
@@ -43,7 +43,8 @@ class TestFlyingChiars:
                 others_nums = len(others)
                 data_info = test_dataset[idx - others_nums]
             keys = list(data_info.keys())
-            set(['img1_path', 'img2_path', 'flow_fw_path']).issubset(set(keys))
+            assert set(['img1_path', 'img2_path',
+                        'flow_fw_path']).issubset(set(keys))
 
             assert osp.split(
                 data_info['img1_path'])[-1] == f'{(idx+1):05}_img1.ppm'
@@ -67,7 +68,7 @@ class TestFlyingChiars:
         test_dataset = FlyingChairs(**test_cfg)
         return train_dataset, test_dataset
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         # Test split_file and ann_file are not defined.
         with pytest.raises(AssertionError):
             FlyingChairs(split_file=None, ann_file='')
@@ -102,7 +103,7 @@ class TestFlyingThings3D:
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_pasing()
+            train_dataset, test_dataset = self._load_path_parsing()
         assert train_dataset.metainfo['subset'] == 'train'
         assert test_dataset.metainfo['subset'] == 'test'
 
@@ -151,7 +152,7 @@ class TestFlyingThings3D:
             double=self.double)
         return FlyingThings3D(**train_cfg), FlyingThings3D(**test_cfg)
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         train_cfg = dict(
             pipeline=[],
             data_root=self.data_root,
@@ -184,7 +185,7 @@ class TestFlyingThings3DSubset:
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_pasing()
+            train_dataset, test_dataset = self._load_path_parsing()
 
         assert train_dataset.metainfo['subset'] == 'train'
         assert test_dataset.metainfo['subset'] == 'test'
@@ -229,7 +230,7 @@ class TestFlyingThings3DSubset:
         return FlyingThings3DSubset(**train_cfg), FlyingThings3DSubset(
             **test_cfg)
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         train_cfg = dict(
             data_root=self.data_root,
             pipeline=[],
@@ -260,7 +261,7 @@ class TestSintel:
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_pasing()
+            train_dataset, test_dataset = self._load_path_parsing()
         assert train_dataset.metainfo['subset'] == 'train'
         assert test_dataset.metainfo['subset'] == 'test'
         for dataset in (train_dataset, test_dataset):
@@ -294,7 +295,7 @@ class TestSintel:
         )
         return Sintel(**train_cfg), Sintel(**test_cfg)
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         train_cfg = dict(
             data_root=self.data_root,
             test_mode=False,
@@ -316,8 +317,9 @@ class TestKITTI2015:
         if init_function == 'ann_file':
             dataset = self._load_annotation_file()
         else:
-            dataset = self._load_path_pasing()
+            dataset = self._load_path_parsing()
         assert len(dataset) == 1
+        assert dataset.METAINFO['sparse']
 
         for data_info in dataset:
             img1_path = data_info['img1_path']
@@ -325,7 +327,7 @@ class TestKITTI2015:
             flow_fw_path = data_info['flow_fw_path']
             assert img1_path[-6:] == '10.png'
             assert img2_path[-6:] == '11.png'
-            flow_fw_path[-6:] == '10.png'
+            assert flow_fw_path[-6:] == '10.png'
 
     def _load_annotation_file(self):
         dataset_cfg = dict(
@@ -335,7 +337,7 @@ class TestKITTI2015:
 
         return KITTI2015(**dataset_cfg)
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         dataset_cfg = dict(data_root=self.data_root, test_mode=False)
 
         return KITTI2015(**dataset_cfg)
@@ -349,8 +351,9 @@ class TestKITTI2012:
         if init_function == 'ann_file':
             dataset = self._load_annotation_file()
         else:
-            dataset = self._load_path_pasing()
+            dataset = self._load_path_parsing()
         assert len(dataset) == 1
+        assert dataset.METAINFO['sparse'] is True
 
         for data_info in dataset:
             img1_path = data_info['img1_path']
@@ -358,7 +361,7 @@ class TestKITTI2012:
             flow_fw_path = data_info['flow_fw_path']
             assert img1_path[-6:] == '10.png'
             assert img2_path[-6:] == '11.png'
-            flow_fw_path[-6:] == '10.png'
+            assert flow_fw_path[-6:] == '10.png'
 
     def _load_annotation_file(self):
         dataset_cfg = dict(
@@ -368,7 +371,7 @@ class TestKITTI2012:
 
         return KITTI2012(**dataset_cfg)
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
         dataset_cfg = dict(data_root=self.data_root, test_mode=False)
 
         return KITTI2012(**dataset_cfg)
@@ -384,7 +387,7 @@ class TestFlyingChairsOcc:
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_pasing()
+            train_dataset, test_dataset = self._load_path_parsing()
 
         assert len(train_dataset) == 1
         assert len(test_dataset) == 1
@@ -408,7 +411,8 @@ class TestFlyingChairsOcc:
                 others_nums = len(others)
                 data_info = test_dataset[idx - others_nums]
             keys = list(data_info.keys())
-            set(['img1_path', 'img2_path', 'flow_fw_path']).issubset(set(keys))
+            assert set(['img1_path', 'img2_path',
+                        'flow_fw_path']).issubset(set(keys))
 
             assert osp.split(
                 data_info['img1_path'])[-1] == f'{(idx+1):05}_img1.png'
@@ -438,7 +442,7 @@ class TestFlyingChairsOcc:
         test_dataset = FlyingChairs(**test_cfg)
         return train_dataset, test_dataset
 
-    def _load_path_pasing(self):
+    def _load_path_parsing(self):
 
         split_file = osp.join(self.data_root, 'FlyingChairsOcc_train_val.txt')
         train_cfg = dict(
@@ -452,3 +456,38 @@ class TestFlyingChairsOcc:
             split_file=split_file)
         test_dataset = FlyingChairsOcc(**test_cfg)
         return train_dataset, test_dataset
+
+
+class TestHD1K:
+    data_root = osp.join(osp.dirname(__file__), '../data/pseudo_hd1k')
+
+    @pytest.mark.parametrize('init_function', ('ann_file', 'path_parse'))
+    def test_load_data_list(self, init_function):
+
+        if init_function == 'ann_file':
+            dataset = self._load_annotation_file()
+        else:
+            dataset = self._load_path_parsing()
+        assert len(dataset) == 1
+        assert dataset.METAINFO['sparse']
+
+        for data_info in dataset:
+            img1_path = data_info['img1_path']
+            img2_path = data_info['img2_path']
+            flow_fw_path = data_info['flow_fw_path']
+            assert img1_path[-8:] == '0010.png'
+            assert img2_path[-8:] == '0011.png'
+            assert flow_fw_path[-8:] == '0010.png'
+
+    def _load_annotation_file(self):
+        dataset_cfg = dict(
+            data_root=self.data_root,
+            test_mode=False,
+            ann_file='hd1k_train.json')
+
+        return HD1K(**dataset_cfg)
+
+    def _load_path_parsing(self):
+        dataset_cfg = dict(data_root=self.data_root, test_mode=False)
+
+        return HD1K(**dataset_cfg)

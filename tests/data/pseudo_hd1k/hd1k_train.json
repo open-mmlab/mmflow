@@ -1,0 +1,13 @@
+{
+    "metainfo": {
+        "dataset": "HD1K",
+        "sparse": true
+    },
+    "data_list": [
+        {
+            "img1_path": "preudo_hd1k/hd1k_input/image_2/data/hd1k/hd1k_input/image_2/000000_0010.png",
+            "img2_path": "preudo_hd1k/hd1k_input/image_2/data/hd1k/hd1k_input/image_2/000000_0011.png",
+            "flow_fw_path": "preudo_hd1k/hd1k_flow_gt/flow_occ/data/hd1k/hd1k_flow_gt/flow_occ/000000_0010.png"
+        }
+    ]
+}

@@ -4,6 +4,7 @@ from .flyingchairs import FlyingChairs
 from .flyingchairsocc import FlyingChairsOcc
 from .flyingthings3d import FlyingThings3D
 from .flyingthings3d_subset import FlyingThings3DSubset
+from .hd1k import HD1K
 from .kiiti2012 import KITTI2012
 from .kitti2015 import KITTI2015
 from .pipelines import (ColorJitter, Compose, Erase, GaussianNoise, InputPad,
@@ -25,5 +26,5 @@ __all__ = [
     'read_flow_kitti', 'GaussianNoise', 'RandomTranslate', 'Compose',
     'InputPad', 'FlyingThings3DSubset', 'FlyingThings3D', 'Sintel',
     'KITTI2012', 'KITTI2015', 'render_color_wheel', 'PackFlowInputs',
-    'TestFormatBundle', 'FlyingChairsOcc'
+    'TestFormatBundle', 'FlyingChairsOcc', 'HD1K'
 ]
