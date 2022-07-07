@@ -669,19 +669,19 @@ class IRRPWCDecoder(BaseDecoder):
             Dict[str, Tensor]: The dict of losses.
         """
         batch_gt_flow_fw, batch_gt_flow_bw, batch_gt_occ_fw, \
-            batch_gt_occ_bw, batch_gt_valid = \
+            batch_gt_occ_bw, batch_gt_valid_fw, batch_gt_valid_bw = \
             unpack_flow_data_samples(batch_data_samples)
 
         losses = dict()
 
-        def _flow_loss_or_detach(preds, gts):
+        def _flow_loss_or_detach(preds, gts, valids):
             if gts is None:
                 self._detach_unused_preds(preds)
                 return None
             else:
                 # only sintel and kitti dataset have valid mask, neither of
                 # them don't have backward flow ground truth
-                return self.flow_loss(preds, gts, valid=batch_gt_valid)
+                return self.flow_loss(preds, gts, valid=valids)
 
         def _occ_loss_or_detach(preds, gts):
             if gts is None:
@@ -692,10 +692,13 @@ class IRRPWCDecoder(BaseDecoder):
 
         n_flow_loss = 0
         losses['loss_flow'] = 0
-        for pred_flow, gt_flow in zip((pred_flow_fw, pred_flow_bw),
-                                      (batch_gt_flow_fw, batch_gt_flow_bw)):
+        for pred_flow, gt_flow, gt_valid in zip(
+            (pred_flow_fw, pred_flow_bw),
+            (batch_gt_flow_fw, batch_gt_flow_bw),
+            (batch_gt_valid_fw, batch_gt_valid_bw),
+        ):
 
-            loss_flow = _flow_loss_or_detach(pred_flow, gt_flow)
+            loss_flow = _flow_loss_or_detach(pred_flow, gt_flow, gt_valid)
             if loss_flow is not None:
                 losses['loss_flow'] += loss_flow
                 n_flow_loss += 1

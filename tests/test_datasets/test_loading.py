@@ -81,9 +81,10 @@ class TestLoading:
         transform = LoadAnnotations(sparse=True)
         results = transform(results)
         flow, valid = read_flow_kitti(sparse_flow_fw)
-        assert np.all(results['gt_valid'] == valid)
-        assert results['gt_valid'].dtype == np.float32
-        assert results['gt_valid'].shape == (50, 50)
+        assert np.all(results['gt_valid_fw'] == valid)
+        assert results['gt_valid_fw'].dtype == np.float32
+        assert results['gt_valid_fw'].shape == (50, 50)
+        assert results['gt_valid_bw'] is None
         assert np.all(results['gt_flow_fw'] == flow)
         assert results['gt_flow_fw'].shape == (50, 50, 2)
         assert results['gt_flow_fw'].dtype == np.float32

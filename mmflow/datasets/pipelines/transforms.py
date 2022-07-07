@@ -2,9 +2,8 @@
 import copy
 import warnings
 from math import ceil
-from typing import List, Sequence, Tuple, Union
+from typing import Sequence, Tuple, Union
 
-import cv2
 import mmcv
 import numpy as np
 from mmcv.image import adjust_brightness, adjust_color, adjust_contrast
@@ -21,82 +20,7 @@ flow_keys = ['gt_flow_fw', 'gt_flow_bw']
 
 occ_keys = ['gt_occ_fw', 'gt_occ_bw']
 
-valid_keys = ['gt_valid']
-
-
-def get_flow_keys(results: dict) -> List[str]:
-    """Get keys of optical flow in results.
-
-    Args:
-        results (dict): The data that includes data and meta information and
-            used in data augmentation pipeline.
-
-    Returns:
-        List: keys of optical flow in results.
-    """
-    flow_keys = []
-    if 'ann_fields' in results:
-        ann_keys = copy.deepcopy(results['ann_fields'])
-        for k in ann_keys:
-            if k.find('flow') > -1:
-                flow_keys.append(k)
-    return flow_keys
-
-
-def get_img_keys(results: dict) -> List:
-    """Get image keys in results.
-
-    Args:
-        results (dict): The data that includes data and meta information and
-            used in data augmentation pipeline.
-
-    Returns:
-        List: Now it will return ['img1', 'img2'].
-    """
-    img_keys = copy.deepcopy(results['img_fields'])
-    return img_keys
-
-
-def get_map_keys(results: dict) -> list:
-    """Get image and annotation keys in results.
-
-    This annotation don't include 'valid' or 'valid_fw' and 'valid_bw'.
-
-    Args:
-        results (dict): The data that includes data and meta information and
-            used in data augmentation pipeline.
-
-    Returns:
-        list: List of image keys and annotation keys.
-    """
-    img_fields = copy.deepcopy(results['img_fields'])
-    if 'ann_fields' in results:
-        return img_fields + results['ann_fields']
-    else:
-        return img_fields
-
-
-def get_valid_keys(results: dict) -> list:
-    """Get valid keys in results.
-
-    Args:
-        results (dict): The data that includes data and meta information and
-            used in data augmentation pipeline.
-
-    Returns:
-        list: Now it will return ['valid'] or [] if there is not 'valid' in
-            results.
-    """
-    flow_keys = get_flow_keys(results)
-    if len(flow_keys) == 0:
-        return []
-    # -3 is for _gt
-    valid_keys = [k.replace('flow', 'valid')[:-3] for k in flow_keys]
-
-    if results.get(valid_keys[0], None) is None:
-        return []
-    else:
-        return valid_keys
+valid_keys = ['gt_valid_fw', 'gt_valid_bw']
 
 
 @TRANSFORMS.register_module()
@@ -111,7 +35,9 @@ class SpacialTransform(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
+
 
     Modified Keys:
 
@@ -121,7 +47,9 @@ class SpacialTransform(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
+
 
     Added Keys:
 
@@ -162,10 +90,6 @@ class SpacialTransform(BaseTransform):
         self.max_scale = max_scale
         self.max_stretch = max_stretch
 
-    @cache_randomness
-    def _do_spacial_transform(self) -> bool:
-        return np.random.rand() < self.spacial_prob
-
     def transform(self, results: dict) -> dict:
         """Call function to do spacial transform to images and annotation,
         including optical flow, occlusion mask and valid mask.
@@ -179,74 +103,116 @@ class SpacialTransform(BaseTransform):
 
         if self._do_spacial_transform():
 
-            if results.get('gt_valid') is None:
+            H, W = results['img1'].shape[:2]
+            self.newH, self.newW, self.x0, self.y0 = self._random_scale(H, W)
 
-                # transform images
-                imgs = [results[k] for k in img_keys]
-                imgs, scale_x, scale_y, _, _ = self.spacial_transform(imgs)
-                for i, k in enumerate(img_keys):
-                    results[k] = imgs[i]
-                results['scale'] = (scale_x, scale_y)
-                results['img_shape'] = imgs[0].shape
-
-                # transform flows
-                flows = []
-                flow_keys_in = []
-                for k in flow_keys:
-                    if results.get(k, None) is not None:
-                        flows.append(results[k])
-                        flow_keys_in.append(k)
-                flows, scale_x, scale_y, _, _ = self.spacial_transform(flows)
-                for flow, k in zip(flows, flow_keys_in):
-                    flow *= [scale_x, scale_y]
-                    results[k] = flow
-
-                # transform occ
-                occs = []
-                occ_keys_in = []
-                for k in occ_keys:
-                    if results.get(k, None) is not None:
-                        occs.append(results[k])
-                        occ_keys_in.append(k)
-                if len(occs) > 0:
-                    occs, _, _, _, _ = self.spacial_transform(occs)
-                    for occ, k in zip(occs, occ_keys_in):
-                        results[k] = occ
-
+            if not results['sparse']:
+                self._dense_flow_transform(results)
             else:
-                # sparse spacial_transform
-                # transform images
-                imgs = [results[k] for k in img_keys]
-                imgs, scale_x, scale_y, x0, y0 = self.spacial_transform(imgs)
-                for i, k in enumerate(img_keys):
-                    results[k] = imgs[i]
-                results['scale'] = (scale_x, scale_y)
-                results['img_shape'] = imgs[0].shape
-
-                # transform flow_fw and valid
-                flow, valid = self.resize_sparse_flow_map(
-                    results['gt_flow_fw'],
-                    results['gt_valid'],
-                    fx=scale_x,
-                    fy=scale_y,
-                    x0=x0,
-                    y0=y0)
-
-                results['gt_flow_fw'] = flow
-                results['gt_valid'] = valid.astype(np.float32)
-
+                self._sparse_flow_transform(results)
         else:
             results['scale'] = (1., 1.)
 
         return results
 
-    def resize_sparse_flow_map(self,
-                               flow: np.ndarray,
-                               valid: np.ndarray,
-                               fx: float = 1.0,
-                               fy: float = 1.0,
-                               x0: int = 0,
-                               y0: int = 0) -> Sequence[np.ndarray]:
+    @cache_randomness
+    def _do_spacial_transform(self) -> bool:
+        return np.random.rand() < self.spacial_prob
+
+    @cache_randomness
+    def _random_scale(self, H, W):
+        min_scale = np.maximum((self.crop_size[0] + 8) / float(H),
+                               (self.crop_size[1] + 8) / float(W))
+        scale = 2**np.random.uniform(min_scale, self.max_scale)
+        scale_x = scale
+        scale_y = scale
+        if np.random.rand() < self.stretch_prob:
+            scale_x *= 2**np.random.uniform(-self.max_stretch,
+                                            self.max_stretch)
+            scale_y *= 2**np.random.uniform(-self.max_stretch,
+                                            self.max_stretch)
+        scale_x = np.clip(scale_x, min_scale, None)
+        scale_y = np.clip(scale_y, min_scale, None)
+        newW = int(W * float(scale_x) + 0.5)
+        newH = int(H * float(scale_y) + 0.5)
+        y0 = np.random.randint(0, newH - self.crop_size[0])
+        x0 = np.random.randint(0, newW - self.crop_size[1])
+        return newH, newW, x0, y0
+
+    def _dense_flow_transform(self, results):
+        # transform images
+        for k in img_keys:
+            if results.get(k) is not None:
+                results[k], scale_x, scale_y, = self._resize_crop(results[k])
+        results['scale'] = (scale_x, scale_y)
+        results['img_shape'] = results['img1'].shape
+
+        # transform flows
+        for k in flow_keys:
+            if results.get(k) is not None:
+                flow, scale_x, scale_y = self._resize_crop(results[k])
+                flow *= [scale_x, scale_y]
+                results[k] = flow
+
+        # transform occ
+        for k in occ_keys:
+            if results.get(k, None) is not None:
+                results[k], _, _ = self._resize_crop(results[k])
+
+        # transform valid
+        for k in valid_keys:
+            if results.get(k, None) is not None:
+                results[k], _, _ = self._resize_crop(results[k])
+
+    def _resize_crop(
+        self,
+        img: np.ndarray,
+        interpolation: str = 'bilinear'
+    ) -> Tuple[np.ndarray, float, float, int, int]:
+        """Spacial transform function.
+
+        Args:
+            img (ndarray): the images that will be transformed.
+
+        Returns:
+            Tuple[ndarray, float, float, int, int]: the transformed images,
+                horizontal scale factor, vertical scale factor, coordinate of
+                left-top point where the image maps will be crop from.
+        """
+
+        img_, scale_x, scale_y = mmcv.imresize(
+            img, (self.newW, self.newH),
+            return_scale=True,
+            interpolation=interpolation)
+        img_ = img_[self.y0:self.y0 + self.crop_size[0],
+                    self.x0:self.x0 + self.crop_size[1]]
+
+        return img_, scale_x, scale_y
+
+    def _sparse_flow_transform(self, results):
+        # sparse spacial_transform for kitti/hd1k dataset
+        # transform images
+        for k in img_keys:
+            if results.get(k) is not None:
+                results[k], scale_x, scale_y, = self._resize_crop(results[k])
+        results['scale'] = (scale_x, scale_y)
+        results['img_shape'] = results['img1'].shape
+
+        # transform flow_fw and valid
+        flow, valid = self._sparse_resize_crop(
+            results['gt_flow_fw'],
+            results['gt_valid_fw'],
+            fx=scale_x,
+            fy=scale_y)
+
+        results['gt_flow_fw'] = flow
+        results['gt_valid_fw'] = valid.astype(np.float32)
+
+    def _sparse_flow_resize_crop(self,
+                                 flow: np.ndarray,
+                                 valid: np.ndarray,
+                                 fx: float = 1.0,
+                                 fy: float = 1.0) -> Sequence[np.ndarray]:
         """Resize sparse optical flow function.
 
         Args:
@@ -254,10 +220,6 @@ class SpacialTransform(BaseTransform):
             valid (ndarray): valid mask for sparse optical flow.
             fx (float, optional): horizontal scale factor. Defaults to 1.0.
             fy (float, optional): vertical scale factor. Defaults to 1.0.
-            x0 (int, optional): abscissa of left-top point where the flow map
-                will be crop from. Defaults to 0.
-            y0 (int, optional): ordinate of left-top point where the flow map
-                will be crop from. Defaults to 0.
 
         Returns:
             Sequence[ndarray]: the transformed flow map and valid mask.
@@ -292,53 +254,11 @@ class SpacialTransform(BaseTransform):
 
         flow_img[yy, xx] = flow1
         valid_img[yy, xx] = 1.
-        flow_img = flow_img[y0:y0 + self.crop_size[0],
-                            x0:x0 + self.crop_size[1]]
-        valid_img = valid_img[y0:y0 + self.crop_size[0],
-                              x0:x0 + self.crop_size[1]]
+        flow_img = flow_img[self.y0:self.y0 + self.crop_size[0],
+                            self.x0:self.x0 + self.crop_size[1]]
+        valid_img = valid_img[self.y0:self.y0 + self.crop_size[0],
+                              self.x0:self.x0 + self.crop_size[1]]
         return flow_img, valid_img
-
-    def spacial_transform(
-            self,
-            imgs: np.ndarray) -> Tuple[np.ndarray, float, float, int, int]:
-        """Spacial transform function.
-
-        Args:
-            imgs (ndarray): the images that will be transformed.
-
-        Returns:
-            Tuple[ndarray, float, float, int, int]: the transformed images,
-                horizontal scale factor, vertical scale factor, coordinate of
-                left-top point where the image maps will be crop from.
-        """
-        H, W = imgs[0].shape[:2]
-        min_scale = np.maximum((self.crop_size[0] + 8) / float(H),
-                               (self.crop_size[1] + 8) / float(W))
-        scale = 2**np.random.uniform(self.min_scale, self.max_scale)
-        scale_x = scale
-        scale_y = scale
-        if np.random.rand() < self.stretch_prob:
-            scale_x *= 2**np.random.uniform(-self.max_stretch,
-                                            self.max_stretch)
-            scale_y *= 2**np.random.uniform(-self.max_stretch,
-                                            self.max_stretch)
-        scale_x = np.clip(scale_x, min_scale, None)
-        scale_y = np.clip(scale_y, min_scale, None)
-
-        newW, newH = int(W * float(scale_x) + 0.5), int(H * float(scale_y) +
-                                                        0.5)
-
-        y0 = np.random.randint(0, newH - self.crop_size[0])
-        x0 = np.random.randint(0, newW - self.crop_size[1])
-
-        imgs_ = []
-        for img in imgs:
-            img_, scale_x, scale_y = mmcv.imresize(
-                img, (newW, newH), return_scale=True)
-            img_ = img_[y0:y0 + self.crop_size[0], x0:x0 + self.crop_size[1]]
-            imgs_.append(img_)
-
-        return imgs_, scale_x, scale_y, x0, y0
 
     def __repr__(self) -> str:
         repr_str = self.__class__.__name__
@@ -351,9 +271,22 @@ class SpacialTransform(BaseTransform):
 
 
 @TRANSFORMS.register_module()
-class Validation:
+class Validation(BaseTransform):
     """This Validation transform from RAFT is for return a mask for the flow is
     less than max_flow.
+
+    Required Keys:
+
+    - gt_flow_fw (optional)
+    - gt_flow_bw (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
+
+
+    Modified Keys:
+
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
 
     Args:
         max_flow (float, int): the max flow for validated flow.
@@ -366,7 +299,7 @@ class Validation:
         assert isinstance(max_flow, (float, int))
         self.max_flow = max_flow
 
-    def __call__(self, results: dict) -> dict:
+    def transform(self, results: dict) -> dict:
         """Call function to get the valid mask.
 
         Args:
@@ -376,14 +309,12 @@ class Validation:
             dict: dict added 'valid' key and its value.
         """
 
-        flow_keys = get_flow_keys(results)
         for k in flow_keys:
             flow = results[k]
             valid = ((np.abs(flow[:, :, 0]) < self.max_flow) &
                      (np.abs(flow[:, :, 1]) < self.max_flow))
             valid_key = k.replace('flow', 'valid')
-            # [:-3] is for '_gt'.
-            results[valid_key[:-3]] = valid.astype(np.float32)
+            results[valid_key] = valid.astype(np.float32)
         results['max_flow'] = self.max_flow
         return results
 
@@ -400,12 +331,10 @@ class Erase(BaseTransform):
 
     Required Keys:
 
-    - img1
     - img2
 
     Modified Keys:
 
-    - img1
     - img2
 
     Added  Keys:
@@ -529,19 +458,19 @@ class InputResize(BaseTransform):
     def _resize_img(self, results: dict) -> None:
         """Resize images with ``results['scale']``."""
         img1 = results['img1']
+        img2 = results['img2']
         times = int(2**self.exponent)
         H, W = img1.shape[:2]
         newH = int(ceil(H / times) * times)
         newW = int(ceil(W / times) * times)
         resized_img1 = mmcv.imresize(img1, (newW, newH), return_scale=False)
+        resized_img2 = mmcv.imresize(img2, (newW, newH), return_scale=False)
+        results['img1'] = resized_img1
+        results['img2'] = resized_img2
 
         w_scale = newW / W
         h_scale = newH / H
         scale_factor = np.array([w_scale, h_scale], dtype=np.float32)
-        results['img1'] = resized_img1
-        resized_img2 = mmcv.imresize(
-            results['img2'], (newW, newH), return_scale=False)
-        results['img2'] = resized_img2
         results['scale_factor'] = scale_factor
         results['img_shape'] = resized_img1.shape
 
@@ -607,6 +536,7 @@ class InputPad(BaseTransform):
         """Pad images according to ``self.exponent``."""
 
         img1 = results['img1']
+        img2 = results['img2']
         times = int(2**self.exponent)
         H, W = img1.shape[:2]
         pad_h = (((H // times) + 1) * times - H) % times
@@ -625,9 +555,8 @@ class InputPad(BaseTransform):
         if len(img1.shape) > 2:
             self._pad.append([0, 0])
         padded_img1 = np.pad(img1, self._pad, mode=self.mode, **self.kwargs)
+        padded_img2 = np.pad(img2, self._pad, mode=self.mode, **self.kwargs)
         results['img1'] = padded_img1
-        padded_img2 = np.pad(
-            results['img2'], self._pad, mode=self.mode, **self.kwargs)
         results['img2'] = padded_img2
         results['pad_shape'] = padded_img1.shape
         results['img_shape'] = padded_img1.shape
@@ -653,7 +582,8 @@ class RandomFlip(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
 
 
     Modified Keys:
@@ -664,7 +594,8 @@ class RandomFlip(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
 
     Added Keys:
 
@@ -753,7 +684,7 @@ class RandomFlip(BaseTransform):
 
 
 @TRANSFORMS.register_module()
-class Normalize:
+class Normalize(BaseTransform):
     """Normalize the image.
 
     Added key is "img_norm_cfg".
@@ -769,7 +700,7 @@ class Normalize:
         self.std = np.array(std, dtype=np.float32)
         self.to_rgb = to_rgb
 
-    def __call__(self, results):
+    def transform(self, results):
         """Call function to normalize images.
 
         Args:
@@ -782,7 +713,6 @@ class Normalize:
             self.to_rgb = False
             warnings.warn('The channels order is RBG, '
                           'and image will not convert it again')
-        img_keys = get_img_keys(results)
         for k in img_keys:
             results[k] = mmcv.imnormalize(results[k], self.mean, self.std,
                                           self.to_rgb)
@@ -800,7 +730,7 @@ class Normalize:
 
 
 @TRANSFORMS.register_module()
-class BGR2RGB:
+class BGR2RGB(BaseTransform):
     """Convert image channels from BGR to RGB order.
 
     Returns:
@@ -810,8 +740,7 @@ class BGR2RGB:
     def __init__(self):
         super().__init__()
 
-    def __call__(self, results):
-        img_keys = get_img_keys(results)
+    def transform(self, results):
         for k in img_keys:
             results[k] = mmcv.bgr2rgb(results[k])
         results['channels_order'] = 'RGB'
@@ -819,7 +748,7 @@ class BGR2RGB:
 
 
 @TRANSFORMS.register_module()
-class Rerange:
+class Rerange(BaseTransform):
     """Rerange the image pixel value.
 
     Args:
@@ -836,7 +765,7 @@ class Rerange:
         self.min_value = min_value
         self.max_value = max_value
 
-    def __call__(self, results):
+    def transform(self, results):
         """Call function to rerange images.
 
         Args:
@@ -844,7 +773,6 @@ class Rerange:
         Returns:
             dict: Reranged results.
         """
-        img_keys = get_img_keys(results)
         for k in img_keys:
             img = results[k]
             img_min_value = np.min(img)
@@ -876,7 +804,8 @@ class RandomCrop(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
 
 
     Modified Keys:
@@ -887,7 +816,8 @@ class RandomCrop(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
     - img_shape
 
     Added Keys:
@@ -1138,7 +1068,7 @@ class ColorJitter(BaseTransform):
 
 
 @TRANSFORMS.register_module()
-class PhotoMetricDistortion:
+class PhotoMetricDistortion(BaseTransform):
     """Apply photometric distortion to image sequentially, every transformation
     is applied with a probability of 0.5.
 
@@ -1230,7 +1160,7 @@ class PhotoMetricDistortion:
         else:
             return img
 
-    def __call__(self, results):
+    def transform(self, results):
         """Call function to perform photometric distortion on images.
 
         Args:
@@ -1239,7 +1169,6 @@ class PhotoMetricDistortion:
             dict: Result dict with images distorted.
         """
 
-        img_keys = get_img_keys(results)
         img = []
         for k in img_keys:
             img.append(results[k])
@@ -1279,73 +1208,7 @@ class PhotoMetricDistortion:
 
 
 @TRANSFORMS.register_module()
-class RandomRotation:
-    """Random rotation of the image from -angle to angle (in degrees).
-
-    .. note: This augmentation is for dense optical flow data, not for sparse
-    optical flow data.
-
-    Args:
-        prob (float): The rotation probability.
-        angle (float): max angle of the rotation in the range from -180 to 180.
-        auto_bound (bool): Whether to adjust the image size to cover the whole
-            rotated image. Default: False
-    """
-
-    def __init__(self, prob, angle, auto_bound=False):
-        assert isinstance(prob, (float)) and prob >= 0. and prob <= 1.
-        assert isinstance(angle, float) and angle >= -180. and angle <= 180.
-        self.prob = prob
-        self.angle = angle
-        self.auto_bound = auto_bound
-
-    def __call__(self, results):
-        """Call function to rotate the images and optical flow map.
-
-        Args:
-            results (dict): Result dict from loading pipeline.
-        Returns:
-            dict: Processed results.
-        """
-        rotate = True if np.random.rand() < self.prob else False
-        angle = random.uniform(-self.angle, self.angle)
-        if rotate:
-            angle_rad = angle * np.pi / 180.
-            cos = np.cos(angle_rad)
-            sin = np.sin(angle_rad)
-
-            map_keys = get_map_keys(results)
-            flow_keys = get_flow_keys(results)
-            for k in map_keys:
-                img = results[k]
-                img = mmcv.imrotate(img, angle, auto_bound=self.auto_bound)
-                results[k] = img
-
-            # Rotation matrix in image coordinate (origin is assumed to be
-            # the top-left corners) with the angle that positive values mean
-            # clockwise rotation
-            # |cos  -sin|
-            # |sin  cos|
-            for fk in flow_keys:
-                flow_ = copy.deepcopy(results[fk])
-                results[fk][:, :, 0] = \
-                    cos * flow_[:, :, 0] - sin * flow_[:, :, 1]
-                results[fk][:, :, 1] = \
-                    sin * flow_[:, :, 0] + cos * flow_[:, :, 1]
-        results['rotate'] = rotate
-        results['rotate_angle'] = angle
-        if self.auto_bound:
-            results['img_shape'] = results['img1'].shape
-        else:
-            pass
-        return results
-
-    def __repr__(self):
-        return self.__class__.__name__ + f'(angle={self.angle})'
-
-
-@TRANSFORMS.register_module()
-class GaussianNoise:
+class GaussianNoise(BaseTransform):
     """Add Gaussian Noise to images.
 
     Add Gaussian Noise, with mean 0 and std sigma uniformly sampled from
@@ -1375,7 +1238,7 @@ class GaussianNoise:
 
         self.clamp_range = clamp_range
 
-    def __call__(self, results):
+    def transform(self, results):
         """Call function to add gaussian noise to images. And then clamp the
         images to clamp_range.
 
@@ -1385,8 +1248,6 @@ class GaussianNoise:
         Returns:
             dict: Processed results.
         """
-        img_keys = get_img_keys(results)
-
         # create new meta 'sigma'
         results['sigma'] = random.uniform(*self.sigma_range)
 
@@ -1407,64 +1268,6 @@ class GaussianNoise:
 
     def __repr__(self):
         return self.__class__.__name__ + f'(sigma_range={self.sigma_range})'
-
-
-@TRANSFORMS.register_module()
-class RandomTranslate:
-    """Random translation of the images and flow map.
-
-    .. note: This augmentation is for dense optical flow data, not for sparse
-    optical flow data.
-
-    Args:
-        prob (float): the probability to do translation.
-        x_offset (float | tuple): translate ratio on x axis, randomly choice
-            [-x_offset, x_offset] or the given [min, max]. Default: 0.
-        y_offset (float | tuple): translate ratio on y axis, randomly choice
-            [-x_offset, x_offset] or the given [min, max]. Default: 0.
-    """
-
-    def __init__(self, prob=0., x_offset=0., y_offset=0.):
-        assert isinstance(prob, float) and prob <= 1. and prob >= 0.
-        self.prob = prob
-        self.x_offset = self._check_input(x_offset)
-        self.y_offset = self._check_input(y_offset)
-
-    def _check_input(self, v):
-        value = []
-        if isinstance(v, float):
-            assert v >= 0. and v <= 1.
-            value = [-v, v]
-        elif isinstance(v, tuple):
-            assert v[0] >= -0.1 and v[1] <= 1.
-            value[0] = [v[0], v[1]]
-        else:
-            raise TypeError('Translate offset should be a single number or a '
-                            f'list/tuple with length 2, but got {v}.')
-        return np.random.uniform(value[0], value[1])
-
-    def __call__(self, results):
-        """Call function to translate the images and optical flow map.
-
-        Args:
-            results (dict): Result dict from loading pipeline.
-        Returns:
-            dict: Processed results.
-        """
-        translate = np.random.uniform(0, 1) < self.prob
-        if translate:
-
-            h, w, _ = results['img_shape']
-            tw = w * self.x_offset
-            th = h * self.y_offset
-            M = np.float32([[1, 0, tw], [0, 1, th]])
-            map_keys = get_map_keys(results)
-            for k in map_keys:
-                results[k] = cv2.warpAffine(results[k], M, (w, h))
-
-        results['translate'] = translate
-        results['translate_offset'] = (self.x_offset, self.y_offset)
-        return results
 
 
 @TRANSFORMS.register_module()

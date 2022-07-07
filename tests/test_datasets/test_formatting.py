@@ -51,7 +51,8 @@ class TestPackFlowInputs(unittest.TestCase):
             'img2': rng.rand(30, 40, 3),
             'flow_fw_path': flow_path,
             'gt_flow_fw': rng.rand(30, 40, 2),
-            'gt_valid': rng.rand(30, 40),
+            'gt_valid_fw': rng.rand(30, 40),
+            'gt_valid_bw': rng.rand(30, 40),
             'gt_flow_bw': None,
             'gt_occ_fw': None,
             'gt_occ_fw': None,
@@ -108,10 +109,10 @@ class TestPackFlowInputs(unittest.TestCase):
         self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
                               torch.Tensor)
         self.assertEqual(results['data_sample'].gt_flow_fw.shape, (30, 40))
-        self.assertIsInstance(results['data_sample'].gt_valid, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_valid.data,
+        self.assertIsInstance(results['data_sample'].gt_valid_fw, PixelData)
+        self.assertIsInstance(results['data_sample'].gt_valid_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_valid.shape, (30, 40))
+        self.assertEqual(results['data_sample'].gt_valid_fw.shape, (30, 40))
 
         self.assertEqual(results['data_sample'].metainfo['scale_factor'], 1.)
         self.assertEqual(results['data_sample'].metainfo['ori_shape'],

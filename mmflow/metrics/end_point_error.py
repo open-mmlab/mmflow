@@ -31,10 +31,10 @@ class EndPointError(BaseMetric):
             pred_flow = \
                 pred['pred_flow_fw']['data'].permute(1, 2, 0).cpu().numpy()
 
-            if data['data_sample'].get('gt_valid', None) is not None:
+            if data['data_sample'].get('gt_valid_fw', None) is not None:
                 # tensor with shape (1, H, W) to ndarray with shape (H, W)
-                gt_valid = np.squeeze(
-                    data['data_sample']['gt_valid']['data'].numpy().squeeze())
+                gt_valid = np.squeeze(data['data_sample']['gt_valid_fw']
+                                      ['data'].numpy().squeeze())
             else:
                 gt_valid = np.ones_like(gt_flow[..., 0])
             gt_flow_list.append(gt_flow)

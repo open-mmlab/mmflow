@@ -119,8 +119,8 @@ class LoadAnnotations(BaseTransform):
             'gt_flow_bw': np.ndarray (H, W, 2)
             'gt_occ_fw': np.ndarray (H, W)
             'gt_occ_bw': np.ndarray (H, W)
-            'gt_valid': np.ndarray (H, W)
-             # in np.float32 type.
+            'gt_valid_fw': np.ndarray (H, W)
+            'gt_valid_bw': np.ndarray (H, W)
 
         }
 
@@ -134,10 +134,11 @@ class LoadAnnotations(BaseTransform):
     Added Keys:
 
     - gt_flow_fw (np.float32)
-    - gt_flow_bw (np.int64, optional)
-    - gt_occ_fw (np.uint8, optional)
-    - gt_occ_bw (np.float32, optional)
-    - gt_valid (np.float32, optional)
+    - gt_flow_bw (np.float32, optional)
+    - gt_occ_fw (np.uint, optional)
+    - gt_occ_bw (np.uint, optional)
+    - gt_valid_fw (np.float32, optional)
+    - gt_valid_bw (np.float32, optional)
 
     Args:
         with_occ (bool): whether to parse and load occlusion mask.
@@ -179,6 +180,9 @@ class LoadAnnotations(BaseTransform):
             results = self._load_flow(results)
         if self.with_occ:
             results = self._load_occ(results)
+
+        results['sparse'] = self.sparse
+
         return results
 
     def _load_flow(self, results: dict) -> dict:
@@ -223,14 +227,16 @@ class LoadAnnotations(BaseTransform):
 
         if flow_fw_filename is not None:
             flow_fw_bytes = self.file_client.get(flow_fw_filename)
-            flow_fw, valid = sparse_flow_from_bytes(flow_fw_bytes)
+            flow_fw, valid_fw = sparse_flow_from_bytes(flow_fw_bytes)
         else:
             flow_fw = None
+            valid_fw = None
 
         results['gt_flow_fw'] = flow_fw
         results['gt_flow_bw'] = None
         # sparse flow dataset don't include backward flow
-        results['gt_valid'] = valid
+        results['gt_valid_fw'] = valid_fw
+        results['gt_valid_bw'] = None
 
         return results
 

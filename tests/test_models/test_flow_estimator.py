@@ -23,7 +23,7 @@ def _demo_model_inputs(H=64, W=64):
         'ori_shape': (H, W)
     })
     data_keys = ('gt_flow_fw', 'gt_flow_bw', 'gt_occ_fw', 'gt_occ_bw',
-                 'gt_valid')
+                 'gt_valid_fw')
     for key in data_keys:
         ch = 2 if 'flow' in key else 1
         data = PixelData(**dict(data=torch.randn(ch, H, W)))

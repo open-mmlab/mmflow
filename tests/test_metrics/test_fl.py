@@ -19,7 +19,7 @@ class TestFlMetric(TestCase):
         return [
             dict(
                 data_sample=dict(
-                    gt_flow_fw=dict(data=flow), gt_valid=dict(data=valid)))
+                    gt_flow_fw=dict(data=flow), gt_valid_fw=dict(data=valid)))
         ]
 
     def _create_toy_predictions(self):

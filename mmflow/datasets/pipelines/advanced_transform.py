@@ -14,7 +14,7 @@ flow_keys = ['gt_flow_fw', 'gt_flow_bw']
 
 occ_keys = ['gt_occ_fw', 'gt_occ_bw']
 
-valid_keys = ['gt_valid']
+valid_keys = ['gt_valid_fw', 'gt_valid_bw']
 
 
 def theta_is_valid(theta: np.ndarray) -> bool:
@@ -159,7 +159,9 @@ class RandomAffine(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
+
 
     Modified Keys:
 
@@ -169,7 +171,8 @@ class RandomAffine(BaseTransform):
     - gt_flow_bw (optional)
     - gt_occ_fw (optional)
     - gt_occ_bw (optional)
-    - gt_valid (optional)
+    - gt_valid_fw (optional)
+    - gt_valid_bw (optional)
 
     Added Keys:
 
