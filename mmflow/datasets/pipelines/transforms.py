@@ -310,11 +310,16 @@ class Validation(BaseTransform):
         """
 
         for k in flow_keys:
-            flow = results[k]
-            valid = ((np.abs(flow[:, :, 0]) < self.max_flow) &
-                     (np.abs(flow[:, :, 1]) < self.max_flow))
-            valid_key = k.replace('flow', 'valid')
-            results[valid_key] = valid.astype(np.float32)
+            if results.get(k, None) is not None:
+                flow = results[k]
+                valid = ((np.abs(flow[:, :, 0]) < self.max_flow) &
+                         (np.abs(flow[:, :, 1]) < self.max_flow))
+                valid_key = k.replace('flow', 'valid')
+                if results.get(valid_key, None) is not None:
+                    results[valid_key] = (
+                        valid.astype(np.float32) * results[valid_key])
+                else:
+                    results[valid_key] = valid.astype(np.float32)
         results['max_flow'] = self.max_flow
         return results
 
