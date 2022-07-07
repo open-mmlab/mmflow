@@ -38,42 +38,6 @@ def make_testdata_for_train():
 
     results['img1'] = img1
     results['img2'] = img2
-    results['flow_fw_gt'] = flow_fw
-    results['flow_bw_gt'] = flow_bw
-    results['occ_fw_gt'] = occ_fw
-    results['occ_bw_gt'] = occ_bw
-    results['img_fields'] = ['img1', 'img2']
-    results['ann_fields'] = [
-        'flow_fw_gt', 'flow_bw_gt', 'occ_fw_gt', 'occ_bw_gt'
-    ]
-    results['img_shape'] = img1.shape
-    results['ori_shape'] = img1.shape
-    # Set initial values for default meta_keys
-    results['pad_shape'] = img1.shape
-    results['scale_factor'] = 1.0
-    return results, original_img1, original_img2, original_flow_fw, \
-        original_flow_bw, original_occ_fw, original_occ_bw
-
-
-def make_testdata_for_train_new():
-    results = dict()
-    img1 = mmcv.imread(osp.join(osp.dirname(__file__), img1_), 'color')
-    original_img1 = copy.deepcopy(img1)
-    img2 = mmcv.imread(osp.join(osp.dirname(__file__), img2_), 'color')
-    original_img2 = copy.deepcopy(img2)
-    flow_fw = read_flow(osp.join(osp.dirname(__file__), flow_fw_))
-    original_flow_fw = copy.deepcopy(flow_fw)
-    flow_bw = read_flow(osp.join(osp.dirname(__file__), flow_bw_))
-    original_flow_bw = copy.deepcopy(flow_bw)
-    occ_fw = mmcv.imread(
-        osp.join(osp.dirname(__file__), occ_fw_), flag='grayscale')
-    original_occ_fw = copy.deepcopy(occ_fw)
-    occ_bw = mmcv.imread(
-        osp.join(osp.dirname(__file__), occ_bw_), flag='grayscale')
-    original_occ_bw = copy.deepcopy(occ_bw)
-
-    results['img1'] = img1
-    results['img2'] = img2
     results['gt_flow_fw'] = flow_fw
     results['gt_flow_bw'] = flow_bw
     results['gt_occ_fw'] = occ_fw
@@ -118,7 +82,7 @@ def test_flip():
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
 
     transform = dict(type='RandomFlip', prob=1)
     flip_module = TRANSFORMS.build(transform)
@@ -161,7 +125,7 @@ def test_random_crop():
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
 
     h, w, _ = original_img1.shape
     transform = dict(type='RandomCrop', crop_size=(h - 20, w - 20))
@@ -215,27 +179,29 @@ def test_validation(max_flow):
     transform = dict(type='Validation', max_flow=max_flow)
     val_module = TRANSFORMS.build(transform)
     results = val_module(results)
-    assert results['valid_fw'].shape == original_flow_fw.shape[:2]
-    assert results['valid_bw'].shape == original_flow_fw.shape[:2]
+    assert results['gt_valid_fw'].shape == original_flow_fw.shape[:2]
+    assert results['gt_valid_bw'].shape == original_flow_fw.shape[:2]
     assert np.all(results['img1'] == original_img1)
     assert np.all(results['img2'] == original_img2)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
 
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
     if max_flow == -1:
         assert results['max_flow'] == -1
-        assert results['valid_fw'].sum() == 0
-        assert results['valid_bw'].sum() == 0
+        assert results['gt_valid_fw'].sum() == 0
+        assert results['gt_valid_bw'].sum() == 0
     elif max_flow == 1e5:
         assert results['max_flow'] == 1e5
-        assert results['valid_fw'].sum() == np.prod(original_flow_fw.shape[:2])
-        assert results['valid_bw'].sum() == np.prod(original_flow_fw.shape[:2])
+        assert results['gt_valid_fw'].sum() == np.prod(
+            original_flow_fw.shape[:2])
+        assert results['gt_valid_bw'].sum() == np.prod(
+            original_flow_bw.shape[:2])
     elif max_flow == 5:
         assert results['max_flow'] == 5
-        assert results['valid_fw'].sum() == 2493
-        assert results['valid_bw'].sum() == 2500
+        assert results['gt_valid_fw'].sum() == 2493
+        assert results['gt_valid_bw'].sum() == 2500
 
 
 @pytest.mark.parametrize('max_num', [2, 10])
@@ -255,7 +221,7 @@ def test_erase(max_num):
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
 
     transform = dict(type='Erase', prob=1., max_num=max_num)
     erase_module = TRANSFORMS.build(transform)
@@ -293,7 +259,7 @@ def test_input_resize():
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, _, _ = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
 
     results = resize_module(results)
     assert results['img_shape'][0] % 2**9 == 0
@@ -339,7 +305,7 @@ def test_input_pad():
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
     pad_module = TRANSFORMS.build(transform)
     results = pad_module(results)
     assert results['pad_shape'][0] % 2**9 == 0
@@ -390,10 +356,10 @@ def test_rgb2bgr():
     assert np.all(results['img1'][:, :, 2] == original_img1[:, :, 0])
     assert np.all(results['img2'][:, :, 0] == original_img2[:, :, 2])
     assert np.all(results['img2'][:, :, 2] == original_img2[:, :, 0])
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
 
     results, original_img1, original_img2 = make_testdata_for_test()
     results = bgr2rgb_module(results)
@@ -423,10 +389,10 @@ def test_normalize():
     assert np.allclose(results['img1'], converted_img1)
     converted_img2 = (original_img2 - mean) / std
     assert np.allclose(results['img2'], converted_img2)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
 
     results, original_img1, original_img2 = make_testdata_for_test()
     results = transform(results)
@@ -477,10 +443,10 @@ def test_rerange():
     converted_img2 = (original_img2 - min_value2) / (max_value2 -
                                                      min_value2) * 255
     assert np.allclose(results['img2'], converted_img2)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
 
     assert str(transform) == f'Rerange(min_value={0}, max_value={255})'
 
@@ -496,49 +462,6 @@ def test_rerange():
     max_value2 = np.max(original_img2)
     converted_img2 = (original_img2 - min_value2) / (max_value2 -
                                                      min_value2) * 255
-
-
-@pytest.mark.parametrize('prob', [0., 1.])
-def test_randomrotation(prob):
-    # tets invalid prob angle
-    with pytest.raises(AssertionError):
-        transform = dict(type='RandomRotation', prob=1.2, angle=90.)
-        TRANSFORMS.build(transform)
-        transform = dict(type='RandomRotation', prob=0, angle=270.)
-        TRANSFORMS.build(transform)
-
-    # test prob = 0
-    transform = dict(type='RandomRotation', prob=prob, angle=180.)
-    transform = TRANSFORMS.build(transform)
-    results, original_img1, original_img2, original_flow_fw, \
-        original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train()
-    results = transform(results)
-    if prob == 0:
-        assert np.all(results['img1'] == original_img1)
-        assert np.all(results['img2'] == original_img2)
-        assert np.all(results['flow_fw_gt'] == original_flow_fw)
-        assert np.all(results['flow_bw_gt'] == original_flow_bw)
-        assert np.all(results['occ_fw_gt'] == original_occ_fw)
-        assert np.all(results['occ_bw_gt'] == original_occ_bw)
-        assert not results['rotate']
-    # TODO: test rotated flow value
-    if prob == 1.:
-        assert np.all(results['img1'].shape == original_img1.shape)
-        assert np.all(results['img2'].shape == original_img2.shape)
-        assert np.all(results['flow_fw_gt'].shape == original_flow_fw.shape)
-        assert np.all(results['flow_bw_gt'].shape == original_flow_bw.shape)
-        assert np.all(results['occ_fw_gt'].shape == original_occ_fw.shape)
-        assert np.all(results['occ_bw_gt'].shape == original_occ_bw.shape)
-        assert results['rotate']
-    results, original_img1, original_img2 = make_testdata_for_test()
-    results = transform(results)
-    if prob == 0:
-        assert np.all(results['img1'] == original_img1)
-        assert np.all(results['img2'] == original_img2)
-    if prob == 1.:
-        assert np.all(results['img1'].shape == original_img1.shape)
-        assert np.all(results['img2'].shape == original_img2.shape)
 
 
 def test_photometricdistortion():
@@ -651,7 +574,9 @@ def test_spacialtransform():
 
     results, original_img1, original_img2, original_flow_fw, \
         original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train_new()
+        make_testdata_for_train()
+    results['sparse'] = False
+
     # test spacial_prob = 0
     transform = dict(
         type='SpacialTransform',
@@ -737,10 +662,10 @@ def test_gaussiannoise(sigma_range, clamp_range):
     results = transforms(results)
     assert np.all(results['img1'].shape == original_img1.shape)
     assert np.all(results['img2'].shape == original_img2.shape)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
     assert sigma_range[0] <= results['sigma'] <= sigma_range[1]
     assert np.min(results['img1']) >= clamp_range[0]
     assert np.min(results['img2']) >= clamp_range[0]
@@ -751,65 +676,6 @@ def test_gaussiannoise(sigma_range, clamp_range):
     results = transforms(results)
     assert np.all(results['img1'].shape == original_img1.shape)
     assert np.all(results['img2'].shape == original_img2.shape)
-
-
-def test_translate():
-    # test prob
-    with pytest.raises(AssertionError):
-        transform = dict(type='RandomTranslate', prob=-1)
-        TRANSFORMS.build(transform)
-    # test offset
-    with pytest.raises(AssertionError):
-        transform = dict(type='RandomTranslate', prob=0., x_offset=1.1)
-        TRANSFORMS.build(transform)
-    with pytest.raises(TypeError):
-        transform = dict(type='RandomTranslate', x_offset='st')
-        TRANSFORMS.build(transform)
-
-    transform = dict(type='RandomTranslate', prob=0.)
-    transform = TRANSFORMS.build(transform)
-    results, original_img1, original_img2, original_flow_fw, \
-        original_flow_bw, original_occ_fw, original_occ_bw = \
-        make_testdata_for_train()
-    org_H, org_W = original_img1.shape[:2]
-    results = transform(results)
-    assert np.all(results['img1'] == original_img1)
-    assert np.all(results['img2'] == original_img2)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
-    assert not results['translate']
-
-    transform = dict(type='RandomTranslate', prob=1., x_offset=0., y_offset=0.)
-    transform = TRANSFORMS.build(transform)
-    results = transform(results)
-    assert np.all(results['img1'] == original_img1)
-    assert np.all(results['img2'] == original_img2)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
-    assert results['translate']
-    transform = dict(
-        type='RandomTranslate', prob=1., x_offset=0.05, y_offset=0.1)
-    transform = TRANSFORMS.build(transform)
-    results = transform(results)
-    x_offset, y_offset = results['translate_offset']
-    M = np.float32([[1, 0, x_offset * org_W], [0, 1, y_offset * org_H]])
-    w = org_W
-    h = org_H
-    assert np.all(results['img1'] == cv2.warpAffine(original_img1, M, (w, h)))
-    assert np.all(results['img2'] == cv2.warpAffine(original_img2, M, (w, h)))
-    assert np.all(
-        results['flow_fw_gt'] == cv2.warpAffine(original_flow_fw, M, (w, h)))
-    assert np.all(
-        results['flow_bw_gt'] == cv2.warpAffine(original_flow_bw, M, (w, h)))
-    assert np.all(
-        results['occ_fw_gt'] == cv2.warpAffine(original_occ_fw, M, (w, h)))
-    assert np.all(
-        results['occ_bw_gt'] == cv2.warpAffine(original_occ_bw, M, (w, h)))
-    assert results['translate']
 
 
 @pytest.mark.parametrize('gamma_range', [(0.7, 1.5), (1.2, 1.5), (0.5, 1.0)])
@@ -851,10 +717,10 @@ def test_random_gamma(gamma_range):
     results = transform(results)
     assert np.all(results['img1'].shape == original_img1.shape)
     assert np.all(results['img2'].shape == original_img2.shape)
-    assert np.all(results['flow_fw_gt'] == original_flow_fw)
-    assert np.all(results['flow_bw_gt'] == original_flow_bw)
-    assert np.all(results['occ_fw_gt'] == original_occ_fw)
-    assert np.all(results['occ_bw_gt'] == original_occ_bw)
+    assert np.all(results['gt_flow_fw'] == original_flow_fw)
+    assert np.all(results['gt_flow_bw'] == original_flow_bw)
+    assert np.all(results['gt_occ_fw'] == original_occ_fw)
+    assert np.all(results['gt_occ_bw'] == original_occ_bw)
     assert gamma_range[0] <= results['gamma'] <= gamma_range[1]
 
     results, original_img1, original_img2 = make_testdata_for_test()

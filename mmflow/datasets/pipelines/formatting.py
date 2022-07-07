@@ -117,7 +117,7 @@ class PackFlowInputs(BaseTransform):
         _type_: _description_
     """
     data_keys = ('gt_flow_fw', 'gt_flow_bw', 'gt_occ_fw', 'gt_occ_bw',
-                 'gt_valid')
+                 'gt_valid_fw', 'gt_valid_bw')
 
     def __init__(
         self,

@@ -31,10 +31,10 @@ class FlowOutliers(BaseMetric):
             pred_flow = \
                 pred['pred_flow_fw']['data'].permute(1, 2, 0).cpu().numpy()
 
-            if data['data_sample'].get('gt_valid', None) is not None:
+            if data['data_sample'].get('gt_valid_fw', None) is not None:
                 # tensor with shape (1, H, W) to ndarray with shape (H, W)
-                gt_valid = np.squeeze(
-                    data['data_sample']['gt_valid']['data'].numpy().squeeze())
+                gt_valid = np.squeeze(data['data_sample']['gt_valid_fw']
+                                      ['data'].numpy().squeeze())
             else:
                 gt_valid = np.ones_like(gt_flow[..., 0])
             gt_flow_list.append(gt_flow)
@@ -69,7 +69,7 @@ class FlowOutliers(BaseMetric):
             mag_map = np.sqrt(np.sum(_flow_gt**2, axis=-1))
             mag = mag_map.reshape(-1) + 1e-6
             val = _valid_gt.reshape(-1) >= 0.5
-            # 3.0 and 0.05 is tooken from KITTI devkit
+            # 3.0 and 0.05 is token from KITTI devkit
             # Inliers are defined as EPE < 3 pixels or < 5%
             out = ((epe > 3.0) & ((epe / mag) > 0.05)).astype(float)
             out_list.append(out[val])

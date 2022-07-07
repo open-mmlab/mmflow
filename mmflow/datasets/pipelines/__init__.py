@@ -5,14 +5,12 @@ from .formatting import PackFlowInputs, TestFormatBundle
 from .loading import LoadAnnotations
 from .transforms import (ColorJitter, Erase, GaussianNoise, InputPad,
                          InputResize, Normalize, PhotoMetricDistortion,
-                         RandomCrop, RandomFlip, RandomRotation,
-                         RandomTranslate, Rerange, SpacialTransform,
+                         RandomCrop, RandomFlip, Rerange, SpacialTransform,
                          Validation)
 
 __all__ = [
     'Compose', 'LoadAnnotations', 'SpacialTransform', 'Validation', 'Erase',
     'InputResize', 'InputPad', 'RandomFlip', 'Normalize', 'Rerange',
     'RandomCrop', 'AdjustGamma', 'ColorJitter', 'PhotoMetricDistortion',
-    'RandomRotation', 'RandomTranslate', 'GaussianNoise', 'RandomAffine',
-    'TestFormatBundle', 'PackFlowInputs'
+    'GaussianNoise', 'RandomAffine', 'TestFormatBundle', 'PackFlowInputs'
 ]

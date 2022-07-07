@@ -25,8 +25,12 @@ class FlowDataSample(BaseDataElement):
         map.
         - ``pred_occ_bw``(PixelData): Backward prediction of occlusion pixel
         map.
-        - ``gt_valid``(PixelData): Invalid pixel maps, which is only used in
-        Sintel dataset.
+        - ``gt_valid_fw``(PixelData): The mask for valid pixel maps, which is
+        used in dataset or is used for filtered flow by ``Validation`` in data
+        transform.
+        - ``gt_valid_bw``(PixelData): The mask for valid pixel maps, which is
+        used in dataset or is used for filtered flow by ``Validation`` in data
+        transform.
 
     Examples:
         >>> import torch
@@ -187,13 +191,25 @@ class FlowDataSample(BaseDataElement):
         del self._pred_occ_bw
 
     @property
-    def gt_valid(self) -> PixelData:
-        return self._gt_valid
+    def gt_valid_fw(self) -> PixelData:
+        return self._gt_valid_fw
 
-    @gt_valid.setter
-    def gt_valid(self, value: PixelData) -> None:
-        self.set_field(value, '_gt_valid', dtype=PixelData)
+    @gt_valid_fw.setter
+    def gt_valid_fw(self, value: PixelData) -> None:
+        self.set_field(value, '_gt_valid_fw', dtype=PixelData)
 
-    @gt_valid.deleter
-    def gt_valid(self) -> None:
-        del self._gt_valid
+    @gt_valid_fw.deleter
+    def gt_valid_fw(self) -> None:
+        del self._gt_valid_fw
+
+    @property
+    def gt_valid_bw(self) -> PixelData:
+        return self._gt_valid_bw
+
+    @gt_valid_bw.setter
+    def gt_valid_bw(self, value: PixelData) -> None:
+        self.set_field(value, '_gt_valid_bw', dtype=PixelData)
+
+    @gt_valid_bw.deleter
+    def gt_valid_bw(self) -> None:
+        del self._gt_valid_bw
