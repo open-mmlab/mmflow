@@ -328,5 +328,5 @@ class PWCNetDecoder(BaseDecoder):
         batch_gt_flow_fw, _, _, _, batch_gt_valid_fw, _ = \
             unpack_flow_data_samples(batch_data_samples)
         loss['loss_flow'] = self.flow_loss(flow_pred, batch_gt_flow_fw,
-                                           batch_gt_valid_fw, _)
+                                           batch_gt_valid_fw)
         return loss
