@@ -19,26 +19,26 @@ def unpack_flow_data_samples(
 
     for data_sample in batch_data_samples:
         if hasattr(data_sample, 'gt_flow_fw'):
-            batch_gt_flow_fw.append(data_sample.gt_flow_fw.data[None, ...])
+            batch_gt_flow_fw.append(data_sample.gt_flow_fw.data)
         if hasattr(data_sample, 'gt_flow_bw'):
-            batch_gt_flow_bw.append(data_sample.gt_flow_bw.data[None, ...])
+            batch_gt_flow_bw.append(data_sample.gt_flow_bw.data)
         if hasattr(data_sample, 'gt_occ_fw'):
-            batch_gt_occ_fw.append(data_sample.gt_occ_fw.data[None, ...])
+            batch_gt_occ_fw.append(data_sample.gt_occ_fw.data)
         if hasattr(data_sample, 'gt_occ_bw'):
-            batch_gt_occ_bw.append(data_sample.gt_occ_bw.data[None, ...])
+            batch_gt_occ_bw.append(data_sample.gt_occ_bw.data)
         if hasattr(data_sample, 'gt_valid_fw'):
-            batch_gt_valid_fw.append(data_sample.gt_valid_fw.data)
+            batch_gt_valid_bw.append(data_sample.gt_valid_fw.data)
         if hasattr(data_sample, 'gt_valid_bw'):
             batch_gt_valid_bw.append(data_sample.gt_valid_bw.data)
 
-    batch_gt_flow_fw = torch.cat(
-        batch_gt_flow_fw, dim=0) if len(batch_gt_flow_fw) > 0 else None
-    batch_gt_flow_bw = torch.cat(
-        batch_gt_flow_bw, dim=0) if len(batch_gt_flow_bw) > 0 else None
-    batch_gt_occ_fw = torch.cat(
-        batch_gt_occ_fw, dim=0) if len(batch_gt_occ_fw) > 0 else None
-    batch_gt_occ_bw = torch.cat(
-        batch_gt_occ_bw, dim=0) if len(batch_gt_occ_bw) > 0 else None
+    batch_gt_flow_fw = torch.stack(
+        batch_gt_flow_fw) if len(batch_gt_flow_fw) > 0 else None
+    batch_gt_flow_bw = torch.stack(
+        batch_gt_flow_bw) if len(batch_gt_flow_bw) > 0 else None
+    batch_gt_occ_fw = torch.stack(
+        batch_gt_occ_fw) if len(batch_gt_occ_fw) > 0 else None
+    batch_gt_occ_bw = torch.stack(
+        batch_gt_occ_bw) if len(batch_gt_occ_bw) > 0 else None
     batch_gt_valid_fw = torch.cat(
         batch_gt_valid_fw, dim=0) if len(batch_gt_valid_fw) > 0 else None
     batch_gt_valid_bw = torch.cat(

@@ -51,12 +51,17 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         super().__init__()
         assert not (bgr_to_rgb and rgb_to_bgr), (
             '`bgr2rgb` and `rgb2bgr` cannot be set to True at the same time')
+        assert (mean is None) == (std is None), (
+            'mean and std should be both None or tuple')
         self.channel_conversion = rgb_to_bgr or bgr_to_rgb
 
         if mean is not None:
-            assert std is not None, 'To enable the normalization in ' \
-                                    'preprocessing, please specify both ' \
-                                    '`mean` and `std`.'
+            assert len(mean) == 3 or len(mean) == 1, (
+                '`mean` should have 1 or 3 values, to be compatible with '
+                f'RGB or gray image, but got {len(mean)} values')
+            assert len(std) == 3 or len(std) == 1, (  # type: ignore
+                '`std` should have 1 or 3 values, to be compatible with RGB '  # type: ignore # noqa: E501
+                f'or gray image, but got {len(std)} values')
             # Enable the normalization in preprocessing.
             self._enable_normalize = True
             self.register_buffer('mean',
@@ -71,6 +76,46 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
                                  False)
             self.register_buffer('clamp_range', torch.tensor(clamp_range),
                                  False)
+
+    def collate_data(
+        self, data: Sequence[dict]
+    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], Optional[list]]:
+        """Collating and copying data to the target device.
+
+        Collates the data sampled from dataloader into a list of tensor and
+        list of labels, and then copies tensor to the target device.
+
+        Subclasses could override it to be compatible with the custom format
+        data sampled from custom dataloader.
+
+        Args:
+            data (Sequence[dict]): Data sampled from dataloader.
+
+        Returns:
+            Tuple[List[torch.Tensor], Optional[list]]: Unstacked list of input
+            tensor and list of labels at target device.
+        """
+        # img1s is list of tensor with shape 3,H,W
+        img1s = [
+            data_['inputs'][0, ...].to(self._device).float() for data_ in data
+        ]
+        img2s = [
+            data_['inputs'][1, ...].to(self._device).float() for data_ in data
+        ]
+        batch_data_samples: List[FlowDataSample] = []
+        # Model can get predictions without any data samples.
+        for _data in data:
+            if 'data_sample' in _data:
+                batch_data_samples.append(_data['data_sample'])
+        # Move data from CPU to corresponding device.
+        batch_data_samples = [
+            data_sample.to(self._device) for data_sample in batch_data_samples
+        ]
+
+        if not batch_data_samples:
+            batch_data_samples = None  # type: ignore
+
+        return img1s, img2s, batch_data_samples
 
     def forward(self,
                 data: Sequence[dict],
@@ -96,9 +141,6 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         if self._enable_normalize:
             img1s = [(img1 - self.mean) / self.std for img1 in img1s]
             img2s = [(img2 - self.mean) / self.std for img2 in img2s]
-        else:
-            img1s = [img1.float() for img1 in img1s]
-            img2s = [img2.float() for img2 in img2s]
 
         if training and hasattr(self, 'sigma_range'):
             # Add Noise
@@ -119,39 +161,3 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         img2s = torch.stack(img2s, dim=0)
 
         return torch.cat((img1s, img2s), dim=1), batch_data_samples
-
-    def collate_data(
-        self, data: Sequence[dict]
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], Optional[list]]:
-        """Collating and copying data to the target device.
-
-        Collates the data sampled from dataloader into a list of tensor and
-        list of labels, and then copies tensor to the target device.
-
-        Subclasses could override it to be compatible with the custom format
-        data sampled from custom dataloader.
-
-        Args:
-            data (Sequence[dict]): Data sampled from dataloader.
-
-        Returns:
-            Tuple[List[torch.Tensor], Optional[list]]: Unstacked list of input
-            tensor and list of labels at target device.
-        """
-        # img1s is list of tensor with shape 3,H,W
-        img1s = [data_['inputs'][0, ...].to(self._device) for data_ in data]
-        img2s = [data_['inputs'][1, ...].to(self._device) for data_ in data]
-        batch_data_samples: List[FlowDataSample] = []
-        # Model can get predictions without any data samples.
-        for _data in data:
-            if 'data_sample' in _data:
-                batch_data_samples.append(_data['data_sample'])
-        # Move data from CPU to corresponding device.
-        batch_data_samples = [
-            data_sample.to(self._device) for data_sample in batch_data_samples
-        ]
-
-        if not batch_data_samples:
-            batch_data_samples = None  # type: ignore
-
-        return img1s, img2s, batch_data_samples
