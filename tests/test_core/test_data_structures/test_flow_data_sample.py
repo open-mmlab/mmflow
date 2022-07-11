@@ -17,29 +17,29 @@ class TestFlowDataSample(TestCase):
         assert data_sample.get('img_size') == [256, 256]
 
     def test_setter(self):
-        img_meta = dict(img_shape=(3, 4, 3))
+        img_meta = dict(img_shape=(4, 5, 3))
         data_sample = FlowDataSample(metainfo=img_meta)
         # test ground truth
-        flow_fw = torch.rand((3, 4, 2))
+        flow_fw = torch.rand((2, 4, 5))
         gt_flow_fw = PixelData(metainfo=img_meta)
         gt_flow_fw.data = flow_fw
 
-        flow_bw = torch.rand((3, 4, 2))
+        flow_bw = torch.rand((2, 4, 5))
         gt_flow_bw = PixelData(metainfo=img_meta)
         gt_flow_bw.data = flow_bw
 
-        occ_fw = torch.rand((3, 4, 1))
+        occ_fw = torch.rand((1, 4, 5))
         gt_occ_fw = PixelData(metainfo=img_meta)
         gt_occ_fw.data = occ_fw
 
-        occ_bw = torch.rand((3, 4, 1))
+        occ_bw = torch.rand((1, 4, 5))
         gt_occ_bw = PixelData(metainfo=img_meta)
         gt_occ_bw.data = occ_bw
 
-        valid_fw = torch.rand((3, 4, 1))
+        valid_fw = torch.rand((1, 4, 5))
         gt_valid_fw = PixelData(metainfo=img_meta)
         gt_valid_fw.data = valid_fw
-        valid_bw = torch.rand((3, 4, 1))
+        valid_bw = torch.rand((1, 4, 5))
         gt_valid_bw = PixelData(metainfo=img_meta)
         gt_valid_bw.data = valid_bw
 
@@ -81,7 +81,7 @@ class TestFlowDataSample(TestCase):
         torch.equal(data_sample.pred_occ_bw.data, occ_bw)
 
     def test_deleter(self):
-        img_meta = dict(img_shape=(3, 4, 3))
+        img_meta = dict(img_shape=(4, 5, 3))
         data_sample = FlowDataSample(metainfo=img_meta)
 
         gt_flow_fw = PixelData(metainfo=img_meta)
