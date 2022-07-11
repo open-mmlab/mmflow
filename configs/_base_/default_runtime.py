@@ -6,7 +6,7 @@ default_hooks = dict(
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(type='CheckpointHook', interval=100000),
     sampler_seed=dict(type='DistSamplerSeedHook'),
-)
+    visualization=dict(type='FlowVisualizationHook'))
 
 env_cfg = dict(
     cudnn_benchmark=False,
@@ -14,8 +14,8 @@ env_cfg = dict(
     dist_cfg=dict(backend='nccl'),
 )
 
-# vis_backends = [dict(type='LocalVisBackend')]
-# visualizer = dict(
-#     type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
+vis_backends = [dict(type='LocalVisBackend')]
+visualizer = dict(
+    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
 
 resume = False
