@@ -16,7 +16,7 @@ optim_wrapper = dict(
     clip_grad=dict(max_norm=1.))
 
 param_scheduler = dict(
-    type='OneCycle',
+    type='OneCycleLR',
     eta_max=0.00025,
     total_steps=120100,
     pct_start=0.05,
