@@ -31,7 +31,7 @@ optimizer = dict(
     amsgrad=False)
 optimizer_config = dict(grad_clip=dict(max_norm=1.))
 param_scheduler = dict(
-    policy='OneCycle',
+    policy='OneCycleLR',
     max_lr=0.000125,
     total_steps=120100,
     pct_start=0.05,
