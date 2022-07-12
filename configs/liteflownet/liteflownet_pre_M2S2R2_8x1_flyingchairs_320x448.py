@@ -8,7 +8,7 @@ optimizer = dict(type='Adam', lr=4e-5, weight_decay=0.0004, betas=(0.9, 0.999))
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
 
 # learning policy
-lr_config = dict(
+param_scheduler = dict(
     type='MultiStepLR',
     by_epoch=False,
     gamma=0.5,

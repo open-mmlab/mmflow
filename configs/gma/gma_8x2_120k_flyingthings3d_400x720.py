@@ -14,7 +14,7 @@ optimizer = dict(
     weight_decay=0.00001,
     amsgrad=False)
 optimizer_config = dict(grad_clip=dict(max_norm=1.))
-lr_config = dict(
+param_scheduler = dict(
     policy='OneCycle',
     max_lr=0.000125,
     total_steps=120100,

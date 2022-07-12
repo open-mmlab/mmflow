@@ -7,8 +7,8 @@ _base_ = [
 optimizer = dict(type='Adam', lr=1e-4, weight_decay=0.0004, betas=(0.9, 0.999))
 optimizer_config = dict(grad_clip=None)
 # learning policy
-lr_config = dict(
-    policy='step',
+param_scheduler = dict(
+    type='MultiStepLR',
     by_epoch=False,
     gamma=0.5,
     step=[120000, 160000, 200000, 240000])

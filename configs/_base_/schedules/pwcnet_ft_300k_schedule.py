@@ -11,7 +11,7 @@ optimizer_config = dict(
         type='Adam', lr=3e-5, weight_decay=0.0004, betas=(0.9, 0.999)))
 
 # learning policy
-lr_config = dict(
+param_scheduler = dict(
     policy='MultiStage',
     by_epoch=False,
     gammas=[0.5, 0.5],

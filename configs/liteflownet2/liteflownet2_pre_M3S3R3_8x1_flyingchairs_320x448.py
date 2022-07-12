@@ -7,8 +7,11 @@ _base_ = [
 optimizer = dict(type='Adam', lr=6e-5, weight_decay=0.0004, betas=(0.9, 0.999))
 optimizer_config = dict(grad_clip=None)
 # learning policy
-lr_config = dict(
-    policy='step', by_epoch=False, gamma=0.5, step=[120000, 160000, 200000])
+param_scheduler = dict(
+    type='MultiStepLR',
+    by_epoch=False,
+    gamma=0.5,
+    step=[120000, 160000, 200000])
 runner = dict(type='IterBasedRunner', max_iters=240000)
 checkpoint_config = dict(by_epoch=False, interval=40000)
 evaluation = dict(interval=40000, metric='EPE')
