@@ -2,7 +2,7 @@
 import platform
 import random
 from functools import partial
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
 
 import mmcv
 import numpy as np
@@ -24,33 +24,19 @@ if platform.system() != 'Windows':
     resource.setrlimit(resource.RLIMIT_NOFILE, (soft_limit, hard_limit))
 
 
-def build_dataset(cfg: Union[mmcv.Config, Sequence[mmcv.Config]],
+def build_dataset(cfg: mmcv.Config,
                   default_args: Optional[dict] = None) -> Dataset:
     """Build Pytorch dataset.
 
     Args:
-        cfg (mmcv.Config): Config dict of dataset or list of config dict.
-            It should at least contain the key "type".
+        cfg (mmcv.Config): Config dict of dataset. It should at
+            least contain the key "type".
         default_args (dict, optional): Default initialization arguments.
-
-    .. note::
-        If the input config is a list, this function will concatenate them
-        automatically.
 
     Returns:
         dataset: The built dataset based on the input config.
     """
-    from .dataset_wrappers import ConcatDataset, RepeatDataset
-    if isinstance(cfg, (list, tuple)):
-        dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
-    elif cfg['type'] == 'ConcatDataset':
-        dataset = ConcatDataset(
-            [build_dataset(c, default_args) for c in cfg['datasets']])
-    elif cfg['type'] == 'RepeatDataset':
-        dataset = RepeatDataset(
-            build_dataset(cfg['dataset'], default_args), cfg['times'])
-    else:
-        dataset = DATASETS.build(cfg, default_args=default_args)
+    dataset = DATASETS.build(cfg, default_args=default_args)
 
     return dataset
 
