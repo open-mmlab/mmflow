@@ -75,8 +75,11 @@ model = dict(
 optimizer = dict(type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999))
 optimizer_config = dict(grad_clip=None)
 # learning policy
-lr_config = dict(
-    policy='step', by_epoch=False, gamma=0.5, step=[200000, 300000, 400000])
+param_scheduler = dict(
+    type='MultiStepLR',
+    by_epoch=False,
+    gamma=0.5,
+    step=[200000, 300000, 400000])
 runner = dict(type='IterBasedRunner', max_iters=500000)
 checkpoint_config = dict(by_epoch=False, interval=50000)
 evaluation = dict(interval=50000, metric='EPE')

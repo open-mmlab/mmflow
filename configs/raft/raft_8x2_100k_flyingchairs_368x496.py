@@ -15,7 +15,7 @@ optim_wrapper = dict(
         amsgrad=False),
     clip_grad=dict(max_norm=1.))
 
-lr_config = dict(
+param_scheduler = dict(
     type='OneCycle',
     eta_max=0.0004,
     total_steps=100100,
@@ -32,4 +32,3 @@ default_hooks = dict(
     checkpoint=dict(type='CheckpointHook', interval=10000),
     sampler_seed=dict(type='DistSamplerSeedHook'),
 )
-custom_hooks = [dict(type='SyncBuffersHook')]

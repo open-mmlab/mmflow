@@ -26,9 +26,9 @@ optimizer = dict(
     weight_decay=0.00001,
     amsgrad=False)
 optimizer_config = dict(grad_clip=dict(max_norm=1.))
-lr_config = dict(
-    policy='OneCycle',
-    max_lr=0.000125,
+param_scheduler = dict(
+    type='OneCycle',
+    eta_max=0.000125,
     total_steps=100100,
     pct_start=0.05,
     anneal_strategy='linear')

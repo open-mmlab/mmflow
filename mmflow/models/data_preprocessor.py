@@ -95,7 +95,7 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
             Tuple[List[torch.Tensor], Optional[list]]: Unstacked list of input
             tensor and list of labels at target device.
         """
-        # img1s is list of tensor with shape 3,H,W
+        # inputs is list of tensor with shape 2,3,H,W
         img1s = [
             data_['inputs'][0, ...].to(self._device).float() for data_ in data
         ]
