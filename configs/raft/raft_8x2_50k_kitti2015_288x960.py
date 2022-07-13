@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/models/raft.py', '../_base_/datasets/kitti2015_raft_288x960.py',
-    '../_base_/default_runtime.py'
+    '../_base_/schedules/raft_50k.py', '../_base_/default_runtime.py'
 ]
 
 model = dict(
@@ -17,24 +17,6 @@ model = dict(
     freeze_bn=True,
     test_cfg=dict(iters=32))
 
-optimizer = dict(
-    type='AdamW',
-    lr=0.000125,
-    betas=(0.9, 0.999),
-    eps=1e-08,
-    weight_decay=0.00001,
-    amsgrad=False)
-optimizer_config = dict(grad_clip=dict(max_norm=1.))
-param_scheduler = dict(
-    type='OneCycleLR',
-    eta_max=0.000125,
-    total_steps=50100,
-    pct_start=0.05,
-    anneal_strategy='linear')
-
-runner = dict(type='IterBasedRunner', max_iters=50000)
-checkpoint_config = dict(by_epoch=False, interval=5000)
-evaluation = dict(interval=5000, metric='EPE')
-
+default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=5000))
 # Load model training on mixed datasets and finetune it on KITTI2015
 load_from = 'https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth'  # noqa

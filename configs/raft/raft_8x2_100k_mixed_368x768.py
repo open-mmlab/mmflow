@@ -1,6 +1,7 @@
 _base_ = [
     '../_base_/models/raft.py',
     '../_base_/datasets/sintel_cleanx100_sintel_fianlx100_kitti2015x200_hd1kx5_flyingthings3d_raft_384x768.py',  # noqa
+    '../_base_/schedules/raft_100k.py',
     '../_base_/default_runtime.py'
 ]
 
@@ -18,24 +19,11 @@ model = dict(
     freeze_bn=True,
     test_cfg=dict(iters=32))
 
-optimizer = dict(
-    type='AdamW',
-    lr=0.000125,
-    betas=(0.9, 0.999),
-    eps=1e-08,
-    weight_decay=0.00001,
-    amsgrad=False)
-optimizer_config = dict(grad_clip=dict(max_norm=1.))
-param_scheduler = dict(
-    type='OneCycleLR',
-    eta_max=0.000125,
-    total_steps=100100,
-    pct_start=0.05,
-    anneal_strategy='linear')
+optim_wrapper = dict(optimizer=dict(lr=0.000125, weight_decay=0.00001))
 
-runner = dict(type='IterBasedRunner', max_iters=100000)
-checkpoint_config = dict(by_epoch=False, interval=10000)
-evaluation = dict(interval=10000, metric='EPE')
+param_scheduler = dict(eta_max=0.000125)
+
+default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=10000))
 
 # Train on FlyingChairs and FlyingThings3D, and finetune on
 # and Sintel, KITTI2015 and HD1K
