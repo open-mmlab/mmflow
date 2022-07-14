@@ -11,10 +11,10 @@ optimizer_config = dict(
 
 # learning policy
 param_scheduler = dict(
-    policy='MultiStage',
+    type='MultiStageLR',
     by_epoch=False,
     gammas=[0.5, 0.5, 0.5, 0.5, 0.5],
-    milestone_lrs=[5e-5, 3e-5, 2e-5, 1e-5, 5e-6],
+    milestone_params=[5e-5, 3e-5, 2e-5, 1e-5, 5e-6],
     milestone_iters=[0, 150000, 300000, 450000, 600000],
     steps=[[
         45000, 65000, 85000, 95000, 97500, 100000, 110000, 120000, 130000,
