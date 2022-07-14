@@ -1,5 +1,3 @@
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False)
-
 crop_size = (320, 768)
 
 sintel_global_transform = dict(
@@ -24,8 +22,6 @@ sintel_train_pipeline = [
         saturation=0.5,
         hue=0.5),
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.5, direction='vertical'),
     dict(
@@ -33,31 +29,14 @@ sintel_train_pipeline = [
         global_transform=sintel_global_transform,
         relative_transform=sintel_relative_transform),
     dict(type='RandomCrop', crop_size=crop_size),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt'],
-        meta_keys=[
-            'img_fields', 'ann_fields', 'filename1', 'filename2',
-            'ori_filename1', 'ori_filename2', 'filename_flow',
-            'ori_filename_flow', 'ori_shape', 'img_shape', 'img_norm_cfg'
-        ]),
+    dict(type='PackFlowInputs')
 ]
 
 sintel_test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=4),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs'],
-        meta_keys=[
-            'flow_gt', 'filename1', 'filename2', 'ori_filename1',
-            'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-            'scale_factor', 'pad_shape'
-        ])
+    dict(type='PackFlowInputs')
 ]
 
 sintel_clean_train = dict(
@@ -110,8 +89,6 @@ kitti_train_pipeline = [
         saturation=0.25,
         hue=0.1),
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='GaussianNoise', sigma_range=(0, 0.02), clamp_range=(0., 1.)),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.5, direction='vertical'),
     dict(
@@ -119,15 +96,7 @@ kitti_train_pipeline = [
         global_transform=kitti_global_transform,
         relative_transform=kitti_relative_transform),
     dict(type='RandomCrop', crop_size=crop_size),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'img_fields', 'ann_fields', 'filename1', 'filename2',
-            'ori_filename1', 'ori_filename2', 'filename_flow',
-            'ori_filename_flow', 'ori_shape', 'img_shape', 'img_norm_cfg'
-        ]),
+    dict(type='PackFlowInputs')
 ]
 
 kitti2015_train = dict(
@@ -147,8 +116,6 @@ hd1k_train_pipeline = [
         saturation=0.25,
         hue=0.1),
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='GaussianNoise', sigma_range=(0, 0.02), clamp_range=(0., 1.)),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.5, direction='vertical'),
     dict(
@@ -156,15 +123,7 @@ hd1k_train_pipeline = [
         global_transform=kitti_global_transform,
         relative_transform=kitti_relative_transform),
     dict(type='RandomCrop', crop_size=crop_size),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'img_fields', 'ann_fields', 'filename1', 'filename2',
-            'ori_filename1', 'ori_filename2', 'filename_flow',
-            'ori_filename_flow', 'ori_shape', 'img_shape', 'img_norm_cfg'
-        ]),
+    dict(type='PackFlowInputs')
 ]
 
 hd1k_train = dict(

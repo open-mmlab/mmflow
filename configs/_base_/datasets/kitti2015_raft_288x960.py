@@ -1,6 +1,3 @@
-img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
-
 crop_size = (288, 960)
 
 # KITTI config
@@ -24,16 +21,7 @@ kitti_train_pipeline = [
         max_scale=0.4,
         max_stretch=0.2),
     dict(type='RandomCrop', crop_size=crop_size),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'filename1', 'filename2', 'ori_filename1', 'ori_filename2',
-            'filename_flow', 'ori_filename_flow', 'ori_shape', 'img_shape',
-            'erase_bounds', 'erase_num', 'scale_factor'
-        ])
+    dict(type='PackFlowInputs')
 ]
 kitti_train = dict(
     type='KITTI2015',
@@ -45,16 +33,7 @@ kitti_test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='InputPad', exponent=3),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs'],
-        meta_keys=[
-            'flow_gt', 'valid', 'filename1', 'filename2', 'ori_filename1',
-            'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-            'scale_factor', 'pad_shape', 'pad'
-        ])
+    dict(type='PackFlowInputs')
 ]
 
 kitti2015_val_test = dict(
@@ -63,19 +42,24 @@ kitti2015_val_test = dict(
     pipeline=kitti_test_pipeline,
     test_mode=True)
 
-data = dict(
-    train_dataloader=dict(
-        samples_per_gpu=2,
-        workers_per_gpu=5,
-        drop_last=True,
-        shuffle=True,
-        persistent_workers=True),
-    val_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=5,
-        shuffle=False,
-        persistent_workers=True),
-    test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=2, shuffle=False),
-    train=kitti_train,
-    val=kitti2015_val_test,
-    test=kitti2015_val_test)
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=5,
+    sampler=dict(type='InfiniteSampler', shuffle=True),
+    drop_last=True,
+    persistent_workers=True,
+    dataset=kitti_train)
+val_dataloader = dict(
+    batch_size=1,
+    num_workers=2,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    drop_last=False,
+    persistent_workers=True,
+    dataset=kitti2015_val_test)
+test_dataloader = val_dataloader
+
+val_evaluator = [[
+    dict(type='EndPointError', prefix='KITTI2015_EPE'),
+    dict(type='FlowOutliers', prefix='KITTI2015_Fl')
+]]
+test_evaluator = val_evaluator
