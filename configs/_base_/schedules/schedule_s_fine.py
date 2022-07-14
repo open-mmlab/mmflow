@@ -1,7 +1,7 @@
 # training schedule for S_fine schedule
 train_cfg = dict(by_epoch=False, max_iters=600000, val_interval=50000)
-val_cfg = dict(type='ValLoop')
-test_cfg = dict(type='TestLoop')
+val_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiValLoop')
 
 # optimizer
 optimizer_config = dict(

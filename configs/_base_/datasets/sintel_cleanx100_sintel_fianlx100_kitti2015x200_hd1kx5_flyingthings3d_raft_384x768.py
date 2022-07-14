@@ -1,5 +1,3 @@
-img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
 crop_size = (368, 768)
 
 # Sintel config
@@ -26,31 +24,13 @@ sintel_train_pipeline = [
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.1, direction='vertical'),
     dict(type='Validation', max_flow=1000.),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'filename1', 'filename2', 'ori_filename1', 'ori_filename2',
-            'filename_flow', 'ori_filename_flow', 'ori_shape', 'img_shape',
-            'erase_bounds', 'erase_num', 'scale_factor'
-        ])
+    dict(type='PackFlowInputs')
 ]
 sintel_test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
     dict(type='InputPad', exponent=3),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs'],
-        meta_keys=[
-            'flow_gt', 'filename1', 'filename2', 'ori_filename1',
-            'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-            'scale_factor', 'pad_shape', 'pad'
-        ])
+    dict(type='PackFlowInputs')
 ]
 
 sintel_clean_train = dict(
@@ -107,16 +87,7 @@ kitti_train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.1, direction='vertical'),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'filename1', 'filename2', 'ori_filename1', 'ori_filename2',
-            'filename_flow', 'ori_filename_flow', 'ori_shape', 'img_shape',
-            'erase_bounds', 'erase_num', 'scale_factor'
-        ])
+    dict(type='PackFlowInputs')
 ]
 kitti_train = dict(
     type='KITTI2015',
@@ -149,16 +120,7 @@ flyingthing3d_train_pipeline = [
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.1, direction='vertical'),
     dict(type='Validation', max_flow=1000.),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'filename1', 'filename2', 'ori_filename1', 'ori_filename2',
-            'filename_flow', 'ori_filename_flow', 'ori_shape', 'img_shape',
-            'erase_bounds', 'erase_num', 'scale_factor'
-        ])
+    dict(type='PackFlowInputs')
 ]
 flyingthings3d_clean_train = dict(
     type='FlyingThings3D',
@@ -190,16 +152,7 @@ hd1k_train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.1, direction='vertical'),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt', 'valid'],
-        meta_keys=[
-            'filename1', 'filename2', 'ori_filename1', 'ori_filename2',
-            'filename_flow', 'ori_filename_flow', 'ori_shape', 'img_shape',
-            'erase_bounds', 'erase_num', 'scale_factor'
-        ])
+    dict(type='PackFlowInputs')
 ]
 hd1k_train = dict(
     type='HD1K',
@@ -209,28 +162,38 @@ hd1k_train = dict(
 
 hd1k_train_x5 = dict(type='RepeatDataset', times=5, dataset=hd1k_train)
 
-data = dict(
-    train_dataloader=dict(
-        samples_per_gpu=2,
-        workers_per_gpu=5,
-        drop_last=True,
-        shuffle=True,
-        persistent_workers=True),
-    val_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=5,
-        shuffle=False,
-        persistent_workers=True),
-    test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
-    train=[
-        sintel_clean_train_x100, sintel_final_train_x100, kitti_train_x200,
-        flyingthings3d_clean_train, hd1k_train_x5
-    ],
-    val=dict(
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=5,
+    sampler=dict(type='InfiniteSampler', shuffle=True),
+    drop_last=True,
+    persistent_workers=True,
+    dataset=dict(
         type='ConcatDataset',
-        datasets=[sintel_clean_test, sintel_final_test],
-        separate_eval=True),
-    test=dict(
-        type='ConcatDataset',
-        datasets=[sintel_clean_test, sintel_final_test],
-        separate_eval=True))
+        datasets=[
+            sintel_clean_train_x100, sintel_final_train_x100, kitti_train_x200,
+            flyingthings3d_clean_train, hd1k_train_x5
+        ]))
+val_dataloader = [
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=sintel_clean_test),
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=sintel_final_test)
+]
+test_dataloader = val_dataloader
+
+val_evaluator = [
+    dict(type='EndPointError', prefix='clean'),
+    dict(type='EndPointError', prefix='final')
+]
+test_evaluator = val_evaluator

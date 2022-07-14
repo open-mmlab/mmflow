@@ -6,6 +6,7 @@ from .evaluation import (DistEvalHook, EvalHook, end_point_error,
                          optical_flow_outliers, single_gpu_online_evaluation)
 from .hooks import (FlowVisualizationHook, LiteFlowNetStageLoadHook,
                     MultiStageLrUpdaterHook)
+from .loops import MultiTestLoop, MultiValLoop
 from .scheduler import (MultiStageLR, MultiStageMomentum,
                         MultiStageParamScheduler)
 from .visualization import FlowLocalVisualizer
@@ -15,6 +16,7 @@ __all__ = [
     'eval_metrics', 'end_point_error_map', 'optical_flow_outliers',
     'single_gpu_online_evaluation', 'multi_gpu_online_evaluation',
     'online_evaluation', 'MultiStageLrUpdaterHook', 'LiteFlowNetStageLoadHook',
-    'FlowVisualizationHook', 'FlowLocalVisualizer', 'MultiStageLR',
-    'MultiStageMomentum', 'MultiStageParamScheduler'
+    'MultiStageLR', 'MultiStageMomentum', 'MultiStageParamScheduler',
+    'FlowVisualizationHook', 'FlowLocalVisualizer', 'MultiTestLoop',
+    'MultiValLoop'
 ]

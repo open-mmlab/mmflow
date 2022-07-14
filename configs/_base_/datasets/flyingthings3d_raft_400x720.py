@@ -68,7 +68,7 @@ test_data_finalpass = dict(
     pass_style='final')
 
 train_dataloader = dict(
-    batch_size=1,
+    batch_size=2,
     num_workers=5,
     sampler=dict(type='InfiniteSampler', shuffle=True),
     drop_last=True,
@@ -77,14 +77,25 @@ train_dataloader = dict(
         type='ConcatDataset',
         datasets=[train_dataset_cleanpass, train_dataset_finalpass]))
 
-val_dataloader = dict(
-    batch_size=1,
-    num_workers=2,
-    sampler=dict(type='DefaultSampler', shuffle=False),
-    drop_last=False,
-    persistent_workers=True,
-    dataset=test_data_cleanpass)
-
+val_dataloader = [
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=test_data_cleanpass),
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=test_data_finalpass)
+]
 test_dataloader = val_dataloader
-val_evaluator = dict(type='EndPointError')
+val_evaluator = [
+    dict(type='EndPointError', prefix='clean'),
+    dict(type='EndPointError', prefix='final')
+]
 test_evaluator = val_evaluator

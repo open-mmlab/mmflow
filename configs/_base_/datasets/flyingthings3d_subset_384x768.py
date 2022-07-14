@@ -79,14 +79,25 @@ train_dataloader = dict(
     persistent_workers=True,
     dataset=flyingthings3d_subset_train)
 
-val_dataloader = dict(
-    batch_size=1,
-    num_workers=2,
-    sampler=dict(type='DefaultSampler', shuffle=False),
-    drop_last=False,
-    persistent_workers=True,
-    dataset=test_data_cleanpass)
-
+val_dataloader = [
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=test_data_cleanpass),
+    dict(
+        batch_size=1,
+        num_workers=2,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=test_data_finalpass)
+]
 test_dataloader = val_dataloader
-val_evaluator = dict(type='EndPointError')
+val_evaluator = [
+    dict(type='EndPointError', prefix='clean'),
+    dict(type='EndPointError', prefix='final')
+]
 test_evaluator = val_evaluator
