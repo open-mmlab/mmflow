@@ -307,7 +307,7 @@ class LoadImageFromWebcam(LoadImageFromFile):
         results['img2_path'] = None
         results['img1'] = img1
         results['img2'] = img2
-        results['img_shape'] = img1.shape
-        results['ori_shape'] = img1.shape
+        results['img_shape'] = img1.shape[:2]
+        results['ori_shape'] = img1.shape[:2]
 
         return results
