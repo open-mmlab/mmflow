@@ -7,7 +7,7 @@ from mmengine.hooks import Hook
 from mmengine.runner import Runner
 from mmengine.visualization import Visualizer
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.registry import HOOKS
 
 

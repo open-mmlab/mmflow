@@ -3,13 +3,12 @@ from abc import ABCMeta, abstractmethod
 from typing import Union
 
 import torch
-from mmcv.utils import print_log
+from mmengine.logging import print_log
 from mmengine.model import BaseModel
 from torch import Tensor, device
 
-from mmflow.core.utils import (OptConfigType, OptMultiConfig, OptSampleList,
-                               SampleList, TensorDict)
-from mmflow.utils.logger import get_root_logger
+from mmflow.utils import (OptConfigType, OptMultiConfig, OptSampleList,
+                          SampleList, TensorDict)
 
 
 class FlowEstimator(BaseModel, metaclass=ABCMeta):
@@ -41,10 +40,9 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         # if set freeze_net True, the weights in this model
         # will be not updated and predict the flow maps.
         if self.freeze_net:
-            logger = get_root_logger()
             print_log(
                 f'Freeze the parameters in {self.__class__.__name__}',
-                logger=logger)
+                logger='current')
             self.eval()
             for p in self.parameters():
                 p.requires_grad = False

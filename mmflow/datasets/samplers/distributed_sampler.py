@@ -8,8 +8,8 @@ from torch.utils.data import Dataset
 from torch.utils.data import DistributedSampler as _DistributedSampler
 from torch.utils.data import Sampler
 
-from mmflow.core.utils import sync_random_seed
 from mmflow.registry import DATA_SAMPLERS
+from mmflow.utils import sync_random_seed
 
 
 @DATA_SAMPLERS.register_module()

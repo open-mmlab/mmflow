@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from mmengine.testing import assert_allclose
 
-from mmflow.core.scheduler import (MultiStageLR, MultiStageMomentum,
-                                   MultiStageParamScheduler)
+from mmflow.engine.schedulers import (MultiStageLR, MultiStageMomentum,
+                                      MultiStageParamScheduler)
 
 
 class ToyModel(torch.nn.Module):

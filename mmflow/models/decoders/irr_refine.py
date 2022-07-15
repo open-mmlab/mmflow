@@ -8,8 +8,8 @@ from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 from torch import Tensor
 
-from mmflow.core.utils import OptMultiConfig
 from mmflow.registry import MODELS
+from mmflow.utils import OptMultiConfig
 from ..builder import build_components
 
 

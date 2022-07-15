@@ -3,9 +3,8 @@ from typing import Union
 
 from torch import Tensor
 
-from mmflow.core.utils import (OptMultiConfig, OptSampleList, SampleList,
-                               TensorDict)
 from mmflow.registry import MODELS
+from mmflow.utils import OptMultiConfig, OptSampleList, SampleList, TensorDict
 from ..builder import build_decoder, build_encoder
 from .base import FlowEstimator
 

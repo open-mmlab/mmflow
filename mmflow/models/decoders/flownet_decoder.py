@@ -7,8 +7,8 @@ from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmcv.runner import BaseModule
 from torch import Tensor
 
-from mmflow.core.utils import SampleList, TensorDict, unpack_flow_data_samples
 from mmflow.registry import MODELS
+from mmflow.utils import SampleList, TensorDict, unpack_flow_data_samples
 from ..builder import build_loss
 from .base_decoder import BaseDecoder
 

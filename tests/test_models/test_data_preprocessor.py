@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import torch
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.models import FlowDataPreprocessor
 
 

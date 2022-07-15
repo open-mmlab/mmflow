@@ -7,8 +7,8 @@ from mmcv.runner import BaseModule
 from mmengine.data import PixelData
 from torch import Tensor
 
-from mmflow.core.data_structures.flow_data_sample import FlowDataSample
-from mmflow.core.utils.typing import SampleList, TensorDict
+from mmflow.data import FlowDataSample
+from mmflow.utils import SampleList, TensorDict
 
 
 class BaseDecoder(BaseModule):

@@ -6,10 +6,10 @@ from unittest.mock import Mock
 import torch
 from mmengine.data import PixelData
 
-from mmflow.core import FlowDataSample
-from mmflow.core.hooks import FlowVisualizationHook
-from mmflow.core.visualization import FlowLocalVisualizer
+from mmflow.data import FlowDataSample
 from mmflow.datasets import read_flow
+from mmflow.engine.hooks import FlowVisualizationHook
+from mmflow.engine.visualization import FlowLocalVisualizer
 
 
 def generate_data_sample(img1_path, img2_path, flow_path) -> FlowDataSample:

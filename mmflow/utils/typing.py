@@ -5,7 +5,7 @@ from typing import Dict, Optional, Sequence, Union
 import torch
 from mmengine.config import ConfigDict
 
-from ..data_structures import FlowDataSample
+from mmflow.data import FlowDataSample
 
 # Type hint of config data
 ConfigType = Union[ConfigDict, dict]

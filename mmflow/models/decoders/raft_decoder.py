@@ -9,9 +9,9 @@ from mmcv.cnn import ConvModule
 from mmcv.runner import BaseModule
 from torch import Tensor
 
-from mmflow.core.utils import TensorDict, TensorList, unpack_flow_data_samples
-from mmflow.core.utils.typing import SampleList
 from mmflow.registry import MODELS
+from mmflow.utils import (SampleList, TensorDict, TensorList,
+                          unpack_flow_data_samples)
 from ..builder import build_components, build_loss
 from .base_decoder import BaseDecoder
 

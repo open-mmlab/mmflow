@@ -9,8 +9,8 @@ from mmcv.ops import DeformConv2d
 from mmcv.runner import BaseModule
 from torch import Tensor
 
-from mmflow.core.utils import OptMultiConfig, SampleList, TensorDict
 from mmflow.registry import MODELS
+from mmflow.utils import OptMultiConfig, SampleList, TensorDict
 from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
 
