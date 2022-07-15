@@ -8,6 +8,7 @@ from numpy import ndarray
 
 from mmflow.apis import inference_model, init_model
 from mmflow.datasets import visualize_flow
+from mmflow.utils import register_all_modules
 
 try:
     import imageio
@@ -35,6 +36,8 @@ def main(args):
 
     assert args.out[-3:] == 'gif' or args.out[-3:] == 'mp4', \
         f'Output file must be gif and mp4, but got {args.out[-3:]}.'
+
+    register_all_modules()
 
     # build the model from a config file and a checkpoint file
     model = init_model(args.config, args.checkpoint, device=args.device)
@@ -79,7 +82,9 @@ def main(args):
         img2 = imgs[i + 1]
         # estimate flow
         result = inference_model(model, img1, img2)
-        flow_map = visualize_flow(result, None)
+        pred_flow_fw = result[0].pred_flow_fw.data.permute(1, 2,
+                                                           0).cpu().numpy()
+        flow_map = visualize_flow(pred_flow_fw, None)
         # visualize_flow return flow map with RGB order
         flow_map = cv2.cvtColor(flow_map, cv2.COLOR_RGB2BGR)
         if len(gts) > 0:
