@@ -4,7 +4,7 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.models.decoders.raft_decoder import (ConvGRU, CorrelationPyramid,
                                                  MotionEncoder, RAFTDecoder,
                                                  XHead)

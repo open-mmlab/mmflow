@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from mmengine.data import PixelData
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.models.decoders.liteflownet_decoder import (BasicBlock,
                                                         MatchingBlock, NetE,
                                                         RegularizationBlock,

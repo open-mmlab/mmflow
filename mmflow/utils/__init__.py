@@ -1,10 +1,13 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from .collect_env import collect_env
-from .logger import get_root_logger
-from .misc import find_latest_checkpoint
-from .set_env import register_all_modules, setup_multi_processes
+from .misc import sync_random_seed, unpack_flow_data_samples
+from .set_env import register_all_modules
+from .typing import (ConfigType, MultiConfig, OptConfigType, OptMultiConfig,
+                     OptSampleList, SampleList, TensorDict, TensorList)
 
 __all__ = [
-    'collect_env', 'get_root_logger', 'find_latest_checkpoint',
-    'setup_multi_processes', 'register_all_modules'
+    'collect_env', 'register_all_modules', 'unpack_flow_data_samples',
+    'ConfigType', 'OptConfigType', 'MultiConfig', 'OptMultiConfig',
+    'SampleList', 'OptSampleList', 'TensorDict', 'TensorList',
+    'sync_random_seed'
 ]

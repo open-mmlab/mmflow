@@ -5,7 +5,7 @@ from typing import List, Optional, Sequence, Tuple, Union
 import torch
 from mmengine.model import BaseDataPreprocessor
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.registry import MODELS
 
 

@@ -5,7 +5,7 @@ import mmcv
 import numpy as np
 from mmengine import Visualizer
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.registry import VISUALIZERS
 
 
@@ -32,7 +32,7 @@ class FlowLocalVisualizer(Visualizer):
 
     def add_datasample(self,
                        name: str,
-                       image: Optional = None,
+                       image: Optional[np.ndarray] = None,
                        gt_sample: Optional[FlowDataSample] = None,
                        pred_sample: Optional[FlowDataSample] = None,
                        draw_gt: bool = True,

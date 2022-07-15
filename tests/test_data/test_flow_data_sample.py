@@ -4,7 +4,7 @@ from unittest import TestCase
 import torch
 from mmengine.data import PixelData
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 
 
 class TestFlowDataSample(TestCase):

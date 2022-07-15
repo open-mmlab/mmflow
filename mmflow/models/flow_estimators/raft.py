@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from mmflow.core.utils import OptSampleList, SampleList, TensorDict
 from mmflow.registry import MODELS
+from mmflow.utils import OptSampleList, SampleList, TensorDict
 from ..builder import build_encoder
 from .pwcnet import PWCNet
 

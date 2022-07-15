@@ -7,7 +7,7 @@ from mmcv.utils import Config, is_list_of
 from mmengine.data import PixelData
 from torch import Tensor
 
-from mmflow.core import FlowDataSample
+from mmflow.data import FlowDataSample
 from mmflow.models import MaskFlowNetS, build_flow_estimator
 from mmflow.models.flow_estimators.base import FlowEstimator
 from mmflow.utils import register_all_modules

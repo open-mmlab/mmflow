@@ -6,8 +6,8 @@ import torch
 import torch.distributed as dist
 from torch import Tensor
 
-from mmflow.core.utils import TensorDict
 from mmflow.registry import MODELS
+from mmflow.utils import TensorDict
 from .pwcnet import PWCNet
 
 

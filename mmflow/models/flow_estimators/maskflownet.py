@@ -5,8 +5,8 @@ import torch
 from numpy import ndarray
 from torch import Tensor
 
-from mmflow.core.utils import SampleList, TensorDict
 from mmflow.registry import MODELS
+from mmflow.utils import SampleList, TensorDict
 from ..builder import build_flow_estimator
 from ..decoders.maskflownet_decoder import Upsample
 from ..utils import Warp

@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from mmflow.datasets import read_flow
-from mmflow.datasets.pipelines import LoadAnnotations
+from mmflow.datasets.transforms import LoadAnnotations
 from mmflow.datasets.utils import read_flow_kitti
 from mmflow.registry import TRANSFORMS
 
