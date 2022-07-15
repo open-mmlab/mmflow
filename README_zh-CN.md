@@ -157,7 +157,7 @@ MMFlow 也提供了其他更详细的教程，包括：
 扫描下方的二维码可关注 OpenMMLab 团队的 [知乎官方账号](https://www.zhihu.com/people/openmmlab)，加入 OpenMMLab 团队的 [官方交流 QQ 群](https://jq.qq.com/?_wv=1027&k=aCvMxdr3)或联络 OpenMMLab 官方微信小助手
 
 <div align="center">
-<img src="resources/zhihu_qrcode.jpg" height="400" />  <img src="resources/qq_group_qrcode.jpg" height="400" />
+<img src="resources/zhihu_qrcode.jpg" height="400" />  <img src="resources/qq_group_qrcode.png" height="400" />
 <img src="resources/wechat.png" height="400" />
 </div>
 
