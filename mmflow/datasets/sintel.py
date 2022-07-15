@@ -46,7 +46,7 @@ class Sintel(MME_BaseDataset):
             None img. The maximum extra number of cycles to get a valid
             image. Defaults to 1000.
     """
-    METAINFO = dict(dataset='Sintel')
+    METAINFO = dict()
 
     def __init__(self,
                  pass_style: str = 'clean',
@@ -70,9 +70,7 @@ class Sintel(MME_BaseDataset):
         self.pass_style = pass_style
 
         self.scene = scene
-        metainfo = dict(
-            subset='test', pass_style=pass_style) if test_mode else dict(
-                subset='train', pass_style=pass_style)
+        metainfo = dict(subset='test') if test_mode else dict(subset='train')
 
         super().__init__(ann_file, metainfo, data_root, data_prefix,
                          filter_cfg, indices, serialize_data, pipeline,

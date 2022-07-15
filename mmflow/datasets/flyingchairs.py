@@ -43,7 +43,7 @@ class FlyingChairs(MME_BaseDataset):
             None img. The maximum extra number of cycles to get a valid
             image. Defaults to 1000.
     """
-    METAINFO = dict(dataset='FlyingChairs')
+    METAINFO = dict()
 
     def __init__(self,
                  split_file: Optional[str] = None,

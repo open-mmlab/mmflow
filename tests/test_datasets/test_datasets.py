@@ -319,7 +319,6 @@ class TestKITTI2015:
         else:
             dataset = self._load_path_parsing()
         assert len(dataset) == 1
-        assert dataset.METAINFO['sparse']
 
         for data_info in dataset:
             img1_path = data_info['img1_path']
@@ -353,7 +352,6 @@ class TestKITTI2012:
         else:
             dataset = self._load_path_parsing()
         assert len(dataset) == 1
-        assert dataset.METAINFO['sparse'] is True
 
         for data_info in dataset:
             img1_path = data_info['img1_path']
@@ -469,7 +467,6 @@ class TestHD1K:
         else:
             dataset = self._load_path_parsing()
         assert len(dataset) == 1
-        assert dataset.METAINFO['sparse']
 
         for data_info in dataset:
             img1_path = data_info['img1_path']
