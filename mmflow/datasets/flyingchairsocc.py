@@ -75,7 +75,7 @@ class FlyingChairsOcc(MME_BaseDataset):
         split_file (str): File name of train-validation split file for
         FlyingChairs.
     """
-    METAINFO = dict(dataset='FlyingChairsOcc')
+    METAINFO = dict()
 
     def __init__(self,
                  split_file: Optional[str] = None,
