@@ -34,7 +34,7 @@ def generate_decoders():
 class TestLiteFlowNetStageLoadHook(TestCase):
 
     @patch('mmflow.engine.hooks.liteflownet_stage_loading.is_model_wrapper')
-    def test_is_model_wrapper(self, mock_is_model_wrapper):
+    def test_is_model_wrapper_and_before_run(self, mock_is_model_wrapper):
         mock_is_model_wrapper.return_value = True
         runner = Mock()
         runner.model = Mock()
@@ -49,7 +49,7 @@ class TestLiteFlowNetStageLoadHook(TestCase):
             runner.model.module.decoder.decoders['level5'][0].weight.data)
         return
 
-    def test_is_not_model_wrapper(self):
+    def test_is_not_model_wrapper_and_before_run(self):
         runner = Mock()
         runner.model = Mock()
         runner.model = Mock()
