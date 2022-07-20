@@ -70,6 +70,14 @@ class ChairsSDHom(MME_BaseDataset):
                          test_mode, lazy_init, max_refetch)
 
     def load_data_list(self) -> List[dict]:
+        """Load ``data_list``
+
+        ``data_list`` can be load from an annotation file named as
+        ``self.ann_file`` or by parsing dataset path.
+
+        Returns:
+            list[dict]: A list of annotation.
+        """
         if self.ann_file.endswith('json'):
             # load data_list with annotation file
             return super().load_data_list()
@@ -83,9 +91,10 @@ class ChairsSDHom(MME_BaseDataset):
 
         self.subset_dir = 'data/test' if self.test_mode else 'data/train'
 
-        self.img1_dir = osp.join(self.data_root, self.subset_dir, 't0')
-        self.img2_dir = osp.join(self.data_root, self.subset_dir, 't1')
-        self.flow_dir = osp.join(self.data_root, self.subset_dir, 'flow')
+        self.data_root = osp.join(self.data_root, self.subset_dir)
+        self.img1_dir = osp.join(self.data_root, 't0')
+        self.img2_dir = osp.join(self.data_root, 't1')
+        self.flow_dir = osp.join(self.data_root, 'flow')
 
         self.img1_suffix = '.png'
         self.img2_suffix = '.png'
