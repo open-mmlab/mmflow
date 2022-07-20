@@ -493,11 +493,17 @@ class TestChairsSDHom:
     data_root = osp.join(osp.dirname(__file__), '../data/pseudo_chairssdhom')
 
     @pytest.mark.parametrize('init_function', ('ann_file', 'path_parse'))
-    def test_load_data_list(self, init_function):
+    @pytest.mark.parametrize('metainfo', ('empty', 'valid'))
+    def test_load_data_list(self, init_function, metainfo):
         if init_function == 'ann_file':
             train_dataset, test_dataset = self._load_annotation_file()
         else:
-            train_dataset, test_dataset = self._load_path_parsing()
+            if metainfo == 'empty':
+                train_dataset, test_dataset = self._load_path_parsing()
+            else:
+                local_metainfo = dict(dataset='ChairsSDHom')
+                train_dataset, test_dataset = self._load_path_parsing(
+                    local_metainfo)
 
         assert len(train_dataset) == 1
         assert len(test_dataset) == 1
@@ -525,10 +531,11 @@ class TestChairsSDHom:
         test_dataset = ChairsSDHom(**test_cfg)
         return train_dataset, test_dataset
 
-    def _load_path_parsing(self):
-        train_cfg = dict(data_root=self.data_root)
+    def _load_path_parsing(self, metainfo=None):
+        train_cfg = dict(data_root=self.data_root, metainfo=metainfo)
         train_dataset = ChairsSDHom(**train_cfg)
 
-        test_cfg = dict(test_mode=True, data_root=self.data_root)
+        test_cfg = dict(
+            test_mode=True, data_root=self.data_root, metainfo=metainfo)
         test_dataset = ChairsSDHom(**test_cfg)
         return train_dataset, test_dataset
