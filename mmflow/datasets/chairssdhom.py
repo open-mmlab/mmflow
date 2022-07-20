@@ -83,10 +83,9 @@ class ChairsSDHom(MME_BaseDataset):
 
         self.subset_dir = 'data/test' if self.test_mode else 'data/train'
 
-        self.data_root = osp.join(self.data_root, self.subset_dir)
-        self.img1_dir = osp.join(self.data_root, 't0')
-        self.img2_dir = osp.join(self.data_root, 't1')
-        self.flow_dir = osp.join(self.data_root, 'flow')
+        self.img1_dir = osp.join(self.data_root, self.subset_dir, 't0')
+        self.img2_dir = osp.join(self.data_root, self.subset_dir, 't1')
+        self.flow_dir = osp.join(self.data_root, self.subset_dir, 'flow')
 
         self.img1_suffix = '.png'
         self.img2_suffix = '.png'
