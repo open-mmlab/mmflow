@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from .builder import build_dataset
+from .chairssdhom import ChairsSDHom
 from .flyingchairs import FlyingChairs
 from .flyingchairsocc import FlyingChairsOcc
 from .flyingthings3d import FlyingThings3D
@@ -25,5 +26,5 @@ __all__ = [
     'InputResize', 'write_flow_kitti', 'read_flow_kitti', 'GaussianNoise',
     'Compose', 'InputPad', 'FlyingThings3DSubset', 'FlyingThings3D', 'Sintel',
     'KITTI2012', 'KITTI2015', 'render_color_wheel', 'PackFlowInputs',
-    'TestFormatBundle', 'FlyingChairsOcc', 'HD1K'
+    'TestFormatBundle', 'FlyingChairsOcc', 'HD1K', 'ChairsSDHom'
 ]
