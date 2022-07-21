@@ -22,7 +22,8 @@ param_scheduler = dict(
     eta_max=0.000125,
     total_steps=50100,
     pct_start=0.05,
-    anneal_strategy='linear')
+    anneal_strategy='linear',
+    by_epoch=False)
 
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
