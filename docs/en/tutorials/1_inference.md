@@ -93,7 +93,7 @@ Optional arguments:
 - `--out-dir`: If specified, predicted optical flow will be saved in this directory.
 - `--show-dir`: if specified, the visualized optical flow map will be saved in this directory.
 - `--cfg-options`:  If specified, the key-value pair optional cfg will be merged into config file.
-For example, '--cfg-option model.encoder.in_channels=6'.
+  For example, '--cfg-option model.encoder.in_channels=6'.
 
 Below is the optional arguments for multi-gpu test:
 

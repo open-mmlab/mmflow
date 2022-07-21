@@ -3,6 +3,7 @@
 本文介绍 MMFlow 的基本使用，安装指引请参看[安装文档](install.md)
 
 <!--- TOC --->
+
 - [快速入门](#快速入门)
   - [准备数据集](#准备数据集)
   - [模型推理](#模型推理)
@@ -10,6 +11,7 @@
     - [数据集上测试](#数据集上测试)
   - [模型训练](#模型训练)
   - [其他教程](#其他教程)
+
 <!--- TOC --->
 
 ## 准备数据集
@@ -36,49 +38,49 @@
 
 1. [图像推理样例](../demo/image_demo.py)
 
-    ```shell
-    python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
-        [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
+       [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
+   ```
 
-    可选参数：
+   可选参数：
 
-    - `--out_prefix`: 输出结果的前缀，包括光流文件和可视化后的光流图片。
-    - `--device`: 用于推理的设备
+   - `--out_prefix`: 输出结果的前缀，包括光流文件和可视化后的光流图片。
+   - `--device`: 用于推理的设备
 
-    例子：
+   例子：
 
-    假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存在 `raft_demo`
+   假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存在 `raft_demo`
 
-    ```shell
-    python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
-        configs/raft/raft_8x2_100k_mixed_368x768.pth \
-        checkpoints/raft_8x2_100k_TSKH_368x768.pth raft_demo
-    ```
+   ```shell
+   python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
+       configs/raft/raft_8x2_100k_mixed_368x768.pth \
+       checkpoints/raft_8x2_100k_TSKH_368x768.pth raft_demo
+   ```
 
 2. [视频推理样例](../demo/video_demo.py)
 
-    ```shell
-    python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
-        [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
-    ```
+   ```shell
+   python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
+       [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
+   ```
 
-    可选参数：
+   可选参数：
 
-    - `--gt`: 输入视频的 ground truth 视频文件。如果指定，可视化结果将会把 ground truth
-        与预测结果连接在一起输出作为比较。
-    - `--device`: 用于推理的设备
+   - `--gt`: 输入视频的 ground truth 视频文件。如果指定，可视化结果将会把 ground truth
+     与预测结果连接在一起输出作为比较。
+   - `--device`: 用于推理的设备
 
-    例子：
+   例子：
 
-    假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存为 `raft_demo.mp4`
+   假设您已经将 checkpoints 下载到目录中 `checkpoints/`,　并将输出的结果存为 `raft_demo.mp4`
 
-    ```shell
-    python demo/video_demo.py demo/demo.mp4 \
-        configs/raft/raft_8x2_100k_mixed_368x768.py \
-        checkpoints/raft_8x2_100k_mixed_368x768.pth \
-        raft_demo.mp4 --gt demo/demo_gt.mp4
-    ```
+   ```shell
+   python demo/video_demo.py demo/demo.mp4 \
+       configs/raft/raft_8x2_100k_mixed_368x768.py \
+       checkpoints/raft_8x2_100k_mixed_368x768.pth \
+       raft_demo.mp4 --gt demo/demo_gt.mp4
+   ```
 
 ### 数据集上测试
 
