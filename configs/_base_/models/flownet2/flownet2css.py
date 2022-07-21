@@ -137,3 +137,4 @@ model = dict(
         test_cfg=dict()),
     link_cfg=dict(scale_factor=4, mode='bilinear'),
     out_level='level2')
+randomness = dict(seed=0, diff_rank_seed=True)

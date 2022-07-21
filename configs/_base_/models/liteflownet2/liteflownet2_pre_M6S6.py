@@ -55,3 +55,4 @@ model = dict(
         layer=['Conv2d', 'ConvTranspose2d'],
         mode='fan_in',
         bias=0))
+randomness = dict(seed=0, diff_rank_seed=True)

@@ -59,3 +59,4 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(),
 )
+randomness = dict(seed=0, diff_rank_seed=True)
