@@ -63,7 +63,6 @@ jobs:
           command: |
             python -m pip install git+ssh://git@github.com/open-mmlab/mmengine.git@main
             python -m pip install << parameters.mmcv >>
-            python -m pip install git+ssh://git@github.com/open-mmlab/mmdetection.git@dev-3.x
             python -m pip install -r requirements.txt
       - run:
           name: Build and install
@@ -102,7 +101,7 @@ jobs:
           name: Build Docker image
           command: |
             docker build .circleci/docker -t mmflow:gpu --build-arg PYTORCH=<< parameters.torch >> --build-arg CUDA=<< parameters.cuda >> --build-arg CUDNN=<< parameters.cudnn >>
-            docker run --gpus all -t -d -v /home/circleci/project:/mmflow -v /home/circleci/mmengine:/mmengine -v /home/circleci/mmdetection:/mmdetection -w /mmflow --name mmflow mmflow:gpu
+            docker run --gpus all -t -d -v /home/circleci/project:/mmflow -v /home/circleci/mmengine:/mmengine -w /mmflow --name mmflow mmflow:gpu
       - run:
           name: Install mmflow dependencies
           command: |
