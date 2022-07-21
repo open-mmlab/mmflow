@@ -81,3 +81,4 @@ model = dict(
     test_cfg=dict(),
     init_cfg=dict(
         type='Kaiming', a=0.1, distribution='uniform', layer='Conv2d'))
+randomness = dict(seed=0, diff_rank_seed=True)
