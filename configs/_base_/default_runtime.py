@@ -1,13 +1,5 @@
 default_scope = 'mmflow'
 
-default_hooks = dict(
-    timer=dict(type='IterTimerHook'),
-    logger=dict(type='LoggerHook', interval=50),
-    param_scheduler=dict(type='ParamSchedulerHook'),
-    checkpoint=dict(type='CheckpointHook', interval=100000, by_epoch=False),
-    sampler_seed=dict(type='DistSamplerSeedHook'),
-    visualization=dict(type='FlowVisualizationHook'))
-
 env_cfg = dict(
     cudnn_benchmark=False,
     mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0),

@@ -1,29 +1,16 @@
 _base_ = [
     '../_base_/models/gma/gma_p-only.py',
     '../_base_/datasets/flyingthings3d_raft_400x720.py',
-    '../_base_/default_runtime.py'
+    '../_base_/schedules/gma_120k.py', '../_base_/default_runtime.py'
 ]
 
 model = dict(freeze_bn=False, test_cfg=dict(iters=32))
 
-optimizer = dict(
-    type='AdamW',
-    lr=0.000125,
-    betas=(0.9, 0.999),
-    eps=1e-08,
-    weight_decay=0.00001,
-    amsgrad=False)
-optimizer_config = dict(grad_clip=dict(max_norm=1.))
-param_scheduler = dict(
-    policy='OneCycleLR',
-    max_lr=0.000125,
-    total_steps=120100,
-    pct_start=0.05,
-    anneal_strategy='linear')
-
-runner = dict(type='IterBasedRunner', max_iters=120000)
-checkpoint_config = dict(by_epoch=False, interval=10000)
-evaluation = dict(interval=10000, metric='EPE')
+lr = 0.000125
+optim_wrapper = dict(optimizer=dict(lr=lr))
+param_scheduler = dict(eta_max=lr)
+val_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiValLoop')
 
 # Train on FlyingChairs and finetune on FlyingThings3D
 load_from = 'https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_flyingchairs_368x496.pth'  # noqa

@@ -1,5 +1,6 @@
 _base_ = [
     '../_base_/datasets/kitti2012_kitti2015_320x896.py',
+    '../_base_/schedules/liteflownet_ft_500k.py',
     '../_base_/default_runtime.py'
 ]
 model = dict(
@@ -62,18 +63,6 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(),
 )
-
-optimizer = dict(type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
-# learning policy
-param_scheduler = dict(
-    type='MultiStepLR',
-    by_epoch=False,
-    gamma=0.5,
-    step=[200000, 300000, 400000])
-runner = dict(type='IterBasedRunner', max_iters=500000)
-checkpoint_config = dict(by_epoch=False, interval=50000)
-evaluation = dict(interval=50000, metric='EPE')
 
 # Train on FlyingChairs and FlyingThings3D_subset, and finetune on KITTI
 load_from = 'https://download.openmmlab.com/mmflow/liteflownet2/liteflownet2_ft_4x1_600k_sintel_kitti_320x768.pth'  # noqa

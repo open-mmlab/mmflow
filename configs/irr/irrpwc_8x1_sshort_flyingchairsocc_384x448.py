@@ -5,3 +5,5 @@ _base_ = [
 ]
 
 custom_hooks = [dict(type='EMAHook')]
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')

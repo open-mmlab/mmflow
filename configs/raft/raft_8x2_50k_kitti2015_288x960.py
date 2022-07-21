@@ -17,6 +17,5 @@ model = dict(
     freeze_bn=True,
     test_cfg=dict(iters=32))
 
-default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=5000))
 # Load model training on mixed datasets and finetune it on KITTI2015
 load_from = 'https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth'  # noqa

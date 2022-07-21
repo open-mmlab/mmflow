@@ -1,28 +1,27 @@
-_base_ = '../default_runtime.py'
-
-train_cfg = dict(by_epoch=False, max_iters=50000, val_interval=5000)
-val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiValLoop')
+train_cfg = dict(by_epoch=False, max_iters=120000, val_interval=10000)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
 
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=dict(
         type='AdamW',
-        lr=0.000125,
+        lr=0.00025,
         betas=(0.9, 0.999),
         eps=1e-08,
-        weight_decay=0.00001,
+        weight_decay=0.0001,
         amsgrad=False),
     clip_grad=dict(max_norm=1.))
 
 # learning policy
 param_scheduler = dict(
     type='OneCycleLR',
-    eta_max=0.000125,
-    total_steps=50100,
+    eta_max=0.00025,
+    total_steps=120100,
     pct_start=0.05,
-    anneal_strategy='linear')
+    anneal_strategy='linear',
+    by_epoch=False)
 
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),

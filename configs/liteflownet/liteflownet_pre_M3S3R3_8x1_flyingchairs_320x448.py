@@ -1,20 +1,15 @@
 _base_ = [
     '../_base_/models/liteflownet/liteflownet_pre_M3S3R3.py',
     '../_base_/datasets/flyingchairs_320x448.py',
+    '../_base_/schedules/liteflownet_pre_240k.py',
     '../_base_/default_runtime.py'
 ]
 
-optimizer = dict(type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
-# learning policy
-param_scheduler = dict(
-    type='MultiStepLR',
-    by_epoch=False,
-    gamma=0.5,
-    step=[120000, 160000, 200000])
-runner = dict(type='IterBasedRunner', max_iters=240000)
-checkpoint_config = dict(by_epoch=False, interval=40000)
-evaluation = dict(interval=40000, metric='EPE')
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999)))
+
 custom_hooks = [
     dict(
         type='LiteFlowNetStageLoadHook',
