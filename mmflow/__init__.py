@@ -5,6 +5,14 @@ from .version import __version__, short_version
 
 
 def digit_version(version_str):
+    """Digital version.
+
+    Args:
+        version_str (str): version string.
+
+    Returns:
+        list: The list of version number.
+    """
     digit_version = []
     for x in version_str.split('.'):
         if x.isdigit():

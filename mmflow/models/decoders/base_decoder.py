@@ -90,6 +90,17 @@ class BaseDecoder(BaseModule):
 
     def predict_by_feat(self, flow_results: Tensor,
                         batch_img_metas: List[dict]) -> SampleList:
+        """Predict list of obj:`FlowDataSample` from flow tensor.
+
+        Args:
+            flow_results (Tensor): Input flow tensor.
+            batch_img_metas (Sequence[dict]): meta data of image to revert
+                the flow to original ground truth size. Defaults to None.
+
+
+        Returns:
+            Sequence[FlowDataSample]: the reverted predicted optical flow.
+        """
         H, W = batch_img_metas[0]['img_shape'][:2]
         # resize flow to the size of images after augmentation.
         flow_results = F.interpolate(

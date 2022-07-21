@@ -54,11 +54,12 @@ class PWCModule(BaseModule):
         self._make_upsample_layer()
 
     def _make_predict_layer(self) -> torch.nn.Module:
+        """Make prediction layer."""
         self.predict_layer = nn.Conv2d(
             self.last_channels, 2, kernel_size=3, padding=1)
 
     def _make_upsample_layer(self) -> torch.nn.Module:
-
+        """Make upsample  layers."""
         if self.up_flow:
             self.upflow_layer = nn.ConvTranspose2d(
                 2, 2, kernel_size=4, stride=2, padding=1)

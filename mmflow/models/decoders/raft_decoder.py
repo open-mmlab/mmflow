@@ -132,6 +132,7 @@ class MotionEncoder(BaseModule):
     def _make_encoder(self, in_channel: int, channels: int, kernels: int,
                       paddings: int, conv_cfg: dict, norm_cfg: dict,
                       act_cfg: dict) -> None:
+        """Make encoder."""
         encoder = []
 
         for ch, k, p in zip(channels, kernels, paddings):
@@ -224,6 +225,7 @@ class ConvGRU(BaseModule):
         self.conv_q = nn.ModuleList(conv_q)
 
     def init_weights(self) -> None:
+        """Weights initialization."""
 
         def weights_init(m):
             classname = m.__class__.__name__
@@ -287,6 +289,7 @@ class XHead(BaseModule):
             raise ValueError(f'x must be \'flow\' or \'mask\', but got {x}')
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward Function."""
         x = self.layers(x)
         return self.predict_layer(x)
 
@@ -371,6 +374,11 @@ class RAFTDecoder(BaseDecoder):
         self.flow_div = 1.
 
     def make_gru_block(self):
+        """Make GRU block.
+
+        Returns:
+            Module: The GRU block.
+        """
         return ConvGRU(
             self.h_channels,
             self.encoder.out_channels[0] + 2 + self.cxt_channels,

@@ -49,6 +49,15 @@ def sync_random_seed(seed=None, device='cuda'):
 def unpack_flow_data_samples(
         batch_data_samples: Sequence[FlowDataSample]
 ) -> Tuple[Optional[Tensor]]:
+    """Unpack data sample list.
+
+    Args:
+        batch_data_samples (Sequence[FlowDataSample]): The list of data samples
+
+
+    Returns:
+        Tuple[Optional[Tensor]]: Tuple of ground truth tensor.
+    """
     batch_gt_flow_fw = []
     batch_gt_flow_bw = []
     batch_gt_occ_fw = []

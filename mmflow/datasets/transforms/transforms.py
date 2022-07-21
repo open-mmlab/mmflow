@@ -117,10 +117,24 @@ class SpacialTransform(BaseTransform):
 
     @cache_randomness
     def _do_spacial_transform(self) -> bool:
+        """Whether do spacial transform.
+
+        Returns:
+            bool: If True, images and flow will do spacial transform.
+        """
         return np.random.rand() < self.spacial_prob
 
     @cache_randomness
     def _random_scale(self, H, W):
+        """Sample image scale randomly.
+
+        Args:
+            H (int): The height of input images.
+            W (int): The width of input images
+
+        Returns:
+            Tuple(int): The new height, width and coordinates for crop box.
+        """
         min_scale = np.maximum((self.crop_size[0] + 8) / float(H),
                                (self.crop_size[1] + 8) / float(W))
         scale = 2**np.random.uniform(min_scale, self.max_scale)
@@ -140,6 +154,11 @@ class SpacialTransform(BaseTransform):
         return newH, newW, x0, y0
 
     def _dense_flow_transform(self, results):
+        """Transform for dense flow map.
+
+        Args:
+            results (dict): Result dict from :obj:`mmflow.BaseDataset`.
+        """
         # transform images
         for k in img_keys:
             if results.get(k) is not None:
@@ -190,6 +209,11 @@ class SpacialTransform(BaseTransform):
         return img_, scale_x, scale_y
 
     def _sparse_flow_transform(self, results):
+        """Transform for sparse flow map.
+
+        Args:
+            results (dict): Result dict from :obj:`mmflow.BaseDataset`.
+        """
         # sparse spacial_transform for kitti/hd1k dataset
         # transform images
         for k in img_keys:
@@ -373,6 +397,11 @@ class Erase(BaseTransform):
 
     @cache_randomness
     def _do_erase(self):
+        """Whether do erase transform.
+
+        Returns:
+            bool: If True, do this transform.
+        """
         return np.random.rand() < self.prob
 
     def transform(self, results: dict) -> dict:

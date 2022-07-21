@@ -162,6 +162,7 @@ class BasicEncoder(BaseModule):
                     stride: int,
                     dilation: int,
                     kernel_size: int = 3) -> torch.nn.Module:
+        """Make basic block."""
         return BasicConvBlock(
             in_channels=in_channels,
             out_channels=out_channel,

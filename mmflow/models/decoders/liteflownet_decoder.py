@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import math
-from typing import Dict, List, Optional, Sequence, Union
+from typing import Dict, Optional, Sequence, Union
 
 import torch
 import torch.nn as nn
@@ -696,22 +696,6 @@ class NetE(BaseDecoder):
 
         flow_results = flow_pred[self.end_level]
         return self.predict_by_feat(flow_results, batch_img_metas)
-
-    def predict_by_feat(self, flow_results: Tensor,
-                        batch_img_metas: List[dict]) -> SampleList:
-        H, W = batch_img_metas[0]['img_shape'][:2]
-        # resize flow to the size of images after augmentation.
-        flow_results = F.interpolate(
-            flow_results, size=(H, W), mode='bilinear', align_corners=False)
-
-        flow_results = flow_results * self.flow_div
-
-        # unravel batch dim,
-        flow_results = list(flow_results)
-        results = [dict(flow_fw=f) for f in flow_results]
-
-        return self.postprocess_result(
-            results, batch_img_metas=batch_img_metas)
 
     def loss_by_feat(self, flow_pred: TensorDict,
                      batch_data_samples: SampleList) -> TensorDict:

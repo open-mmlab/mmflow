@@ -245,7 +245,7 @@ class FlowNet2(FlowEstimator):
     def _forward(self,
                  batch_inputs: torch.Tensor,
                  patch_data_samples: OptSampleList = None) -> TensorDict:
-
+        """Forward function."""
         return self.flownet_fusion(
             self.extract_feat(batch_inputs), patch_data_samples, mode='tensor')
 

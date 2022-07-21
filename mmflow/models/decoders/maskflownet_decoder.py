@@ -248,7 +248,7 @@ class MaskModule(PWCModule):
         super().__init__(*args, **kwargs)
 
     def _make_predict_layer(self) -> None:
-
+        """Make prediction layer."""
         self.predict_flow = nn.Conv2d(
             self.last_channels, 2, kernel_size=3, padding=1)
 
@@ -257,6 +257,7 @@ class MaskModule(PWCModule):
                 self.last_channels, 1, kernel_size=3, padding=1)
 
     def _make_upsample_layer(self) -> None:
+        """Make upsample layer."""
         if self.up_flow:
             self.upfeat_layer = nn.Sequential(
                 nn.ConvTranspose2d(
@@ -273,7 +274,7 @@ class MaskModule(PWCModule):
 
         Args:
             x (Tensor): The input feature.
-            upflow (Tensor): The upsampled optcal flow from the last level.
+            upflow (Tensor): The upsampled optical flow from the last level.
 
         Returns:
             Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]: The
