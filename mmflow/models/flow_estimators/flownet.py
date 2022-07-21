@@ -18,6 +18,14 @@ class FlowNetS(PWCNet):
         super().__init__(*args, **kwargs)
 
     def extract_feat(self, imgs: Tensor) -> TensorDict:
+        """Extract feature.
+
+        Args:
+            imgs (Tensor): Input images.
+
+        Returns:
+            TensorDict: The dict of tensor.
+        """
         return self.encoder(imgs)
 
     def loss(self, batch_inputs: Tensor,

@@ -54,7 +54,7 @@ c. 安装 MMCV，我们推荐按照如下方式安装预编译的 MMCV
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/{cu_version}/{torch_version}/index.html
 ```
 
-请按照 CUDA 和 Pytorch 的版本 替换链接中的 ``{cu_version}`` and ``{torch_version}``， 例如，当环境中已安装 CUDA 10.2 和 PyTorch 1.10.0 时安装最新版本的 ``mmcv-full``，可以使用以下命令：
+请按照 CUDA 和 Pytorch 的版本 替换链接中的 `{cu_version}` and `{torch_version}`， 例如，当环境中已安装 CUDA 10.2 和 PyTorch 1.10.0 时安装最新版本的 `mmcv-full`，可以使用以下命令：
 
 ```shell
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.10.0/index.html

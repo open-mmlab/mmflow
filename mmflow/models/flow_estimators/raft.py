@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch import Tensor
 
 from mmflow.registry import MODELS
-from mmflow.utils import OptSampleList, SampleList, TensorDict
+from mmflow.utils import OptSampleList, SampleList, TensorDict, TensorList
 from ..builder import build_encoder
 from .pwcnet import PWCNet
 
@@ -50,6 +50,7 @@ class RAFT(PWCNet):
             self.freeze_bn()
 
     def freeze_bn(self) -> None:
+        """Set batch normalization layer evaluation mode."""
         for m in self.modules():
             if isinstance(m, nn.BatchNorm2d):
                 m.eval()
@@ -120,7 +121,19 @@ class RAFT(PWCNet):
     def _forward(self,
                  batch_inputs: Tensor,
                  batch_data_samples: OptSampleList = None,
-                 flow_init=None) -> TensorDict:
+                 flow_init=None) -> TensorList:
+        """_summary_
+
+        Args:
+            batch_inputs (torch.Tensor): The input tensor with shape
+                (N, C, ...) in general.
+            batch_data_samples (list[:obj:`FlowDataSample`], optional): The
+                annotation data of every samples. Defaults to None.
+            flow_init (Tensor, optional): The initialized flow when warm start.
+                Default to None.
+        Returns:
+            TensorList: The list of tensor.
+        """
         feat1, feat2, h_feat, cxt_feat = self.extract_feat(batch_inputs)
         B, _, H, W = feat1.shape
 

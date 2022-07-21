@@ -10,6 +10,17 @@ from .utils import end_point_error_map
 
 @METRICS.register_module()
 class FlowOutliers(BaseMetric):
+    """Optical flow outliers metric.
+
+    Args:
+        collect_device (str): Device name used for collecting results from
+            different ranks during distributed training. Must be 'cpu' or
+            'gpu'. Defaults to 'cpu'.
+        prefix (str, optional): The prefix that will be added in the metric
+            names to disambiguate homonymous metrics of different evaluators.
+            If prefix is not provided in the argument, self.default_prefix
+            will be used instead. Default: None
+    """
 
     def __init__(self,
                  collect_device: str = 'cpu',
@@ -18,6 +29,15 @@ class FlowOutliers(BaseMetric):
 
     def process(self, data_batch: Sequence[dict],
                 predictions: Sequence[dict]) -> None:
+        """Process one batch of data samples and predictions. The processed
+        results should be stored in ``self.results``, which will be used to
+        compute the metrics when all batches have been processed.
+
+        Args:
+            data_batch (Sequence[dict]): A batch of data from the dataloader.
+            predictions (Sequence[dict]): A batch of outputs from
+                the model.
+        """
         gt_flow_list = []
         pred_flow_list = []
         gt_valid_list = []
