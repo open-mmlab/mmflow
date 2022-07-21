@@ -107,7 +107,7 @@ jobs:
           command: |
             docker exec mmflow pip install -e /mmengine
             docker exec mmflow pip install << parameters.mmcv >>
-            docker exec mmflow pip install -r requirements.txt
+            docker exec mmflow python -m pip install -r requirements/tests.txt -r requirements/optional.txt
       - run:
           name: Build and install
           command: |
