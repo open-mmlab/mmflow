@@ -20,11 +20,9 @@ model = dict(
     test_cfg=dict(iters=32))
 
 optim_wrapper = dict(optimizer=dict(lr=0.000125, weight_decay=0.00001))
-
 param_scheduler = dict(eta_max=0.000125)
-
-default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=10000))
-
+val_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiValLoop')
 # Train on FlyingChairs and FlyingThings3D, and finetune on
 # and Sintel, KITTI2015 and HD1K
 load_from = 'https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth'  # noqa

@@ -22,3 +22,11 @@ param_scheduler = dict(
     pct_start=0.05,
     anneal_strategy='linear',
     by_epoch=False)
+
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),
+    logger=dict(type='LoggerHook', interval=50),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    checkpoint=dict(type='CheckpointHook', interval=10000, by_epoch=False),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    visualization=dict(type='FlowVisualizationHook'))
