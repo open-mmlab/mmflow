@@ -58,14 +58,14 @@ sintel_clean_test = dict(
     type='Sintel',
     pipeline=test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='clean')
 
 sintel_final_test = dict(
     type='Sintel',
     pipeline=test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='final')
 
 train_dataloader = dict(

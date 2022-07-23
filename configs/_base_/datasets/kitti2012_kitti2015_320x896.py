@@ -49,7 +49,7 @@ kitti2015_val_test = dict(
     type='KITTI2015',
     data_root='data/kitti2015',
     pipeline=test_pipeline,
-    test_mode=True)
+    test_mode=False)
 
 kitti2012_train = dict(
     type='KITTI2012',
@@ -61,7 +61,7 @@ kitti2012_val_test = dict(
     type='KITTI2012',
     data_root='data/kitti2012',
     pipeline=test_pipeline,
-    test_mode=True)
+    test_mode=False)
 
 train_dataloader = dict(
     batch_size=1,

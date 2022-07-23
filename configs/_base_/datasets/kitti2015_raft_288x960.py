@@ -40,7 +40,7 @@ kitti2015_val_test = dict(
     type='KITTI2015',
     data_root='data/kitti2015',
     pipeline=kitti_test_pipeline,
-    test_mode=True)
+    test_mode=False)
 
 train_dataloader = dict(
     batch_size=2,

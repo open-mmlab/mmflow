@@ -61,14 +61,14 @@ test_data_cleanpass = dict(
     type=test_dataset_type,
     data_root=test_data_root,
     pipeline=test_pipeline,
-    test_mode=True,
+    test_mode=False,
     pass_style='clean')
 
 test_data_finalpass = dict(
     type=test_dataset_type,
     data_root=test_data_root,
     pipeline=test_pipeline,
-    test_mode=True,
+    test_mode=False,
     pass_style='final')
 
 train_dataloader = dict(
