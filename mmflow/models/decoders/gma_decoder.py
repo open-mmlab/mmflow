@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import torch
 import torch.nn as nn
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS

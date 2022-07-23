@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn.bricks.conv_module import ConvModule
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.data import FlowDataSample

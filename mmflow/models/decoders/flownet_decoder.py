@@ -4,7 +4,7 @@ from typing import Dict, Optional, Sequence, Tuple, Union
 import torch
 import torch.nn as nn
 from mmcv.cnn import build_activation_layer, build_norm_layer
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS

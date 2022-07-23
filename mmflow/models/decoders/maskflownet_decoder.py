@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn.bricks.activation import build_activation_layer
 from mmcv.ops import DeformConv2d
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS
