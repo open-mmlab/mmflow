@@ -3,7 +3,7 @@ from typing import Dict, Optional, Sequence, Tuple
 
 import torch
 import torch.nn as nn
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 from mmflow.registry import MODELS
 from mmflow.utils import (OptMultiConfig, SampleList, TensorDict,

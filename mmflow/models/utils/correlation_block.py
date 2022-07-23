@@ -3,7 +3,7 @@ from math import sqrt
 
 import torch
 from mmcv.cnn import build_activation_layer
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 from mmflow.models import build_operators
 
