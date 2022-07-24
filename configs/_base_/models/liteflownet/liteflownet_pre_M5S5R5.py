@@ -1,6 +1,6 @@
 model = dict(
     type='LiteFlowNet',
-    data_preprocessors=dict(
+    data_preprocessor=dict(
         type='FlowDataPreprocessor',
         mean=[0., 0., 0.],
         std=[255., 255., 255.],
