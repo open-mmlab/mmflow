@@ -62,15 +62,15 @@ class BaseDecoder(BaseModule):
         data_samples = []
         for result, img_meta in zip(results, batch_img_metas):
             ori_H, ori_W = img_meta['ori_shape']
-
             pad = img_meta.get('pad', None)
             w_scale, h_scale = img_meta.get('scale_factor', (None, None))
             data_sample = FlowDataSample(**{'metainfo': img_meta})
             for key, f in result.items():
                 if f is not None:
+                    # shape is 2, H, W
                     H, W = f.shape[1:]
                     if pad is not None:
-                        f = f[pad[0][0]:(H - pad[0][1]),
+                        f = f[:, pad[0][0]:(H - pad[0][1]),
                               pad[1][0]:(W - pad[1][1])]
 
                     elif (w_scale is not None and h_scale is not None):
