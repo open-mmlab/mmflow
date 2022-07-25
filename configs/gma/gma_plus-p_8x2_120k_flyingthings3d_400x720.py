@@ -10,7 +10,7 @@ lr = 0.000125
 optim_wrapper = dict(optimizer=dict(lr=lr))
 param_scheduler = dict(eta_max=lr)
 val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiTestLoop')
 
 # Train on FlyingChairs and finetune on FlyingThings3D
 load_from = 'https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_flyingchairs_368x496.pth'  # noqa

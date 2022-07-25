@@ -1,7 +1,7 @@
 # training schedule for pwc-net_ft schedule
 train_cfg = dict(by_epoch=False, max_iters=300000, val_interval=50000)
 val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiTestLoop')
 
 # optimizer
 optimizer = dict(type='Adam', lr=3e-5, weight_decay=0.0004, betas=(0.9, 0.999))

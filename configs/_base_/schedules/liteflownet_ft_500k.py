@@ -1,7 +1,7 @@
 # training schedule for liteflownet_ft 500k schedule
 train_cfg = dict(by_epoch=False, max_iters=500000, val_interval=50000)
 val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiTestLoop')
 
 # optimizer
 optim_wrapper = dict(
