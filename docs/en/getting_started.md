@@ -98,11 +98,13 @@ python tools/test.py ${CONFIG_FILE} ${CHECKPOINT_FILE} [optional arguments]
 
 Optional arguments:
 
-- `--out_dir`: Directory to save the output results. If not specified, the flow files will not be saved.
-- `--fuse-conv-bn`: Whether to fuse conv and bn, this will slightly increase the inference speed.
+- `--work_dir`: Directory to save the file containing evaluation metrics. If not specified, the file will use config filename as default work_dir.
+- `--show`: Whether to show prediction results.
 - `--show_dir`: Directory to save the visualized flow maps. If not specified, the flow maps will not be saved.
-- `--eval`: Evaluation metrics, e.g., "EPE".
+- `--wait-time`: The interval of show(s). Default to 2.
 - `--cfg-option`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
+- `--launcher`: Items for distributed job initialization launcher. Allowed choices are `none`, `pytorch`, `slurm`, `mpi`. Especially, if set to none, it will test in a non-distributed mode.
+- `--local_rank`: ID for local rank. If not specified, it will be set to 0.
   For example, '--cfg-option model.encoder.in_channels=6'.
 
 Examples:
@@ -113,7 +115,7 @@ Test PWC-Net on Sintel clean and final sub-datasets without saving predicted flo
 
 ```shell
 python tools/test.py configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py \
-    checkpoints/pwcnet_8x1_sfine_sintel_384x768.pth --eval EPE
+    checkpoints/pwcnet_8x1_sfine_sintel_384x768.pth
 ```
 
 ## Train a model
@@ -128,17 +130,11 @@ python tools/train.py ${CONFIG_FILE} [optional arguments]
 Optional arguments:
 
 - `--work-dir`: Override the working directory specified in the config file.
-- `--load-from`: The checkpoint file to load weights from.
-- `--resume-from`: Resume from a previous checkpoint file.
-- `--no-validate`: Whether not to evaluate the checkpoint during training.
-- `--seed`: Seed id for random state in python, numpy and pytorch to generate random numbers.
-- `--deterministic`: If specified, it will set deterministic options for CUDNN backend.
+- `--amp`: Whether to use automatic-mixed-precision training. Default to False.
 - `--cfg-options`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
   For example, '--cfg-option model.encoder.in_channels=6'.
-
-Difference between `resume-from` and `load-from`:
-`resume-from` loads both the model weights and optimizer status, and the epoch/iter is also inherited from the specified checkpoint. It is usually used for resuming the training process that is interrupted accidentally.
-`load-from` only loads the model weights and the training epoch/iter starts from 0. It is usually used for finetuning.
+- `--launcher`: Items for distributed job initialization launcher. Allowed choices are `none`, `pytorch`, `slurm`, `mpi`. Especially, if set to none, it will test in a non-distributed mode.
+- `--local_rank`: ID for local rank. If not specified, it will be set to 0.
 
 Here is an example to train PWC-Net.
 
