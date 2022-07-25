@@ -122,7 +122,8 @@ class PackFlowInputs(BaseTransform):
     def __init__(
         self,
         meta_keys=('img1_path', 'img2_path', 'ori_shape', 'img_shape',
-                   'scale_factor', 'pad_shape', 'flip', 'flip_direction')
+                   'scale_factor', 'pad', 'pad_shape', 'flip',
+                   'flip_direction')
     ) -> None:
 
         self.meta_keys = meta_keys
