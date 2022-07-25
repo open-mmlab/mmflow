@@ -115,7 +115,7 @@ Test PWC-Net on Sintel clean and final sub-datasets without saving predicted flo
 
 ```shell
 python tools/test.py configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py \
-    checkpoints/pwcnet_8x1_sfine_sintel_384x768.pth --eval EPE
+    checkpoints/pwcnet_8x1_sfine_sintel_384x768.pth
 ```
 
 ## Train a model
