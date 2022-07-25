@@ -1,7 +1,7 @@
 # training schedule for maskflownet_ft schedule
 train_cfg = dict(by_epoch=False, max_iters=1000000, val_interval=50000)
 val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiValLoop')
+test_cfg = dict(type='MultiTestLoop')
 
 # optimizer
 optimizer_config = dict(
