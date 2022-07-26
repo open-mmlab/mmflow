@@ -8,6 +8,7 @@ _base_ = [
 model = dict(
     decoder=dict(
         flow_loss=dict(
+            _delete_=True,
             type='MultiLevelCharbonnierLoss',
             weights=dict(
                 level6=0.32,
