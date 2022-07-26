@@ -122,7 +122,7 @@ kitti2012_train = dict(
     type='KITTI2012',
     data_root='data/kitti2012',
     pipeline=sparse_train_pipeline,
-    test_mode=False),
+    test_mode=False)
 
 kitti2012_val_test = dict(
     type='KITTI2012',
