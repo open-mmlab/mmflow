@@ -7,6 +7,7 @@ _base_ = [
 model = dict(
     decoder=dict(
         flow_loss=dict(
+            _delete_=True,
             type='MultiLevelCharbonnierLoss',
             resize_flow='upsample',
             weights=dict(
