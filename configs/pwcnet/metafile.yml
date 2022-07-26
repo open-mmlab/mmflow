@@ -114,7 +114,7 @@ Models:
 
   - Name: pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768
     In Collection: PWC-Net
-    Config: configs/pwcnet/.py
+    Config: configs/pwcnet/pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768.py
     Metadata:
       Training Data:
         - Sintel
