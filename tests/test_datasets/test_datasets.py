@@ -262,8 +262,7 @@ class TestSintel:
             train_dataset, test_dataset = self._load_annotation_file()
         else:
             train_dataset, test_dataset = self._load_path_parsing()
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
+
         for dataset in (train_dataset, test_dataset):
             assert len(dataset) == 2
             # assert dataset.metainfo['pass_style'] == self.pass_style
