@@ -137,7 +137,7 @@ class SpacialTransform(BaseTransform):
         """
         min_scale = np.maximum((self.crop_size[0] + 8) / float(H),
                                (self.crop_size[1] + 8) / float(W))
-        scale = 2**np.random.uniform(min_scale, self.max_scale)
+        scale = 2**np.random.uniform(self.min_scale, self.max_scale)
         scale_x = scale
         scale_y = scale
         if np.random.rand() < self.stretch_prob:
