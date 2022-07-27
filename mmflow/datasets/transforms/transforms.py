@@ -122,9 +122,7 @@ class SpacialTransform(BaseTransform):
         Returns:
             bool: If True, images and flow will do spacial transform.
         """
-        prob = np.random.rand()
-        print(prob)
-        return prob < self.spacial_prob
+        return np.random.rand() < self.spacial_prob
 
     @cache_randomness
     def _random_scale(self, H, W):
