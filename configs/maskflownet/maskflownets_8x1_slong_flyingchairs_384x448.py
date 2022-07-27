@@ -4,6 +4,7 @@ _base_ = [
     '../_base_/schedules/schedule_s_long.py', '../_base_/default_runtime.py'
 ]
 
-optimizer = dict(type='Adam', lr=0.0001, weight_decay=0., betas=(0.9, 0.999))
-optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
-custom_hooks = [dict(type='SyncBuffersHook')]
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=0.0001, weight_decay=0., betas=(0.9, 0.999)))
