@@ -662,8 +662,6 @@ class RandomFlip(BaseTransform):
             dict: Flipped results, 'flip', 'flip_direction' keys are added into
                 result dict.
         """
-        print(results['img1'].sum(), results['img2'].sum())
-
         if self.do_flip():
             self._flip(results)
             if 'flip' in results and 'flip_direction' in results:
@@ -679,7 +677,6 @@ class RandomFlip(BaseTransform):
             else:
                 results['flip'] = [False]
                 results['flip_direction'] = [None]
-        print(results['img1'].sum(), results['img2'].sum())
 
         return results
 
@@ -905,7 +902,6 @@ class RandomCrop(BaseTransform):
         """
         img_shape = copy.deepcopy(results['img_shape'])
         crop_bbox = self.get_crop_bbox(img_shape)
-        print(results['img1'].sum(), results['img2'].sum())
 
         # crop imgs
         for k in img_keys:
@@ -929,7 +925,6 @@ class RandomCrop(BaseTransform):
 
         results['img_shape'] = results['img1'].shape
         results['crop_bbox'] = crop_bbox
-        print(crop_bbox, results['img1'].sum(), results['img2'].sum())
 
         return results
 
@@ -1001,7 +996,7 @@ class ColorJitter(BaseTransform):
             self._saturation[0], self._saturation[1])
         h = None if self._hue is None else np.random.uniform(
             self._hue[0], self._hue[1])
-        print(fn_idx, b, c, s, h)
+
         return fn_idx, b, c, s, h
 
     def _check_input(self,
@@ -1065,9 +1060,8 @@ class ColorJitter(BaseTransform):
         Returns:
             bool: Whether do color jitter for images asymmetrically.
         """
-        asym = np.random.rand()
-        print(asym)
-        return asym < self.asymmetric_prob
+
+        return np.random.rand() < self.asymmetric_prob
 
     def transform(self, results):
         """Call function to perform photometric distortion on images.
