@@ -30,10 +30,10 @@ class AttentionLayer(BaseModule):
                 nn.init.xavier_uniform_(p)
 
     def forward(self, feature1, position, value):
-        """Forward function for Attention1D.
-        Key: feature2 + position
-        Value: feature2
-        Query: self attention feature1 + position
+        """Forward function for AttentionLayer.
+        Key: feature1 + position
+        Value: feature1
+        Query: feature1 + position
 
                 Args:
                     feature1 (Tensor): The input feature1.
