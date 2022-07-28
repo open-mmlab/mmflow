@@ -4,8 +4,8 @@ import os.path as osp
 import numpy as np
 import pytest
 
-from mmflow.datasets import (HD1K, KITTI2012, KITTI2015, FlyingChairs,
-                             FlyingChairsOcc, FlyingThings3D,
+from mmflow.datasets import (HD1K, KITTI2012, KITTI2015, ChairsSDHom,
+                             FlyingChairs, FlyingChairsOcc, FlyingThings3D,
                              FlyingThings3DSubset, Sintel)
 
 
@@ -487,3 +487,55 @@ class TestHD1K:
         dataset_cfg = dict(data_root=self.data_root, test_mode=False)
 
         return HD1K(**dataset_cfg)
+
+
+class TestChairsSDHom:
+    data_root = osp.join(osp.dirname(__file__), '../data/pseudo_chairssdhom')
+
+    @pytest.mark.parametrize('init_function', ('ann_file', 'path_parse'))
+    @pytest.mark.parametrize('metainfo', ('empty', 'valid'))
+    def test_load_data_list(self, init_function, metainfo):
+        if init_function == 'ann_file':
+            train_dataset, test_dataset = self._load_annotation_file()
+        else:
+            if metainfo == 'empty':
+                train_dataset, test_dataset = self._load_path_parsing()
+            else:
+                local_metainfo = dict(dataset='ChairsSDHom')
+                train_dataset, test_dataset = self._load_path_parsing(
+                    local_metainfo)
+
+        assert len(train_dataset) == 1
+        assert len(test_dataset) == 1
+        assert train_dataset.metainfo['subset'] == 'train'
+        assert test_dataset.metainfo['subset'] == 'test'
+
+        # Test if the filenames of img1, img2 and flow are the same.
+        for dataset in [train_dataset, test_dataset]:
+            for data_info in dataset:
+                img1_path = data_info['img1_path']
+                img2_path = data_info['img2_path']
+                flow_fw_path = data_info['flow_fw_path']
+                assert int(osp.splitext(osp.basename(img1_path))[0]) \
+                       == int(osp.splitext(osp.basename(img2_path))[0])\
+                       == int(osp.splitext(osp.basename(flow_fw_path))[0])
+
+    def _load_annotation_file(self):
+        train_ann_file = osp.join(self.data_root, 'train.json')
+        test_ann_file = osp.join(self.data_root, 'test.json')
+        train_cfg = dict(data_root=self.data_root, ann_file=train_ann_file)
+        train_dataset = ChairsSDHom(**train_cfg)
+
+        test_cfg = dict(
+            test_mode=True, data_root=self.data_root, ann_file=test_ann_file)
+        test_dataset = ChairsSDHom(**test_cfg)
+        return train_dataset, test_dataset
+
+    def _load_path_parsing(self, metainfo=None):
+        train_cfg = dict(data_root=self.data_root, metainfo=metainfo)
+        train_dataset = ChairsSDHom(**train_cfg)
+
+        test_cfg = dict(
+            test_mode=True, data_root=self.data_root, metainfo=metainfo)
+        test_dataset = ChairsSDHom(**test_cfg)
+        return train_dataset, test_dataset

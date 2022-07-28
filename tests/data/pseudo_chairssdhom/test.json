@@ -1,0 +1,13 @@
+{
+    "metainfo": {
+        "dataset": "ChairsSDHom",
+        "subset": "test"
+    },
+    "data_list": [
+        {
+            "img1_path": "data/ChairsSDHom/data/test/t0/00000.png",
+            "img2_path": "data/ChairsSDHom/data/test/t1/00000.png",
+            "flow_fw_path": "data/ChairsSDHom/data/test/flow/00000.pfm"
+        }
+    ]
+}
