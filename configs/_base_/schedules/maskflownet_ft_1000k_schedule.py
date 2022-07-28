@@ -18,3 +18,11 @@ param_scheduler = dict(
     milestone_iters=[0, 200000, 400000, 600000, 800000],
     steps=[[100000, 150000], [300000, 350000], [500000, 550000],
            [700000, 750000], [850000, 875000, 900000, 950000, 975000]])
+
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),
+    logger=dict(type='LoggerHook', interval=50),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    checkpoint=dict(type='CheckpointHook', interval=50000, by_epoch=False),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    visualization=dict(type='FlowVisualizationHook'))
