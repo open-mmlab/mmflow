@@ -12,7 +12,7 @@ def test_attention():
     #  test cross attention y
     attn_y = Attention1D(in_channels=3, y_attention=True)
     # test x's self attention first
-    selfattn_x, _ = attn_y.self_attn(feature1, None, None)
+    selfattn_x, _ = attn_y.self_attn(feature1, feature1, None, None)
     assert selfattn_x.size() == (b, c, h, w)
     feature2_y, attention_y = attn_y.forward(feature1, feature2, None, None)
     assert feature2_y.size() == (b, c, h, w)
@@ -21,7 +21,7 @@ def test_attention():
     #  test cross attention x
     attn_x = Attention1D(in_channels=3, y_attention=False)
     # test y's self attention first
-    selfattn_y, _ = attn_x.self_attn(feature1, None, None)
+    selfattn_y, _ = attn_x.self_attn(feature1, feature1, None, None)
     assert selfattn_y.size() == (b, c, h, w)
     feature2_x, attention_x = attn_x.forward(feature1, feature2, None, None)
     assert feature2_x.size() == (b, c, h, w)
