@@ -47,7 +47,6 @@ flyingthings3d_subset_train = dict(
     pipeline=train_pipeline,
     data_root='data/FlyingThings3D_subset',
     test_mode=False,
-    direction='forward',
     scene='left')
 
 chairssdHom_train = dict(
@@ -60,14 +59,14 @@ test_data_cleanpass = dict(
     type=test_dataset_type,
     data_root=test_data_root,
     pipeline=test_pipeline,
-    test_mode=True,
+    test_mode=False,
     pass_style='clean')
 
 test_data_finalpass = dict(
     type=test_dataset_type,
     data_root=test_data_root,
     pipeline=test_pipeline,
-    test_mode=True,
+    test_mode=False,
     pass_style='final')
 
 train_dataloader = dict(
