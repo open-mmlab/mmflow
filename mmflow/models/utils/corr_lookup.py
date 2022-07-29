@@ -4,8 +4,8 @@ from typing import Sequence
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from mmengine.runner import autocast
 from torch import Tensor
-from torch.cuda.amp import autocast
 
 from mmflow.registry import MODELS
 

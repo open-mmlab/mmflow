@@ -4,7 +4,7 @@ from math import sqrt
 import torch
 from mmcv.cnn import build_activation_layer
 from mmengine.model import BaseModule
-from torch.cuda.amp import autocast
+from mmengine.runner import autocast
 
 from mmflow.models import build_operators
 
