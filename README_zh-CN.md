@@ -66,7 +66,7 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 最新的 v0.5.1 版本已经在 2022.07.29 发布:
 
-- 设置 MMCV 的最新版本为 1.7.0
+- 设置 MMCV 的最高版本小于 1.7.0
 - 更新 resources 中的 qq_group_qrcode 图片
 
 如果想了解更多版本更新细节和历史信息，请参考[更新日志](docs/en/changelog.md)。
