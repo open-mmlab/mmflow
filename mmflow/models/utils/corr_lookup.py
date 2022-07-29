@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
+from torch.cuda.amp import autocast
 
 from mmflow.registry import MODELS
 
@@ -65,7 +66,9 @@ def bilinear_sample(feat: Tensor,
         grid[:, :, :, 0] = grid[:, :, :, 0] * 2. / max(W - 1, 1) - 1.
         grid[:, :, :, 1] = grid[:, :, :, 1] * 2. / max(H - 1, 1) - 1.
 
-    return F.grid_sample(feat, grid, mode, padding_mode, align_corners)
+    with autocast(enabled=False):
+        return F.grid_sample(feat.float(), grid, mode, padding_mode,
+                             align_corners)
 
 
 @MODELS.register_module()

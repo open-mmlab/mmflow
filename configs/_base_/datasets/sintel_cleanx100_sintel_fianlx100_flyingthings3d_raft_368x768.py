@@ -58,13 +58,13 @@ sintel_clean_test = dict(
     type='Sintel',
     pipeline=sintel_test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='clean')
 sintel_final_test = dict(
     type='Sintel',
     pipeline=sintel_test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='final')
 
 # Flyingthings3d config
