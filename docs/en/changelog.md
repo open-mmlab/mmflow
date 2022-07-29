@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.1(07/29/2022)
+
+### Improvements
+
+- Set the maximum version of MMCV to 1.7.0 ([167](https://github.com/open-mmlab/mmflow/pull/167))
+- Update the qq_group_qrcode image in resources ([166](https://github.com/open-mmlab/mmflow/pull/166))
+
+### New Contributors
+
+- @Weepingchestnut made their first contribution in https://github.com/open-mmlab/mmflow/pull/166
+
 ## v0.5.0(07/01/2022)
 
 ### Highlight
