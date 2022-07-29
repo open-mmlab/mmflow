@@ -1,6 +1,3 @@
-img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
-
 crop_size = (368, 768)
 
 # Sintel config
