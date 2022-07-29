@@ -4,7 +4,7 @@ val_cfg = dict(type='MultiValLoop')
 test_cfg = dict(type='MultiTestLoop')
 
 # optimizer
-optimizer_config = dict(
+optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=dict(
         type='Adam', lr=5e-5, weight_decay=0.0004, betas=(0.9, 0.999)))
