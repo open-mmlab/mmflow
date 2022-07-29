@@ -1,6 +1,3 @@
-img_norm_cfg = dict(
-    mean=[127.5, 127.5, 127.5], std=[127.5, 127.5, 127.5], to_rgb=False)
-
 crop_size = (368, 768)
 
 # Sintel config
@@ -58,13 +55,13 @@ sintel_clean_test = dict(
     type='Sintel',
     pipeline=sintel_test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='clean')
 sintel_final_test = dict(
     type='Sintel',
     pipeline=sintel_test_pipeline,
     data_root='data/Sintel',
-    test_mode=True,
+    test_mode=False,
     pass_style='final')
 
 # Flyingthings3d config
