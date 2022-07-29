@@ -96,7 +96,7 @@ Models:
         Metrics:
           EPE: 1.50
           Fl-all: 5.27%
-    Weights: https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.pth
+    Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.pth
 
   - Name: gma_8x2_50k_kitti2015_288x960
     In Collection: GMA

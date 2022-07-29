@@ -74,7 +74,7 @@ Models:
         Dataset: Sintel final
         Metrics:
           EPE: 2.06
-    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.ckpt
+    Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.pth
 
   - Name: pwcnet_ft_4x1_300k_sintel_final_384x768
     In Collection: PWC-Net

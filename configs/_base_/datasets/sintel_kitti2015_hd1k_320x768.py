@@ -132,26 +132,40 @@ hd1k_train = dict(
     pipeline=hd1k_train_pipeline,
     test_mode=False),
 
-data = dict(
-    train_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=2,
-        drop_last=True,
-        sample_ratio=(0.5, 0.25, 0.25),
-        persistent_workers=True),
-    val_dataloader=dict(
-        samples_per_gpu=1,
-        workers_per_gpu=5,
-        shuffle=False,
-        persistent_workers=True),
-    test_dataloader=dict(samples_per_gpu=1, workers_per_gpu=5, shuffle=False),
-    train=[[sintel_clean_train, sintel_final_train], kitti2015_train,
-           hd1k_train],
-    val=dict(
+train_dataloader=dict(
+    batch_size=1,
+    num_workers=2,
+        sampler=dict(
+        type='MixedBatchDistributedSampler',
+        sample_ratio=[0.5, 0.25, 0.25],
+        shuffle=True),
+    drop_last=True,
+    persistent_workers=True,
+    datasets=dict(
         type='ConcatDataset',
-        datasets=[sintel_clean_test, sintel_final_test],
-        separate_eval=True),
-    test=dict(
-        type='ConcatDataset',
-        datasets=[sintel_clean_test, sintel_final_test],
-        separate_eval=True))
+        datasets=[[sintel_clean_train, sintel_final_train], kitti2015_train,
+        hd1k_train]))
+
+val_dataloader=[
+    dict(
+        batch_size=1,
+        num_workers=5,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=sintel_clean_test),
+    dict(
+        batch_size=1,
+        num_workers=5,
+        sampler=dict(type='DefaultSampler', shuffle=False),
+        drop_last=False,
+        persistent_workers=True,
+        dataset=sintel_final_test)
+]
+
+test_dataloader = val_dataloader
+val_evaluator = [
+    dict(type='EndPointError', prefix='clean'),
+    dict(type='EndPointError', prefix='final')
+]
+test_evaluator = val_evaluator
