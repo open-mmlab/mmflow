@@ -25,22 +25,23 @@ class AttentionLayer(BaseModule):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
 
-    def forward(self, feature1, feature2, position, value):
+    def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
+                position: torch.Tensor, value: torch.Tensor):
         """Forward function for AttentionLayer.
 
+        Query: feature1 + position
         Key: feature2 + position
         Value: feature2
-        Query: feature1 + position
 
         Args:
             feature1 (Tensor): The input feature1.
             feature2 (Tensor): The input feature2.
             position (Tensor): position encoding.
             value (Tensor): attention value.
-        Returns:
 
-            out (Tensor): attention layer output
-            attention (Tensor): attention of key and query
+        Returns:
+            Tensor: attention layer output
+            Tensor: attention of key and query
         """
         b, c, h, w = feature1.size()
 
@@ -72,9 +73,9 @@ class AttentionLayer(BaseModule):
 
         # the shape of output is [B, C, H, W]
         if self.y_attention:
-            out = out.permute(0, 3, 2, 1).contiguous()  # [B, C, H, W]
+            out = out.permute(0, 3, 2, 1).contiguous()
         else:
-            out = out.permute(0, 3, 1, 2).contiguous()  # [B, C, H, W]
+            out = out.permute(0, 3, 1, 2).contiguous()
 
         return out, attention
 
@@ -86,17 +87,23 @@ class Attention1D(BaseModule):
 
     Args:
         in_channels (int): Number of input channels.
-        y_attention (bool): Whether y axis's attention or not
+        y_attention (bool): Whether calculate y axis's attention or not
+        double_cross_attn (bool): Whether calculate self attention or not
     """
 
-    def __init__(self, in_channels: int, y_attention: bool = False):
-        super(Attention1D, self).__init__()
+    def __init__(self,
+                 in_channels: int,
+                 y_attention: bool = False,
+                 double_cross_attn: bool = True):
+        super().__init__()
         self.y_attention = y_attention
-
-        self.self_attn = AttentionLayer(in_channels, not y_attention)
+        self.double_cross_attn = double_cross_attn
+        if double_cross_attn:
+            self.self_attn = AttentionLayer(in_channels, not y_attention)
         self.cross_attn = AttentionLayer(in_channels, y_attention)
 
-    def forward(self, feature1, feature2, position, value):
+    def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
+                position: torch.Tensor, value: torch.Tensor):
         """Forward function for Attention1D.
 
         Args:
@@ -106,8 +113,9 @@ class Attention1D(BaseModule):
             value (Tensor): attention value.
 
         Returns:
-            out (Tensor): cross attention output
-            attention (Tensor):  cross attention of key and query
+            Tensor : cross attention output
+            Tensor : cross attention of key and query
         """
-        feature1 = self.self_attn(feature1, feature1, position, value)[0]
+        if self.double_cross_attn:
+            feature1 = self.self_attn(feature1, feature1, position, value)[0]
         return self.cross_attn(feature1, feature2, position, value)
