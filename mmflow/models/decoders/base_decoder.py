@@ -79,8 +79,8 @@ class BaseDecoder(BaseModule):
                             size=(ori_H, ori_W),
                             mode='bilinear',
                             align_corners=False).squeeze(0)
-                        f[:, :, 0] = f[:, :, 0] / w_scale
-                        f[:, :, 1] = f[:, :, 1] / h_scale
+                        f[0, :, :] = f[0, :, :] / w_scale
+                        f[1, :, :] = f[1, :, :] / h_scale
                 flow_data = PixelData(**{'data': f})
                 data_sample.set_data({'pred_' + key: flow_data})
 
