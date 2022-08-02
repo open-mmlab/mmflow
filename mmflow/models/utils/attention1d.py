@@ -3,7 +3,7 @@ from typing import Tuple
 
 import torch
 from mmcv.runner import BaseModule
-from torch import nn
+from torch import Tensor, nn
 
 
 class AttentionLayer(BaseModule):
@@ -26,9 +26,8 @@ class AttentionLayer(BaseModule):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
 
-    def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
-                position: torch.Tensor,
-                value: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, feature1: Tensor, feature2: Tensor, position: Tensor,
+                value: Tensor) -> Tuple[Tensor, Tensor]:
         """Forward function for AttentionLayer.
 
         Query: feature1 + position
@@ -42,7 +41,7 @@ class AttentionLayer(BaseModule):
             value (Tensor): attention value.
 
         Returns:
-            Tuple[torch.Tensor, torch.Tensor]: The output of attention layer
+            Tuple[Tensor, Tensor]: The output of attention layer
             and attention weights (scores).
         """
         b, c, h, w = feature1.size()
@@ -104,9 +103,8 @@ class Attention1D(BaseModule):
             self.self_attn = AttentionLayer(in_channels, not y_attention)
         self.cross_attn = AttentionLayer(in_channels, y_attention)
 
-    def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
-                position: torch.Tensor,
-                value: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, feature1: Tensor, feature2: Tensor, position: Tensor,
+                value: Tensor) -> Tuple[Tensor, Tensor]:
         """Forward function for Attention1D.
 
         Args:
@@ -116,7 +114,7 @@ class Attention1D(BaseModule):
             value (Tensor): attention value.
 
         Returns:
-            Tuple[torch.Tensor, torch.Tensor]: The output of attention layer
+            Tuple[Tensor, Tensor]: The output of attention layer
             and attention weights (scores).
         """
         if self.double_cross_attn:
