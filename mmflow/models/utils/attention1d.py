@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from typing import Tuple
 
 import torch
 from mmcv.runner import BaseModule
@@ -14,7 +15,7 @@ class AttentionLayer(BaseModule):
         y_attention (bool): Whether calculate y axis's attention or not.
     """
 
-    def __init__(self, in_channels: int, y_attention: bool = False):
+    def __init__(self, in_channels: int, y_attention: bool = False) -> None:
         super().__init__()
         self.y_attention = y_attention
 
@@ -26,7 +27,8 @@ class AttentionLayer(BaseModule):
                 nn.init.xavier_uniform_(p)
 
     def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
-                position: torch.Tensor, value: torch.Tensor):
+                position: torch.Tensor,
+                value: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Forward function for AttentionLayer.
 
         Query: feature1 + position
@@ -40,8 +42,8 @@ class AttentionLayer(BaseModule):
             value (Tensor): attention value.
 
         Returns:
-            Tensor: attention layer output
-            Tensor: attention of key and query
+            Tuple[torch.Tensor, torch.Tensor]: The output of attention layer
+            and attention weights (scores).
         """
         b, c, h, w = feature1.size()
 
@@ -67,9 +69,9 @@ class AttentionLayer(BaseModule):
 
         # the shape of attention is [B, W, H, H] or  [B, H, W, W]
         scores = torch.matmul(query, key) / scale_factor
-        attention = torch.softmax(scores, dim=-1)
+        scores = torch.softmax(scores, dim=-1)
 
-        out = torch.matmul(attention, value)
+        out = torch.matmul(scores, value)
 
         # the shape of output is [B, C, H, W]
         if self.y_attention:
@@ -77,7 +79,7 @@ class AttentionLayer(BaseModule):
         else:
             out = out.permute(0, 3, 1, 2).contiguous()
 
-        return out, attention
+        return out, scores
 
 
 class Attention1D(BaseModule):
@@ -94,7 +96,7 @@ class Attention1D(BaseModule):
     def __init__(self,
                  in_channels: int,
                  y_attention: bool = False,
-                 double_cross_attn: bool = True):
+                 double_cross_attn: bool = True) -> None:
         super().__init__()
         self.y_attention = y_attention
         self.double_cross_attn = double_cross_attn
@@ -103,7 +105,8 @@ class Attention1D(BaseModule):
         self.cross_attn = AttentionLayer(in_channels, y_attention)
 
     def forward(self, feature1: torch.Tensor, feature2: torch.Tensor,
-                position: torch.Tensor, value: torch.Tensor):
+                position: torch.Tensor,
+                value: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Forward function for Attention1D.
 
         Args:
@@ -113,8 +116,8 @@ class Attention1D(BaseModule):
             value (Tensor): attention value.
 
         Returns:
-            Tensor : cross attention output
-            Tensor : cross attention of key and query
+            Tuple[torch.Tensor, torch.Tensor]: The output of attention layer
+            and attention weights (scores).
         """
         if self.double_cross_attn:
             feature1 = self.self_attn(feature1, feature1, position, value)[0]
