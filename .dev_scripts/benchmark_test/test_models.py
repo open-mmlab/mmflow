@@ -2,6 +2,7 @@
 
 # This tool is used for benchmark-test.
 
+import argparse
 import datetime
 import glob
 import os
@@ -17,7 +18,6 @@ DOWNLOAD_DIR = osp.join(MMFlow_ROOT, 'work_dirs', 'download')
 LOG_DIR = osp.join(
     MMFlow_ROOT, 'work_dirs',
     'benchmark_test_' + datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
-PARTITION = 'mm_seg'
 IS_WINDOWS = (platform.system() == 'Windows')
 
 MODEL_TYPES = {
@@ -76,11 +76,12 @@ def find_available_port():
             port = 65535
 
 
-def slurm_test(info: dict, thread_id: int, allotted_port: int):
+def slurm_test(info: dict, partition: str, thread_id: int, allotted_port: int):
     """Slurm test.
 
     Args:
         info (dict): Test info from metafile.yml.
+        partition (str): The slurm partition name.
         thread_id (int): The id of thread.
         allotted_port (int): The id of allotted port.
     """
@@ -101,7 +102,7 @@ def slurm_test(info: dict, thread_id: int, allotted_port: int):
     env_cmd += f'TORCH_HOME={DOWNLOAD_DIR} MASTER_PORT={allotted_port} '
     env_cmd += 'GPUS=1 GPUS_PER_NODE=1'
     base_cmd = 'sh tools/slurm_test.sh'
-    task_cmd = f'{PARTITION} {basename}'
+    task_cmd = f'{partition} {basename}'
     out_file = osp.join(LOG_DIR, f'{thread_id:03d}_{basename}.log')
     cmd = f'{env_cmd} {base_cmd} {task_cmd} {config} {weights}' \
           f' > {out_file} 2>&1'
@@ -136,12 +137,14 @@ def py_test(info: dict):
     os.system(cmd)
 
 
-def test_models(meta_file: str, slurm_style: bool, available_ports):
+def test_models(meta_file: str, partition: str, use_slurm: bool,
+                available_ports):
     """Test all models in a metafile.
 
     Args:
         meta_file (str): The path of metafile.yml.
-        slurm_style (bool): Use slurm_test.sh if `slurm_style=True`.
+        partition (str): The slurm partition name.
+        use_slurm (bool): Use slurm_test.sh if `use_slurm=True`.
         available_ports: Available ports.
     """
 
@@ -160,11 +163,11 @@ def test_models(meta_file: str, slurm_style: bool, available_ports):
 
         for i in range(len(yaml_data['Models'])):
             info = yaml_data['Models'][i]
-            if slurm_style:
+            if use_slurm:
                 allotted_port = next(available_ports)
                 threading.Thread(
                     target=slurm_test,
-                    args=(info, thread_num, allotted_port)).start()
+                    args=(info, partition, thread_num, allotted_port)).start()
                 thread_num += 1
             else:
                 py_test(info)
@@ -175,6 +178,16 @@ def test_models(meta_file: str, slurm_style: bool, available_ports):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='MMFlow benchmark test')
+    parser.add_argument(
+        '--partition', default='mm_seg', help='slurm partition name')
+    parser.add_argument(
+        '--use-slurm',
+        action='store_true',
+        default=False,
+        help='use slurm for tests')
+    args = parser.parse_args()
+
     configs_root = osp.join(MMFlow_ROOT, 'configs')
     file_list = glob.glob(
         osp.join(configs_root, '**', '*metafile.yml'), recursive=True)
@@ -189,4 +202,4 @@ if __name__ == '__main__':
     thread_num = 0
     available_ports = find_available_port()
     for fn in file_list:
-        test_models(fn, True, available_ports)
+        test_models(fn, args.partition, args.use_slurm, available_ports)
