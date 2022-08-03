@@ -22,4 +22,4 @@ model = dict(
     test_cfg=dict(iters=32))
 
 # Load model training on mixed datasets and finetune it on KITTI2015s
-load_from = 'https://download.openmmlab.com/mmflow/gma/ gma_8x2_120k_mixed_368x768.pth'  # noqa
+load_from = 'https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.pth'  # noqa
