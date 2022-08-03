@@ -71,7 +71,7 @@ Models:
         Dataset: FlyingChairs
         Metrics:
           EPE: 1.71
-    Weights:
+    Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M3S3R3_8x1_flyingchairs_320x448.pth
 
   - Name: liteflownet_pre_M2S2R2_8x1_flyingchairs_320x448
     In Collection: LiteFlowNet

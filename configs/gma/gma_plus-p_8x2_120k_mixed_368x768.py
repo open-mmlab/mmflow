@@ -1,6 +1,7 @@
 _base_ = [
     '../_base_/models/gma/gma_plus-p.py',
     '../_base_/datasets/sintel_cleanx100_sintel_fianlx100_kitti2015x200_hd1kx5_flyingthings3d_raft_384x768.py',  # noqa
+    '../_base_/schedules/gma_120k.py',
     '../_base_/default_runtime.py'
 ]
 
