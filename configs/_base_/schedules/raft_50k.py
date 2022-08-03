@@ -1,8 +1,6 @@
-_base_ = '../default_runtime.py'
-
 train_cfg = dict(by_epoch=False, max_iters=50000, val_interval=5000)
-val_cfg = dict(type='MultiValLoop')
-test_cfg = dict(type='MultiTestLoop')
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
 
 # optimizer
 optim_wrapper = dict(

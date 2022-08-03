@@ -58,8 +58,8 @@ val_dataloader = dict(
     dataset=kitti2015_val_test)
 test_dataloader = val_dataloader
 
-val_evaluator = [[
+val_evaluator = [
     dict(type='EndPointError', prefix='KITTI2015_EPE'),
     dict(type='FlowOutliers', prefix='KITTI2015_Fl')
-]]
+]
 test_evaluator = val_evaluator
