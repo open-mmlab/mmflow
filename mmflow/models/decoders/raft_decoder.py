@@ -382,7 +382,7 @@ class RAFTDecoder(BaseDecoder):
 
         Args:
             flow (Tensor): The optical flow with the shape [N, 2, H/8, W/8].
-            mask (Tensor, optional): The leanable mask with shape
+            mask (Tensor, optional): The learnable mask with shape
                 [N, grid_size x scale x scale, H/8, H/8].
 
         Returns:
