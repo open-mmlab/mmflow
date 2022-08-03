@@ -132,6 +132,9 @@ hd1k_train = dict(
     pipeline=hd1k_train_pipeline,
     test_mode=False)
 
+sintel_train = dict(
+    type='ConcatDataset', datasets=[sintel_clean_train, sintel_final_train])
+
 train_dataloader = dict(
     batch_size=1,
     num_workers=2,
@@ -143,12 +146,7 @@ train_dataloader = dict(
     persistent_workers=True,
     dataset=dict(
         type='ConcatDataset',
-        datasets=[
-            dict(
-                type='ConcatDataset',
-                datasets=[sintel_clean_train, sintel_final_train]),
-            kitti2015_train, hd1k_train
-        ]))
+        datasets=[sintel_train, kitti2015_train, hd1k_train]))
 
 val_dataloader = [
     dict(
