@@ -223,7 +223,7 @@ class SpacialTransform(BaseTransform):
         results['img_shape'] = results['img1'].shape
 
         # transform flow_fw and valid
-        flow, valid = self._sparse_resize_crop(
+        flow, valid = self._sparse_flow_resize_crop(
             results['gt_flow_fw'],
             results['gt_valid_fw'],
             fx=scale_x,

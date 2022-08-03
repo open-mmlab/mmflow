@@ -130,23 +130,27 @@ hd1k_train = dict(
     type='HD1K',
     data_root='data/hd1k',
     pipeline=hd1k_train_pipeline,
-    test_mode=False),
+    test_mode=False)
 
-train_dataloader=dict(
+train_dataloader = dict(
     batch_size=1,
     num_workers=2,
-        sampler=dict(
+    sampler=dict(
         type='MixedBatchDistributedSampler',
         sample_ratio=[0.5, 0.25, 0.25],
         shuffle=True),
     drop_last=True,
     persistent_workers=True,
-    datasets=dict(
+    dataset=dict(
         type='ConcatDataset',
-        datasets=[[sintel_clean_train, sintel_final_train], kitti2015_train,
-        hd1k_train]))
+        datasets=[
+            dict(
+                type='ConcatDataset',
+                datasets=[sintel_clean_train, sintel_final_train]),
+            kitti2015_train, hd1k_train
+        ]))
 
-val_dataloader=[
+val_dataloader = [
     dict(
         batch_size=1,
         num_workers=5,
