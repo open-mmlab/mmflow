@@ -137,7 +137,8 @@ def py_test(info: dict):
     os.system(cmd)
 
 
-def test_models(meta_file: str, partition: str, use_slurm: bool, available_ports):
+def test_models(meta_file: str, partition: str, use_slurm: bool,
+                available_ports):
     """Test all models in a metafile.
 
     Args:
@@ -178,8 +179,13 @@ def test_models(meta_file: str, partition: str, use_slurm: bool, available_ports
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='MMFlow benchmark test')
-    parser.add_argument('--partition', default='mm_seg', help='slurm partition name')
-    parser.add_argument('--use-slurm', action='store_true', default=False, help='use slurm for tests')
+    parser.add_argument(
+        '--partition', default='mm_seg', help='slurm partition name')
+    parser.add_argument(
+        '--use-slurm',
+        action='store_true',
+        default=False,
+        help='use slurm for tests')
     args = parser.parse_args()
 
     configs_root = osp.join(MMFlow_ROOT, 'configs')
