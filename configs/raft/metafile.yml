@@ -110,4 +110,4 @@ Models:
         Metrics:
           EPE: 0.61
           Fl-all: 1.45%
-    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.pth
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_288x960.pth
