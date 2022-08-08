@@ -39,9 +39,8 @@ def plot_curve(log_dicts, args):
                 if metric not in epoch_logs.keys():
                     continue
                 if metric in [
-                        'EPE', 'clean/EPE', 'final/EPE', 'KITTI2015_EPE/EPE',
-                        'KITTI2015_Fl/Fl', 'KITTI2012_EPE/EPE',
-                        'KITTI2012_Fl/Fl'
+                        'EPE', 'clean/EPE', 'final/EPE', 'KITTI2015/EPE',
+                        'KITTI2015/Fl', 'KITTI2012/EPE', 'KITTI2012/Fl'
                 ]:
                     for idx in range(len(epoch_logs[metric])):
                         plot_iters.append(epoch_logs['step'][idx])
@@ -53,8 +52,8 @@ def plot_curve(log_dicts, args):
             ax = plt.gca()
             label = legend[i * num_metrics + j]
             if metric in [
-                    'EPE', 'clean/EPE', 'final/EPE', 'KITTI2015_EPE/EPE',
-                    'KITTI2015_Fl/Fl', 'KITTI2012_EPE/EPE', 'KITTI2012_Fl/Fl'
+                    'EPE', 'clean/EPE', 'final/EPE', 'KITTI2015/EPE',
+                    'KITTI2015/Fl', 'KITTI2012/EPE', 'KITTI2012/Fl'
             ]:
                 plt.xlabel('iter')
                 plt.plot(plot_iters, plot_values, label=label, linewidth=0.5)
