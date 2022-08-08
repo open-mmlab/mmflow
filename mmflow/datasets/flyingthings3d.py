@@ -82,7 +82,6 @@ class FlyingThings3D(MME_BaseDataset):
         f'but got {pass_style}'
         self.pass_style = pass_style
         self.double = double
-        metainfo = dict(subset='test') if test_mode else dict(subset='train')
 
         super().__init__(ann_file, metainfo, data_root, data_prefix,
                          filter_cfg, indices, serialize_data, pipeline,

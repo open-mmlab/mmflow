@@ -23,8 +23,6 @@ class TestFlyingChiars:
 
         assert len(train_dataset) == 4
         assert len(test_dataset) == 1
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
 
         split = np.loadtxt(
             osp.join(self.data_root, 'FlyingChairs_train_val.txt'),
@@ -104,8 +102,6 @@ class TestFlyingThings3D:
             train_dataset, test_dataset = self._load_annotation_file()
         else:
             train_dataset, test_dataset = self._load_path_parsing()
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
 
         multiple_param = 2 if double else 1
         for dataset in (train_dataset, test_dataset):
@@ -186,9 +182,6 @@ class TestFlyingThings3DSubset:
             train_dataset, test_dataset = self._load_annotation_file()
         else:
             train_dataset, test_dataset = self._load_path_parsing()
-
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
 
         for dataset in (train_dataset, test_dataset):
             if self.scene is None:
@@ -388,8 +381,6 @@ class TestFlyingChairsOcc:
 
         assert len(train_dataset) == 1
         assert len(test_dataset) == 1
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
 
         split = np.loadtxt(
             osp.join(self.data_root, 'FlyingChairsOcc_train_val.txt'),
@@ -507,8 +498,6 @@ class TestChairsSDHom:
 
         assert len(train_dataset) == 1
         assert len(test_dataset) == 1
-        assert train_dataset.metainfo['subset'] == 'train'
-        assert test_dataset.metainfo['subset'] == 'test'
 
         # Test if the filenames of img1, img2 and flow are the same.
         for dataset in [train_dataset, test_dataset]:
