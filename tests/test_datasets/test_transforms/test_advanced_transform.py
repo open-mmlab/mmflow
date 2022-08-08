@@ -11,12 +11,12 @@ from mmflow.datasets.transforms.advanced_transform import (RandomAffine,
                                                            transform_flow)
 from mmflow.datasets.utils import read_flow
 
-img1_ = '../data/0000000-img_0.png'
-img2_ = '../data/0000000-img_1.png'
-flow_fw_ = '../data/0000000-flow_01.flo'
-flow_bw_ = '../data/0000000-flow_10.flo'
-occ_fw_ = '../data/0000000-occ_01.png'
-occ_bw_ = '../data/0000000-occ_10.png'
+img1_ = '../../data/0000000-img_0.png'
+img2_ = '../../data/0000000-img_1.png'
+flow_fw_ = '../../data/0000000-flow_01.flo'
+flow_bw_ = '../../data/0000000-flow_10.flo'
+occ_fw_ = '../../data/0000000-occ_01.png'
+occ_bw_ = '../../data/0000000-occ_10.png'
 
 
 def test_is_valid():
