@@ -10,14 +10,14 @@ from mmflow.datasets.transforms import LoadAnnotations
 from mmflow.datasets.utils import read_flow_kitti
 from mmflow.registry import TRANSFORMS
 
-img1_ = osp.join(osp.dirname(__file__), '../data/00001_img1.ppm')
-img2_ = osp.join(osp.dirname(__file__), '../data/00001_img2.ppm')
-flow_ = osp.join(osp.dirname(__file__), '../data/00001_flow.flo')
-flow_fw = osp.join(osp.dirname(__file__), '../data/0000000-flow_01.flo')
-flow_bw = osp.join(osp.dirname(__file__), '../data/0000000-flow_10.flo')
-occ_fw = osp.join(osp.dirname(__file__), '../data/0000000-occ_01.png')
-occ_bw = osp.join(osp.dirname(__file__), '../data/0000000-occ_10.png')
-sparse_flow_fw = osp.join(osp.dirname(__file__), '../data/sparse_flow.png')
+img1_ = osp.join(osp.dirname(__file__), '../../data/00001_img1.ppm')
+img2_ = osp.join(osp.dirname(__file__), '../../data/00001_img2.ppm')
+flow_ = osp.join(osp.dirname(__file__), '../../data/00001_flow.flo')
+flow_fw = osp.join(osp.dirname(__file__), '../../data/0000000-flow_01.flo')
+flow_bw = osp.join(osp.dirname(__file__), '../../data/0000000-flow_10.flo')
+occ_fw = osp.join(osp.dirname(__file__), '../../data/0000000-occ_01.png')
+occ_bw = osp.join(osp.dirname(__file__), '../../data/0000000-occ_10.png')
+sparse_flow_fw = osp.join(osp.dirname(__file__), '../../data/sparse_flow.png')
 
 
 class TestLoading:
