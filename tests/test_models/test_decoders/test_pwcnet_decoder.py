@@ -4,8 +4,8 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.pwcnet_decoder import PWCModule, PWCNetDecoder
+from mmflow.structures import FlowDataSample
 
 
 def _get_test_data():

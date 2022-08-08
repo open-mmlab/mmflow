@@ -4,10 +4,10 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.flownet_decoder import (BasicBlock, DeconvModule,
                                                     FlowNetCDecoder,
                                                     FlowNetSDecoder)
+from mmflow.structures import FlowDataSample
 
 
 def _get_test_data_cuda(

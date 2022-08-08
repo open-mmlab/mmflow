@@ -4,11 +4,11 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.irrpwc_decoder import (IRRCorrBlock,
                                                    IRRFlowDecoder,
                                                    IRROccDecoder,
                                                    IRRPWCDecoder)
+from mmflow.structures import FlowDataSample
 
 
 def _get_test_data(

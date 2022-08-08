@@ -5,12 +5,12 @@ import torch
 import torch.nn as nn
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.liteflownet_decoder import (BasicBlock,
                                                         MatchingBlock, NetE,
                                                         RegularizationBlock,
                                                         SubpixelBlock,
                                                         Upsample)
+from mmflow.structures import FlowDataSample
 
 
 def test_uspample():
