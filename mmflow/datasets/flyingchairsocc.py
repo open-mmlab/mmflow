@@ -90,14 +90,6 @@ class FlyingChairsOcc(MME_BaseDataset):
                  test_mode: bool = False,
                  lazy_init: bool = False,
                  max_refetch: int = 1000):
-        if metainfo is None:
-            metainfo = dict(subset='test') if test_mode else dict(
-                subset='train')
-        else:
-            if test_mode:
-                metainfo.update(dict(subset='test'))
-            else:
-                metainfo.update(dict(subset='train'))
         if split_file is not None:
             self.split = np.loadtxt(split_file, dtype=np.int32).tolist()
         else:

@@ -124,7 +124,6 @@ class FlyingThings3DSubset(MME_BaseDataset):
                 'left', 'right'
             ), f'`scene` expected to be \'left\' or \'right\' but got {scene}'
         self.scene = scene
-        metainfo = dict(subset='test') if test_mode else dict(subset='train')
 
         super().__init__(ann_file, metainfo, data_root, data_prefix,
                          filter_cfg, indices, serialize_data, pipeline,

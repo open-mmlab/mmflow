@@ -57,14 +57,6 @@ class ChairsSDHom(MME_BaseDataset):
                  test_mode: bool = False,
                  lazy_init: bool = False,
                  max_refetch: int = 1000) -> None:
-        if metainfo is None:
-            metainfo = dict(subset='test') if test_mode else dict(
-                subset='train')
-        else:
-            if test_mode:
-                metainfo.update(dict(subset='test'))
-            else:
-                metainfo.update(dict(subset='train'))
         super().__init__(ann_file, metainfo, data_root, data_prefix,
                          filter_cfg, indices, serialize_data, pipeline,
                          test_mode, lazy_init, max_refetch)
