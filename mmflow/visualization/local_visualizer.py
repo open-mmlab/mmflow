@@ -5,8 +5,8 @@ import mmcv
 import numpy as np
 from mmengine import Visualizer
 
-from mmflow.data import FlowDataSample
 from mmflow.registry import VISUALIZERS
+from mmflow.structures import FlowDataSample
 
 
 @VISUALIZERS.register_module()

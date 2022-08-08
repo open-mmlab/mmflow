@@ -6,7 +6,7 @@ from torch import Tensor
 from mmflow.registry import MODELS
 from mmflow.utils import OptMultiConfig, OptSampleList, SampleList, TensorDict
 from ..builder import build_decoder, build_encoder
-from .base import FlowEstimator
+from .base_flow_estimator import FlowEstimator
 
 
 @MODELS.register_module()

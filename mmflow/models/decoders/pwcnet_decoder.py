@@ -6,10 +6,9 @@ import torch.nn as nn
 from mmengine.model import BaseModule
 
 from mmflow.registry import MODELS
-from mmflow.utils import (OptMultiConfig, SampleList, TensorDict,
-                          unpack_flow_data_samples)
+from mmflow.utils import OptMultiConfig, SampleList, TensorDict
 from ..builder import build_components, build_loss
-from ..utils import BasicDenseBlock, CorrBlock
+from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 

@@ -8,8 +8,9 @@ from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS
-from mmflow.utils import SampleList, TensorDict, unpack_flow_data_samples
+from mmflow.utils import SampleList, TensorDict
 from ..builder import build_loss
+from ..utils import unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 

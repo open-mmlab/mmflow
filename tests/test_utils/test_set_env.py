@@ -3,38 +3,9 @@ import datetime
 import sys
 from unittest import TestCase
 
-import mmcv
-import pytest
 from mmengine import DefaultScope
 
-import mmflow
 from mmflow.utils import register_all_modules
-
-
-def test_collect_env():
-    try:
-        import torch  # noqa: F401
-    except ModuleNotFoundError:
-        pytest.skip('skipping tests that require PyTorch')
-
-    from mmflow.utils import collect_env
-    env_info = collect_env()
-    expected_keys = [
-        'sys.platform', 'Python', 'CUDA available', 'PyTorch',
-        'PyTorch compiling details', 'OpenCV', 'MMCV', 'MMCV Compiler',
-        'MMCV CUDA Compiler', 'MMFlow', 'GCC'
-    ]
-    for key in expected_keys:
-        assert key in env_info
-
-    if env_info['CUDA available']:
-        for key in ['CUDA_HOME', 'NVCC']:
-            assert key in env_info
-
-    assert env_info['sys.platform'] == sys.platform
-    assert env_info['Python'] == sys.version.replace('\n', '')
-    assert env_info['MMCV'] == mmcv.__version__
-    assert mmflow.__version__ in env_info['MMFlow']
 
 
 class TestSetupEnv(TestCase):

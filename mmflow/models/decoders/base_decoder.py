@@ -7,7 +7,7 @@ from mmengine.data import PixelData
 from mmengine.model import BaseModule
 from torch import Tensor
 
-from mmflow.data import FlowDataSample
+from mmflow.structures import FlowDataSample
 from mmflow.utils import SampleList, TensorDict
 
 

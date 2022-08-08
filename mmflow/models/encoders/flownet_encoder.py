@@ -5,7 +5,8 @@ import torch
 from mmcv.cnn.bricks.conv_module import ConvModule
 
 from mmflow.registry import MODELS
-from ..utils import BasicEncoder, CorrBlock
+from ..utils import CorrBlock
+from .base_encoder import BasicEncoder
 
 
 @MODELS.register_module()

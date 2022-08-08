@@ -9,8 +9,8 @@ from mmcv.parallel import DataContainer as DC
 from mmcv.transforms import BaseTransform
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.registry import TRANSFORMS
+from mmflow.structures import FlowDataSample
 
 
 def to_tensor(

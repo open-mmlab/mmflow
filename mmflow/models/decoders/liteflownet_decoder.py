@@ -9,12 +9,11 @@ from mmcv.cnn.bricks.conv_module import ConvModule
 from mmengine.model import BaseModule
 from torch import Tensor
 
-from mmflow.data import FlowDataSample
 from mmflow.registry import MODELS
-from mmflow.utils import (OptMultiConfig, SampleList, TensorDict,
-                          unpack_flow_data_samples)
+from mmflow.structures import FlowDataSample
+from mmflow.utils import OptMultiConfig, SampleList, TensorDict
 from ..builder import build_components, build_loss
-from ..utils import CorrBlock
+from ..utils import CorrBlock, unpack_flow_data_samples
 from .base_decoder import BaseDecoder
 
 

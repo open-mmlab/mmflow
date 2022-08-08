@@ -4,8 +4,8 @@ from unittest import TestCase
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
-from mmflow.engine.visualization import FlowLocalVisualizer
+from mmflow.structures import FlowDataSample
+from mmflow.visualization import FlowLocalVisualizer
 
 
 class TestFlowLocalVisualizer(TestCase):

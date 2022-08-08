@@ -4,8 +4,7 @@ from unittest import TestCase
 import numpy as np
 import torch
 
-from mmflow.metrics import EndPointError
-from mmflow.metrics.utils import end_point_error_map
+from mmflow.evaluation import EndPointError, end_point_error_map
 
 
 def test_end_point_error_map():

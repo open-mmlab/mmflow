@@ -36,7 +36,7 @@ class FlowDataSample(BaseDataElement):
         >>> import torch
         >>> import numpy as np
         >>> from mmengine.data import PixelData
-        >>> from mmflow.data import FlowDataSample
+        >>> from mmflow.structures import FlowDataSample
 
         >>> data_sample = FlowDataSample()
         >>> img_meta = dict(img_shape=(3, 4, 3))

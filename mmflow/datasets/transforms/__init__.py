@@ -11,6 +11,6 @@ from .transforms import (ColorJitter, Erase, GaussianNoise, InputPad,
 __all__ = [
     'Compose', 'LoadAnnotations', 'SpacialTransform', 'Validation', 'Erase',
     'InputResize', 'InputPad', 'RandomFlip', 'Normalize', 'Rerange',
-    'RandomCrop', 'AdjustGamma', 'ColorJitter', 'PhotoMetricDistortion',
-    'GaussianNoise', 'RandomAffine', 'TestFormatBundle', 'PackFlowInputs'
+    'RandomCrop', 'ColorJitter', 'PhotoMetricDistortion', 'GaussianNoise',
+    'RandomAffine', 'TestFormatBundle', 'PackFlowInputs'
 ]
