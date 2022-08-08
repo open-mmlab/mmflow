@@ -9,13 +9,12 @@ from mmcv.cnn import ConvModule
 from mmengine.model import BaseModule
 from torch import Tensor
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.registry import MODELS
-from mmflow.utils import (OptMultiConfig, SampleList, TensorDict, TensorList,
-                          unpack_flow_data_samples)
+from mmflow.structures import FlowDataSample
+from mmflow.utils import OptMultiConfig, SampleList, TensorDict, TensorList
 from ..builder import build_components, build_loss
-from ..utils import BasicDenseBlock, CorrBlock
+from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
 
 IRRForwardOutput = Tuple[Dict[str, TensorList], Dict[str, TensorList],
                          Dict[str, TensorList], Dict[str, TensorList]]

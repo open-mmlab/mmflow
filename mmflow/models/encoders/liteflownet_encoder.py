@@ -2,7 +2,7 @@
 from typing import Optional, Sequence, Union
 
 from mmflow.registry import MODELS
-from ..utils import BasicEncoder
+from .base_encoder import BasicEncoder
 
 
 @MODELS.register_module()

@@ -8,7 +8,7 @@ from mmflow.registry import MODELS
 from mmflow.utils import OptSampleList, SampleList, TensorDict
 from ..builder import build_flow_estimator
 from ..utils import BasicLink
-from .base import FlowEstimator
+from .base_flow_estimator import FlowEstimator
 
 
 @MODELS.register_module()

@@ -5,8 +5,8 @@ from typing import List, Optional, Sequence, Tuple, Union
 import torch
 from mmengine.model import BaseDataPreprocessor
 
-from mmflow.data import FlowDataSample
 from mmflow.registry import MODELS
+from mmflow.structures import FlowDataSample
 
 
 @MODELS.register_module()

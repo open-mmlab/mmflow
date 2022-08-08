@@ -4,7 +4,7 @@ from unittest import TestCase
 import numpy as np
 import torch
 
-from mmflow.metrics import FlowOutliers
+from mmflow.evaluation import FlowOutliers
 
 
 class TestFlMetric(TestCase):

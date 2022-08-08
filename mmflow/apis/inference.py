@@ -9,9 +9,9 @@ from mmcv.ops import Correlation
 from mmengine.config import Config
 from mmengine.runner import load_checkpoint
 
-from mmflow.data import FlowDataSample
 from mmflow.datasets.transforms import Compose
 from mmflow.models import build_flow_estimator
+from mmflow.structures import FlowDataSample
 
 
 def init_model(config: Union[str, Config],
