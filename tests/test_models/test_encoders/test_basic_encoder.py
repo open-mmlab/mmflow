@@ -2,7 +2,7 @@
 import pytest
 import torch
 
-from mmflow.models.utils import BasicEncoder
+from mmflow.models import BasicEncoder
 
 
 def test_basic_encoder():
