@@ -97,3 +97,17 @@ Models:
           EPE: 1.59
           Fl-all: 5.68%
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth
+
+  - Name: raft_8x2_50k_kitti2015_288x960
+    In Collection: RAFT
+    Config: configs/raft/raft_8x2_50k_kitti2015_288x960.py
+    Metadata:
+      Training Data:
+        - KITTI2015
+    Results:
+      - Task: Optical flow estimation
+        Dataset: KITTI2015
+        Metrics:
+          EPE: 0.61
+          Fl-all: 1.45%
+    Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_288x960.pth
