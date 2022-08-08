@@ -4,11 +4,11 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.maskflownet_decoder import (BasicDeformWarpBlock,
                                                         DeformWarpBlock,
                                                         MaskFlowNetSDecoder,
                                                         MaskModule)
+from mmflow.structures import FlowDataSample
 
 
 def _get_test_data():

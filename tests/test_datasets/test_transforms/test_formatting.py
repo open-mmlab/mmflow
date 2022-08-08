@@ -7,8 +7,8 @@ import numpy as np
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.datasets.transforms import PackFlowInputs
+from mmflow.structures import FlowDataSample
 
 img1_path = osp.join(osp.dirname(__file__), '../data/00001_img1.ppm')
 img2_path = osp.join(osp.dirname(__file__), '../data/00001_img2.ppm')

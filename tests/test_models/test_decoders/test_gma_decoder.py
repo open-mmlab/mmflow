@@ -4,9 +4,9 @@ import pytest
 import torch
 from mmengine.data import PixelData
 
-from mmflow.data import FlowDataSample
 from mmflow.models.decoders.gma_decoder import (Aggregate, Attention,
                                                 GMADecoder, RelPosEmb)
+from mmflow.structures import FlowDataSample
 
 
 def test_relposemb():
