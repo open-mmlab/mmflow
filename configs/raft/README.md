@@ -101,9 +101,9 @@ is available at https://github.com/princeton-vl/RAFT.
             <th>-</th>
             <th>1.45%</th>
             <th>0.61</th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.log.json'>log</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.py'>Config</a></th>
-            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_368x768.pth'>Model</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_288x960.log.json'>log</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_288x960.py'>Config</a></th>
+            <th><a href='https://download.openmmlab.com/mmflow/raft/raft_8x2_50k_kitti2015_288x960.pth'>Model</a></th>
         </tr>
     </tbody>
 </table>
