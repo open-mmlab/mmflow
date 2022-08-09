@@ -75,7 +75,10 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
         img2s = [img2s]
 
     cfg = model.cfg
-    cfg = copy.deepcopy(cfg.test_dataloader.dataset)
+    if isinstance(cfg.test_dataloader, list):
+        cfg = copy.deepcopy(cfg.test_dataloader[0].dataset)
+    else:
+        cfg = copy.deepcopy(cfg.test_dataloader.dataset)
 
     if isinstance(img1s[0], np.ndarray):
         cfg.pipeline[0].type = 'LoadImageFromWebcam'

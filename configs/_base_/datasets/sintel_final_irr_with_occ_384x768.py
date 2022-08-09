@@ -1,5 +1,3 @@
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False)
-
 crop_size = (384, 768)
 
 global_transform = dict(
@@ -87,3 +85,10 @@ val_dataloader = [
         persistent_workers=True,
         dataset=sintel_final_test)
 ]
+
+test_dataloader = val_dataloader
+val_evaluator = [
+    dict(type='EndPointError', prefix='clean'),
+    dict(type='EndPointError', prefix='final')
+]
+test_evaluator = val_evaluator
