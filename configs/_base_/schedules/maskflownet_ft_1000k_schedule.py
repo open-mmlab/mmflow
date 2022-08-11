@@ -21,7 +21,7 @@ param_scheduler = dict(
 
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
-    logger=dict(type='LoggerHook', interval=50),
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(type='CheckpointHook', interval=50000, by_epoch=False),
     sampler_seed=dict(type='DistSamplerSeedHook'),
