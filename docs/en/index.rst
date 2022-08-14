@@ -41,7 +41,7 @@ Welcome to MMFlow's documentation!
    :maxdepth: 1
    :caption: Convention
    
-   convention.md
+   conventions.md
 
 .. toctree::
    :maxdepth: 1
