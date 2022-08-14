@@ -13,7 +13,6 @@ Welcome to MMFlow's documentation!
 
    get_started.md
 
-
 .. toctree::
    :maxdepth: 2
    :caption: User Guides
@@ -25,12 +24,6 @@ Welcome to MMFlow's documentation!
    :caption: More about MMFlow
    
    advanced_tutorials/index.rst
-
- .. toctree::
-   :maxdepth: 1
-   :caption: Frequently Asked Questions
-   
-   faq.md
 
 .. toctree::
    :maxdepth: 1
@@ -54,7 +47,6 @@ Welcome to MMFlow's documentation!
    :maxdepth: 1
    :caption: API Reference
 
-   model_zoo.md
    api.rst
 
 .. toctree::
