@@ -1,154 +1,148 @@
-# Getting Started
-
-This page provides basic tutorials about the usage of MMFlow.
-For installation instructions, please see [install.md](install.md).
+# Get Started
 
 <!-- TOC -->
 
-- [Getting Started](#getting-started)
-  - [Prepare datasets](#prepare-datasets)
-  - [Inference with Pre-trained Models](#inference-with-pre-trained-models)
-    - [Run a demo](#run-a-demo)
-    - [Test a dataset](#test-a-dataset)
-  - [Train a model](#train-a-model)
-  - [Tutorials](#tutorials)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Prepare environment](#prepare-environment)
+  - [Install MMFlow](#install-mmflow)
+  - [A from-scratch setup script](#a-from-scratch-setup-script)
+  - [Verification](#verification)
 
 <!-- TOC -->
 
-## Prepare datasets
+## Prerequisites
 
-It is recommended to symlink the dataset root to `$MMFlow/data`.
-Please follow the corresponding guidelines for data preparation.
+- Linux
+- Python 3.6+
+- PyTorch 1.5 or higher
+- CUDA 9.0 or higher
+- NCCL 2
+- GCC 5.4 or higher
+- [mmcv](https://github.com/open-mmlab/mmcv) 1.3.15 or higher
 
-- [FlyingChairs](data_prepare/FlyingChairs/README.md)
-- [FlyingThings3d_subset](data_prepare/FlyingThings3d_subset/README.md)
-- [FlyingThings3d](data_prepare/FlyingThings3d/README.md)
-- [Sintel](data_prepare/Sintel/README.md)
-- [KITTI2015](data_prepare/KITTI2015/README.md)
-- [KITTI2012](data_prepare/KITTI2012/README.md)
-- [FlyingChairsOcc](data_prepare/FlyingChairsOcc/README.md)
-- [ChairsSDHom](data_prepare/ChairsSDHom/README.md)
-- [HD1K](data_prepare/hd1k/README.md)
+## Prepare environment
 
-## Inference with Pre-trained Models
-
-We provide testing scripts to evaluate a whole dataset (Sintel, KITTI2015, etc.),
-and provide some high-level APIs and scripts to estimate flow for images or a video easily.
-
-### Run a demo
-
-We provide scripts to run demos. Here is an example to predict the optical flow between two adjacent frames.
-
-1. [image demo](../demo/image_demo.py)
-
-   ```shell
-   python demo/image_demo.py ${IMAGE1} ${IMAGE2} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_DIR} \
-       [--out_prefix] ${OUTPUT_PREFIX} [--device] ${DEVICE}
-   ```
-
-   Optional arguments:
-
-   - `--out_prefix`: The prefix for the output results including flow file and visualized flow map.
-   - `--device`: Device used for inference.
-
-   Example:
-
-   Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
-   and output will be saved in the directory `raft_demo`.
-
-   ```shell
-   python demo/image_demo.py demo/frame_0001.png demo/frame_0002.png \
-       configs/raft/raft_8x2_100k_mixed_368x768.py \
-       checkpoints/raft_8x2_100k_mixed_368x768.pth raft_demo
-   ```
-
-2. [video demo](../demo/video_demo.py)
-
-   ```shell
-   python demo/video_demo.py ${VIDEO} ${CONFIG_FILE} ${CHECKPOINT_FILE} ${OUTPUT_FILE} \
-       [--gt] ${GROUND_TRUTH} [--device] ${DEVICE}
-   ```
-
-   Optional arguments:
-
-   - `--gt`: The video file of ground truth for input video.
-     If specified, the ground truth will be concatenated predicted result as a comparison.
-   - `--device`: Device used for inference.
-
-   Example:
-
-   Assume that you have already downloaded the checkpoints to the directory `checkpoints/`,
-   and output will be save as `raft_demo.mp4`.
-
-   ```shell
-   python demo/video_demo.py demo/demo.mp4 \
-       configs/raft/raft_8x2_100k_mixed_368x768.py \
-       checkpoints/raft_8x2_100k_mixed_368x768.pth \
-       raft_demo.mp4 --gt demo/demo_gt.mp4
-   ```
-
-### Test a dataset
-
-You can use the following commands to test a dataset, and more information is in [tutorials/1_inference](tutorials/1_inference.md).
+a. Create a conda virtual environment and activate it.
 
 ```shell
-# single-gpu testing
-python tools/test.py ${CONFIG_FILE} ${CHECKPOINT_FILE} [optional arguments]
+conda create -n openmmlab python=3.7 -y
+conda activate openmmlab
 ```
 
-Optional arguments:
+b. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/)
 
-- `--work_dir`: Directory to save the file containing evaluation metrics. If not specified, the file will use config filename as default work_dir.
-- `--show`: Whether to show prediction results.
-- `--show_dir`: Directory to save the visualized flow maps. If not specified, the flow maps will not be saved.
-- `--wait-time`: The interval of show(s). Default to 2.
-- `--cfg-option`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
-- `--launcher`: Items for distributed job initialization launcher. Allowed choices are `none`, `pytorch`, `slurm`, `mpi`. Especially, if set to none, it will test in a non-distributed mode.
-- `--local_rank`: ID for local rank. If not specified, it will be set to 0.
-  For example, '--cfg-option model.encoder.in_channels=6'.
+Note: Make sure that your compilation CUDA version and runtime CUDA version match.
+You can check the supported CUDA version for pre-compiled packages on the [PyTorch website](https://pytorch.org/).
 
-Examples:
-
-Assume that you have already downloaded the checkpoints to the directory `checkpoints/`.
-
-Test PWC-Net on Sintel clean and final sub-datasets without saving predicted flow files and evaluating the EPE.
+`E.g.1` If you have CUDA 10.2 installed under `/usr/local/cuda` and would like to install the latest PyTorch,
+you can run this command.
 
 ```shell
-python tools/test.py configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py \
-    checkpoints/pwcnet_8x1_sfine_sintel_384x768.pth
+conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
 ```
 
-## Train a model
-
-You can use the [train script](../tools/train.py) to launch training task with a single GPU,
-and more information in [tutorials/2_finetune](tutorials/2_finetune.md)
+`E.g.2` If you have CUDA 9.2 installed under `/usr/local/cuda` and would like to install PyTorch 1.7.0.,
+you can run this command.
 
 ```shell
-python tools/train.py ${CONFIG_FILE} [optional arguments]
+conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 cudatoolkit=9.2 -c pytorch
 ```
 
-Optional arguments:
+If you build PyTorch from source instead of installing the pre-built package, you can use more CUDA versions such as 9.0.
 
-- `--work-dir`: Override the working directory specified in the config file.
-- `--amp`: Whether to use automatic-mixed-precision training. Default to False.
-- `--cfg-options`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
-  For example, '--cfg-option model.encoder.in_channels=6'.
-- `--launcher`: Items for distributed job initialization launcher. Allowed choices are `none`, `pytorch`, `slurm`, `mpi`. Especially, if set to none, it will test in a non-distributed mode.
-- `--local_rank`: ID for local rank. If not specified, it will be set to 0.
-
-Here is an example to train PWC-Net.
+c. Install MMCV, we recommend you to install the pre-built mmcv as below.
 
 ```shell
-python tools/train.py configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py --work-dir work_dir/pwcnet
+pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/{cu_version}/{torch_version}/index.html
 ```
 
-## Tutorials
+Please replace ``{cu_version}`` and ``{torch_version}`` in the url to your desired one. mmcv-full is only compiled on
+PyTorch 1.x.0 because the compatibility usually holds between 1.x.0 and 1.x.1. If your PyTorch version is 1.x.1,
+you can install mmcv-full compiled with PyTorch 1.x.0 and it usually works well.
+For example, to install the latest ``mmcv-full`` with ``CUDA 10.2`` and ``PyTorch 1.10.0``, use the following command:
 
-We provide some tutorials for users:
+```shell
+pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.10/index.html
+```
 
-- [learn about configs](tutorials/0_config.md)
-- [inference model](tutorials/1_inference.md)
-- [finetune model](tutorials/2_finetune.md)
-- [customize data pipelines](tutorials/3_data_pipeline.md)
-- [add new modules](tutorials/4_new_modules.md)
-- [customize runtime settings](tutorials/5_customize_runtime.md).
+See [here](https://github.com/open-mmlab/mmcv#installation) for different versions of MMCV compatible to different PyTorch and CUDA versions.
+
+Optionally you can choose to compile mmcv from source by the following command
+
+```shell
+git clone https://github.com/open-mmlab/mmcv.git
+cd mmcv
+MMCV_WITH_OPS=1 pip install -e .  # package mmcv-full, which contains cuda ops, will be installed after this step
+# OR pip install -e .  # package mmcv, which contains no cuda ops, will be installed after this step
+cd ..
+```
+
+**Important:** You need to run `pip uninstall mmcv` first if you have mmcv installed. If `mmcv` and `mmcv-full` are both installed, there will be `ModuleNotFoundError`.
+
+## Install MMFlow
+
+a. Clone the MMFlow repository.
+
+```shell
+git clone https://github.com/open-mmlab/mmflow.git
+cd mmflow
+```
+
+b. Install build requirements and then install mmflow.
+
+```shell
+pip install -r requirements/build.txt
+pip install -v -e .  # or "python setup.py develop"
+```
+
+Note:
+
+1. The git commit id will be written to the version number, e.g. 0.6.0+2e7045c. The version will also be saved in trained models.
+
+2. Following the above instructions, MMFlow is installed on `dev` mode, any local modifications made to the code will take effect without the need to reinstall it (unless you submit some commits and want to update the version number).
+
+3. If you would like to use `opencv-python-headless` instead of `opencv-python`, you can install it before installing MMCV.
+
+## A from-scratch setup script
+
+Assuming that you already have CUDA 10.1 installed, here is a full script for setting up mmflow with conda.
+
+```shell
+conda create -n open-mmlab python=3.7 -y
+conda activate open-mmlab
+
+conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch -y
+
+# install latest mmcv
+pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html
+
+# install mmflow
+git clone https://github.com/open-mmlab/mmflow.git
+cd mmflow
+pip install -r requirements/build.txt
+pip install -v -e .
+```
+
+## Verification
+
+To verify whether MMFlow is installed correctly, we can run the following sample code to initialize a model and inference a demo image.
+
+```python
+from mmflow.apis import inference_model, init_model
+
+config_file = 'configs/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.py'
+# download the checkpoint from model zoo and put it in `checkpoints/`
+# url: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.pth
+checkpoint_file = 'checkpoints/pwcnet_ft_4x1_300k_sintel_final_384x768.pth'
+device = 'cuda:0'
+# init a model
+model = init_model(config_file, checkpoint_file, device=device)
+# inference the demo image
+inference_model(model, 'demo/frame_0001.png', 'demo/frame_0002.png')
+```
+
+The above code is supposed to run successfully upon you finish the installation.
+
+
+## Quick Run

@@ -1,4 +1,4 @@
-# Tutorial 5: Customize Runtime Settings
+# Customize Runtime Settings
 
 In this tutorial, we will introduce some methods about how to customize optimization methods, training schedules, workflow and hooks when running your own settings for the project.
 
