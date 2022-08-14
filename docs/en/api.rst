@@ -17,7 +17,7 @@ hooks
     :members:
 
 mmflow.datasets
---------------
+----------------
 
 datasets
 ^^^^^^^^^^
@@ -43,7 +43,7 @@ decoders
     :members:
 
 flow_estimators
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 .. automodule:: mmflow.models.flow_estimators
     :members:
 
