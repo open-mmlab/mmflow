@@ -3,7 +3,7 @@ More about MMFlow
 
 .. toctree::
    :maxdepth: 1
-   :caption: Learning MMSeg
+   :caption: Learning MMFlow
 
    data_flow.md
    structures.md
@@ -16,7 +16,7 @@ More about MMFlow
 
 .. toctree::
    :maxdepth: 1
-   :caption: Extending MMSeg
+   :caption: Extending MMFlow
 　　
    add_modules.md
    add_datasets.md
