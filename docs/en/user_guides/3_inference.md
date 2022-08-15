@@ -1,4 +1,4 @@
-# Tutorial 2: Inference with existing models
+# Tutorial 3: Inference with existing models
 
 MMFlow provides pre-trained models for flow estimation in [Model Zoo](../model_zoo.md), and supports multiple standard datasets, including FlyingChairs, Sintel, etc. This note will show how to perform common tasks on these existing models and standard datasets, including:
 

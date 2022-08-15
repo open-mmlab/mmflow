@@ -1,4 +1,4 @@
-# Tutorial 3: Train and test with existing models
+# Tutorial 4: Train and test with existing models
 
 Flow estimators pre-trained on the FlyingChairs and FlyingThings3d can serve as a good pre-trained model for other datasets.
 This tutorial provides instruction for users to use the models provided in the [Model Zoo](../model_zoo.md) for other datasets to obtain better performance.

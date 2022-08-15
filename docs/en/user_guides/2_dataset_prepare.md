@@ -1,4 +1,4 @@
-# Tutorial 1: Prepare Datasets
+# Tutorial 2: Prepare Datasets
 
 MMFlow supports multiple datasets. Please follow the corresponding guidelines for data preparation.
 
