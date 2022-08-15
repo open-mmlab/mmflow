@@ -17,13 +17,13 @@ Welcome to MMFlow's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Advanced Guides
-   
+
    advanced_guides/index.rst
 
 .. toctree::
    :maxdepth: 1
    :caption: Migration
-   
+
    migration.md
 
 .. toctree::
@@ -40,7 +40,7 @@ Welcome to MMFlow's documentation!
 
 .. toctree::
    :maxdepth: 1
-   
+
    notes/change_log.md
    notes/faq.md
    notes/contribution_guides.md
