@@ -1,10 +1,8 @@
-
-Advanced Guides
-===============
+Basic Concepts
+***************
 
 .. toctree::
    :maxdepth: 1
-   :caption: Basic Concepts
 
    data_flow.md
    structures.md
@@ -15,9 +13,11 @@ Advanced Guides
    engine.md
    conventions.md
 
+Component Customization
+************************
+
 .. toctree::
    :maxdepth: 1
-   :caption: Component Customization
 
    add_modules.md
    add_datasets.md

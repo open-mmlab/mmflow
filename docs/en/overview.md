@@ -1,5 +1,3 @@
-# Overview
-
 This chapter introduces you to the framework of MMFlow,
 the basic conception of optical flow, and provides links to detailed tutorials about MMFlow.
 

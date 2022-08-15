@@ -1,16 +1,3 @@
-# Get Started
-
-<!-- TOC -->
-
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Prepare environment](#prepare-environment)
-  - [Install MMFlow](#install-mmflow)
-  - [A from-scratch setup script](#a-from-scratch-setup-script)
-  - [Verification](#verification)
-
-<!-- TOC -->
-
 ## Prerequisites
 
 - Linux
