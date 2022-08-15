@@ -1,8 +1,8 @@
-# Tutorial 5: Customize Runtime Settings
+# Runtime Settings Customization
 
 In this tutorial, we will introduce some methods about how to customize optimization methods, training schedules, workflow and hooks when running your own settings for the project.
 
-## Customize Optimization Methods
+## Optimization Methods Customization
 
 ### Customize optimizer supported by PyTorch
 

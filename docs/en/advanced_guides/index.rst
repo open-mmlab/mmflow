@@ -1,9 +1,10 @@
-More about MMFlow
-=================
+
+Advanced Guides
+===============
 
 .. toctree::
    :maxdepth: 1
-   :caption: Learning MMFlow
+   :caption: Basic Concepts
 
    data_flow.md
    structures.md
@@ -12,12 +13,12 @@ More about MMFlow
    transforms.md
    evaluation.md
    engine.md
-
+   conventions.md
 
 .. toctree::
    :maxdepth: 1
-   :caption: Extending MMFlow
-　　
+   :caption: Component Customization
+
    add_modules.md
    add_datasets.md
    add_transforms.md

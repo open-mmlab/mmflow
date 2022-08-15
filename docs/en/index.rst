@@ -2,67 +2,44 @@ Welcome to MMFlow's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: １
-   :caption: Overview
+   :maxdepth: 1
    
    overview.md
 
 .. toctree::
    :maxdepth: 2
-   :caption: Get Started
 
    get_started.md
 
 .. toctree::
    :maxdepth: 2
-   :caption: User Guides
-
-   tutorials/index.rst
+  
+   user_guides/index.rst
 
 .. toctree::
    :maxdepth: 2
-   :caption: More about MMFlow
    
-   advanced_tutorials/index.rst
+   advanced_guides/index.rst
 
 .. toctree::
    :maxdepth: 1
-   :caption: Frequently Asked Questions
-   
-   faq.md
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Migration
    
    migration.md
 
 .. toctree::
    :maxdepth: 1
-   :caption: Convention
-   
-   conventions.md
-
-.. toctree::
-   :maxdepth: 1
-   :caption: API Reference
 
    api.rst
 
 .. toctree::
    :maxdepth: 1
-   :caption: Model Zoo
 
    model_zoo.md
 
 .. toctree::
    :maxdepth: 1
-   :caption: Notes
    
-   contribution_guide.md
-   projects.md
-   changelog.md
-
+   notes/index.rst
 
 .. toctree::
    :caption: Switch Language
