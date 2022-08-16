@@ -180,9 +180,11 @@ class CorrLookupFlow1D(nn.Module):
             Tensor: lookup cost volume on the correlation of x and y directions
              concatenate together.
         """
-        corr_x = corr[0]
-        corr_y = corr[1]
         B, _, H, W = flow.shape
+        # reshape corr_x to [B*H*W, 1, 1, W]
+        corr_x = corr[0].view(-1, 1, 1, W)
+        # reshape corr_y to [B*H*W, 1, H, 1]
+        corr_y = corr[1].permute(0, 2, 1, 3).contiguous().view(-1, 1, H, 1)
 
         # reshape flow to [B, H, W, 2]
         flow = flow.permute(0, 2, 3, 1)
