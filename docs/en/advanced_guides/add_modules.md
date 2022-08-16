@@ -1,4 +1,4 @@
-# Tutorial 4: Adding New Modules
+# Adding New Modules
 
 MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `decoder`. This tutorial is for how to add new components.
 

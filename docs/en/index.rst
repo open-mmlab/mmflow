@@ -3,44 +3,53 @@ Welcome to MMFlow's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Learn the Basics
-
-   intro.md
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Installation
-
-   install.md
-
-.. toctree::
-   :maxdepth: 1
    :caption: Get Started
 
-   getting_started.md
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Tutorials
-
-   tutorials/0_config.md
-   tutorials/1_inference.md
-   tutorials/2_finetune.md
-   tutorials/3_data_pipeline.md
-   tutorials/4_new_modules.md
-   tutorials/5_customize_runtime.md
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Conventions
-
-   conventions.md
+   overview.md
+   get_started.md
 
 .. toctree::
    :maxdepth: 2
-   :caption: API Reference
+   :caption: User Guides
+
+   user_guides/index.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Advanced Guides
+
+   advanced_guides/index.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Migration
+
+   migration.md
+
+.. toctree::
+   :maxdepth: 1
+   :caption: APIs Reference
 
    api.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Model Zoo
+
+   model_zoo.md
+
+.. toctree::
+   :maxdepth: 1
+
+   notes/change_log.md
+   notes/faq.md
+   notes/contribution_guides.md
+
+.. toctree::
+   :caption: Switch Language
+
+   English <en_docs_url>
+   简体中文 <zh_CM_docs_url>
 
 Indices and tables
 ==================
