@@ -42,7 +42,7 @@ Welcome to MMFlow's documentation!
    :maxdepth: 1
    :caption: Notes
 
-   notes/change_log.md
+   notes/changelog.md
    notes/faq.md
    notes/contribution_guides.md
 
