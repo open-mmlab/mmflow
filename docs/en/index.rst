@@ -46,11 +46,11 @@ Welcome to MMFlow's documentation!
    notes/faq.md
    notes/contribution_guides.md
 
-Switch Language
-=================
+.. toctree::
+   :maxdepth: 1
+   :caption: Switch Language
 
-English <en_docs_url>
-简体中文 <zh_CM_docs_url>
+   switch_language.md
 
 Indices and tables
 ==================
