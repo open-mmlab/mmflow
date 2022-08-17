@@ -187,7 +187,7 @@ When using Slurm, the port option need to be set in one of the following ways:
    In `config2.py`, set
 
    ```python
-   env_cfg = dict(dist_cfg=dict(backend='nccl', port=29500))
+   env_cfg = dict(dist_cfg=dict(backend='nccl', port=29501))
    ```
 
    Then you can launch two jobs with `config1.py` and `config2.py`.
