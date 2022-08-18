@@ -34,10 +34,9 @@ class Correlation1D(BaseModule):
             # y direction, corr shape is  [B, W, H, H]
             feat1 = feat1.permute(0, 3, 2, 1)
             feat2 = feat2.permute(0, 3, 1, 2)
-            corr = torch.matmul(feat1, feat2) / scale_factor
         else:
             # x direction, corr shape is  [B, H, W, W]
             feat1 = feat1.permute(0, 2, 3, 1)
             feat2 = feat2.permute(0, 2, 1, 3)
-            corr = torch.matmul(feat1, feat2) / scale_factor
+        corr = torch.matmul(feat1, feat2) / scale_factor
         return corr

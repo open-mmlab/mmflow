@@ -181,9 +181,9 @@ class CorrLookupFlow1D(nn.Module):
              concatenate together.
         """
         B, _, H, W = flow.shape
-        # reshape corr_x to [B*H*W, 1, 1, W]
+        # reshape corr_x from [B, H, W, W] to [B*H*W, 1, 1, W]
         corr_x = corr[0].view(-1, 1, 1, W)
-        # reshape corr_y to [B*H*W, 1, H, 1]
+        # reshape corr_y from [B, W, H, H]to [B*H*W, 1, H, 1]
         corr_y = corr[1].permute(0, 2, 1, 3).contiguous().view(-1, 1, H, 1)
 
         # reshape flow to [B, H, W, 2]
