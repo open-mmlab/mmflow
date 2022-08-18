@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/FlyingChairs_release/',
         help='Directory to save the annotation files for FlyingChairs dataset')
     args = parser.parse_args()
 

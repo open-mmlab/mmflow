@@ -25,9 +25,62 @@
 
 Here is the script to prepare FlyingChairs dataset.
 
+## Download and Unpack dataset
+
 ```bash
 wget https://lmb.informatik.uni-freiburg.de/data/FlyingChairs/FlyingChairs.zip
 unzip FlyingChairs.zip
 cd FlyingChairs_release
 wget https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs/FlyingChairs_train_val.txt
+```
+
+## Generate annotation file
+
+We provide a convenient script to generate annotation file, which list all of data samples in the dataset.
+You can use the following command to generate annotation file.
+
+```bash
+python tools/dataset_converters/prepare_flyingchairs.py  [optional arguments]
+```
+
+This scrip accepts these arguments:
+
+- `--data-root ${DATASET_DIR}`: The dataset directory of FlyingChairs, default to `'data/FlyingChair_release'`.
+
+- `--split-file ${SPLIT_FILE}`: The file for splitting train and test dataset, default to `'data/FlyingChairs_release/FlyingChairs_train_val.txt'`.
+
+- `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/FlyingChairs_release/'`,
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/FlyingChairs_train.json` and `${SAVE_DIR}/FlyingChairs_test.json`
+
+**Note**:
+
+Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like ceph. There is an example for using object storage
+
+```python
+dataset_type = 'FlyingChairs'
+data_root = 'data/FlyingChairs_release'
+file_client_args= dict(
+    backend='s3',
+    path_mapping=dict(
+        {'data/': 's3://dataset_path'}))
+train_pipeline = [
+    dict(type='LoadImageFromFile', file_client_args=file_client_args),
+    dict(type='LoadAnnotations', file_client_args=file_client_args),
+]
+flyingchairs_train = dict(
+    type=dataset_type,
+    ann_file='FlyingChairs_train.json',
+    pipeline=train_pipeline,
+    data_root=data_root)
+
+test_pipeline = [
+    dict(type='LoadImageFromFile', file_client_args=file_client_args),
+    dict(type='LoadAnnotations', file_client_args=file_client_args),
+]
+flyingchairs_test = dict(
+    type=dataset_type,
+    ann_file='FlyingChairs_test.json',
+    pipeline=test_pipeline,
+    data_root=data_root,
+    test_mode=True)
 ```
