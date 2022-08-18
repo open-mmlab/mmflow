@@ -5,6 +5,7 @@ import mmcv
 import numpy as np
 from mmcv import sparse_flow_from_bytes
 from mmcv.transforms import BaseTransform
+from mmengine.fileio import FileClient
 
 from mmflow.registry import TRANSFORMS
 from ..utils import flow_from_bytes
@@ -37,7 +38,7 @@ class LoadImageFromFile(BaseTransform):
             See :func:``mmcv.imfrombytes`` for details.
             Defaults to 'cv2'.
         file_client_args (dict): Arguments to instantiate a FileClient.
-            See :class:`mmcv.fileio.FileClient` for details.
+            See :class:`mmengine.fileio.FileClient` for details.
             Defaults to ``dict(backend='disk')``.
     """
 
@@ -50,7 +51,7 @@ class LoadImageFromFile(BaseTransform):
         self.to_float32 = to_float32
         self.color_type = color_type
         self.file_client_args = file_client_args.copy()
-        self.file_client = mmcv.FileClient(**self.file_client_args)
+        self.file_client = FileClient(**self.file_client_args)
         self.imdecode_backend = imdecode_backend
 
     def transform(self,
@@ -145,7 +146,7 @@ class LoadAnnotations(BaseTransform):
             Default to False.
         sparse (bool): whether the flow is sparse. Default to False.
         file_client_args (dict): Arguments to instantiate a FileClient.
-            See :class:`mmcv.fileio.FileClient` for details.
+            See :class:`mmengine.fileio.FileClient` for details.
             Defaults to ``dict(backend='disk')``.
     """
 
@@ -172,7 +173,7 @@ class LoadAnnotations(BaseTransform):
         """
 
         if self.file_client is None:
-            self.file_client = mmcv.FileClient(**self.file_client_args)
+            self.file_client = FileClient(**self.file_client_args)
 
         if self.sparse:
             results = self._load_sparse_flow(results)
