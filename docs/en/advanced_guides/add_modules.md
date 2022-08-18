@@ -6,8 +6,13 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 
 1. Create a new file `mmflow/models/encoders/my_model.py`.
 
+You can write a new head inherit from `BaseModule` from mmengine, and overwrite `forward`.
+We have a unified interface for weight initialization in mmengine,
+you can use `init_cfg` to specify the initialization function and arguments,
+or overwrite `init_weights` if you prefer customized initialization.
+
 ```python
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 from mmflow.registry import MODELS
 
@@ -17,10 +22,11 @@ class MyModel(BaseModule):
     def __init__(self, arg1, arg2):
         pass
 
-    def forward(self, x):  # should return a tuple
+    def forward(self, x):  # should return a dict
         pass
 
-    def init_weights(self, pretrained=None):
+    # optional
+    def init_weights(self):
         pass
 ```
 
@@ -34,15 +40,13 @@ from .my_model import MyModel
 
 1. Create a new file `mmflow/models/decoders/my_decoder.py`.
 
-You can write a new head inherit from `BaseModule` from MMCV,
-and overwrite `forward(self, x)`, `forward_train` and `forward_test` methods.
-We have a unified interface for [weights initialization](https://mmcv.readthedocs.io/en/latest/understand_mmcv/cnn.html#weight-initialization) in MMCV,
-you can use `init_cfg` to specify the initialization function and arguments,
-or overwrite `init_weigths` if you prefer customized initialization.
+You can write a new head inherit from `BaseModule` from mmengine,
+and overwrite `forward` and `init_weights`.
 
 ```python
-from mmflow.registry import MODELS
+from mmengine.model import BaseModule
 
+from mmflow.registry import MODELS
 
 @MODELS.register_module()
 class MyDecoder(BaseModule):
@@ -57,18 +61,20 @@ class MyDecoder(BaseModule):
     def init_weights(self):
         pass
 
-    def forward_train(self, *args, flow_gt):
+    def loss(self, *args, batch_data_samples):
         flow_pred = self.forward(*args)
-        return self.losses(flow_pred, flow_gt)
+        return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(self,*args, img_metas):
+    def predict(self, *args, batch_img_metas):
         flow_pred = self.forward(*args)
-        return self.get_flow(flow_pred, img_metas)
+        flow_results = flow_pred[self.end_level]
+        return self.predict_by_feat(flow_results, batch_img_metas)
 ```
 
-`losses` is the loss function to compute the losses between the model output and target, `get_flow` is implemented in `BaseDecoder` to restore the flow shape as the original shape of input images.
+`loss_by_feat` is the loss function to compute the losses between the model output and target.
+`predict_by_feat` is implemented in `BaseDecoder` to restore the flow shape as the original shape of input images.
 
-1. Import the module in `mmflow/models/decoders/__init__.py`
+2. Import the module in `mmflow/models/decoders/__init__.py`
 
 ```python
 from .my_decoder import MyDecoder
