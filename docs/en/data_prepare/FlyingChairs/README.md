@@ -13,6 +13,19 @@
 }
 ```
 
+## Download and Unpack dataset
+
+Please download the datasets from the official websites.
+
+```bash
+wget https://lmb.informatik.uni-freiburg.de/data/FlyingChairs/FlyingChairs.zip
+unzip FlyingChairs.zip
+cd FlyingChairs_release
+wget https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs/FlyingChairs_train_val.txt
+```
+
+If your dataset folder structure is different from the following, you may need to change the corresponding paths.
+
 ```text
 
 ├── FlyingChairs_release
@@ -21,17 +34,6 @@
 |   |    ├── xxxxx_flow.flo
 |   |    ├── xxxxx_img1.ppm
 |   |    ├── xxxxx_img2.ppm
-```
-
-Here is the script to prepare FlyingChairs dataset.
-
-## Download and Unpack dataset
-
-```bash
-wget https://lmb.informatik.uni-freiburg.de/data/FlyingChairs/FlyingChairs.zip
-unzip FlyingChairs.zip
-cd FlyingChairs_release
-wget https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs/FlyingChairs_train_val.txt
 ```
 
 ## Generate annotation file
@@ -54,7 +56,7 @@ This scrip accepts these arguments:
 
 **Note**:
 
-Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like ceph. There is an example for using object storage
+Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like s3 storage. There is an example for using object storage:
 
 ```python
 dataset_type = 'FlyingChairs'

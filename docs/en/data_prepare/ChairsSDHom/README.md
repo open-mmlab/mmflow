@@ -32,7 +32,7 @@ ChairsSDHom
 |   |   |    |    |      |── xxxxx.png
 ```
 
-Here is the script to prepare ChairsSDHom dataset.
+## DownLoad and unpack dataset
 
 ```bash
 wget https://lmb.informatik.uni-freiburg.de/data/FlowNet2/ChairsSDHom/ChairsSDHom.tar.gz

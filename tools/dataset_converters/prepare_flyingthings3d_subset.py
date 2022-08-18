@@ -78,7 +78,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/FlyingThings3D_subset/',
         help='Directory to save the annotation files for '
         'FlyingThings3D subset dataset')
     args = parser.parse_args()

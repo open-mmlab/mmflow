@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/Sintel/',
         help='Directory to save the annotation files for Sintel dataset')
     args = parser.parse_args()
 
@@ -92,12 +92,10 @@ def main():
                     data_list.append(data_info)
         if subset_dir == 'training':
             annotation_file = osp.join(args.save_dir, 'Sintel_train.json')
-            metainfo = dict(dataset='Sintel', subset='train')
         else:
             annotation_file = osp.join(args.save_dir, 'Sintel_test.json')
-            metainfo = dict(dataset='Sintel', subset='test')
         with open(annotation_file, 'w') as jsonfile:
-            json.dump({'data_list': data_list, 'metainfo': metainfo}, jsonfile)
+            json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)
 
     _get_data_list('training')
     _get_data_list('testing')

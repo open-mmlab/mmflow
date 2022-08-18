@@ -28,6 +28,18 @@ year = {2012}
 }
 ```
 
+## Download and Unpack dataset
+
+Please download the datasets from the official websites.
+
+```bash
+wget http://files.is.tue.mpg.de/sintel/MPI-Sintel-complete.zip
+# or use US mirror wget http://sintel.cs.washington.edu/MPI-Sintel-complete.zip
+unzip MPI-Sintel-complete.zip
+```
+
+If your dataset folder structure is different from the following, you may need to change the corresponding paths.
+
 ```text
  Sintel
 |   |   ├── training
@@ -44,10 +56,39 @@ year = {2012}
 |   |   |   |   |    ├── frame_xxxx.png
 ```
 
-Here is the script to prepare Sintel dataset.
+## Generate annotation file
 
-```bash
-wget http://files.is.tue.mpg.de/sintel/MPI-Sintel-complete.zip
-# or use US mirror wget http://sintel.cs.washington.edu/MPI-Sintel-complete.zip
-unzip MPI-Sintel-complete.zip
+We provide a convenient script to generate annotation file, which list all of data samples in the dataset.
+You can use the following command to generate annotation file.
+
+```python
+python tools/dataset_converters/prepare_sintel.py [optional arguments]
+```
+
+This scrip accepts these arguments:
+
+- `--data-root ${DATASET_DIR}`: The dataset directory of Sintel, default to `'data/Sintel'`.
+
+- `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/Sintel/'`,
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/Sintel_train.json` and `${SAVE_DIR}/Sintel_test.json`
+
+**Note**:
+
+Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like s3 storage. There is an example for using object storage:
+
+```python
+file_client_args= dict(
+    backend='s3',
+    path_mapping=dict(
+        {'data/': 's3://dataset_path'}))
+train_pipeline = [
+    dict(type='LoadImageFromFile', file_client_args=file_client_args),
+    dict(type='LoadAnnotations', file_client_args=file_client_args)]
+sintel_clean_train = dict(
+    type='Sintel',
+    ann_file='Sintel_train.json',
+    pipeline=train_pipeline,
+    data_root='data/Sintel',
+    test_mode=False,
+    pass_style='clean')
 ```

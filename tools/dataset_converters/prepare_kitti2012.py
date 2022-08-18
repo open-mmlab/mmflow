@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/kitti2012/',
         help='Directory to save the annotation files for KITTI2012 dataset')
     args = parser.parse_args()
 
