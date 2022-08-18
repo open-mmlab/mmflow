@@ -11,6 +11,17 @@
 }
 ```
 
+## Download and Unpack dataset
+
+Please download the datasets from the official websites.
+
+```bash
+wget https://download.visinf.tu-darmstadt.de/data/flyingchairs_occ/FlyingChairsOcc.tar.gz
+tar -xvf FlyingChairsOcc.tar.gz
+```
+
+If your dataset folder structure is different from the following, you may need to change the corresponding paths.
+
 ```text
 
 ├── FlyingChairsOcc
@@ -23,9 +34,7 @@
 |   |   |    ├── xxxxx_occ2.png
 ```
 
-Here is the script to prepare FlyingChairsOcc dataset.
+## Generate annotation file
 
-```bash
-wget https://download.visinf.tu-darmstadt.de/data/flyingchairs_occ/FlyingChairsOcc.tar.gz
-tar -xvf FlyingChairsOcc.tar.gz
-```
+We provide a convenient script to generate annotation file, which list all of data samples in the dataset.
+You can use the following command to generate annotation file.
