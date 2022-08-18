@@ -112,14 +112,11 @@ def main():
         if subset_dir == 'TRAIN':
             annotation_file = osp.join(args.save_dir,
                                        'FlyingThings3D_TRAIN.json')
-            metainfo = dict(dataset='FlyingThings3D', subset='train')
         else:
             annotation_file = osp.join(args.save_dir,
                                        'FlyingThings3D_TEST.json')
-            metainfo = dict(dataset='FlyingThings3D', subset='test')
-
         with open(annotation_file, 'w') as jsonfile:
-            json.dump({'data_list': data_list, 'metainfo': metainfo}, jsonfile)
+            json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)
 
     _get_data_list('TRAIN')
     _get_data_list('TEST')

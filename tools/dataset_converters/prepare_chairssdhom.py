@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='tests/data/pseudo_chairssdhom',
+        default='data/ChairsSDHom/',
         help='Directory to save the annotation files for ChairsSDHom dataset')
     args = parser.parse_args()
 
@@ -48,7 +48,6 @@ def main():
                                                      img2_dir)
 
         data_list = []
-        metainfo = dict(dataset='ChairsSDHom', subset=subset_dir)
 
         for i in range(len(flow_filenames)):
             data_info = dict(
@@ -60,7 +59,7 @@ def main():
         with open(osp.join(args.save_dir, f'{subset_dir}.json'),
                   'w') as jsonfile:
             json.dump({
-                'metainfo': metainfo,
+                'metainfo': {},
                 'data_list': data_list
             },
                       jsonfile,

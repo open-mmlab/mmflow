@@ -55,8 +55,6 @@ def main():
 
     train_list = []
     test_list = []
-    train_meta = dict(dataset='FlyingChairs', subset='train')
-    test_meta = dict(dataset='FlyingChairs', subset='test')
 
     for i, flag in enumerate(split):
 
@@ -72,11 +70,11 @@ def main():
     mmcv.mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'FlyingChairs_train.json'),
               'w') as jsonfile:
-        json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
+        json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
 
     with open(osp.join(args.save_dir, 'FlyingChairs_test.json'),
               'w') as jsonfile:
-        json.dump({'data_list': test_list, 'metainfo': test_meta}, jsonfile)
+        json.dump({'data_list': test_list, 'metainfo': {}}, jsonfile)
 
 
 if __name__ == '__main__':

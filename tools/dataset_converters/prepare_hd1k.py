@@ -52,7 +52,6 @@ def main():
         seq_ix += 1
 
     train_list = []
-    train_meta = dict(dataset='HD1K', sparse=True)
 
     for i in range(len(flow_filenames)):
         data_info = dict(
@@ -63,7 +62,7 @@ def main():
         train_list.append(data_info)
     mmcv.mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'hd1k_train.json'), 'w') as jsonfile:
-        json.dump({'metainfo': train_meta, 'data_list': train_list}, jsonfile)
+        json.dump({'metainfo': {}, 'data_list': train_list}, jsonfile)
 
 
 if __name__ == '__main__':
