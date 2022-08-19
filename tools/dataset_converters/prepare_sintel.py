@@ -91,9 +91,9 @@ def main():
                         occ_fw_path=i_occ)
                     data_list.append(data_info)
         if subset_dir == 'training':
-            annotation_file = osp.join(args.save_dir, 'Sintel_train.json')
+            annotation_file = osp.join(args.save_dir, 'train.json')
         else:
-            annotation_file = osp.join(args.save_dir, 'Sintel_test.json')
+            annotation_file = osp.join(args.save_dir, 'test.json')
         with open(annotation_file, 'w') as jsonfile:
             json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)
 

@@ -71,12 +71,12 @@ def parse_args():
     parser.add_argument(
         '--data-root',
         type=str,
-        default='data/FlyingChairs_release',
+        default='data/FlyingChairsOcc',
         help='Directory for dataset.')
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/FlyingChairsOcc/',
         help='Directory to save '
         'the annotation files for FlyingChairsOcc dataset')
     args = parser.parse_args()
@@ -131,12 +131,10 @@ def main():
         else:
             test_list.append(data_info)
     mmcv.mkdir_or_exist(args.save_dir)
-    with open(osp.join(args.save_dir, 'FlyingChairsOcc_train.json'),
-              'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
 
-    with open(osp.join(args.save_dir, 'FlyingChairsOcc_test.json'),
-              'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'test.json'), 'w') as jsonfile:
         json.dump({'data_list': test_list, 'metainfo': {}}, jsonfile)
 
 

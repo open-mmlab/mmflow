@@ -19,62 +19,62 @@ You can download datasets via \[BitTorrent\] (https://lmb.informatik.uni-freibur
 
 ```text
 ├── FlyingThings3D_subset
-|   |   ├── train
-|   |   |   ├── flow
-|   |   |   |   ├── left
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   ├── right
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   ├── flow_occlusions
-|   |   |   |   ├── left
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   ├── right
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   ├── image_clean
-|   |   |   |   ├── left
-|   |   |   |   |    ├── xxxxxxx.png
-|   |   |   |   ├── right
-|   |   |   |   |    ├── xxxxxxx.png
-|   |   ├── val
-|   |   |   ├── flow
-|   |   |   |   ├── left
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   ├── right
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   ├── flow_occlusions
-|   |   |   |   ├── left
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   ├── right
-|   |   |   |   |    ├── into_future
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   |   |    ├── into_past
-|   |   |   |   |    |      ├── xxxxxxx.flo
-|   |   |   ├── image_clean
-|   |   |   |   ├── left
-|   |   |   |   |    ├── xxxxxxx.png
-|   |   |   |   ├── right
-|   |   |   |   |    ├── xxxxxxx.png
+|   ├── train
+|   |   ├── flow
+|   |   |   ├── left
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   ├── right
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   ├── flow_occlusions
+|   |   |   ├── left
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   ├── right
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   ├── image_clean
+|   |   |   ├── left
+|   |   |   |    ├── xxxxxxx.png
+|   |   |   ├── right
+|   |   |   |    ├── xxxxxxx.png
+|   ├── val
+|   |   ├── flow
+|   |   |   ├── left
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   ├── right
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   ├── flow_occlusions
+|   |   |   ├── left
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   ├── right
+|   |   |   |    ├── into_future
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   |   |    ├── into_past
+|   |   |   |    |      ├── xxxxxxx.flo
+|   |   ├── image_clean
+|   |   |   ├── left
+|   |   |   |    ├── xxxxxxx.png
+|   |   |   ├── right
+|   |   |   |    ├── xxxxxxx.png
 ```
 
 ## Generate annotation file
@@ -91,7 +91,7 @@ This scrip accepts these arguments:
 - `--data-root ${DATASET_DIR}`: The dataset directory of FlyingThings3D_subset, default to `'data/FlyingThings3D_subset'`.
 
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/FlyingThings3D_subset/'`,
-  and annotation files for train and test dataset will be save as `${SAVE_DIR}/FlyingThings3D_subset_train.json` and `${SAVE_DIR}/FlyingThings3D_subset_test.json`
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json` and `${SAVE_DIR}/test.json`
 
 **Note**:
 
@@ -108,7 +108,7 @@ train_pipeline = [
 ]
 flyingthings3d_subset_train = dict(
     type='FlyingThings3DSubset',
-    ann_file='FlyingThings3D_subset_train.json',
+    ann_file='train.json',
     pipeline=train_pipeline,
     data_root='data/FlyingThings3D_subset',
     test_mode=False,

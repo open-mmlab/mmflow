@@ -23,14 +23,14 @@
 You can download datasets on this [webpage](http://www.cvlibs.net/datasets/kitti/user_login.php). Then, you need to unzip and move corresponding datasets to follow the folder structure shown below. The datasets have been well-prepared by the original authors.
 
 ```text
-kitti2015
-|   |   ├── training
-|   |   |   ├── flow_occ
-|   |   |   |   ├── xxxxxx_xx.png
-|   |   |   ├── flow_noc
-|   |   |   |   ├── xxxxxx_xx.png
-|   |   |   ├── image_2
-|   |   |   |   ├── xxxxxx_xx.png
+├── kitti2015
+|   ├── training
+|   |   ├── flow_occ
+|   |   |   ├── xxxxxx_xx.png
+|   |   ├── flow_noc
+|   |   |   ├── xxxxxx_xx.png
+|   |   ├── image_2
+|   |   |   ├── xxxxxx_xx.png
 ```
 
 ## Generate annotation file
@@ -47,7 +47,7 @@ This scrip accepts these arguments:
 - `--data-root ${DATASET_DIR}`: The dataset directory of FlyingChairs, default to `'data/kitti2015'`.
 
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/kitti2015/'`,
-  and annotation files for train and test dataset will be save as `${SAVE_DIR}/KITTI2015_train.json`.
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json`.
 
 **Note**:
 
@@ -63,7 +63,7 @@ train_pipeline = [
     dict(type='LoadAnnotations', file_client_args=file_client_args, sparse=True)]
 kitti_train = dict(
     type='KITTI2015',
-    ann_file='KITTI2015_train.json',
+    ann_file='train.json',
     data_root='data/kitti2015',
     pipeline=kitti_train_pipeline,
     test_mode=False)

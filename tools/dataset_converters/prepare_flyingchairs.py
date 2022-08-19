@@ -68,12 +68,10 @@ def main():
         else:
             test_list.append(data_info)
     mmcv.mkdir_or_exist(args.save_dir)
-    with open(osp.join(args.save_dir, 'FlyingChairs_train.json'),
-              'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
 
-    with open(osp.join(args.save_dir, 'FlyingChairs_test.json'),
-              'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'test.json'), 'w') as jsonfile:
         json.dump({'data_list': test_list, 'metainfo': {}}, jsonfile)
 
 

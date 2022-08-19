@@ -49,7 +49,7 @@ def main():
             img1_path=i_img1, img2_path=i_img2, flow_fw_path=i_flow_fw)
         data_list.append(data_info)
 
-    annotation_file = osp.join(args.save_dir, 'KITTI2012_train.json')
+    annotation_file = osp.join(args.save_dir, 'train.json')
 
     with open(annotation_file, 'w') as jsonfile:
         json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)

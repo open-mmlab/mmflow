@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/hd1k/',
         help='Directory to save the annotation files for HD1K dataset')
     args = parser.parse_args()
 
@@ -29,7 +29,6 @@ def main():
     args = parse_args()
 
     img1_dir = osp.join(args.data_root, 'hd1k_input/image_2')
-    img2_dir = osp.join(args.data_root, 'hd1k_input/image_2')
     flow_dir = osp.join(args.data_root, 'hd1k_flow_gt/flow_occ')
 
     img1_filenames = []
@@ -55,13 +54,13 @@ def main():
 
     for i in range(len(flow_filenames)):
         data_info = dict(
-            img1_path=osp.join(img1_dir, img1_filenames[i]),
-            img2_path=osp.join(img2_dir, img2_filenames[i]),
-            flow_fw_path=osp.join(flow_dir, flow_filenames[i]))
+            img1_path=osp.join(img1_filenames[i]),
+            img2_path=osp.join(img2_filenames[i]),
+            flow_fw_path=osp.join(flow_filenames[i]))
 
         train_list.append(data_info)
     mmcv.mkdir_or_exist(args.save_dir)
-    with open(osp.join(args.save_dir, 'hd1k_train.json'), 'w') as jsonfile:
+    with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'metainfo': {}, 'data_list': train_list}, jsonfile)
 
 

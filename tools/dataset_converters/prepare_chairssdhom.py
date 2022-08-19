@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument(
         '--data-root',
         type=str,
-        default='data/ChairsSDHom/data',
+        default='data/ChairsSDHom',
         help='Directory for dataset.')
 
     parser.add_argument(
@@ -37,7 +37,7 @@ def main():
     flow_suffix = '.pfm'
 
     def _get_data_list(subset_dir):
-        data_root = osp.join(args.data_root, subset_dir)
+        data_root = osp.join(args.data_root, 'data', subset_dir)
         img1_dir = osp.join(data_root, 't0')
         img2_dir = osp.join(data_root, 't1')
         flow_dir = osp.join(data_root, 'flow')

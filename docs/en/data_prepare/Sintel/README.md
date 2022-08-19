@@ -41,19 +41,19 @@ unzip MPI-Sintel-complete.zip
 If your dataset folder structure is different from the following, you may need to change the corresponding paths.
 
 ```text
- Sintel
-|   |   ├── training
-|   |   |   ├── clean
-|   |   |   |   ├── xxxx_x
-|   |   |   |   |    ├── frame_xxxx.png
-|   |   |   ├── final
-|   |   |   |   ├── xxxx_x
-|   |   |   |   |    ├── frame_xxxx.png
-|   |   |   ├── flow
-|   |   |   |   |    ├── frame_xxxx.flo
-|   |   |   ├── invalid
-|   |   |   |   ├── xxxx_x
-|   |   |   |   |    ├── frame_xxxx.png
+├── Sintel
+|   ├── training
+|   |   ├── clean
+|   |   |   ├── xxxx_x
+|   |   |   |    ├── frame_xxxx.png
+|   |   ├── final
+|   |   |   ├── xxxx_x
+|   |   |   |    ├── frame_xxxx.png
+|   |   ├── flow
+|   |   |   |    ├── frame_xxxx.flo
+|   |   ├── invalid
+|   |   |   ├── xxxx_x
+|   |   |   |    ├── frame_xxxx.png
 ```
 
 ## Generate annotation file
@@ -61,7 +61,7 @@ If your dataset folder structure is different from the following, you may need t
 We provide a convenient script to generate annotation file, which list all of data samples in the dataset.
 You can use the following command to generate annotation file.
 
-```python
+```bash
 python tools/dataset_converters/prepare_sintel.py [optional arguments]
 ```
 
@@ -70,7 +70,7 @@ This scrip accepts these arguments:
 - `--data-root ${DATASET_DIR}`: The dataset directory of Sintel, default to `'data/Sintel'`.
 
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/Sintel/'`,
-  and annotation files for train and test dataset will be save as `${SAVE_DIR}/Sintel_train.json` and `${SAVE_DIR}/Sintel_test.json`
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json` and `${SAVE_DIR}/test.json`
 
 **Note**:
 
@@ -86,7 +86,7 @@ train_pipeline = [
     dict(type='LoadAnnotations', file_client_args=file_client_args)]
 sintel_clean_train = dict(
     type='Sintel',
-    ann_file='Sintel_train.json',
+    ann_file='train.json',
     pipeline=train_pipeline,
     data_root='data/Sintel',
     test_mode=False,

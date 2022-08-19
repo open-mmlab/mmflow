@@ -19,63 +19,63 @@ You can download datasets via \[BitTorrent\] (https://lmb.informatik.uni-freibur
 
 ```text
 ├── flyingthings3d
-|   |   ├── frames_cleanpass
-|   |   |   ├── TEST
-|   |   |   |   ├── x
+|   ├── frames_cleanpass
+|   |   ├── TEST
+|   |   |   ├── x
+|   |   |   |   ├── xxxx
+|   |   |   |   |    ├── left
+|   |   |   |   |    |   ├── xxxx.png
+|   |   |   |   |    ├── right
+|   |   |   |   |    |   ├── xxxx.png
+|   |   ├── TRAIN
+|   |   |   ├── x
+|   |   |   |   ├── xxxx
+|   |   |   |   |    ├── left
+|   |   |   |   |    |   ├── xxxx.png
+|   |   |   |   |    ├── right
+|   |   |   |   |    |   ├── xxxx.png
+|   ├── frames_finalpass
+|   |   ├── TEST
+|   |   |   ├── x
+|   |   |   |   ├── xxxx
+|   |   |   |   |    ├── left
+|   |   |   |   |    |   ├── xxxx.png
+|   |   |   |   |    ├── right
+|   |   |   |   |    |   ├── xxxx.png
+|   |   ├── TRAIN
+|   |   |   ├── x
+|   |   |   |   ├── xxxx
+|   |   |   |   |    ├── left
+|   |   |   |   |    |   ├── xxxx.png
+|   |   |   |   |    ├── right
+|   |   |   |   |    |   ├── xxxx.png
+|   ├── optical_flow
+|   |   ├── TEST
+|   |   |   ├── x
 |   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── left
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   |   |   |    ├── right
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   ├── TRAIN
-|   |   |   |   ├── x
-|   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── left
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   |   |   |    ├── right
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   ├── frames_finalpass
-|   |   |   ├── TEST
-|   |   |   |   ├── x
-|   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── left
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   |   |   |    ├── right
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   ├── TRAIN
-|   |   |   |   ├── x
-|   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── left
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   |   |   |   |    ├── right
-|   |   |   |   |   |    |   ├── xxxx.png
-|   |   ├── optical_flow
-|   |   |   ├── TEST
-|   |   |   |   ├── x
-|   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── into_future
-|   |   |   |   |   |    |       ├── left
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_L.pfm
-|   |   |   |   |   |    |       ├── right
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_R.pfm
-|   |   |   |   |   |    ├── into_past
-|   |   |   |   |   |    |       ├── left
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_L.pfm
-|   |   |   |   |   |    |       ├── right
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_R.pfm
-|   |   |   ├── TRAIN
-|   |   |   |   ├── x
-|   |   |   |   |   ├── xxxx
-|   |   |   |   |   |    ├── into_future
-|   |   |   |   |   |    |       ├── left
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_L.pfm
-|   |   |   |   |   |    |       ├── right
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_R.pfm
-|   |   |   |   |   |    ├── into_past
-|   |   |   |   |   |    |       ├── left
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_L.pfm
-|   |   |   |   |   |    |       ├── right
-|   |   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_R.pfm
+|   |   |   |   |    ├── into_future
+|   |   |   |   |    |       ├── left
+|   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_L.pfm
+|   |   |   |   |    |       ├── right
+|   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_R.pfm
+|   |   |   |   |    ├── into_past
+|   |   |   |   |    |       ├── left
+|   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_L.pfm
+|   |   |   |   |    |       ├── right
+|   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_R.pfm
+|   |   ├── TRAIN
+|   |   |   ├── x
+|   |   |   |   ├── xxxx
+|   |   |   |   |    ├── into_future
+|   |   |   |   |    |       ├── left
+|   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_L.pfm
+|   |   |   |   |    |       ├── right
+|   |   |   |   |    |       |     ├── OpticalFlowIntoFuture_xxxx_R.pfm
+|   |   |   |   |    ├── into_past
+|   |   |   |   |    |       ├── left
+|   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_L.pfm
+|   |   |   |   |    |       ├── right
+|   |   |   |   |    |       |     ├── OpticalFlowIntoPast_xxxx_R.pfm
 ```
 
 ## Generate annotation file
@@ -89,10 +89,10 @@ python tools/dataset_converters/prepare_flyingthings3d.py [optional arguments]
 
 This scrip accepts these arguments:
 
-- `--data-root ${DATASET_DIR}`: The dataset directory of FlyingThings3D, default to `'data/FlyingThings3D'`.
+- `--data-root ${DATASET_DIR}`: The dataset directory of FlyingThings3D, default to `'data/flyingthings3d'`.
 
-- `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/FlyingThings3D/'`,
-  and annotation files for train and test dataset will be save as `${SAVE_DIR}/FlyingThings3D_train.json` and `${SAVE_DIR}/FlyingThings3D_test.json`
+- `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/flyingthings3d/'`,
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json` and `${SAVE_DIR}/test.json`
 
 **Note**:
 
@@ -107,11 +107,13 @@ train_pipeline = [
     dict(type='LoadImageFromFile', file_client_args=file_client_args),
     dict(type='LoadAnnotations', file_client_args=file_client_args),
 ]
-flyingthings3d_subset_train = dict(
+flyingthings3d_train_cleanpass = dict(
     type='FlyingThings3D',
-    ann_file='FlyingThings3D_train.json',
+    ann_file='train.json',
     pipeline=train_pipeline,
-    data_root='data/FlyingThings3D',
-    test_mode=False,  pass_style='clean',
-    scene='left')
+    data_root='data/flyingthings3d',
+    test_mode=False,
+    pass_style='clean',
+    scene='left',
+    double=True)
 ```

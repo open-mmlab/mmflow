@@ -14,12 +14,12 @@ def parse_args():
     parser.add_argument(
         '--data-root',
         type=str,
-        default='data/FlyingThings3D',
+        default='data/flyingthings3d',
         help='Directory for dataset.')
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='data/FlyingThings3D/',
+        default='data/flyingthings3d/',
         help='Directory to save the annotation files for '
         'FlyingThings3D dataset')
     args = parser.parse_args()
@@ -39,14 +39,12 @@ def main():
         imgs_dirs = []
         flow_fw_dirs = []
         flow_bw_dirs = []
-
         for i_scene in scene:
             tmp_imgs_dirs = glob(
                 osp.join(args.data_root, 'frames_cleanpass',
                          subset_dir + '/*/*'))
             tmp_imgs_dirs = [osp.join(f, i_scene) for f in tmp_imgs_dirs]
             imgs_dirs += tmp_imgs_dirs
-
             tmp_flow_fw_dirs = glob(
                 osp.join(args.data_root, 'optical_flow',
                          subset_dir + '/*/*/' + flow_fw_dir))
@@ -110,11 +108,9 @@ def main():
 
         mmcv.mkdir_or_exist(args.save_dir)
         if subset_dir == 'TRAIN':
-            annotation_file = osp.join(args.save_dir,
-                                       'FlyingThings3D_TRAIN.json')
+            annotation_file = osp.join(args.save_dir, 'train.json')
         else:
-            annotation_file = osp.join(args.save_dir,
-                                       'FlyingThings3D_TEST.json')
+            annotation_file = osp.join(args.save_dir, 'test.json')
         with open(annotation_file, 'w') as jsonfile:
             json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)
 

@@ -52,7 +52,7 @@ This scrip accepts these arguments:
 - `--split-file ${SPLIT_FILE}`: The file for splitting train and test dataset, default to `'data/FlyingChairs_release/FlyingChairs_train_val.txt'`.
 
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/FlyingChairs_release/'`,
-  and annotation files for train and test dataset will be save as `${SAVE_DIR}/FlyingChairs_train.json` and `${SAVE_DIR}/FlyingChairs_test.json`
+  and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json` and `${SAVE_DIR}/test.json`
 
 **Note**:
 
@@ -71,7 +71,7 @@ train_pipeline = [
 ]
 flyingchairs_train = dict(
     type=dataset_type,
-    ann_file='FlyingChairs_train.json',
+    ann_file='train.json',
     pipeline=train_pipeline,
     data_root=data_root)
 
@@ -81,7 +81,7 @@ test_pipeline = [
 ]
 flyingchairs_test = dict(
     type=dataset_type,
-    ann_file='FlyingChairs_test.json',
+    ann_file='test.json',
     pipeline=test_pipeline,
     data_root=data_root,
     test_mode=True)
