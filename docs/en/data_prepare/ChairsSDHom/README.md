@@ -61,9 +61,9 @@ This scrip accepts these arguments:
 
 ```python
 file_client_args = dict(
-    backend='petrel',
+    backend='s3',
     path_mapping=dict(
-        {'data/': 'openmmlab:s3://openmmlab/datasets/optical_flow/'}))
+        {'data/': 's3://dataset_path'}))
 train_pipeline = [
     dict(type='LoadImageFromFile', file_client_args=file_client_args),
     dict(type='LoadAnnotations', file_client_args=file_client_args)]
