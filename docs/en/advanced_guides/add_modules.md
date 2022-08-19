@@ -19,7 +19,7 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
    @MODELS.register_module()
    class MyEncoder(BaseModule):
 
-       def __init__(self, arg1, arg2):
+       def __init__(self, arg1, arg2):  # arg1 and arg2 need to be specified in config
            pass
 
        def forward(self, x):  # should return a dict
@@ -51,7 +51,7 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
    @MODELS.register_module()
    class MyDecoder(BaseModule):
 
-       def __init__(self, arg1, arg2):
+       def __init__(self, arg1, arg2):  # arg1 and arg2 need to be specified in config
            pass
 
        def forward(self, *args):
@@ -125,11 +125,21 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 
 3. Use it in your config file.
 
+   It's worth pointing out that `data_preprocessor` is an important parameter of `FlowEstimator`
+   which can be used to move data to a specified device (such as a GPU) and further format the input data.
+   In addition, image normalization, adding Gaussian noise and  are implemented in `data_preprocessor` as well.
+   Therefore, `data_preprocessor` needs to be specified in the config of `MyEstimator`.
+   You can refer to the config of [PWC-Net](../../../configs/_base_/models/pwcnet.py) for a typical configuration of `data_preprocessor`.
+
    ```python
    model = dict(
        type='MyEstimator',
+       data_preprocessor=dict(
+           type='FlowDataPreprocessor',
+           mean=[0., 0., 0.],
+           std=[255., 255., 255.]),
        encoder=dict(
-           type='MyModel',
+           type='MyEncoder',
            arg1=xxx,
            arg2=xxx),
        decoder=dict(
