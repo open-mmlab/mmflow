@@ -4,6 +4,7 @@ import json
 import os
 import os.path as osp
 
+import mmcv
 from utils import get_data_filename
 
 
@@ -17,7 +18,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/Sintel/',
         help='Directory to save the annotation files for Sintel dataset')
     args = parser.parse_args()
 
@@ -90,14 +91,13 @@ def main():
                         invalid_path=i_invalid,
                         occ_fw_path=i_occ)
                     data_list.append(data_info)
+        mmcv.mkdir_or_exist(args.save_dir)
         if subset_dir == 'training':
-            annotation_file = osp.join(args.save_dir, 'Sintel_train.json')
-            metainfo = dict(dataset='Sintel', subset='train')
+            annotation_file = osp.join(args.save_dir, 'train.json')
         else:
-            annotation_file = osp.join(args.save_dir, 'Sintel_test.json')
-            metainfo = dict(dataset='Sintel', subset='test')
+            annotation_file = osp.join(args.save_dir, 'test.json')
         with open(annotation_file, 'w') as jsonfile:
-            json.dump({'data_list': data_list, 'metainfo': metainfo}, jsonfile)
+            json.dump({'data_list': data_list, 'metainfo': {}}, jsonfile)
 
     _get_data_list('training')
     _get_data_list('testing')

@@ -78,7 +78,7 @@ def parse_args():
     parser.add_argument(
         '--save-dir',
         type=str,
-        default='.',
+        default='data/FlyingThings3D_subset/',
         help='Directory to save the annotation files for '
         'FlyingThings3D subset dataset')
     args = parser.parse_args()
@@ -136,8 +136,6 @@ def main():
 
     train_list = []
     test_list = []
-    train_meta = dict(dataset='FlyingThings3D_subset', subset='train')
-    test_meta = dict(dataset='FlyingThings3D_subset', subset='test')
     for subset in ('train', 'val'):
         data_root = osp.join(args.data_root, subset)
 
@@ -175,13 +173,10 @@ def main():
                 else:
                     test_list.append(data_info)
     mmcv.mkdir_or_exist(args.save_dir)
-    with open(
-            osp.join(args.save_dir, 'FlyingThings3D_subset_train.json'),
-            'w') as jsonfile:
-        json.dump({'data_list': train_list, 'metainfo': train_meta}, jsonfile)
-    with open(osp.join(args.save_dir, 'FlyingThings3D_subset_test.json'),
-              'w') as jsonfile:
-        json.dump({'data_list': test_list, 'metainfo': test_meta}, jsonfile)
+    with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
+        json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
+    with open(osp.join(args.save_dir, 'test.json'), 'w') as jsonfile:
+        json.dump({'data_list': test_list, 'metainfo': {}}, jsonfile)
 
 
 if __name__ == '__main__':
