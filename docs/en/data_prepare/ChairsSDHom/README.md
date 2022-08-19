@@ -59,6 +59,10 @@ This scrip accepts these arguments:
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/ChairsSDHom/'`,
   and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json` and `${SAVE_DIR}/test.json`
 
+**Note**:
+
+Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like s3 storage. There is an example for using object storage:
+
 ```python
 file_client_args = dict(
     backend='s3',

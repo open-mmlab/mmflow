@@ -42,7 +42,7 @@ This scrip accepts these arguments:
 - `--save-dir ${SAVE_DIR}`: The directory for saving the annotation file, default to`'data/hd1k/'`,
   and annotation files for train and test dataset will be save as `${SAVE_DIR}/train.json`.
 
-  **Note**:
+**Note**:
 
 Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like s3 storage. There is an example for using object storage:
 
