@@ -15,17 +15,19 @@ A pipeline consists of a sequence of operations. Each operation takes a dict as 
 
 The operations are categorized into data loading, pre-processing, formatting.
 
-Here is a pipeline example for PWC-Net
+Here is a pipeline example for PWC-Net training on FlyingChairs.
 
 ```python
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
-    dict(type='ColorJitter', brightness=0.5, contrast=0.5, saturation=0.5,
-         hue=0.5),
+    dict(type='LoadImageFromFile', file_client_args=file_client_args),
+    dict(type='LoadAnnotations', file_client_args=file_client_args),
+    dict(
+        type='ColorJitter',
+        brightness=0.5,
+        contrast=0.5,
+        saturation=0.5,
+        hue=0.5),
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),
-    dict(type='Normalize', mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False),
-    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
     dict(type='RandomFlip', prob=0.5, direction='vertical'),
     dict(type='RandomAffine',
@@ -42,29 +44,30 @@ train_pipeline = [
             rotate=(-1.0, 1.0)
         ),
     dict(type='RandomCrop', crop_size=(384, 448)),
-    dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['imgs', 'flow_gt'],
-        meta_keys=['img_fields', 'ann_fields', 'filename1', 'filename2',
-                   'ori_filename1', 'ori_filename2', 'filename_flow',
-                   'ori_filename_flow', 'ori_shape', 'img_shape',
-                   'img_norm_cfg']),
+    dict(type='PackFlowInputs')
 ]
-
 ```
 
 For each operation, we list the related dict fields that are added/updated/removed.
+Before pipelines, the information we can directly obtain from the datasets are img1_path, img2_path and flow_fw_path.
 
 ### Data loading
 
 `LoadImageFromFile`
 
-- add: img1, img2, filename1, filename2, img_shape, ori_shape, pad_shape, scale_factor, img_norm_cfg
+- add: img1, img2, img_shape, ori_shape
 
 `LoadAnnotations`
 
-- add: flow_gt, filename_flow
+- add: gt_flow_fw, gt_flow_bw(None), sparse(False)
+
+```{note}
+FlyingChairs doesn't provide the ground truth of backward flow, so gt_flow_bw is None.
+Besides, FlyingChairs' ground truth is dense, so sparse is False.
+For some special datasets, such as HD1K and KITTI, their ground truth is sparse, so gt_valid_fw and gt_valid_bw will be added.
+FlyingChairsOcc and FlyingThing3d contain the ground truth of occlusion, so gt_occ_fw and gt_occ_bw will be added for these datasets.
+In the pipelines below, we only consider the case of FlyingChairs.
+```
 
 ### Pre-processing
 
@@ -74,35 +77,28 @@ For each operation, we list the related dict fields that are added/updated/remov
 
 `RandomGamma`
 
-- update: img1, img2
-
-`Normalize`
-
-- update: img1, img2, img_norm_cfg
-
-`GaussianNoise`
-
+- add: gamma
 - update: img1, img2
 
 `RandomFlip`
 
+- add: flip, flip_direction
 - update: img1, img2, flow_gt
 
 `RandomAffine`
 
+- add: global_ndc_affine_mat, relative_ndc_affine_mat
 - update: img1, img2, flow_gt
 
 `RandomCrop`
 
+- add: crop_bbox
 - update: img1, img2, flow_gt, img_shape
 
 ### Formatting
 
-`DefaultFormatBundle`
+`PackFlowInputs`
 
-- update: img1, img2, flow_gt
-
-`Collect`
-
-- add: img_meta (the keys of img_meta is specified by `meta_keys`)
-- remove: all other keys except for those specified by `keys`
+- add: inputs, data_sample
+- remove: img1 and img2 (merged into inputs), keys specified by `data_keys` (like gt_flow_fw, merged into data_sample)
+  keys specified by `meta_keys` (merged into the metainfo of data_sample), all other keys
