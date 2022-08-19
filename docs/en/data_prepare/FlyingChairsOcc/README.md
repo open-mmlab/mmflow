@@ -65,7 +65,7 @@ train_pipeline = [
 ]
 flyingchairsocc_train = dict(
     type='FlyingChairsOcc',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/FlyingChairsOcc/
     data_root='data/FlyingChairsOcc/',
     pipeline=train_pipeline,
     test_mode=False)

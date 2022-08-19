@@ -56,7 +56,7 @@ train_pipeline = [
     dict(type='LoadAnnotations', file_client_args=file_client_args, sparse=True)]
 hd1k_train = dict(
     type='HD1K',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/hd1k/
     pipeline=train_pipeline,
     data_root='data/hd1k',
     test_mode=False)

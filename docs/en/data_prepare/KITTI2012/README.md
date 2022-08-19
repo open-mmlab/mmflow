@@ -56,7 +56,7 @@ train_pipeline = [
     dict(type='LoadAnnotations', file_client_args=file_client_args, sparse=True)]
 kitti_train = dict(
     type='KITTI2012',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/kitti2012/
     data_root='data/kitti2012',
     pipeline=kitti_train_pipeline,
     test_mode=False)

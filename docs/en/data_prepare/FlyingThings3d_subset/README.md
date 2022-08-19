@@ -108,7 +108,7 @@ train_pipeline = [
 ]
 flyingthings3d_subset_train = dict(
     type='FlyingThings3DSubset',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/FlyingThings3D_subset/
     pipeline=train_pipeline,
     data_root='data/FlyingThings3D_subset',
     test_mode=False,

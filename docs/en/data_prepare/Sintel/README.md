@@ -86,7 +86,7 @@ train_pipeline = [
     dict(type='LoadAnnotations', file_client_args=file_client_args)]
 sintel_clean_train = dict(
     type='Sintel',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/Sintel/
     pipeline=train_pipeline,
     data_root='data/Sintel',
     test_mode=False,

@@ -109,7 +109,7 @@ train_pipeline = [
 ]
 flyingthings3d_train_cleanpass = dict(
     type='FlyingThings3D',
-    ann_file='train.json',
+    ann_file='train.json', # train.json is in data_root i.e. data/flyingthings3d/
     pipeline=train_pipeline,
     data_root='data/flyingthings3d',
     test_mode=False,
