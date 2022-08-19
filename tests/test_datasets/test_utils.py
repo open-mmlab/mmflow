@@ -3,6 +3,7 @@ import os.path as osp
 from tempfile import TemporaryDirectory
 
 import mmcv
+import mmengine
 import numpy as np
 import pytest
 from PIL import Image
@@ -74,7 +75,7 @@ def test_visualize_flow():
 
 def test_flow_from_bytes():
     filename = '../data/0000000-flow_01.flo'
-    file_client = mmcv.FileClient(backend='disk')
+    file_client = mmengine.FileClient(backend='disk')
     flow_bytes = file_client.get(osp.join(osp.dirname(__file__), filename))
     flow = flow_from_bytes(flow_bytes, filename[-3:])
     assert flow.shape[-1] == 2 and len(flow.shape) == 3
