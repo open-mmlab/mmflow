@@ -127,7 +127,7 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 
    It's worth pointing out that `data_preprocessor` is an important parameter of `FlowEstimator`
    which can be used to move data to a specified device (such as a GPU) and further format the input data.
-   In addition, image normalization, adding Gaussian noise and  are implemented in `data_preprocessor` as well.
+   In addition, image normalization, adding Gaussian noise are implemented in `data_preprocessor` as well.
    Therefore, `data_preprocessor` needs to be specified in the config of `MyEstimator`.
    You can refer to the config of [PWC-Net](../../../configs/_base_/models/pwcnet.py) for a typical configuration of `data_preprocessor`.
 
