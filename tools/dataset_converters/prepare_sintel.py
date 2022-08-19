@@ -4,6 +4,7 @@ import json
 import os
 import os.path as osp
 
+import mmcv
 from utils import get_data_filename
 
 
@@ -90,6 +91,7 @@ def main():
                         invalid_path=i_invalid,
                         occ_fw_path=i_occ)
                     data_list.append(data_info)
+        mmcv.mkdir_or_exist(args.save_dir)
         if subset_dir == 'training':
             annotation_file = osp.join(args.save_dir, 'train.json')
         else:
