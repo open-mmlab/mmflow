@@ -56,8 +56,8 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         return self.pixel_mean.device
 
     def forward(self,
-                batch_inputs: torch.Tensor,
-                batch_data_samples: OptSampleList = None,
+                inputs: torch.Tensor,
+                data_samples: OptSampleList = None,
                 mode: str = 'tensor') -> Union[dict, SampleList]:
         """The unified entry for a forward process in both training and test.
 
@@ -74,9 +74,9 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         optimizer updating, which are done in the :meth:`train_step`.
 
         Args:
-            batch_inputs (torch.Tensor): The input tensor with shape
+            inputs (torch.Tensor): The input tensor with shape
                 (N, C, ...) in general.
-            batch_data_samples (list[:obj:`FlowDataSample`], optional): The
+            data_samples (list[:obj:`FlowDataSample`], optional): The
                 annotation data of every samples. Defaults to None.
             mode (str): Return what kind of value. Defaults to 'tensor'.
 
@@ -89,31 +89,31 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         """
 
         if mode == 'loss':
-            return self.loss(batch_inputs, batch_data_samples)
+            return self.loss(inputs, data_samples)
         elif mode == 'predict':
-            return self.predict(batch_inputs, batch_data_samples)
+            return self.predict(inputs, data_samples)
         elif mode == 'tensor':
-            return self._forward(batch_inputs, batch_data_samples)
+            return self._forward(inputs, data_samples)
         else:
             raise RuntimeError(f'Invalid mode "{mode}". '
                                'Only supports loss, predict and tensor mode')
 
     @abstractmethod
-    def loss(self, batch_inputs: Tensor,
-             batch_data_samples: SampleList) -> Union[dict, tuple]:
+    def loss(self, inputs: Tensor,
+             data_samples: SampleList) -> Union[dict, tuple]:
         """Calculate losses from a batch of inputs and data samples."""
         pass
 
     @abstractmethod
-    def predict(self, batch_inputs: Tensor,
-                batch_data_samples: SampleList) -> SampleList:
+    def predict(self, inputs: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Predict results from a batch of inputs and data samples with post-
         processing."""
         pass
 
     @abstractmethod
     def _forward(self,
-                 batch_inputs: Tensor,
+                 inputs: Tensor,
                  data_samples: OptSampleList = None) -> TensorDict:
         """Network forward process.
 
@@ -123,6 +123,6 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def extract_feat(self, batch_inputs: Tensor) -> TensorDict:
+    def extract_feat(self, inputs: Tensor) -> TensorDict:
         """Extract features from images."""
         pass
