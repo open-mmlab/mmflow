@@ -77,9 +77,7 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
             self.register_buffer('clamp_range', torch.tensor(clamp_range),
                                  False)
 
-    def collate_data(
-        self, data: dict
-    ) -> Dict[str, Any]:
+    def collate_data(self, data: dict) -> Dict[str, Any]:
         """Collating and copying data to the target device.
 
         Collates the data sampled from dataloader into a list of tensor and
@@ -119,7 +117,7 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
 
     def forward(self,
                 data: Sequence[dict],
-                training: bool = False) -> Tuple[torch.Tensor, Optional[list]]:
+                training: bool = False) -> Dict[str, Any]:
         """Perform normalization、padding and bgr2rgb conversion based on
         ``BaseDataPreprocessor``.
 
@@ -132,7 +130,11 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
             model input.
         """
 
-        img1s, img2s, batch_data_samples = self.collate_data(data)
+        img1s, img2s, data_samples = self.collate_data(data)
+
+        data = self.cast_data(data)  # type: ignore
+        img1s, img2s = data['inputs'][0, ...], data['inputs'][1, ...]
+        data_samples = data.get('data_samples', None)
 
         if self.channel_conversion and img1s[0].size(0) == 3:
             img1s = [_img1[[2, 1, 0], ...] for _img1 in img1s]
@@ -161,4 +163,4 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         img2s = torch.stack(img2s, dim=0)
 
         return dict(
-            inputs=torch.cat((img1s, img2s), dim=1), data_samples=batch_data_samples)
+            inputs=torch.cat((img1s, img2s), dim=1), data_samples=data_samples)
