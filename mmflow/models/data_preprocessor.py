@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import random
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import torch
 from mmengine.model import BaseDataPreprocessor
@@ -78,8 +78,8 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
                                  False)
 
     def collate_data(
-        self, data: Sequence[dict]
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], Optional[list]]:
+        self, data: dict
+    ) -> Dict[str, Any]:
         """Collating and copying data to the target device.
 
         Collates the data sampled from dataloader into a list of tensor and
@@ -105,8 +105,8 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         batch_data_samples: List[FlowDataSample] = []
         # Model can get predictions without any data samples.
         for _data in data:
-            if 'data_sample' in _data:
-                batch_data_samples.append(_data['data_sample'])
+            if 'data_samples' in _data:
+                batch_data_samples.append(_data['data_samples'])
         # Move data from CPU to corresponding device.
         batch_data_samples = [
             data_sample.to(self._device) for data_sample in batch_data_samples
@@ -160,4 +160,5 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         img1s = torch.stack(img1s, dim=0)
         img2s = torch.stack(img2s, dim=0)
 
-        return torch.cat((img1s, img2s), dim=1), batch_data_samples
+        return dict(
+            inputs=torch.cat((img1s, img2s), dim=1), data_samples=batch_data_samples)

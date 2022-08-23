@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from abc import abstractmethod
+from tkinter.messagebox import NO
 from typing import List, Optional, Sequence, Union
 
 import torch.nn.functional as F
@@ -8,7 +9,7 @@ from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.structures import FlowDataSample
-from mmflow.utils import SampleList, TensorDict
+from mmflow.utils import OptSampleList, SampleList, TensorDict
 
 
 class BaseDecoder(BaseModule):
@@ -44,22 +45,34 @@ class BaseDecoder(BaseModule):
         pass
 
     def postprocess_result(
-            self, results: Sequence[TensorDict],
-            batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
+            self, flow_results: Tensor,
+            data_samples: OptSampleList = None) -> Sequence[FlowDataSample]:
         """Reverted flow as original size of ground truth.
 
         Args:
-            flow_result (Sequence[Dict[str, Tensor]]): predicted results of
-                optical flow.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            flow_results (Tensor): predicted results of optical flow.
+            data_samples (list[:obj:`FlowDataSample`], optional): The
+                annotation data of every samples. Defaults to None.
 
         Returns:
             Sequence[FlowDataSample]: the reverted predicted optical flow.
         """
-        assert len(results) == len(batch_img_metas)
+        # unravel batch dim,
+        flow_results = list(flow_results)
+        results = [dict(flow_fw=f) for f in flow_results]
 
-        data_samples = []
+        only_prediction = False
+        if data_samples is None:
+            data_samples = []
+            only_prediction = True
+
+        batch_size, _, H, W = flow_results.shape
+        for i in range(batch_size):
+            if only_prediction:
+                prediction = FlowDataSample()
+                prediction.set_data({
+                    'data'
+                })
         for result, img_meta in zip(results, batch_img_metas):
             ori_H, ori_W = img_meta['ori_shape']
             pad = img_meta.get('pad', None)
@@ -89,28 +102,27 @@ class BaseDecoder(BaseModule):
         return data_samples
 
     def predict_by_feat(self, flow_results: Tensor,
-                        batch_img_metas: List[dict]) -> SampleList:
+                        data_samples: List[dict]) -> SampleList:
         """Predict list of obj:`FlowDataSample` from flow tensor.
 
         Args:
             flow_results (Tensor): Input flow tensor.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
-
+            data_samples (list[:obj:`FlowDataSample`], optional): The
+                annotation data of every samples. Defaults to None.
 
         Returns:
             Sequence[FlowDataSample]: the reverted predicted optical flow.
         """
-        H, W = batch_img_metas[0]['img_shape'][:2]
+        if data_samples is None:
+            flow_results = flow_results * self.flow_div
+            return self.postprocess_result(flow_results, data_samples=None)
+        
+        H, W = data_samples[0].metainfo['img_shape'][:2]
         # resize flow to the size of images after augmentation.
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
 
         flow_results = flow_results * self.flow_div
 
-        # unravel batch dim,
-        flow_results = list(flow_results)
-        results = [dict(flow_fw=f) for f in flow_results]
-
         return self.postprocess_result(
-            results, batch_img_metas=batch_img_metas)
+            flow_results, data_samples=data_samples)
