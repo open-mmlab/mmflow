@@ -25,9 +25,10 @@ class ToyModel(BaseModel):
         self.linear1 = nn.Linear(2, 2)
         self.linear2 = nn.Linear(2, 1)
 
-    def forward(self, batch_inputs, labels, mode='tensor'):
-        labels = torch.stack(labels)
-        outputs = self.linear1(batch_inputs)
+    def forward(self, inputs, data_samples, mode='tensor'):
+        inputs = torch.stack(inputs)
+        labels = torch.stack(data_samples)
+        outputs = self.linear1(inputs)
         outputs = self.linear2(outputs)
 
         if mode == 'tensor':
@@ -54,7 +55,7 @@ class ToyDataset2(Dataset):
         return self.data.size(0)
 
     def __getitem__(self, index):
-        return dict(inputs=self.data[index], data_sample=self.label[index])
+        return dict(inputs=self.data[index], data_samples=self.label[index])
 
 
 @METRICS.register_module()
@@ -63,7 +64,7 @@ class ToyMetric3(BaseMetric):
     def __init__(self, collect_device='cpu', prefix=''):
         super().__init__(collect_device=collect_device, prefix=prefix)
 
-    def process(self, data_samples, predictions):
+    def process(self, data_batch, data_samples):
         result = {'acc': 1}
         self.results.append(result)
 

@@ -81,67 +81,67 @@ class TestPackFlowInputs(unittest.TestCase):
         transform = PackFlowInputs(meta_keys=self.meta_keys)
         results = transform(copy.deepcopy(self.result1))
 
-        self.assertIn('data_sample', results)
+        self.assertIn('data_samples', results)
         self.assertIn('inputs', results)
         self.assertIsInstance(results['inputs'], torch.Tensor)
         self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
-        self.assertIsInstance(results['data_sample'], FlowDataSample)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
+        self.assertIsInstance(results['data_samples'], FlowDataSample)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw, PixelData)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_flow_fw.shape, (30, 40))
-        self.assertEqual(results['data_sample'].metainfo['scale_factor'], 1.)
-        self.assertEqual(results['data_sample'].metainfo['ori_shape'],
+        self.assertEqual(results['data_samples'].gt_flow_fw.shape, (30, 40))
+        self.assertEqual(results['data_samples'].metainfo['scale_factor'], 1.)
+        self.assertEqual(results['data_samples'].metainfo['ori_shape'],
                          (30, 40))
-        self.assertEqual(results['data_sample'].metainfo['img_shape'],
+        self.assertEqual(results['data_samples'].metainfo['img_shape'],
                          (30, 40))
 
     def test_sparse_flow_transform(self):
         transform = PackFlowInputs(meta_keys=self.meta_keys)
         results = transform(copy.deepcopy(self.result2))
 
-        self.assertIn('data_sample', results)
+        self.assertIn('data_samples', results)
         self.assertIn('inputs', results)
         self.assertIsInstance(results['inputs'], torch.Tensor)
         self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
-        self.assertIsInstance(results['data_sample'], FlowDataSample)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
+        self.assertIsInstance(results['data_samples'], FlowDataSample)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw, PixelData)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_flow_fw.shape, (30, 40))
-        self.assertIsInstance(results['data_sample'].gt_valid_fw, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_valid_fw.data,
+        self.assertEqual(results['data_samples'].gt_flow_fw.shape, (30, 40))
+        self.assertIsInstance(results['data_samples'].gt_valid_fw, PixelData)
+        self.assertIsInstance(results['data_samples'].gt_valid_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_valid_fw.shape, (30, 40))
+        self.assertEqual(results['data_samples'].gt_valid_fw.shape, (30, 40))
 
-        self.assertEqual(results['data_sample'].metainfo['scale_factor'], 1.)
-        self.assertEqual(results['data_sample'].metainfo['ori_shape'],
+        self.assertEqual(results['data_samples'].metainfo['scale_factor'], 1.)
+        self.assertEqual(results['data_samples'].metainfo['ori_shape'],
                          (30, 40))
-        self.assertEqual(results['data_sample'].metainfo['img_shape'],
+        self.assertEqual(results['data_samples'].metainfo['img_shape'],
                          (30, 40))
 
     def test_occ_flow_transform(self):
         transform = PackFlowInputs(meta_keys=self.meta_keys)
         results = transform(copy.deepcopy(self.result3))
 
-        self.assertIn('data_sample', results)
+        self.assertIn('data_samples', results)
         self.assertIn('inputs', results)
         self.assertIsInstance(results['inputs'], torch.Tensor)
         self.assertEqual(results['inputs'].shape, (2, 3, 30, 40))
-        self.assertIsInstance(results['data_sample'], FlowDataSample)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_flow_fw.data,
+        self.assertIsInstance(results['data_samples'], FlowDataSample)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw, PixelData)
+        self.assertIsInstance(results['data_samples'].gt_flow_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_flow_fw.shape, (30, 40))
-        self.assertIsInstance(results['data_sample'].gt_occ_fw, PixelData)
-        self.assertIsInstance(results['data_sample'].gt_occ_fw.data,
+        self.assertEqual(results['data_samples'].gt_flow_fw.shape, (30, 40))
+        self.assertIsInstance(results['data_samples'].gt_occ_fw, PixelData)
+        self.assertIsInstance(results['data_samples'].gt_occ_fw.data,
                               torch.Tensor)
-        self.assertEqual(results['data_sample'].gt_occ_fw.shape, (30, 40))
+        self.assertEqual(results['data_samples'].gt_occ_fw.shape, (30, 40))
 
-        self.assertEqual(results['data_sample'].metainfo['scale_factor'], 1.)
-        self.assertEqual(results['data_sample'].metainfo['ori_shape'],
+        self.assertEqual(results['data_samples'].metainfo['scale_factor'], 1.)
+        self.assertEqual(results['data_samples'].metainfo['ori_shape'],
                          (30, 40))
-        self.assertEqual(results['data_sample'].metainfo['img_shape'],
+        self.assertEqual(results['data_samples'].metainfo['img_shape'],
                          (30, 40))
 
     def test_repr(self):

@@ -84,27 +84,24 @@ class RAFT(PWCNet):
 
     def loss(
         self,
-        batch_inputs: Tensor,
-        batch_data_samples: SampleList,
+        inputs: Tensor,
+        data_samples: SampleList,
         flow_init: Optional[Tensor] = None,
     ) -> TensorDict:
         """Forward function for RAFT when model training.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
             flow_init (Tensor, optional): The initialized flow when warm start.
                 Default to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
 
         Returns:
             Dict[str, Tensor]: The losses of output.
         """
 
-        feat1, feat2, h_feat, cxt_feat = self.extract_feat(batch_inputs)
+        feat1, feat2, h_feat, cxt_feat = self.extract_feat(inputs)
         B, _, H, W = feat1.shape
 
         if flow_init is None:
@@ -116,25 +113,26 @@ class RAFT(PWCNet):
             flow=flow_init,
             h_feat=h_feat,
             cxt_feat=cxt_feat,
-            batch_data_samples=batch_data_samples)
+            data_samples=data_samples)
 
     def _forward(self,
-                 batch_inputs: Tensor,
-                 batch_data_samples: OptSampleList = None,
+                 inputs: Tensor,
+                 data_samples: OptSampleList = None,
                  flow_init=None) -> TensorList:
         """_summary_
 
         Args:
-            batch_inputs (torch.Tensor): The input tensor with shape
+            inputs (torch.Tensor): The input tensor with shape
                 (N, C, ...) in general.
-            batch_data_samples (list[:obj:`FlowDataSample`], optional): The
-                annotation data of every samples. Defaults to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
             flow_init (Tensor, optional): The initialized flow when warm start.
                 Default to None.
         Returns:
             TensorList: The list of tensor.
         """
-        feat1, feat2, h_feat, cxt_feat = self.extract_feat(batch_inputs)
+        feat1, feat2, h_feat, cxt_feat = self.extract_feat(inputs)
         B, _, H, W = feat1.shape
 
         if flow_init is None:
@@ -145,20 +143,21 @@ class RAFT(PWCNet):
 
     def predict(self,
                 imgs: Tensor,
-                batch_data_samples,
+                data_samples: OptSampleList = None,
                 flow_init: Optional[Tensor] = None) -> SampleList:
         """Forward function for RAFT when model testing.
 
         Args:
             imgs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
             flow_init (Tensor, optional): The initialized flow when warm start.
                 Default to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
         train_iter = self.decoder.iters
         if self.test_cfg is not None and self.test_cfg.get(
@@ -171,17 +170,13 @@ class RAFT(PWCNet):
         if flow_init is None:
             flow_init = torch.zeros((B, 2, H, W), device=feat1.device)
 
-        batch_img_metas = []
-        for data_sample in batch_data_samples:
-
-            batch_img_metas.append(data_sample.metainfo)
         results = self.decoder.predict(
             feat1=feat1,
             feat2=feat2,
             flow=flow_init,
             h_feat=h_feat,
             cxt_feat=cxt_feat,
-            batch_img_metas=batch_img_metas)
+            data_samples=data_samples)
         # recover iter in train
         self.decoder.iters = train_iter
 

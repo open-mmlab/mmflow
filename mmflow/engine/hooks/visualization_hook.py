@@ -73,18 +73,16 @@ class FlowVisualizationHook(Hook):
             return
 
         if self.every_n_inner_iters(batch_idx, self.interval):
-            for input_data, output in zip(data_batch, outputs):
-                img1_path = input_data['data_sample'].metainfo['img1_path']
-                img2_path = input_data['data_sample'].metainfo['img2_path']
+            for output in outputs:
+                img1_path = output.metainfo['img1_path']
+                img2_path = output.metainfo['img2_path']
                 window_name = f'{mode}_{osp.basename(img1_path)}' \
                               f'_{osp.basename(img2_path)}'
 
-                gt_sample = input_data['data_sample']
                 self._visualizer.add_datasample(
                     window_name,
                     image=None,
-                    gt_sample=gt_sample,
-                    pred_sample=output,
+                    data_sample=output,
                     show=self.show,
                     wait_time=self.wait_time,
                     step=runner.iter)

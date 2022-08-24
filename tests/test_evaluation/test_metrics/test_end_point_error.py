@@ -30,16 +30,23 @@ class TestEPEMetric(TestCase):
                     gt_flow_fw=dict(data=flow), gt_valid_fw=dict(data=valid)))
         ]
 
-    def _create_toy_predictions(self):
-        flow = torch.from_numpy(self.flow_pred.transpose(2, 0, 1))
-        return [dict(pred_flow_fw=dict(data=flow))]
+    def _create_toy_data_samples(self):
+        flow_gt = torch.from_numpy(self.flow_gt.transpose(2, 0, 1))
+        valid_gt = torch.from_numpy(self.valid_gt[None, ...])
+        flow_pred = torch.from_numpy(self.flow_pred.transpose(2, 0, 1))
+        return [
+            dict(
+                gt_flow_fw=dict(data=flow_gt),
+                gt_valid_fw=dict(data=valid_gt),
+                pred_flow_fw=dict(data=flow_pred))
+        ]
 
     def test_evaluate(self):
         epe_metric = EndPointError()
-        toy_predictions = self._create_toy_predictions()
+        toy_data_samples = self._create_toy_data_samples()
         toy_data_batch = self._create_toy_data_batch()
 
-        epe_metric.process(toy_data_batch, toy_predictions)
+        epe_metric.process(toy_data_batch, toy_data_samples)
         eval_result = epe_metric.evaluate(1)
         epe_tar = np.linalg.norm((self.flow_pred - self.flow_gt),
                                  ord=2,

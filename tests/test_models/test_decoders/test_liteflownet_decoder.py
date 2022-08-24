@@ -197,14 +197,14 @@ def test_nete(extra_training_loss, regularized_flow):
     metainfo = dict(img_shape=(16, 16, 3), ori_shape=(16, 16))
     data_sample = FlowDataSample(metainfo=metainfo)
     data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, 16, 16)))
-    batch_data_samples = [data_sample.cuda()]
+    data_samples = [data_sample.cuda()]
 
     # test loss forward
-    loss = nete.loss(img1, img2, feat1, feat2, batch_data_samples)
+    loss = nete.loss(img1, img2, feat1, feat2, data_samples=data_samples)
     assert float(loss['loss_flow']) > 0
 
     # test predict forward
-    out = nete.predict(img1, img2, feat1, feat2, [metainfo])
+    out = nete.predict(img1, img2, feat1, feat2, data_samples=data_samples)
     assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (16, 16)
 

@@ -102,7 +102,8 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
         data = test_pipeline(data)
         datas.append(data)
 
-    data, data_samples = model.data_preprocessor(datas, False)
+    datas = model.data_preprocessor(datas, False)
+    inputs, data_samples = datas['inputs'], datas['data_samples']
 
     for m in model.modules():
         assert not isinstance(
@@ -111,6 +112,6 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
 
     # forward the model
     with torch.no_grad():
-        results = model.predict(data, data_samples)
+        results = model.predict(inputs, data_samples)
 
     return results

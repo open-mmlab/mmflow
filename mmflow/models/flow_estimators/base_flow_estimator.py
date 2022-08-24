@@ -2,7 +2,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Union
 
-import torch
 from mmengine.logging import print_log
 from mmengine.model import BaseModel
 from torch import Tensor, device
@@ -56,7 +55,7 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         return self.pixel_mean.device
 
     def forward(self,
-                inputs: torch.Tensor,
+                inputs: Tensor,
                 data_samples: OptSampleList = None,
                 mode: str = 'tensor') -> Union[dict, SampleList]:
         """The unified entry for a forward process in both training and test.
@@ -74,10 +73,11 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         optimizer updating, which are done in the :meth:`train_step`.
 
         Args:
-            inputs (torch.Tensor): The input tensor with shape
-                (N, C, ...) in general.
-            data_samples (list[:obj:`FlowDataSample`], optional): The
-                annotation data of every samples. Defaults to None.
+            inputs (Tensor): The input tensor with shape (N, C, ...)
+                in general.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
             mode (str): Return what kind of value. Defaults to 'tensor'.
 
         Returns:
@@ -105,7 +105,8 @@ class FlowEstimator(BaseModel, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def predict(self, inputs: Tensor,
+    def predict(self,
+                inputs: Tensor,
                 data_samples: OptSampleList = None) -> SampleList:
         """Predict results from a batch of inputs and data samples with post-
         processing."""

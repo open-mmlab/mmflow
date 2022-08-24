@@ -11,6 +11,7 @@ from torch import Tensor
 
 from mmflow.registry import MODELS
 from mmflow.utils import SampleList, TensorDict, TensorList
+from mmflow.utils.typing import OptSampleList
 from ..builder import build_components, build_loss
 from ..utils import unpack_flow_data_samples
 from .base_decoder import BaseDecoder
@@ -464,7 +465,7 @@ class RAFTDecoder(BaseDecoder):
         flow: Tensor,
         h_feat: Tensor,
         cxt_feat: Tensor,
-        batch_data_samples: SampleList,
+        data_samples: SampleList,
     ) -> TensorList:
         """Forward function when model training.
 
@@ -474,9 +475,8 @@ class RAFTDecoder(BaseDecoder):
             flow (Tensor): The last estimated flow from GRU cell.
             h (Tensor): The hidden state for GRU cell.
             cxt_feat (Tensor): The contextual feature from the first image.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The losses of model.
@@ -484,17 +484,15 @@ class RAFTDecoder(BaseDecoder):
 
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
-        return self.loss_by_feat(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, data_samples)
 
-    def predict(
-        self,
-        feat1: Tensor,
-        feat2: Tensor,
-        flow: Tensor,
-        h_feat: Tensor,
-        cxt_feat: Tensor,
-        batch_img_metas: Sequence[dict],
-    ) -> SampleList:
+    def predict(self,
+                feat1: Tensor,
+                feat2: Tensor,
+                flow: Tensor,
+                h_feat: Tensor,
+                cxt_feat: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function when model training.
 
         Args:
@@ -503,26 +501,27 @@ class RAFTDecoder(BaseDecoder):
             flow (Tensor): The last estimated flow from GRU cell.
             h (Tensor): The hidden state for GRU cell.
             cxt_feat (Tensor): The contextual feature from the first image.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
+            Sequence[FlowDataSample]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
         flow_pred = self.forward(feat1, feat2, flow, h_feat, cxt_feat)
 
         flow_result = flow_pred[-1]
-        return self.predict_by_feat(flow_result, batch_img_metas)
+        return self.predict_by_feat(flow_result, data_samples)
 
     def loss_by_feat(self, flow_pred: TensorList,
-                     batch_data_samples: SampleList) -> TensorDict:
+                     data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:
-            flow_pred (Sequence[Tensor]): The list of predicted optical flow.
-            flow_gt (Tensor): The ground truth of optical flow.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            flow_pred (Dict[str, Tensor]): multi-level predicted optical flow.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
@@ -530,7 +529,7 @@ class RAFTDecoder(BaseDecoder):
 
         loss = dict()
         batch_gt_flow_fw, _, _, _, batch_gt_valid_fw, _ = \
-            unpack_flow_data_samples(batch_data_samples)
+            unpack_flow_data_samples(data_samples)
         loss['loss_flow'] = self.flow_loss(flow_pred, batch_gt_flow_fw,
                                            batch_gt_valid_fw)
         return loss

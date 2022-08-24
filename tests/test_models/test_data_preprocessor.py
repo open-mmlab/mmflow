@@ -36,17 +36,17 @@ class TestFlowDataPreprocessor(TestCase):
             'inputs': torch.randint(0, 256, (2, 3, 11, 10)),
             'data_sample': FlowDataSample()
         }]
-        inputs, data_samples = processor(data)
+        out = processor(data)
 
-        self.assertEqual(inputs.shape, (1, 6, 11, 10))
-        self.assertEqual(len(data_samples), 1)
+        self.assertEqual(out['inputs'].shape, (1, 6, 11, 10))
+        self.assertEqual(len(out['data_samples']), 1)
 
         # test channel_conversion
         processor = FlowDataPreprocessor(
             mean=[0., 0., 0.], std=[1., 1., 1.], bgr_to_rgb=True)
-        inputs, data_samples = processor(data)
-        self.assertEqual(inputs.shape, (1, 6, 11, 10))
-        self.assertEqual(len(data_samples), 1)
+        out = processor(data)
+        self.assertEqual(out['inputs'].shape, (1, 6, 11, 10))
+        self.assertEqual(len(out['data_samples']), 1)
 
         # test training and noise
         processor = FlowDataPreprocessor(
@@ -54,6 +54,6 @@ class TestFlowDataPreprocessor(TestCase):
             std=[1., 1., 1.],
             sigma_range=(0, 0.04),
             clamp_range=(0., 1.))
-        inputs, data_samples = processor(data, training=True)
-        self.assertEqual(inputs.shape, (1, 6, 11, 10))
-        self.assertEqual(len(data_samples), 1)
+        out = processor(data, training=True)
+        self.assertEqual(out['inputs'].shape, (1, 6, 11, 10))
+        self.assertEqual(len(out['data_samples']), 1)

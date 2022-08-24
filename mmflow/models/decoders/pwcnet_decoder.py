@@ -6,7 +6,7 @@ import torch.nn as nn
 from mmengine.model import BaseModule
 
 from mmflow.registry import MODELS
-from mmflow.utils import OptMultiConfig, SampleList, TensorDict
+from mmflow.utils import OptMultiConfig, OptSampleList, SampleList, TensorDict
 from ..builder import build_components, build_loss
 from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
 from .base_decoder import BaseDecoder
@@ -276,9 +276,8 @@ class PWCNetDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
@@ -287,12 +286,10 @@ class PWCNetDecoder(BaseDecoder):
         flow_pred = self.forward(feat1, feat2)
         return self.loss_by_feat(flow_pred, data_samples)
 
-    def predict(
-        self,
-        feat1: TensorDict,
-        feat2: TensorDict,
-        img_metas: Sequence[dict],
-    ) -> SampleList:
+    def predict(self,
+                feat1: TensorDict,
+                feat2: TensorDict,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -300,16 +297,17 @@ class PWCNetDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
         Returns:
-            Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
+            Sequence[FlowDataSample]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
         flow_pred = self.forward(feat1, feat2)
         flow_results = flow_pred[self.end_level]
-        return self.predict_by_feat(flow_results, img_metas)
+        return self.predict_by_feat(flow_results, data_samples)
 
     def loss_by_feat(self, flow_pred: TensorDict,
                      data_samples: SampleList) -> TensorDict:
@@ -317,9 +315,8 @@ class PWCNetDecoder(BaseDecoder):
 
         Args:
             flow_pred (Dict[str, Tensor]): multi-level predicted optical flow.
-            data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.

@@ -28,14 +28,14 @@ def _get_test_data(
     data_sample.gt_occ_fw = PixelData(**dict(data=torch.randn(1, h, w)))
     data_sample.gt_occ_bw = PixelData(**dict(data=torch.randn(1, h, w)))
 
-    batch_data_samples = [data_sample.cuda()]
+    data_samples = [data_sample.cuda()]
 
     feat = dict()
     for level, ch in _channels.items():
         feat[level] = torch.randn(1, ch, h, w).cuda()
         w = w // 2
         h = h // 2
-    return feat, batch_data_samples, metainfo
+    return feat, data_samples, metainfo
 
 
 def test_irr_flow_decoder():
@@ -199,43 +199,43 @@ def test_irr_pwc_decoder():
     w = 32
     input_channels = dict(
         level1=16, level2=32, level3=64, level4=96, level5=128, level6=196)
-    feat1, batch_data_samples, metainfo = _get_test_data(input_channels)
-    feat2, batch_data_samples, metainfo = _get_test_data(input_channels)
+    feat1, data_samples, metainfo = _get_test_data(input_channels)
+    feat2, data_samples, metainfo = _get_test_data(input_channels)
 
     feat1['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
     feat2['level0'] = torch.randn(1, 3, 16 * 4, 16 * 4).cuda()
 
     # test loss forward with flow_fw_gt, flow_bw_gt, occ_fw_gt, occ_bw_gt
-    loss = model.loss(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, data_samples=data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
     # test loss forward with flow_gt
-    del batch_data_samples[0].gt_flow_bw
-    del batch_data_samples[0].gt_occ_fw
-    del batch_data_samples[0].gt_occ_bw
+    del data_samples[0].gt_flow_bw
+    del data_samples[0].gt_occ_fw
+    del data_samples[0].gt_occ_bw
 
-    loss = model.loss(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, data_samples=data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) == 0.
 
     # test loss forward with flow_fw_gt, flow_bw_gt
-    batch_data_samples[0].gt_flow_bw = PixelData(**dict(
+    data_samples[0].gt_flow_bw = PixelData(**dict(
         data=torch.randn(2, h, w))).cuda()
-    loss = model.loss(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, data_samples=data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) == 0.
 
     # test loss forward with flow_gt, occ_gt
-    del batch_data_samples[0].gt_flow_bw
-    batch_data_samples[0].gt_occ_fw = PixelData(**dict(
+    del data_samples[0].gt_flow_bw
+    data_samples[0].gt_occ_fw = PixelData(**dict(
         data=torch.randn(1, h, w))).cuda()
-    loss = model.loss(feat1, feat2, batch_data_samples)
+    loss = model.loss(feat1, feat2, data_samples=data_samples)
     assert float(loss['loss_flow']) > 0
     assert float(loss['loss_occ']) > 0
 
     # test predict forward
-    flow_result = model.predict(feat1, feat2, [metainfo])
+    flow_result = model.predict(feat1, feat2, data_samples=data_samples)
     assert isinstance(flow_result, list) and mmcv.is_list_of(
         flow_result, FlowDataSample)
     assert flow_result[0].pred_flow_fw.shape == (h, w)

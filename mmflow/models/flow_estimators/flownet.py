@@ -18,75 +18,71 @@ class FlowNetS(PWCNet):
         super().__init__(*args, **kwargs)
 
     def extract_feat(self, imgs: Tensor) -> TensorDict:
-        """Extract feature.
+        """Extract features from images.
 
         Args:
-            imgs (Tensor): Input images.
+            imgs (Tensor): The concatenated input images.
 
         Returns:
-            TensorDict: The dict of tensor.
+            TensorDict: The feature pyramid extracted from the concatenated
+                input images.
         """
         return self.encoder(imgs)
 
-    def loss(self, batch_inputs: Tensor,
-             batch_data_samples: SampleList) -> dict:
+    def loss(self, inputs: Tensor, data_samples: SampleList) -> dict:
         """Forward function for FlowNetS when model training.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is batch_inputs[N, :3, H, W] and img2 is
+                batch_inputs[N, 3:, H, W]. These should usually be mean
+                centered and std scaled.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             TensorDict: The losses of output.
         """
 
-        return self.decoder.loss(
-            self.extract_feat(batch_inputs),
-            batch_data_samples=batch_data_samples)
+        return self.decoder.loss(self.extract_feat(inputs), data_samples)
 
-    def predict(self, batch_inputs: Tensor,
-                batch_data_samples: SampleList) -> SampleList:
+    def predict(self, inputs: Tensor, data_samples: SampleList) -> SampleList:
         """Forward function for FlowNetS when model testing.
 
         Args:
-            imgs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is inputs[N, :3, H, W] and img2 is
+                inputs[N, 3:, H, W]. These should usually be mean
+                centered and std scaled.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
-        batch_img_metas = []
-        for data_sample in batch_data_samples:
-            batch_img_metas.append(data_sample.metainfo)
-        return self.decoder.predict(
-            self.extract_feat(batch_inputs), batch_img_metas=batch_img_metas)
+        return self.decoder.predict(self.extract_feat(inputs), data_samples)
 
     def _forward(self,
-                 batch_inputs: Tensor,
+                 inputs: Tensor,
                  data_samples: OptSampleList = None) -> TensorDict:
         """Network forward process. Usually includes backbone, neck and head
         forward without any post-processing.
 
         Args:
-            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
+            inputs (Tensor): Input images of shape (N, 6, H, W).
                 img1 is batch_inputs[N, :3, H, W] and img2 is
                 batch_inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``. Default to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
         Returns:
             Dict[str, :obj:`FlowDataSample`]: The predicted optical flow
             from level6 to level2.
         """
-        return self.decoder(self.extract_feat(batch_inputs))
+        return self.decoder(self.extract_feat(inputs))
 
 
 @MODELS.register_module()
@@ -112,9 +108,8 @@ class FlowNetC(PWCNet):
             imgs (Tensor): The concatenated input images.
 
         Returns:
-            Tuple[TensorDict, TensorDict]: The feature pyramid
-                from the first image and the feature pyramid from feature
-                correlation.
+            Tuple[TensorDict, TensorDict]: The feature pyramid from the first
+                image and the feature pyramid from feature correlation.
         """
 
         in_channels = self.encoder.in_channels

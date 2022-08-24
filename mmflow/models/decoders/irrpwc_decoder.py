@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from collections import defaultdict
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -11,8 +11,8 @@ from torch import Tensor
 
 from mmflow.models.decoders.base_decoder import BaseDecoder
 from mmflow.registry import MODELS
-from mmflow.structures import FlowDataSample
-from mmflow.utils import OptMultiConfig, SampleList, TensorDict, TensorList
+from mmflow.utils import (OptMultiConfig, OptSampleList, SampleList,
+                          TensorDict, TensorList)
 from ..builder import build_components, build_loss
 from ..utils import BasicDenseBlock, CorrBlock, unpack_flow_data_samples
 
@@ -569,7 +569,7 @@ class IRRPWCDecoder(BaseDecoder):
         self,
         feat1: TensorDict,
         feat2: TensorDict,
-        batch_data_samples: FlowDataSample,
+        data_samples: SampleList,
     ) -> TensorDict:
         """Forward function when model training.
 
@@ -578,9 +578,8 @@ class IRRPWCDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
@@ -589,14 +588,12 @@ class IRRPWCDecoder(BaseDecoder):
         pred_flow_fw, pred_flow_bw, pred_occ_fw, pred_occ_bw = self.forward(
             feat1, feat2)
         return self.loss_by_feat(pred_flow_fw, pred_flow_bw, pred_occ_fw,
-                                 pred_occ_bw, batch_data_samples)
+                                 pred_occ_bw, data_samples)
 
-    def predict(
-        self,
-        feat1: TensorDict,
-        feat2: TensorDict,
-        batch_img_metas: Sequence[dict],
-    ) -> SampleList:
+    def predict(self,
+                feat1: TensorDict,
+                feat2: TensorDict,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -604,11 +601,12 @@ class IRRPWCDecoder(BaseDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
+            Sequence[FlowDataSample]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
@@ -617,13 +615,42 @@ class IRRPWCDecoder(BaseDecoder):
         flow_results_fw = pred_flow_fw[self.end_level][-1]
         flow_results_bw = pred_flow_bw[self.end_level][-1]
         return self.predict_by_feat(flow_results_fw, flow_results_bw,
-                                    batch_img_metas)
+                                    data_samples)
 
-    def predict_by_feat(self, flow_results_fw: Tensor, flow_results_bw: Tensor,
-                        batch_img_metas: List[dict]) -> SampleList:
+    def predict_by_feat(self,
+                        flow_results_fw: Tensor,
+                        flow_results_bw: Tensor,
+                        data_samples: OptSampleList = None) -> SampleList:
+        """Predict list of obj:`FlowDataSample` from flow tensor.
 
-        results = []
-        H, W = batch_img_metas[0]['img_shape'][:2]
+        Args:
+            flow_results_fw (Tensor): Predicted forward flow tensor.
+            flow_results_bw (Tensor): predicted backward flow tensor.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
+
+        Returns:
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
+        """
+
+        if data_samples is None:
+            flow_results_fw = flow_results_fw * self.flow_div
+            flow_results_bw = flow_results_bw * self.flow_div
+
+            # unravel batch dim,
+            flow_results_fw = list(flow_results_fw)
+            flow_results_bw = list(flow_results_bw)
+
+            flow_results = [
+                dict(flow_fw=f, flow_bw=b)
+                for f, b in zip(flow_results_fw, flow_results_bw)
+            ]
+            return self.postprocess_result(flow_results, data_samples=None)
+
+        H, W = data_samples[0].metainfo['img_shape'][:2]
+
         flow_results_fw = F.interpolate(
             flow_results_fw, size=(H, W), mode='bilinear', align_corners=False)
         flow_results_fw = flow_results_fw * self.flow_div
@@ -638,12 +665,11 @@ class IRRPWCDecoder(BaseDecoder):
 
         # collect forward and backward flow
         results = [
-            dict(flow_fw=flow_fw, flow_bw=flow_bw)
-            for flow_fw, flow_bw in zip(flow_results_fw, flow_results_bw)
+            dict(flow_fw=f, flow_bw=b)
+            for f, b in zip(flow_results_fw, flow_results_bw)
         ]
 
-        return self.postprocess_result(
-            results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(results, data_samples=data_samples)
 
     def loss_by_feat(
         self,
@@ -651,7 +677,7 @@ class IRRPWCDecoder(BaseDecoder):
         pred_flow_bw: Dict[str, Sequence[torch.Tensor]],
         pred_occ_fw: Dict[str, Sequence[torch.Tensor]],
         pred_occ_bw: Dict[str, Sequence[torch.Tensor]],
-        batch_data_samples: SampleList,
+        data_samples: SampleList,
     ) -> TensorDict:
         """Compute optical flow loss and occlusion mask loss.
 
@@ -660,16 +686,15 @@ class IRRPWCDecoder(BaseDecoder):
             pred_flow_bw (dict): multi-level predicted backward optical flow.
             pred_occ_fw (dict): multi-level predicted forward occlusion mask.
             pred_occ_bw (dict): multi-level predicted backward occlusion mask.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
         """
         batch_gt_flow_fw, batch_gt_flow_bw, batch_gt_occ_fw, \
             batch_gt_occ_bw, batch_gt_valid_fw, batch_gt_valid_bw = \
-            unpack_flow_data_samples(batch_data_samples)
+            unpack_flow_data_samples(data_samples)
 
         losses = dict()
 

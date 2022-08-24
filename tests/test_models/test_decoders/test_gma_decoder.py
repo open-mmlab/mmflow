@@ -124,18 +124,19 @@ def test_gmadecoder(max_pos_size, position_only):
         metainfo = dict(img_shape=(h, w, 3), ori_shape=(h, w))
         data_sample = FlowDataSample(metainfo=metainfo)
         data_sample.gt_flow_fw = PixelData(**dict(data=torch.randn(2, h, w)))
-        batch_data_samples = [data_sample]
+        data_samples = [data_sample]
         # test forward function
         out = model(feat1, feat2, flow, h_feat, cxt_feat)
         assert isinstance(out, list)
         assert out[0].shape == torch.Size((1, 2, 64, 64))
 
         # test loss forward
-        loss = model.loss(feat1, feat2, flow, h_feat, cxt_feat,
-                          batch_data_samples)
+        loss = model.loss(
+            feat1, feat2, flow, h_feat, cxt_feat, data_samples=data_samples)
         assert float(loss['loss_flow']) > 0.
 
         # test predict forward
-        out = model.predict(feat1, feat2, flow, h_feat, cxt_feat, [metainfo])
+        out = model.predict(
+            feat1, feat2, flow, h_feat, cxt_feat, data_samples=data_samples)
         assert out[0].pred_flow_fw.shape == (64, 64)
         assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)

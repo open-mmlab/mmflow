@@ -56,21 +56,18 @@ class PWCNet(FlowEstimator):
                 img1 is inputs[N, :3, H, W] and img2 is
                 inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             dict: A dictionary of loss components.
         """
 
-        return self.decoder.loss(
-            *self.extract_feat(inputs),
-            data_samples=data_samples)
+        return self.decoder.loss(*self.extract_feat(inputs), data_samples)
 
-    def predict(self, inputs: Tensor,
-                data_samples: SampleList) -> SampleList:
+    def predict(self,
+                inputs: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Predict results from a batch of inputs and data samples with post-
         processing.
 
@@ -79,23 +76,16 @@ class PWCNet(FlowEstimator):
                 img1 is inputs[N, :3, H, W] and img2 is
                 inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``.
-
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            list[:obj:`FlowDataSample`]: Optical Flow results of the
-            input images. Each FlowDataSample usually contain
-            ``pred_flow_fw``.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
 
-        img_metas = []
-        for data_sample in data_samples:
-            img_metas.append(data_sample.metainfo)
-        return self.decoder.predict(*self.extract_feat(inputs),
-                                    img_metas)
+        return self.decoder.predict(*self.extract_feat(inputs), data_samples)
 
     def _forward(self,
                  inputs: Tensor,
@@ -108,10 +98,9 @@ class PWCNet(FlowEstimator):
                 img1 is inputs[N, :3, H, W] and img2 is
                 inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``. Default to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
         Returns:
             Dict[str, :obj:`FlowDataSample`]: The predicted optical flow
             from level6 to level2.

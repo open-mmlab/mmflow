@@ -16,8 +16,8 @@ register_all_modules()
 
 
 def _demo_model_inputs(H=64, W=64):
-    batch_inputs = torch.randn(2, 6, H, W)
-    batch_data_samples = []
+    inputs = torch.randn(2, 6, H, W)
+    data_samples = []
     data_sample = FlowDataSample(metainfo={
         'img_shape': (H, W),
         'ori_shape': (H, W)
@@ -28,8 +28,8 @@ def _demo_model_inputs(H=64, W=64):
         ch = 2 if 'flow' in key else 1
         data = PixelData(**dict(data=torch.randn(ch, H, W)))
         data_sample.set_data({key: data})
-    batch_data_samples = [data_sample, data_sample]
-    return batch_inputs, batch_data_samples
+    data_samples = [data_sample, data_sample]
+    return inputs, data_samples
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
@@ -52,22 +52,20 @@ def test_flow_estimator(cfg_file):
     cfg = Config.fromfile(cfg_file)
     estimator = build_flow_estimator(cfg.model).cuda()
 
-    batch_inputs, batch_data_samples = _demo_model_inputs()
-    batch_inputs = batch_inputs.cuda()
-    batch_data_samples = [
-        data_samples.cuda() for data_samples in batch_data_samples
-    ]
+    inputs, data_samples = _demo_model_inputs()
+    inputs = inputs.cuda()
+    data_samples = [data_sample.cuda() for data_sample in data_samples]
     # test tensor out
     if type(estimator) is MaskFlowNetS:
-        out, _ = estimator(batch_inputs, batch_data_samples, mode='tensor')
+        out, _ = estimator(inputs, data_samples, mode='tensor')
     else:
-        out = estimator(batch_inputs, batch_data_samples, mode='tensor')
+        out = estimator(inputs, data_samples, mode='tensor')
     assert isinstance(out, dict)
     # test predict out
-    out = estimator(batch_inputs, batch_data_samples, mode='predict')
+    out = estimator(inputs, data_samples, mode='predict')
     assert is_list_of(out, FlowDataSample)
     # test loss out
-    loss = estimator(batch_inputs, batch_data_samples, mode='loss')
+    loss = estimator(inputs, data_samples, mode='loss')
     assert float(loss['loss_flow']) > 0.
 
 
@@ -92,19 +90,19 @@ def test_flow_estimator_without_cuda(cfg_file):
 
     estimator = build_flow_estimator(cfg.model)
 
-    batch_inputs, batch_data_samples = _demo_model_inputs()
+    inputs, data_samples = _demo_model_inputs()
 
     # test tensor out
-    out = estimator(batch_inputs, batch_data_samples, mode='tensor')
+    out = estimator(inputs, data_samples, mode='tensor')
     if cfg.model.type == 'RAFT':
         assert is_list_of(out, Tensor)
     else:
         assert isinstance(out, dict)
 
     # test predict out
-    predict = estimator(batch_inputs, batch_data_samples, mode='predict')
+    predict = estimator(inputs, data_samples, mode='predict')
     assert is_list_of(predict, FlowDataSample)
 
     # test loss out
-    loss = estimator(batch_inputs, batch_data_samples, mode='loss')
+    loss = estimator(inputs, data_samples, mode='loss')
     assert float(loss['loss_flow']) > 0.

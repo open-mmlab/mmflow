@@ -22,16 +22,23 @@ class TestFlMetric(TestCase):
                     gt_flow_fw=dict(data=flow), gt_valid_fw=dict(data=valid)))
         ]
 
-    def _create_toy_predictions(self):
-        flow = torch.from_numpy(self.flow_pred.transpose(2, 0, 1))
-        return [dict(pred_flow_fw=dict(data=flow))]
+    def _create_toy_data_samples(self):
+        flow_gt = torch.from_numpy(self.flow_gt.transpose(2, 0, 1))
+        valid_gt = torch.from_numpy(self.valid_gt[None, ...])
+        flow_pred = torch.from_numpy(self.flow_pred.transpose(2, 0, 1))
+        return [
+            dict(
+                gt_flow_fw=dict(data=flow_gt),
+                gt_valid_fw=dict(data=valid_gt),
+                pred_flow_fw=dict(data=flow_pred))
+        ]
 
     def test_evaluate(self):
         fl_metric = FlowOutliers()
-        toy_predictions = self._create_toy_predictions()
+        toy_data_samples = self._create_toy_data_samples()
         toy_data_batch = self._create_toy_data_batch()
 
-        fl_metric.process(toy_data_batch, toy_predictions)
+        fl_metric.process(toy_data_batch, toy_data_samples)
         eval_result = fl_metric.evaluate(1)
         fl_tar = 100 * (2 / 3)
         assert eval_result['Fl'] == fl_tar

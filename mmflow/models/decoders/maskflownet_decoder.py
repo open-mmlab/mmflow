@@ -1,5 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -10,7 +10,7 @@ from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS
-from mmflow.utils import OptMultiConfig, SampleList, TensorDict
+from mmflow.utils import OptMultiConfig, OptSampleList, SampleList, TensorDict
 from ..utils import CorrBlock
 from .pwcnet_decoder import PWCModule, PWCNetDecoder
 
@@ -461,18 +461,32 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
         # Stage2 of MaskFlowNet need input mask.
         return flow_pred, last_mask
 
-    def predict(
-        self,
-        feat1: TensorDict,
-        feat2: TensorDict,
-        batch_img_metas: Sequence[dict],
-    ) -> SampleList:
+    def predict(self,
+                feat1: TensorDict,
+                feat2: TensorDict,
+                data_samples: OptSampleList = None) -> SampleList:
+        """Forward function when model testing.
+
+        Args:
+            feat1 (Dict[str, Tensor]): The feature pyramid from the first
+                image.
+            feat2 (Dict[str, Tensor]): The feature pyramid from the second
+                image.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
+
+        Returns:
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
+        """
+
         flow_pred, _ = self.forward(feat1, feat2)
         flow_results = flow_pred[self.end_level]
-        return self.predict_by_feat(flow_results, batch_img_metas)
+        return self.predict_by_feat(flow_results, data_samples)
 
     def loss(self, feat1: TensorDict, feat2: TensorDict,
-             batch_data_samples: SampleList) -> TensorDict:
+             data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -480,16 +494,15 @@ class MaskFlowNetSDecoder(PWCNetDecoder):
                 image.
             feat2 (Dict[str, Tensor]): The feature pyramid from the second
                 image.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
         """
 
         flow_pred, _ = self.forward(feat1, feat2)
-        return self.loss_by_feat(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, data_samples)
 
 
 @MODELS.register_module()
@@ -576,7 +589,7 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
     def loss(self, feat1: TensorDict, feat2: TensorDict, feat3: TensorDict,
              feat4: TensorDict, flows_stage1: TensorDict,
-             batch_data_samples: SampleList) -> TensorDict:
+             data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -590,9 +603,8 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
                 image from stage2 of MaskFlowNet.
             flows_stage1 (Dict[str, Tensor]): Estimated multi-level flow from
                 the stage1.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The dict of losses.
@@ -600,17 +612,15 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
 
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
 
-        return self.loss_by_feat(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, data_samples)
 
-    def predict(
-        self,
-        feat1: TensorDict,
-        feat2: TensorDict,
-        feat3: TensorDict,
-        feat4: TensorDict,
-        flows_stage1: TensorDict,
-        batch_img_metas: Sequence[dict],
-    ) -> SampleList:
+    def predict(self,
+                feat1: TensorDict,
+                feat2: TensorDict,
+                feat3: TensorDict,
+                feat4: TensorDict,
+                flows_stage1: TensorDict,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -624,13 +634,14 @@ class MaskFlowNetDecoder(MaskFlowNetSDecoder):
                 image from stage2 of MaskFlowNet.
             flows_stage1 (Dict[str, Tensor]): Estimated multi-level flow from
                 the stage1.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
         Returns:
-            Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
+            Sequence[FlowDataSample]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
         flow_pred = self.forward(feat1, feat2, feat3, feat4, flows_stage1)
         flow_result = flow_pred[self.end_level]
-        return self.predict_by_feat(flow_result, batch_img_metas)
+        return self.predict_by_feat(flow_result, data_samples)
