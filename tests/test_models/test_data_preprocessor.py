@@ -32,10 +32,10 @@ class TestFlowDataPreprocessor(TestCase):
     def test_forward(self):
         processor = FlowDataPreprocessor(mean=[0, 0, 0], std=[1, 1, 1])
 
-        data = [{
-            'inputs': torch.randint(0, 256, (2, 3, 11, 10)),
-            'data_sample': FlowDataSample()
-        }]
+        data = {
+            'inputs': [torch.randint(0, 256, (2, 3, 11, 10))],
+            'data_samples': [FlowDataSample()]
+        }
         out = processor(data)
 
         self.assertEqual(out['inputs'].shape, (1, 6, 11, 10))

@@ -46,8 +46,8 @@ class FlowOutliers(BaseMetric):
             # sintel and kitti only support forward optical flow
             # so here we only evaluate the predicted forward flow
             # tensor with shape (2, H, W) to ndarray with shape (H, W, 2)
-            gt_flow = data_sample['gt_flow_fw']['data'].permute(1, 2,
-                                                                0).numpy()
+            gt_flow = data_sample['gt_flow_fw']['data'].permute(
+                1, 2, 0).cpu().numpy()
             pred_flow = data_sample['pred_flow_fw']['data'].permute(
                 1, 2, 0).cpu().numpy()
 

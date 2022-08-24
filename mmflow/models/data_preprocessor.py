@@ -76,14 +76,12 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
             self.register_buffer('clamp_range', torch.tensor(clamp_range),
                                  False)
 
-    def forward(self,
-                data: Sequence[dict],
-                training: bool = False) -> Dict[str, Any]:
+    def forward(self, data: dict, training: bool = False) -> Dict[str, Any]:
         """Perform normalization、padding and bgr2rgb conversion based on
         ``BaseDataPreprocessor``.
 
         Args:
-            data (Sequence[dict]): data sampled from dataloader.
+            data (dict): data sampled from dataloader.
             training (bool): Whether to enable training time augmentation.
 
         Returns:
@@ -91,9 +89,10 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         """
 
         data = self.cast_data(data)  # type: ignore
-        img1s = [data_['inputs'][0, ...] for data_ in data]
-        img2s = [data_['inputs'][1, ...] for data_ in data]
-        data_samples = [data_.get('data_samples', None) for data_ in data]
+        inputs = data['inputs']
+        data_samples = data.get('data_samples', None)
+        img1s = [input_[0, ...] for input_ in inputs]
+        img2s = [input_[1, ...] for input_ in inputs]
 
         if self.channel_conversion and img1s[0].size(0) == 3:
             img1s = [_img1[[2, 1, 0], ...] for _img1 in img1s]
