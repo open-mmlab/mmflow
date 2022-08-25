@@ -13,9 +13,9 @@ Collections:
     README: configs/gma/README.md
 
 Models:
-  - Name: gma_8x2_120k_flyingchairs_368x496
+  - Name: gma_8xb2_120k_flyingchairs_368x496
     In Collection: GMA
-    Config: configs/gma/gma_8x2_120k_flyingchairs_368x496.py
+    Config: configs/gma/gma_8xb2_120k_flyingchairs_368x496.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -33,9 +33,9 @@ Models:
           EPE: 4.53
     Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingchairs_368x496.pth
 
-  - Name: gma_8x2_120k_flyingthings3d_400x720
+  - Name: gma_8xb2_120k_flyingthings3d_400x720
     In Collection: GMA
-    Config: configs/gma/gma_8x2_120k_flyingthings3d_400x720.py
+    Config: configs/gma/gma_8xb2_120k_flyingthings3d_400x720.py
     Metadata:
       Training Data: FlyingThings3D
     Results:
@@ -54,9 +54,9 @@ Models:
           Fl-all: 16.54%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingthings3d_400x720.pth
 
-  - Name: gma_8x2_120k_flyingthings3d_sintel_368x768
+  - Name: gma_8xb2_120k_flyingthings3d-sintel_368x768
     In Collection: GMA
-    Config: configs/gma/gma_8x2_120k_flyingthings3d_sintel_368x768.py
+    Config: configs/gma/gma_8xb2_120k_flyingthings3d-sintel_368x768.py
     Metadata:
       sTraining Data:
         - FlyingThings3D
@@ -72,9 +72,9 @@ Models:
           EPE: 0.84
     Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_flyingthings3d_sintel_368x768.pth
 
-  - Name: gma_8x2_120k_mixed_368x768
+  - Name: gma_8xb2_120k_mixed_368x768
     In Collection: GMA
-    Config: configs/gma/gma_8x2_120k_mixed_368x768.py
+    Config: configs/gma/gma_8xb2_120k_mixed_368x768.py
     Metadata:
       sTraining Data:
         - FlyingThings3D
@@ -98,9 +98,9 @@ Models:
           Fl-all: 5.27%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_120k_mixed_368x768.pth
 
-  - Name: gma_8x2_50k_kitti2015_288x960
+  - Name: gma_8xb2_50k_kitti2015_288x960
     In Collection: GMA
-    Config: configs/gma/gma_8x2_50k_kitti2015_288x960.py
+    Config: configs/gma/gma_8xb2_50k_kitti2015_288x960.py
     Metadata:
       Training Data: KITTI2015
     Results:
@@ -111,9 +111,9 @@ Models:
           Fl-all: 1.34%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_8x2_50k_kitti2015_288x960.pth
 
-  - Name: gma_p-only_8x2_120k_flyingchairs_368x496
+  - Name: gma-p-only_8xb2_120k_flyingchairs_368x496
     In Collection: GMA
-    Config: configs/gma/gma_p-only_8x2_120k_flyingchairs_368x496.py
+    Config: configs/gma/gma-p-only_8xb2_120k_flyingchairs_368x496.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -131,9 +131,9 @@ Models:
           EPE: 4.69
     Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_flyingchairs_368x496.pth
 
-  - Name: gma_p-only_8x2_120k_flyingthings3d_400x720
+  - Name: gma-p-only_8xb2_120k_flyingthings3d_400x720
     In Collection: GMA
-    Config: configs/gma/gma_p-only_8x2_120k_flyingthings3d_400x720.py
+    Config: configs/gma/gma-p-only_8xb2_120k_flyingthings3d_400x720.py
     Metadata:
       Training Data: FlyingThings3D
     Results:
@@ -152,9 +152,9 @@ Models:
           Fl-all: 16.46%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_flyingthings3d_400x720.pth
 
-  - Name: gma_p-only_8x2_120k_mixed_368x768
+  - Name: gma-p-only_8xb2_120k_mixed_368x768
     In Collection: GMA
-    Config: configs/gma/gma_p-only_8x2_120k_mixed_368x768.py
+    Config: configs/gma/gma-p-only_8xb2_120k_mixed_368x768.py
     Metadata:
       sTraining Data:
         - FlyingThings3D
@@ -178,9 +178,9 @@ Models:
           Fl-all: 5.28%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_120k_mixed_368x768.pth
 
-  - Name: gma_p-only_8x2_50k_kitti2015_288x960
+  - Name: gma-p-only_8xb2_50k_kitti2015_288x960
     In Collection: GMA
-    Config: configs/gma/gma_p-only_8x2_50k_kitti2015_288x960.py
+    Config: configs/gma/gma-p-only_8xb2_50k_kitti2015_288x960.py
     Metadata:
       Training Data: KITTI2015
     Results:
@@ -191,9 +191,9 @@ Models:
           Fl-all: 1.39%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_p-only_8x2_50k_kitti2015_288x960.pth
 
-  - Name: gma_plus-p_8x2_120k_flyingchairs_368x496
+  - Name: gma-plus-p_8xb2_120k_flyingchairs_368x496
     In Collection: GMA
-    Config: configs/gma/gma_plus-p_8x2_120k_flyingchairs_368x496.py
+    Config: configs/gma/gma-plus-p_8xb2_120k_flyingchairs_368x496.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -211,9 +211,9 @@ Models:
           EPE: 4.65
     Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_flyingchairs_368x496.pth
 
-  - Name: gma_plus-p_8x2_120k_flyingthings3d_400x720
+  - Name: gma-plus-p_8xb2_120k_flyingthings3d_400x720
     In Collection: GMA
-    Config: configs/gma/gma_plus-p_8x2_120k_flyingthings3d_400x720.py
+    Config: configs/gma/gma-plus-p_8xb2_120k_flyingthings3d_400x720.py
     Metadata:
       Training Data: FlyingThings3D
     Results:
@@ -232,9 +232,9 @@ Models:
           Fl-all: 19.17%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_flyingthings3d_400x720.pth
 
-  - Name: gma_plus-p_8x2_120k_mixed_368x768
+  - Name: gma-plus-p_8xb2_120k_mixed_368x768
     In Collection: GMA
-    Config: configs/gma/gma_plus-p_8x2_120k_mixed_368x768.py
+    Config: configs/gma/gma-plus-p_8xb2_120k_mixed_368x768.py
     Metadata:
       sTraining Data:
         - FlyingThings3D
@@ -258,9 +258,9 @@ Models:
           Fl-all: 9.07%
     Weights: https://download.openmmlab.com/mmflow/gma/gma_plus-p_8x2_120k_mixed_368x768.pth
 
-  - Name: gma_plus-p_8x2_50k_kitti2015_288x960
+  - Name: gma-plus-p_8xb2_50k_kitti2015_288x960
     In Collection: GMA
-    Config: configs/gma/gma_plus-p_8x2_50k_kitti2015_288x960.py
+    Config: configs/gma/gma-plus-p_8xb2_50k_kitti2015_288x960.py
     Metadata:
       Training Data: KITTI2015
     Results:

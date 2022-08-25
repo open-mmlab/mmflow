@@ -13,9 +13,9 @@ Collections:
     README: configs/maskflownet/README.md
 
 Models:
-  - Name: maskflownets_8x1_slong_flyingchairs_384x448
+  - Name: maskflownets_8xb1_slong_flyingchairs_384x448
     In Collection: MaskFlownet
-    Config: configs/maskflownet/maskflownets_8x1_slong_flyingchairs_384x448.py
+    Config: configs/maskflownet/maskflownets_8xb1_slong_flyingchairs_384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -25,9 +25,9 @@ Models:
           EPE: 1.54
     Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownets_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: maskflownets_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: maskflownets_8xb1_sfine_flyingthings3d-subset_384x768
     In Collection: MaskFlownet
-    Config: configs/maskflownet/maskflownets_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/maskflownet/maskflownets_8xb1_sfine_flyingthings3d-subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D
     Results:
@@ -49,9 +49,9 @@ Models:
           Fl-all: 29.70%
     Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownets_8x1_sfine_flyingthings3d_subset_384x768.pth
 
-  - Name: maskflownet_8x1_800k_flyingchairs_384x448
+  - Name: maskflownet_8xb1_800k_flyingchairs_384x448
     In Collection: MaskFlownet
-    Config: configs/maskflownet/maskflownet_8x1_800k_flyingchairs_384x448.py
+    Config: configs/maskflownet/maskflownet_8xb1_800k_flyingchairs_384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -61,9 +61,9 @@ Models:
           EPE: 1.37
     Weights: https://download.openmmlab.com/mmflow/maskflownet/maskflownet_8x1_800k_flyingchairs_384x448.pth
 
-  - Name: maskflownet_8x1_500k_flyingthings3d_subset_384x768
+  - Name: maskflownet_8xb1_500k_flyingthings3d-subset_384x768
     In Collection: MaskFlownet
-    Config: configs/maskflownet/maskflownet_8x1_500k_flyingthings3d_subset_384x768.py
+    Config: configs/maskflownet/maskflownet_8xb1_500k_flyingthings3d-subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:

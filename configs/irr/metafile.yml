@@ -13,9 +13,9 @@ Collections:
     README: configs/irr/README.md
 
 Models:
-  - Name: irrpwc_8x1_sshort_flyingchairsocc_384x448
+  - Name: irrpwc_8xb1_sshort_flyingchairsocc_384x448
     In Collection: IRR
-    Config: configs/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.py
+    Config: configs/irr/irrpwc_8xb1_sshort_flyingchairsocc_384x448.py
     Metadata:
       Training Data: FlyingChairsOcc
     Results:
@@ -33,9 +33,9 @@ Models:
           EPE: 3.86
     Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_8x1_sshort_flyingchairsocc_384x448.pth
 
-  - Name: irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768
+  - Name: irrpwc_8xb1_sfine-half_flyingthings3d-subset_384x768
     In Collection: IRR
-    Config: configs/irr/irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768.py
+    Config: configs/irr/irrpwc_8xb1_sfine-half_flyingthings3d-subset_384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -54,9 +54,9 @@ Models:
           Fl-all: 25.06%
     Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_8x1_sfine_half_flyingthings3d_subset_384x768.pth
 
-  - Name: irrpwc_ft_4x1_300k_sintel_384x768
+  - Name: irrpwc_ft_4xb1_300k_sintel_384x768
     In Collection: IRR
-    Config: configs/irr/irrpwc_ft_4x1_300k_sintel_384x768.py
+    Config: configs/irr/irrpwc_ft_4xb1_300k_sintel_384x768.py
     Metadata:
       Training Data: Sintel
     Results:
@@ -70,9 +70,9 @@ Models:
           EPE: 2.18
     Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_ft_4x1_300k_sintel_384x768.pth
 
-  - Name: irrpwc_ft_4x1_300k_sintel_final_384x768
+  - Name: irrpwc_ft_4xb1_300k_sintel-final_384x768
     In Collection: IRR
-    Config: configs/irr/irrpwc_ft_4x1_300k_sintel_final_384x768.py
+    Config: configs/irr/irrpwc_ft_4xb1_300k_sintel-final_384x768.py
     Metadata:
       Training Data: Sintel final
     Results:
@@ -86,9 +86,9 @@ Models:
           EPE: 1.94
     Weights: https://download.openmmlab.com/mmflow/irr/irrpwc_ft_4x1_300k_sintel_final_384x768.pth
 
-  - Name: irrpwc_ft_4x1_300k_kitti_320x896
+  - Name: irrpwc_ft_4xb1_300k_kitti_320x896
     In Collection: IRR
-    Config: configs/irr/irrpwc_ft_4x1_300k_kitti_320x896.py
+    Config: configs/irr/irrpwc_ft_4xb1_300k_kitti_320x896.py
     Metadata:
       Training Data:
         - KITTI2012
