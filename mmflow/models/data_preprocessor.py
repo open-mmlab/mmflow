@@ -1,12 +1,11 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import random
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 import torch
 from mmengine.model import BaseDataPreprocessor
 
 from mmflow.registry import MODELS
-from mmflow.structures import FlowDataSample
 
 
 @MODELS.register_module()
@@ -77,66 +76,30 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
             self.register_buffer('clamp_range', torch.tensor(clamp_range),
                                  False)
 
-    def collate_data(
-        self, data: Sequence[dict]
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], Optional[list]]:
-        """Collating and copying data to the target device.
-
-        Collates the data sampled from dataloader into a list of tensor and
-        list of labels, and then copies tensor to the target device.
-
-        Subclasses could override it to be compatible with the custom format
-        data sampled from custom dataloader.
-
-        Args:
-            data (Sequence[dict]): Data sampled from dataloader.
-
-        Returns:
-            Tuple[List[torch.Tensor], Optional[list]]: Unstacked list of input
-            tensor and list of labels at target device.
-        """
-        # inputs is list of tensor with shape 2,3,H,W
-        img1s = [
-            data_['inputs'][0, ...].to(self._device).float() for data_ in data
-        ]
-        img2s = [
-            data_['inputs'][1, ...].to(self._device).float() for data_ in data
-        ]
-        batch_data_samples: List[FlowDataSample] = []
-        # Model can get predictions without any data samples.
-        for _data in data:
-            if 'data_sample' in _data:
-                batch_data_samples.append(_data['data_sample'])
-        # Move data from CPU to corresponding device.
-        batch_data_samples = [
-            data_sample.to(self._device) for data_sample in batch_data_samples
-        ]
-
-        if not batch_data_samples:
-            batch_data_samples = None  # type: ignore
-
-        return img1s, img2s, batch_data_samples
-
-    def forward(self,
-                data: Sequence[dict],
-                training: bool = False) -> Tuple[torch.Tensor, Optional[list]]:
+    def forward(self, data: dict, training: bool = False) -> Dict[str, Any]:
         """Perform normalization、padding and bgr2rgb conversion based on
         ``BaseDataPreprocessor``.
 
         Args:
-            data (Sequence[dict]): data sampled from dataloader.
+            data (dict): data sampled from dataloader.
             training (bool): Whether to enable training time augmentation.
 
         Returns:
-            Tuple[torch.Tensor, Optional[list]]: Data in the same format as the
-            model input.
+            Dict: Data in the same format as the model input.
         """
 
-        img1s, img2s, batch_data_samples = self.collate_data(data)
+        data = self.cast_data(data)  # type: ignore
+        inputs = data['inputs']
+        data_samples = data.get('data_samples', None)
+        img1s = [input_[0, ...] for input_ in inputs]
+        img2s = [input_[1, ...] for input_ in inputs]
 
         if self.channel_conversion and img1s[0].size(0) == 3:
             img1s = [_img1[[2, 1, 0], ...] for _img1 in img1s]
             img2s = [_img2[[2, 1, 0], ...] for _img2 in img2s]
+
+        img1s = [_img1.float() for _img1 in img1s]
+        img2s = [_img2.float() for _img2 in img2s]
 
         if self._enable_normalize:
             img1s = [(img1 - self.mean) / self.std for img1 in img1s]
@@ -160,4 +123,5 @@ class FlowDataPreprocessor(BaseDataPreprocessor):
         img1s = torch.stack(img1s, dim=0)
         img2s = torch.stack(img2s, dim=0)
 
-        return torch.cat((img1s, img2s), dim=1), batch_data_samples
+        return dict(
+            inputs=torch.cat((img1s, img2s), dim=1), data_samples=data_samples)

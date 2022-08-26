@@ -91,15 +91,15 @@ class MultiValLoop(BaseLoop):
         """
         self.runner.call_hook(
             'before_val_iter', batch_idx=idx, data_batch=data_batch)
-        # outputs should be sequence of BaseDataElement
+        # data_samples should be sequence of BaseDataElement
         with autocast(enabled=self.fp16):
-            outputs = self.runner.model.val_step(data_batch)
-        self.evaluator.process(data_batch, outputs)
+            data_samples = self.runner.model.val_step(data_batch)
+        self.evaluator.process(data_samples, data_batch)
         self.runner.call_hook(
             'after_val_iter',
             batch_idx=idx,
             data_batch=data_batch,
-            outputs=outputs)
+            outputs=data_samples)
 
 
 @LOOPS.register_module()
@@ -186,10 +186,10 @@ class MultiTestLoop(BaseLoop):
             'before_test_iter', batch_idx=idx, data_batch=data_batch)
         # outputs should be sequence of BaseDataElement
         with autocast(enabled=self.fp16):
-            predictions = self.runner.model.test_step(data_batch)
-        self.evaluator.process(data_batch, predictions)
+            data_samples = self.runner.model.test_step(data_batch)
+        self.evaluator.process(data_samples, data_batch)
         self.runner.call_hook(
             'after_test_iter',
             batch_idx=idx,
             data_batch=data_batch,
-            outputs=predictions)
+            outputs=data_samples)

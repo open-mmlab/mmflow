@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from abc import abstractmethod
-from typing import List, Optional, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import torch.nn.functional as F
 from mmengine.data import PixelData
@@ -8,7 +8,7 @@ from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.structures import FlowDataSample
-from mmflow.utils import SampleList, TensorDict
+from mmflow.utils import OptSampleList, SampleList, TensorDict
 
 
 class BaseDecoder(BaseModule):
@@ -44,64 +44,86 @@ class BaseDecoder(BaseModule):
         pass
 
     def postprocess_result(
-            self, results: Sequence[TensorDict],
-            batch_img_metas: Sequence[dict]) -> Sequence[FlowDataSample]:
+            self,
+            flow_results: List[Dict],
+            data_samples: OptSampleList = None) -> Sequence[FlowDataSample]:
         """Reverted flow as original size of ground truth.
 
         Args:
-            flow_result (Sequence[Dict[str, Tensor]]): predicted results of
-                optical flow.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            flow_results (List[Dict]): List of predicted results.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[FlowDataSample]: the reverted predicted optical flow.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
-        assert len(results) == len(batch_img_metas)
 
-        data_samples = []
-        for result, img_meta in zip(results, batch_img_metas):
-            ori_H, ori_W = img_meta['ori_shape']
-            pad = img_meta.get('pad', None)
-            w_scale, h_scale = img_meta.get('scale_factor', (None, None))
-            data_sample = FlowDataSample(**{'metainfo': img_meta})
-            for key, f in result.items():
-                if f is not None:
-                    # shape is 2, H, W
-                    H, W = f.shape[1:]
-                    if pad is not None:
-                        f = f[:, pad[0][0]:(H - pad[0][1]),
-                              pad[1][0]:(W - pad[1][1])]
+        only_prediction = False
+        if data_samples is None:
+            data_samples = []
+            only_prediction = True
+        else:
+            assert len(flow_results) == len(data_samples)
 
-                    elif (w_scale is not None and h_scale is not None):
-                        f = F.interpolate(
-                            f[None],
-                            size=(ori_H, ori_W),
-                            mode='bilinear',
-                            align_corners=False).squeeze(0)
-                        f[0, :, :] = f[0, :, :] / w_scale
-                        f[1, :, :] = f[1, :, :] / h_scale
-                flow_data = PixelData(**{'data': f})
-                data_sample.set_data({'pred_' + key: flow_data})
+        for i in range(len(flow_results)):
+            if only_prediction:
+                prediction = FlowDataSample()
+                for key, f in flow_results[i].items():
+                    prediction.set_data({
+                        'pred_' + key:
+                        PixelData(**{'data': flow_results[i]})
+                    })
+                data_samples.append(prediction)
+            else:
+                img_meta = data_samples[i].metainfo
+                ori_H, ori_W = img_meta['ori_shape']
+                pad = img_meta.get('pad', None)
+                w_scale, h_scale = img_meta.get('scale_factor', (None, None))
+                for key, f in flow_results[i].items():
+                    if f is not None:
+                        # shape is 2, H, W
+                        H, W = f.shape[1:]
+                        if pad is not None:
+                            f = f[:, pad[0][0]:(H - pad[0][1]),
+                                  pad[1][0]:(W - pad[1][1])]
 
-            data_samples.append(data_sample)
+                        elif (w_scale is not None and h_scale is not None):
+                            f = F.interpolate(
+                                f[None],
+                                size=(ori_H, ori_W),
+                                mode='bilinear',
+                                align_corners=False).squeeze(0)
+                            f[0, :, :] = f[0, :, :] / w_scale
+                            f[1, :, :] = f[1, :, :] / h_scale
+                    data_samples[i].set_data(
+                        {'pred_' + key: PixelData(**{'data': f})})
+            return data_samples
 
-        return data_samples
-
-    def predict_by_feat(self, flow_results: Tensor,
-                        batch_img_metas: List[dict]) -> SampleList:
+    def predict_by_feat(self,
+                        flow_results: Tensor,
+                        data_samples: OptSampleList = None) -> SampleList:
         """Predict list of obj:`FlowDataSample` from flow tensor.
 
         Args:
-            flow_results (Tensor): Input flow tensor.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
-
+            flow_results (Tensor): Predicted flow tensor.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[FlowDataSample]: the reverted predicted optical flow.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
-        H, W = batch_img_metas[0]['img_shape'][:2]
+        if data_samples is None:
+            flow_results = flow_results * self.flow_div
+            # unravel batch dim,
+            flow_results = list(flow_results)
+            flow_results = [dict(flow_fw=f) for f in flow_results]
+            return self.postprocess_result(flow_results, data_samples=None)
+
+        H, W = data_samples[0].metainfo['img_shape'][:2]
         # resize flow to the size of images after augmentation.
         flow_results = F.interpolate(
             flow_results, size=(H, W), mode='bilinear', align_corners=False)
@@ -110,7 +132,6 @@ class BaseDecoder(BaseModule):
 
         # unravel batch dim,
         flow_results = list(flow_results)
-        results = [dict(flow_fw=f) for f in flow_results]
+        flow_results = [dict(flow_fw=f) for f in flow_results]
 
-        return self.postprocess_result(
-            results, batch_img_metas=batch_img_metas)
+        return self.postprocess_result(flow_results, data_samples=data_samples)

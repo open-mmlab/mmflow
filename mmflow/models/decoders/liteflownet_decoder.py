@@ -10,8 +10,7 @@ from mmengine.model import BaseModule
 from torch import Tensor
 
 from mmflow.registry import MODELS
-from mmflow.structures import FlowDataSample
-from mmflow.utils import OptMultiConfig, SampleList, TensorDict
+from mmflow.utils import OptMultiConfig, OptSampleList, SampleList, TensorDict
 from ..builder import build_components, build_loss
 from ..utils import CorrBlock, unpack_flow_data_samples
 from .base_decoder import BaseDecoder
@@ -645,8 +644,7 @@ class NetE(BaseDecoder):
             img, size=(h, w), mode='bilinear', align_corners=False)
 
     def loss(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
-             feat2: TensorDict,
-             batch_data_samples: FlowDataSample) -> TensorDict:
+             feat2: TensorDict, data_samples: SampleList) -> TensorDict:
         """Forward function when model training.
 
         Args:
@@ -654,9 +652,8 @@ class NetE(BaseDecoder):
             img2 (Tensor): The second input image.
             feat1 (TensorDict): The feature pyramid from first image.
             feat2 (TensorDict): The feature pyramid from second image.
-            batch_data_samples (list[:obj:`FlowDataSample`]): Each item
-                contains the meta information of each image and corresponding
-                annotations.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             TensorDict: The losses of model.
@@ -670,11 +667,14 @@ class NetE(BaseDecoder):
         if self.extra_training_loss:
             flow_pred['level0'] = self._scale_img(flow_pred[self.end_level], H,
                                                   W)
-        return self.loss_by_feat(flow_pred, batch_data_samples)
+        return self.loss_by_feat(flow_pred, data_samples)
 
-    def predict(self, img1: Tensor, img2: Tensor, feat1: TensorDict,
+    def predict(self,
+                img1: Tensor,
+                img2: Tensor,
+                feat1: TensorDict,
                 feat2: TensorDict,
-                batch_img_metas: Sequence[dict]) -> SampleList:
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function when model testing.
 
         Args:
@@ -682,11 +682,12 @@ class NetE(BaseDecoder):
             img2 (Tensor): The second input image.
             feat1 (TensorDict): The feature pyramid from first image.
             feat2 (TensorDict): The feature pyramid from second image.
-            batch_img_metas (Sequence[dict]): meta data of image to revert
-                the flow to original ground truth size.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: The batch of predicted optical flow
+            Sequence[FlowDataSample]: The batch of predicted optical flow
                 with the same size of images before augmentation.
         """
 
@@ -694,16 +695,16 @@ class NetE(BaseDecoder):
             img1=img1, img2=img2, feat1=feat1, feat2=feat2)
 
         flow_results = flow_pred[self.end_level]
-        return self.predict_by_feat(flow_results, batch_img_metas)
+        return self.predict_by_feat(flow_results, data_samples)
 
     def loss_by_feat(self, flow_pred: TensorDict,
-                     batch_data_samples: SampleList) -> TensorDict:
+                     data_samples: SampleList) -> TensorDict:
         """Compute optical flow loss.
 
         Args:
-            flow_pred (TensorDict): multi-level predicted optical flow.
-            flow_gt (Tensor): The ground truth of optical flow.
-            valid (Tensor, optional): The valid mask. Defaults to None.
+            flow_pred (Dict[str, Tensor]): multi-level predicted optical flow.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             TensorDict: The dict of losses.
@@ -711,7 +712,7 @@ class NetE(BaseDecoder):
 
         loss = dict()
         batch_gt_flow_fw, _, _, _, batch_gt_valid_fw, _ = \
-            unpack_flow_data_samples(batch_data_samples)
+            unpack_flow_data_samples(data_samples)
         loss['loss_flow'] = self.flow_loss(flow_pred, batch_gt_flow_fw,
                                            batch_gt_valid_fw)
         return loss

@@ -28,33 +28,33 @@ class EndPointError(BaseMetric):
         super().__init__(collect_device, prefix)
 
     def process(self, data_batch: Sequence[dict],
-                predictions: Sequence[dict]) -> None:
+                data_samples: Sequence[dict]) -> None:
         """Process one batch of data samples and predictions. The processed
         results should be stored in ``self.results``, which will be used to
         compute the metrics when all batches have been processed.
 
         Args:
             data_batch (Sequence[dict]): A batch of data from the dataloader.
-            predictions (Sequence[dict]): A batch of outputs from
+            data_samples (Sequence[dict]): A batch of outputs from
                 the model.
         """
         gt_flow_list = []
         pred_flow_list = []
         gt_valid_list = []
 
-        for data, pred in zip(data_batch, predictions):
+        for data_sample in data_samples:
             # sintel and kitti only support forward optical flow
             # so here we only evaluate the predicted forward flow
             # tensor with shape (2, H, W) to ndarray with shape (H, W, 2)
-            gt_flow = data['data_sample']['gt_flow_fw']['data'].permute(
-                1, 2, 0).numpy()
-            pred_flow = \
-                pred['pred_flow_fw']['data'].permute(1, 2, 0).cpu().numpy()
+            gt_flow = data_sample['gt_flow_fw']['data'].permute(
+                1, 2, 0).cpu().numpy()
+            pred_flow = data_sample['pred_flow_fw']['data'].permute(
+                1, 2, 0).cpu().numpy()
 
-            if data['data_sample'].get('gt_valid_fw', None) is not None:
+            if data_sample.get('gt_valid_fw', None) is not None:
                 # tensor with shape (1, H, W) to ndarray with shape (H, W)
-                gt_valid = np.squeeze(data['data_sample']['gt_valid_fw']
-                                      ['data'].numpy().squeeze())
+                gt_valid = np.squeeze(
+                    data_sample['gt_valid_fw']['data'].cpu().numpy().squeeze())
             else:
                 gt_valid = np.ones_like(gt_flow[..., 0])
             gt_flow_list.append(gt_flow)

@@ -6,7 +6,7 @@ from numpy import ndarray
 from torch import Tensor
 
 from mmflow.registry import MODELS
-from mmflow.utils import SampleList, TensorDict
+from mmflow.utils import OptSampleList, SampleList, TensorDict
 from ..builder import build_flow_estimator
 from ..decoders.maskflownet_decoder import Upsample
 from ..utils import Warp
@@ -99,16 +99,13 @@ class MaskFlowNet(MaskFlowNetS):
         return feat1, feat2, self.encoder(img1), self.encoder(
             img2), flows_stage1
 
-    def loss(self, imgs: Tensor, batch_data_samples: SampleList) -> TensorDict:
+    def loss(self, imgs: Tensor, data_samples: SampleList) -> TensorDict:
         """Forward function for PWCNet when model training.
 
         Args:
             imgs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             TensorDict: The losses of output.
@@ -120,25 +117,25 @@ class MaskFlowNet(MaskFlowNetS):
             feat3=feat3,
             feat4=feat4,
             flows_stage1=flows_stage1,
-            batch_data_samples=batch_data_samples)
+            data_samples=data_samples)
 
     def predict(
-            self, imgs: Tensor,
-            batch_data_samples: SampleList) -> Sequence[Dict[str, ndarray]]:
+            self,
+            imgs: Tensor,
+            data_samples: OptSampleList = None
+    ) -> Sequence[Dict[str, ndarray]]:
         """Forward function for PWCNet when model testing.
 
         Args:
             imgs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
         feat1, feat2, feat3, feat4, flows_stage1 = self.extract_feat(imgs)
-        batch_img_metas = []
-        for data_sample in batch_data_samples:
-            batch_img_metas.append(data_sample.metainfo)
         return self.decoder.predict(feat1, feat2, feat3, feat4, flows_stage1,
-                                    batch_img_metas)
+                                    data_samples)

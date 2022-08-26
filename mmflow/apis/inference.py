@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import copy
+from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -89,7 +90,7 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
         cfg.pipeline.remove(dict(type='LoadAnnotations'))
 
     test_pipeline = Compose(cfg.pipeline)
-    datas = []
+    datas = defaultdict(list)
     for img1, img2 in zip(img1s, img2s):
         # prepare data
         if isinstance(img1, np.ndarray) and isinstance(img2, np.ndarray):
@@ -100,9 +101,11 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
             data = dict(img1_path=img1, img2_path=img2)
         # build the data pipeline
         data = test_pipeline(data)
-        datas.append(data)
+        datas['inputs'].append(data['inputs'])
+        datas['data_samples'].append(data['data_samples'])
 
-    data, data_samples = model.data_preprocessor(datas, False)
+    datas = model.data_preprocessor(datas, False)
+    inputs, data_samples = datas['inputs'], datas['data_samples']
 
     for m in model.modules():
         assert not isinstance(
@@ -111,6 +114,6 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
 
     # forward the model
     with torch.no_grad():
-        results = model.predict(data, data_samples)
+        results = model.predict(inputs, data_samples)
 
     return results

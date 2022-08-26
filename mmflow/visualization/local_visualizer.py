@@ -33,8 +33,7 @@ class FlowLocalVisualizer(Visualizer):
     def add_datasample(self,
                        name: str,
                        image: Optional[np.ndarray] = None,
-                       gt_sample: Optional[FlowDataSample] = None,
-                       pred_sample: Optional[FlowDataSample] = None,
+                       data_sample: Optional[FlowDataSample] = None,
                        draw_gt: bool = True,
                        draw_pred: bool = True,
                        show: bool = False,
@@ -50,16 +49,10 @@ class FlowLocalVisualizer(Visualizer):
 
         Args:
             name (str): The image identifier.
-            image (None): The image to draw. For MMFlow, set to None.
-            gt_sample (:obj:`FlowDataSample`, optional): GT FlowDataSample.
-                The ground truth of optical flow from img1 to img2,
-                which has 3 dimensions in order of  channel, height
-                and width, is in the data field of 'gt_flow_fw' in gt_sample.
-                Defaults to None.
-            pred_sample (:obj:`FlowDataSample`, optional): Prediction
-                FlowDataSample. The prediction of optical flow from
-                img1 to img2 is in the data field of 'pred_flow_fw'
-                in pred_sample. Defaults to None.
+            image (np.ndarray, optional): The image to draw. For MMFlow,
+                set to None.
+            data_sample (:obj:`FlowDataSample`, optional): The
+                annotation data of every samples. Defaults to None.
             draw_gt (bool): Whether to draw GT FlowDataSample. Default to True.
             draw_pred (bool): Whether to draw Prediction FlowDataSample.
                 Defaults to True.
@@ -72,14 +65,14 @@ class FlowLocalVisualizer(Visualizer):
         gt_flow_fw_map = None
         pred_flow_fw_map = None
 
-        if draw_gt and gt_sample is not None:
-            assert 'gt_flow_fw' in gt_sample
-            gt_flow_fw = gt_sample.gt_flow_fw.data.permute(1, 2, 0).numpy()
+        if draw_gt and data_sample is not None and 'gt_flow_fw' in data_sample:
+            gt_flow_fw = data_sample.gt_flow_fw.data.permute(1, 2,
+                                                             0).cpu().numpy()
             gt_flow_fw_map = np.uint8(mmcv.flow2rgb(gt_flow_fw) * 255.)
 
-        if draw_pred and pred_sample is not None:
-            assert 'pred_flow_fw' in pred_sample
-            pred_flow_fw = pred_sample.pred_flow_fw.data.permute(
+        if (draw_pred and data_sample is not None
+                and 'pred_flow_fw' in data_sample):
+            pred_flow_fw = data_sample.pred_flow_fw.data.permute(
                 1, 2, 0).cpu().numpy()
             pred_flow_fw_map = np.uint8(mmcv.flow2rgb(pred_flow_fw) * 255.)
 

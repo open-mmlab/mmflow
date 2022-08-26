@@ -50,13 +50,13 @@ class FlowNetCSS(FlowEstimator):
 
         self.out_level = out_level
 
-    def extract_feat(self, batch_inputs: Tensor) -> TensorDict:
+    def extract_feat(self, inputs: Tensor) -> TensorDict:
         """Extract features from images."""
-        flowc = self.flownetC(batch_inputs, mode='tensor')[self.out_level]
+        flowc = self.flownetC(inputs, mode='tensor')[self.out_level]
 
-        img_channels = batch_inputs.shape[1] // 2
-        img1 = batch_inputs[:, :img_channels, ...]
-        img2 = batch_inputs[:, img_channels:, ...]
+        img_channels = inputs.shape[1] // 2
+        img1 = inputs[:, :img_channels, ...]
+        img2 = inputs[:, img_channels:, ...]
 
         link_output1 = self.link(img1, img2, flowc, self.flow_div)
 
@@ -66,23 +66,19 @@ class FlowNetCSS(FlowEstimator):
             dim=1)
         return concat1, img1, img2
 
-    def loss(self, batch_inputs: Tensor,
-             batch_data_samples: SampleList) -> dict:
+    def loss(self, inputs: Tensor, data_samples: SampleList) -> dict:
         """Forward function for Flownet2CSS when model training.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The losses of output.
         """
 
-        concat1, img1, img2 = self.extract_feat(batch_inputs)
+        concat1, img1, img2 = self.extract_feat(inputs)
 
         # Train FlowNetCS before FlowNetCSS
         if hasattr(self, 'flownetS2'):
@@ -99,26 +95,28 @@ class FlowNetCSS(FlowEstimator):
                                 dim=1)
             # when flownetS2 does not have flow_loss, loss if the multi-levels
             # flow_pred
-            loss = self.flownetS2(concat2, batch_data_samples, mode='loss')
+            loss = self.flownetS2(concat2, data_samples, mode='loss')
         else:
-            loss = self.flownetS1(concat1, batch_data_samples, mode='loss')
+            loss = self.flownetS1(concat1, data_samples, mode='loss')
 
         return loss
 
-    def predict(self, batch_inputs: torch.Tensor,
-                patch_data_samples: SampleList) -> SampleList:
+    def predict(self,
+                inputs: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function for Flownet2CSS when model testing.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
-        concat1, img1, img2 = self.extract_feat(batch_inputs)
+        concat1, img1, img2 = self.extract_feat(inputs)
 
         # Train FlowNetCS before FlowNetCSS
         if hasattr(self, 'flownetS2'):
@@ -129,26 +127,27 @@ class FlowNetCSS(FlowEstimator):
                 (img1, img2, link_output2.warped_img2,
                  link_output2.upsample_flow, link_output2.brightness_err),
                 dim=1)
-            flow_result = self.flownetS2(
-                concat2, patch_data_samples, mode='predict')
+            flow_result = self.flownetS2(concat2, data_samples, mode='predict')
         else:
-            flow_result = self.flownetS1(
-                concat1, patch_data_samples, mode='predict')
+            flow_result = self.flownetS1(concat1, data_samples, mode='predict')
 
         return flow_result
 
     def _forward(self,
-                 batch_inputs: torch.Tensor,
-                 patch_data_samples: SampleList = None) -> TensorDict:
-        """Forward function for Flownet2CSS.
+                 inputs: Tensor,
+                 data_samples: OptSampleList = None) -> TensorDict:
+        """Forward function of Flownet2CSS.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
             Dict[str, Tensor]: The predicted multi-level optical flow.
         """
-        concat1, img1, img2 = self.extract_feat(batch_inputs)
+        concat1, img1, img2 = self.extract_feat(inputs)
 
         # Train FlowNetCS before FlowNetCSS
         if hasattr(self, 'flownetS2'):
@@ -159,11 +158,9 @@ class FlowNetCSS(FlowEstimator):
                 (img1, img2, link_output2.warped_img2,
                  link_output2.upsample_flow, link_output2.brightness_err),
                 dim=1)
-            flow_result = self.flownetS2(
-                concat2, patch_data_samples, mode='tensor')
+            flow_result = self.flownetS2(concat2, data_samples, mode='tensor')
         else:
-            flow_result = self.flownetS1(
-                concat1, patch_data_samples, mode='tensor')
+            flow_result = self.flownetS1(concat1, data_samples, mode='tensor')
         return flow_result
 
 
@@ -203,59 +200,65 @@ class FlowNet2(FlowEstimator):
 
         self.out_level = out_level
 
-    def loss(self, batch_inputs: torch.Tensor,
-             patch_data_samples: SampleList) -> dict:
+    def loss(self, inputs: Tensor, data_samples: SampleList) -> dict:
         """Forward function for FlowNet2 when model training.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            flow_gt (Tensor): The ground truth of optical flow.
-                Defaults to None.
-            valid (Tensor, optional): The valid mask. Defaults to None.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             Dict[str, Tensor]: The losses of output.
         """
         loss = self.flownet_fusion(
-            self.extract_feat(batch_inputs), patch_data_samples, mode='loss')
+            self.extract_feat(inputs), data_samples, mode='loss')
 
         return loss
 
-    def predict(self, batch_inputs: torch.Tensor,
-                patch_data_samples: SampleList) -> SampleList:
+    def predict(self,
+                inputs: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Forward function for FlowNet2 when model testing.
 
         Args:
-            batch_inputs (Tensor): The concatenated input images.
-            img_metas (Sequence[dict], optional): meta data of image to revert
-                the flow to original ground truth size. Defaults to None.
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            Sequence[Dict[str, ndarray]]: the batch of predicted optical flow
-                with the same size of images after augmentation.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
 
         return self.flownet_fusion(
-            self.extract_feat(batch_inputs),
-            patch_data_samples,
-            mode='predict')
+            self.extract_feat(inputs), data_samples, mode='predict')
 
     def _forward(self,
-                 batch_inputs: torch.Tensor,
-                 patch_data_samples: OptSampleList = None) -> TensorDict:
-        """Forward function."""
+                 inputs: Tensor,
+                 data_samples: OptSampleList = None) -> TensorDict:
+        """Forward function of FlowNet2.
+
+        Args:
+            inputs (Tensor): The concatenated input images.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
+
+        Returns:
+            Dict[str, Tensor]: The predicted multi-level optical flow.
+        """
         return self.flownet_fusion(
-            self.extract_feat(batch_inputs), patch_data_samples, mode='tensor')
+            self.extract_feat(inputs), data_samples, mode='tensor')
 
-    def extract_feat(self, batch_inputs: Tensor) -> TensorDict:
-        img_channels = batch_inputs.shape[1] // 2
-        img1 = batch_inputs[:, :img_channels, ...]
-        img2 = batch_inputs[:, img_channels:, ...]
+    def extract_feat(self, inputs: Tensor) -> TensorDict:
+        img_channels = inputs.shape[1] // 2
+        img1 = inputs[:, :img_channels, ...]
+        img2 = inputs[:, img_channels:, ...]
 
-        flow_css = self.flownetCSS._forward(batch_inputs)[self.out_level]
-        flow_sd = self.flownetSD._forward(batch_inputs)[self.out_level]
+        flow_css = self.flownetCSS._forward(inputs)[self.out_level]
+        flow_sd = self.flownetSD._forward(inputs)[self.out_level]
 
         link_output_css = self.link(img1, img2, flow_css, self.flow_div)
         link_output_sd = self.link(img1, img2, flow_sd, self.flow_div)

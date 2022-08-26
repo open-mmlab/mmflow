@@ -52,12 +52,14 @@ class TestFlowVisualizationHook(TestCase):
             'data_sample': data_sample2
         }]
 
-        pred_flow = torch.rand((2, 50, 50))
         pred_flow_fw = PixelData()
-        pred_flow_fw.data = pred_flow
-        pred_flow_data_sample = FlowDataSample()
-        pred_flow_data_sample.pred_flow_fw = pred_flow_fw
-        self.outputs = [pred_flow_data_sample] * 2
+        pred_flow_fw.data = torch.rand((2, 50, 50))
+        data_sample1.pred_flow_fw = pred_flow_fw
+
+        pred_flow_fw = PixelData()
+        pred_flow_fw.data = torch.rand((2, 50, 50))
+        data_sample2.pred_flow_fw = pred_flow_fw
+        self.outputs = [data_sample1, data_sample2]
 
     def test_after_iter(self):
         runner = Mock()

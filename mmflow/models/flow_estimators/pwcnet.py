@@ -47,73 +47,62 @@ class PWCNet(FlowEstimator):
         img2 = imgs[:, in_channels:, ...]
         return self.encoder(img1), self.encoder(img2)
 
-    def loss(self, batch_inputs: Tensor,
-             batch_data_samples: SampleList) -> Union[dict, list]:
+    def loss(self, inputs: Tensor,
+             data_samples: SampleList) -> Union[dict, list]:
         """Calculate losses from a batch of inputs and data samples.
 
         Args:
-            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
-                img1 is batch_inputs[N, :3, H, W] and img2 is
-                batch_inputs[N, 3:, H, W]. These should usually be mean
+            inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is inputs[N, :3, H, W] and img2 is
+                inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``.
+            data_samples (list[:obj:`FlowDataSample`]): Each item contains the
+                meta information of each image and corresponding annotations.
 
         Returns:
             dict: A dictionary of loss components.
         """
 
-        return self.decoder.loss(
-            *self.extract_feat(batch_inputs),
-            batch_data_samples=batch_data_samples)
+        return self.decoder.loss(*self.extract_feat(inputs), data_samples)
 
-    def predict(self, batch_inputs: Tensor,
-                batch_data_samples: SampleList) -> SampleList:
+    def predict(self,
+                inputs: Tensor,
+                data_samples: OptSampleList = None) -> SampleList:
         """Predict results from a batch of inputs and data samples with post-
         processing.
 
         Args:
-            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
-                img1 is batch_inputs[N, :3, H, W] and img2 is
-                batch_inputs[N, 3:, H, W]. These should usually be mean
+            inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is inputs[N, :3, H, W] and img2 is
+                inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``.
-
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
 
         Returns:
-            list[:obj:`FlowDataSample`]: Optical Flow results of the
-            input images. Each FlowDataSample usually contain
-            ``pred_flow_fw``.
+            Sequence[FlowDataSample]: The batch of predicted optical flow
+                with the same size of images before augmentation.
         """
 
-        batch_img_metas = []
-        for data_sample in batch_data_samples:
-            batch_img_metas.append(data_sample.metainfo)
-        return self.decoder.predict(*self.extract_feat(batch_inputs),
-                                    batch_img_metas)
+        return self.decoder.predict(*self.extract_feat(inputs), data_samples)
 
     def _forward(self,
-                 batch_inputs: Tensor,
+                 inputs: Tensor,
                  data_samples: OptSampleList = None) -> TensorDict:
         """Network forward process. Usually includes backbone, neck and head
         forward without any post-processing.
 
         Args:
-            batch_inputs (Tensor): Input images of shape (N, 6, H, W).
-                img1 is batch_inputs[N, :3, H, W] and img2 is
-                batch_inputs[N, 3:, H, W]. These should usually be mean
+            inputs (Tensor): Input images of shape (N, 6, H, W).
+                img1 is inputs[N, :3, H, W] and img2 is
+                inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
-            batch_data_samples (list[:obj:`FlowDataSample`]): The batch
-                data samples. It usually includes information such
-                as ``gt_flow_fw``, ``gt_flow_bw``, ``gt_occ_fw`` and
-                ``gt_occ_bw``. Default to None.
+            data_samples (list[:obj:`FlowDataSample`], optional): Each item
+                contains the meta information of each image and corresponding
+                annotations. Defaults to None.
         Returns:
             Dict[str, :obj:`FlowDataSample`]: The predicted optical flow
             from level6 to level2.
         """
-        return self.decoder(*self.extract_feat(batch_inputs))
+        return self.decoder(*self.extract_feat(inputs))
