@@ -11,9 +11,9 @@ Collections:
     README: configs/flownet2/README.md
 
 Models:
-  - Name: flownet2cs_8x1_slong_flyingchairs_384x448
+  - Name: flownet2cs_8xb1_slong_flyingchairs-384x448
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.py
+    Config: configs/flownet2/flownet2cs_8xb1_slong_flyingchairs-384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -23,9 +23,9 @@ Models:
           EPE: 1.59
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: flownet2cs_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: flownet2cs_8xb1_sfine_flyingthings3d-subset-384x768
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/flownet2/flownet2cs_8xb1_sfine_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -48,9 +48,9 @@ Models:
           Fl-all: 28.28%
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2cs_8x1_sfine_flyingthings3d_subset_384x768.pth
 
-  - Name: flownet2css_8x1_slong_flyingchairs_384x448
+  - Name: flownet2css_8xb1_slong_flyingchairs-384x448
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.py
+    Config: configs/flownet2/flownet2css_8xb1_slong_flyingchairs-384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -60,9 +60,9 @@ Models:
           EPE: 1.55
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: flownet2css_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: flownet2css_8xb1_sfine_flyingthings3d-subset-384x768
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/flownet2/flownet2css_8xb1_sfine_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -85,9 +85,9 @@ Models:
           Fl-all: 25.76%
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css_8x1_sfine_flyingthings3d_subset_384x768.pth
 
-  - Name: flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448
+  - Name: flownet2css-sd_8xb1_sfine_flyingthings3d-subset-chairssdhom-384x448
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.py
+    Config: configs/flownet2/flownet2css-sd_8xb1_sfine_flyingthings3d-subset-chairssdhom-384x448.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -110,9 +110,9 @@ Models:
           Fl-all: 25.66%
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2css-sd_8x1_sfine_flyingthings3d_subset_chairssdhom_384x448.pth
 
-  - Name: flownet2sd_8x1_slong_chairssdhom_384x448
+  - Name: flownet2sd_8xb1_slong_chairssdhom-384x448
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.py
+    Config: configs/flownet2/flownet2sd_8xb1_slong_chairssdhom-384x448.py
     Metadata:
       Training Data: ChairsSDHom
     Results:
@@ -122,9 +122,9 @@ Models:
           EPE: 0.37
     Weights: https://download.openmmlab.com/mmflow/flownet2/flownet2sd_8x1_slong_chairssdhom_384x448.pth
 
-  - Name: flownet2_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: flownet2_8xb1_sfine_flyingthings3d-subset-384x768
     In Collection: FlowNet2
-    Config: configs/flownet2/flownet2_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/flownet2/flownet2_8xb1_sfine_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:

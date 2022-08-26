@@ -13,9 +13,9 @@ Collections:
     README: configs/liteflownet/README.md
 
 Models:
-  - Name: liteflownet_pre_M6S6_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M6S6_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M6S6_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M6S6_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -25,9 +25,9 @@ Models:
           EPE: 4.43
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M6S6_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_pre_M6S6R6_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M6S6R6_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M6S6R6_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M6S6R6_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -37,9 +37,9 @@ Models:
           EPE: 4.07
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M6S6R6_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_pre_M5S5R5_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M5S5R5_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M5S5R5_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M5S5R5_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -49,9 +49,9 @@ Models:
           EPE: 2.98
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M5S5R5_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_pre_M4S4R4_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M4S4R4_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M4S4R4_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M4S4R4_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -61,9 +61,9 @@ Models:
           EPE: 2.20
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M4S4R4_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_pre_M3S3R3_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M3S3R3_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M3S3R3_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M3S3R3_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -73,9 +73,9 @@ Models:
           EPE: 1.71
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M3S3R3_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_pre_M2S2R2_8x1_flyingchairs_320x448
+  - Name: liteflownet-pre-M2S2R2_8xb1_flyingchairs-320x448
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_pre_M2S2R2_8x1_flyingchairs_320x448.py
+    Config: configs/liteflownet/liteflownet-pre-M2S2R2_8xb1_flyingchairs-320x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -102,9 +102,9 @@ Models:
           Fl-all: 37.99%
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_pre_M2S2R2_8x1_flyingchairs_320x448.pth
 
-  - Name: liteflownet_8x1_500k_flyingthings3d_subset_384x768
+  - Name: liteflownet_8xb1_500k_flyingthings3d-subset-384x768
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_8x1_500k_flyingthings3d_subset_384x768.py
+    Config: configs/liteflownet/liteflownet_8xb1_500k_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -127,9 +127,9 @@ Models:
           Fl-all: 32.86$
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_8x1_500k_flyingthings3d_subset_384x768.pth
 
-  - Name: liteflownet_ft_4x1_500k_sintel_384x768
+  - Name: liteflownet-ft_4xb1_500k_sintel-384x768
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_ft_4x1_500k_sintel_384x768.py
+    Config: configs/liteflownet/liteflownet-ft_4xb1_500k_sintel-384x768.py
     Metadata:
       Training Data: Sintel
     Results:
@@ -143,9 +143,9 @@ Models:
           EPE: 2.06
     Weights: https://download.openmmlab.com/mmflow/liteflownet/liteflownet_ft_4x1_500k_sintel_384x768.pth
 
-  - Name: liteflownet_ft_4x1_500k_kitti_320x896
+  - Name: liteflownet-ft_4xb1_500k_kitti-320x896
     In Collection: LiteFlowNet
-    Config: configs/liteflownet/liteflownet_ft_4x1_500k_kitti_320x896.py
+    Config: configs/liteflownet/liteflownet-ft_4xb1_500k_kitti-320x896.py
     Metadata:
       Training Data:
         - KITTI2012

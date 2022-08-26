@@ -11,9 +11,9 @@ Collections:
     README: configs/flownet/README.md
 
 Models:
-  - Name: flownetc_8x1_slong_flyingchairs_384x448
+  - Name: flownetc_8xb1_slong_flyingchairs-384x448
     In Collection: FlowNet
-    Config: configs/flownet/flownetc_8x1_slong_flyingchairs_384x448.py
+    Config: configs/flownet/flownetc_8xb1_slong_flyingchairs-384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -35,9 +35,9 @@ Models:
           EPE: 7.95
     Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: flownetc_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: flownetc_8xb1_sfine_flyingthings3d-subset-384x768
     In Collection: FlowNet
-    Config: configs/flownet/flownetc_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/flownet/flownetc_8xb1_sfine_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -59,9 +59,9 @@ Models:
           EPE: 5.42
     Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_sfine_flyingthings3d_subset_384x768.pth
 
-  - Name: flownetc_8x1_sfine_sintel_384x448
+  - Name: flownetc_8xb1_sfine_sintel-384x448
     In Collection: FlowNet
-    Config: configs/flownet/flownetc_8x1_sfine_sintel_384x448.py
+    Config: configs/flownet/flownetc_8xb1_sfine_sintel-384x448.py
     Metadata:
       Training Data: Sintel
     Results:
@@ -83,9 +83,9 @@ Models:
           EPE: 4.78
     Weights: https://download.openmmlab.com/mmflow/flownet/flownetc_8x1_sfine_sintel_384x448.pth
 
-  - Name: flownets_8x1_slong_flyingchairs_384x448
+  - Name: flownets_8xb1_slong_flyingchairs-384x448
     In Collection: FlowNet
-    Config: configs/flownet/flownets_8x1_slong_flyingchairs_384x448.py
+    Config: configs/flownet/flownets_8xb1_slong_flyingchairs-384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -107,9 +107,9 @@ Models:
           EPE: 8.81
     Weights: https://download.openmmlab.com/mmflow/flownet/flownets_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: flownets_8x1_sfine_sintel_384x448
+  - Name: flownets_8xb1_sfine_sintel-384x448
     In Collection: FlowNet
-    Config: configs/flownet/flownets_8x1_sfine_sintel_384x448.py
+    Config: configs/flownet/flownets_8xb1_sfine_sintel-384x448.py
     Metadata:
       Training Data: Sintel
     Results:
