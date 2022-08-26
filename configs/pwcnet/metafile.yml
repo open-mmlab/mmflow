@@ -14,9 +14,9 @@ Collections:
     README: configs/pwcnet/README.md
 
 Models:
-  - Name: pwcnet_8x1_slong_flyingchairs_384x448
+  - Name: pwcnet_8xb1_slong_flyingchairs-384x448
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py
+    Config: configs/pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -34,9 +34,9 @@ Models:
           EPE: 4.81
     Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.pth
 
-  - Name: pwcnet_8x1_sfine_flyingthings3d_subset_384x768
+  - Name: pwcnet_8xb1_sfine_flyingthings3d-subset-384x768
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.py
+    Config: configs/pwcnet/pwcnet_8xb1_sfine_flyingthings3d-subset-384x768.py
     Metadata:
       Training Data: FlyingThings3D subset
     Results:
@@ -60,9 +60,9 @@ Models:
           Fl-all: 29.85%
     Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_8x1_sfine_flyingthings3d_subset_384x768.pth
 
-  - Name: pwcnet_ft_4x1_300k_sintel_384x768
+  - Name: pwcnet-ft_4xb1_300k_sintel-384x768
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.py
+    Config: configs/pwcnet/pwcnet-ft_4xb1_300k_sintel-384x768.py
     Metadata:
       Training Data: Sintel
     Results:
@@ -76,9 +76,9 @@ Models:
           EPE: 2.06
     Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_384x768.pth
 
-  - Name: pwcnet_ft_4x1_300k_sintel_final_384x768
+  - Name: pwcnet-ft_4xb1_300k_sintel-final-384x768
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.py
+    Config: configs/pwcnet/pwcnet-ft_4xb1_300k_sintel-final-384x768.py
     Metadata:
       Training Data: Sintel
     Results:
@@ -92,9 +92,9 @@ Models:
           EPE: 1.78
     Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_sintel_final_384x768.pth
 
-  - Name: pwcnet_ft_4x1_300k_kitti_320x896
+  - Name: pwcnet-ft_4xb1_300k_kitti-320x896
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_ft_4x1_300k_kitti_320x896.py
+    Config: configs/pwcnet/pwcnet-ft_4xb1_300k_kitti-320x896.py
     Metadata:
       Training Data:
         - KITTI2012
@@ -112,9 +112,9 @@ Models:
           Fl-all: 6.09%
     Weights: https://download.openmmlab.com/mmflow/pwcnet/pwcnet_ft_4x1_300k_kitti_320x896.pth
 
-  - Name: pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768
+  - Name: pwcnet-plus_8xb1_750k_sintel-kitti2015-hd1k-320x768
     In Collection: PWC-Net
-    Config: configs/pwcnet/pwcnet_plus_8x1_750k_sintel_kitti2015_hd1k_320x768.py
+    Config: configs/pwcnet/pwcnet-plus_8xb1_750k_sintel-kitti2015-hd1k-320x768.py
     Metadata:
       Training Data:
         - Sintel

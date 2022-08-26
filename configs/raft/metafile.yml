@@ -13,9 +13,9 @@ Collections:
     README: configs/raft/README.md
 
 Models:
-  - Name: raft_8x2_100k_flyingchairs_368x496
+  - Name: raft_8xb2_100k_flyingchairs-368x496
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_100k_flyingchairs_368x496.py
+    Config: configs/raft/raft_8xb2_100k_flyingchairs-368x496.py
     Metadata:
       Training Data: FlyingChairs
     Results:
@@ -33,9 +33,9 @@ Models:
           EPE: 4.85
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingchairs.pth
 
-  - Name: raft_8x2_100k_flyingthings3d_400x720
+  - Name: raft_8xb2_100k_flyingthings3d-400x720
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_100k_flyingthings3d_400x720.py
+    Config: configs/raft/raft_8xb2_100k_flyingthings3d-400x720.py
     Metadata:
       Training Data: FlyingThings3D
     Results:
@@ -54,9 +54,9 @@ Models:
           Fl-all: 16.23%
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_400x720.pth
 
-  - Name: raft_8x2_100k_flyingthings3d_sintel_368x768
+  - Name: raft_8xb2_100k_flyingthings3d-sintel-368x768
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.py
+    Config: configs/raft/raft_8xb2_100k_flyingthings3d-sintel-368x768.py
     Metadata:
       Training Data:
         - FlyingThings3D
@@ -72,9 +72,9 @@ Models:
           EPE: 0.97
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_flyingthings3d_sintel_368x768.pth
 
-  - Name: raft_8x2_100k_mixed_368x768
+  - Name: raft_8xb2_100k_mixed-368x768
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_100k_mixed_368x768.py
+    Config: configs/raft/raft_8xb2_100k_mixed-368x768.py
     Metadata:
       Training Data:
         - FlyingThings3D
@@ -98,9 +98,9 @@ Models:
           Fl-all: 5.68%
     Weights: https://download.openmmlab.com/mmflow/raft/raft_8x2_100k_mixed_368x768.pth
 
-  - Name: raft_8x2_50k_kitti2015_288x960
+  - Name: raft_8xb2_50k_kitti2015-288x960
     In Collection: RAFT
-    Config: configs/raft/raft_8x2_50k_kitti2015_288x960.py
+    Config: configs/raft/raft_8xb2_50k_kitti2015-288x960.py
     Metadata:
       Training Data:
         - KITTI2015
