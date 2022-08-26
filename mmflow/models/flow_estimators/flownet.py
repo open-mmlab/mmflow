@@ -34,8 +34,8 @@ class FlowNetS(PWCNet):
 
         Args:
             inputs (Tensor): Input images of shape (N, 6, H, W).
-                img1 is batch_inputs[N, :3, H, W] and img2 is
-                batch_inputs[N, 3:, H, W]. These should usually be mean
+                img1 is inputs[N, :3, H, W] and img2 is
+                inputs[N, 3:, H, W]. These should usually be mean
                 centered and std scaled.
             data_samples (list[:obj:`FlowDataSample`]): Each item contains the
                 meta information of each image and corresponding annotations.
