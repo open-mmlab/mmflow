@@ -54,7 +54,7 @@ class EndPointError(BaseMetric):
             if data_sample.get('gt_valid_fw', None) is not None:
                 # tensor with shape (1, H, W) to ndarray with shape (H, W)
                 gt_valid = np.squeeze(
-                    data_sample['gt_valid_fw']['data'].numpy().squeeze())
+                    data_sample['gt_valid_fw']['data'].cpu().numpy().squeeze())
             else:
                 gt_valid = np.ones_like(gt_flow[..., 0])
             gt_flow_list.append(gt_flow)
