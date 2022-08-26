@@ -8,12 +8,11 @@ from mmflow.structures import FlowDataSample
 
 
 def unpack_flow_data_samples(
-        batch_data_samples: Sequence[FlowDataSample]
-) -> Tuple[Optional[Tensor]]:
+        data_samples: Sequence[FlowDataSample]) -> Tuple[Optional[Tensor]]:
     """Unpack data sample list.
 
     Args:
-        batch_data_samples (Sequence[FlowDataSample]): The list of data samples
+        data_samples (Sequence[FlowDataSample]): The list of data samples
 
 
     Returns:
@@ -26,7 +25,7 @@ def unpack_flow_data_samples(
     batch_gt_valid_fw = []
     batch_gt_valid_bw = []
 
-    for data_sample in batch_data_samples:
+    for data_sample in data_samples:
         if hasattr(data_sample, 'gt_flow_fw'):
             batch_gt_flow_fw.append(data_sample.gt_flow_fw.data)
         if hasattr(data_sample, 'gt_flow_bw'):
