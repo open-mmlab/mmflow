@@ -5,7 +5,7 @@ from typing import Dict, Optional, Sequence, Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn.bricks.conv_module import ConvModule
+from mmcv.cnn import ConvModule
 from mmengine.model import BaseModule
 from torch import Tensor
 

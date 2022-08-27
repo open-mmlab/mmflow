@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import mmcv
 import pytest
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
+from mmengine.utils import is_list_of
 
 from mmflow.models.decoders.raft_decoder import (ConvGRU, CorrelationPyramid,
                                                  MotionEncoder, RAFTDecoder,
@@ -134,4 +134,4 @@ def test_raft_decoder():
     out = model.predict(
         feat1, feat2, flow, h_feat, cxt_feat, data_samples=data_samples)
     assert out[0].pred_flow_fw.shape == (64, 64)
-    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert isinstance(out, list) and is_list_of(out, FlowDataSample)

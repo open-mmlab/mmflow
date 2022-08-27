@@ -2,7 +2,7 @@
 import os.path as osp
 from argparse import ArgumentParser
 
-import mmcv
+from mmengine.utils import mkdir_or_exist
 
 from mmflow.apis import inference_model, init_model
 from mmflow.datasets import visualize_flow, write_flow
@@ -39,7 +39,7 @@ def main(args):
     # get prediction from result and convert to np
     pred_flow_fw = result[0].pred_flow_fw.data.permute(1, 2, 0).cpu().numpy()
     # save the results
-    mmcv.mkdir_or_exist(args.out_dir)
+    mkdir_or_exist(args.out_dir)
     visualize_flow(pred_flow_fw,
                    osp.join(args.out_dir, f'{args.out_prefix}.png'))
     write_flow(pred_flow_fw, osp.join(args.out_dir, f'{args.out_prefix}.flo'))

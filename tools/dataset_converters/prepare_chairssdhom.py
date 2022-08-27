@@ -3,7 +3,7 @@ import argparse
 import json
 import os.path as osp
 
-import mmcv
+from mmengine.utils import mkdir_or_exist
 from utils import get_data_filename
 
 
@@ -55,7 +55,7 @@ def main():
                 img2_path=img2_filenames[i],
                 flow_fw_path=flow_filenames[i])
             data_list.append(data_info)
-        mmcv.mkdir_or_exist(args.save_dir)
+        mkdir_or_exist(args.save_dir)
         with open(osp.join(args.save_dir, f'{subset_dir}.json'),
                   'w') as jsonfile:
             json.dump({

@@ -3,7 +3,7 @@ from typing import Optional
 
 import mmcv
 import numpy as np
-from mmengine import Visualizer
+from mmengine.visualization import Visualizer
 
 from mmflow.registry import VISUALIZERS
 from mmflow.structures import FlowDataSample

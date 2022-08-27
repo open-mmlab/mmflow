@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from typing import Tuple
 
-from mmcv.utils import Config
+from mmengine.config import Config
 from torch import Tensor
 
 from mmflow.registry import MODELS

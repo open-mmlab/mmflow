@@ -5,6 +5,7 @@ from typing import Sequence
 
 import cv2
 import mmcv
+from mmengine.utils import scandir
 from numpy import ndarray
 
 try:
@@ -65,7 +66,7 @@ def create_frame(frame_dir: str,
     Returns:
         list[ndarray]: List of frames.
     """
-    frame_files = list(mmcv.scandir(frame_dir))
+    frame_files = list(scandir(frame_dir))
     frame_files.sort()
     frame_list = []
     for frame_file in frame_files:

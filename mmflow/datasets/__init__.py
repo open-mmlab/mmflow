@@ -13,8 +13,7 @@ from .sintel import Sintel
 from .transforms import (ColorJitter, Compose, Erase, GaussianNoise, InputPad,
                          InputResize, Normalize, PackFlowInputs,
                          PhotoMetricDistortion, RandomAffine, RandomCrop,
-                         RandomFlip, Rerange, SpacialTransform,
-                         TestFormatBundle, Validation)
+                         RandomFlip, Rerange, SpacialTransform, Validation)
 from .utils import (read_flow, read_flow_kitti, render_color_wheel,
                     visualize_flow, write_flow, write_flow_kitti)
 
@@ -26,5 +25,5 @@ __all__ = [
     'InputResize', 'write_flow_kitti', 'read_flow_kitti', 'GaussianNoise',
     'Compose', 'InputPad', 'FlyingThings3DSubset', 'FlyingThings3D', 'Sintel',
     'KITTI2012', 'KITTI2015', 'render_color_wheel', 'PackFlowInputs',
-    'TestFormatBundle', 'FlyingChairsOcc', 'HD1K', 'ChairsSDHom'
+    'FlyingChairsOcc', 'HD1K', 'ChairsSDHom'
 ]

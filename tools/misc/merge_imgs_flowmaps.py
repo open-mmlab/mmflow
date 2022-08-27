@@ -5,6 +5,7 @@ import os.path as osp
 import cv2
 import mmcv
 import numpy as np
+from mmengine.utils import scandir
 
 try:
     import imageio
@@ -45,8 +46,8 @@ def merge_imgs_flow(img_dir: str, flow_dir: str, out_dir: str) -> None:
         flow_dir (str): The directory of flow maps.
         out_dir (str): The directory to save the frames
     """
-    img_files = list(mmcv.scandir(img_dir))
-    flow_files = list(mmcv.scandir(flow_dir))
+    img_files = list(scandir(img_dir))
+    flow_files = list(scandir(flow_dir))
     img_files.sort()
     flow_files.sort()
     # img is longer than flow

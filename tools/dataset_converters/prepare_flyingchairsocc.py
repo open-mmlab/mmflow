@@ -3,8 +3,8 @@ import argparse
 import json
 import os.path as osp
 
-import mmcv
 import numpy as np
+from mmengine.utils import mkdir_or_exist, scandir
 
 DATASET_SIZE = 22872
 VALIDATE_INDICES = [
@@ -102,16 +102,12 @@ def main():
     occ_fw_suffix = '_occ1.png'
     occ_bw_suffix = '_occ2.png'
 
-    img1_filenames = [f for f in mmcv.scandir(img1_dir, suffix=img1_suffix)]
-    img2_filenames = [f for f in mmcv.scandir(img2_dir, suffix=img2_suffix)]
-    flow_fw_filenames = [
-        f for f in mmcv.scandir(flow_dir, suffix=flow_fw_suffix)
-    ]
-    flow_bw_filenames = [
-        f for f in mmcv.scandir(flow_dir, suffix=flow_bw_suffix)
-    ]
-    occ_fw_filenames = [f for f in mmcv.scandir(occ_dir, suffix=occ_fw_suffix)]
-    occ_bw_filenames = [f for f in mmcv.scandir(occ_dir, suffix=occ_bw_suffix)]
+    img1_filenames = [f for f in scandir(img1_dir, suffix=img1_suffix)]
+    img2_filenames = [f for f in scandir(img2_dir, suffix=img2_suffix)]
+    flow_fw_filenames = [f for f in scandir(flow_dir, suffix=flow_fw_suffix)]
+    flow_bw_filenames = [f for f in scandir(flow_dir, suffix=flow_bw_suffix)]
+    occ_fw_filenames = [f for f in scandir(occ_dir, suffix=occ_fw_suffix)]
+    occ_bw_filenames = [f for f in scandir(occ_dir, suffix=occ_bw_suffix)]
 
     train_list = []
     test_list = []
@@ -130,7 +126,7 @@ def main():
             train_list.append(data_info)
         else:
             test_list.append(data_info)
-    mmcv.mkdir_or_exist(args.save_dir)
+    mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
 

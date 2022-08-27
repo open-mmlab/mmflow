@@ -4,7 +4,6 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn.bricks.activation import build_activation_layer
 from mmcv.ops import DeformConv2d
 from mmengine.model import BaseModule
 from torch import Tensor
@@ -58,7 +57,7 @@ class BasicDeformWarpBlock(BaseModule):
         super().__init__(init_cfg)
         self.channels = channels
         self.deconv = DeformConv2d(channels, channels, 3, padding=1)
-        self.act = build_activation_layer(act_cfg)
+        self.act = MODELS.build(act_cfg)
         self.with_deform_bias = with_deform_bias
         if self.with_deform_bias:
             self.deconv_bias = nn.Parameter(torch.zeros(channels, 1, 1))
@@ -108,7 +107,7 @@ class DeformWarpBlock(BaseModule):
         self.channels = channels
         self.deconv = DeformConv2d(channels, channels, 3, padding=1)
         self.tradeoff_conv = nn.Conv2d(up_channels, channels, 3, padding=1)
-        self.act = build_activation_layer(act_cfg)
+        self.act = MODELS.build(act_cfg)
         self.with_deform_bias = with_deform_bias
         if self.with_deform_bias:
             self.deconv_bias = nn.Parameter(torch.zeros(channels, 1, 1))
@@ -265,7 +264,7 @@ class MaskModule(PWCModule):
                     out_channels=self.up_channels,
                     kernel_size=4,
                     stride=2,
-                    padding=1), build_activation_layer(self.act_cfg))
+                    padding=1), MODELS.build(self.act_cfg))
 
     def forward(
         self, x: Tensor, upflow: Tensor

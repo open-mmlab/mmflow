@@ -4,7 +4,7 @@ import json
 import os.path as osp
 from glob import glob
 
-import mmcv
+from mmengine.utils import mkdir_or_exist
 from utils import get_data_filename
 
 
@@ -106,7 +106,7 @@ def main():
             data_list.append(data_info)
             data_list.append(data_info_final)
 
-        mmcv.mkdir_or_exist(args.save_dir)
+        mkdir_or_exist(args.save_dir)
         if subset_dir == 'TRAIN':
             annotation_file = osp.join(args.save_dir, 'train.json')
         else:

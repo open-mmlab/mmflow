@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
 
 from mmflow.datasets.transforms import PackFlowInputs
 from mmflow.structures import FlowDataSample
