@@ -7,8 +7,8 @@ import numpy as np
 import torch
 from mmengine import Config
 from mmengine.fileio import dump
-from mmengine.utils import mkdir_or_exist
 from mmengine.runner import Runner, load_checkpoint
+from mmengine.utils import mkdir_or_exist
 
 from mmflow.models import build_flow_estimator
 from mmflow.utils import register_all_modules
