@@ -10,4 +10,6 @@ vis_backends = [dict(type='LocalVisBackend')]
 visualizer = dict(
     type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
 
+log_processor = dict(by_epoch=False)
+log_level = 'INFO'
 resume = False
