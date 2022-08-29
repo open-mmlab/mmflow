@@ -3,8 +3,8 @@ import argparse
 import json
 import os.path as osp
 
-import mmcv
 import numpy as np
+from mmengine.utils import mkdir_or_exist, scandir
 
 
 def parse_args():
@@ -46,9 +46,9 @@ def main():
     img2_suffix = '_img2.ppm'
     flow_suffix = '_flow.flo'
 
-    img1_filenames = [f for f in mmcv.scandir(img1_dir, suffix=img1_suffix)]
-    img2_filenames = [f for f in mmcv.scandir(img2_dir, suffix=img2_suffix)]
-    flow_filenames = [f for f in mmcv.scandir(flow_dir, suffix=flow_suffix)]
+    img1_filenames = [f for f in scandir(img1_dir, suffix=img1_suffix)]
+    img2_filenames = [f for f in scandir(img2_dir, suffix=img2_suffix)]
+    flow_filenames = [f for f in scandir(flow_dir, suffix=flow_suffix)]
     img1_filenames.sort()
     img2_filenames.sort()
     flow_filenames.sort()
@@ -67,7 +67,7 @@ def main():
             train_list.append(data_info)
         else:
             test_list.append(data_info)
-    mmcv.mkdir_or_exist(args.save_dir)
+    mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
 

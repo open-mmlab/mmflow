@@ -3,7 +3,7 @@
 import os.path as osp
 from typing import Optional, Sequence, Union
 
-import mmcv
+from mmengine.utils import scandir
 
 
 def get_data_filename(
@@ -33,7 +33,7 @@ def get_data_filename(
 
     files = []
     for data_dir in data_dirs:
-        for f in mmcv.scandir(data_dir, suffix=suffix):
+        for f in scandir(data_dir, suffix=suffix):
             if f not in exclude:
                 files.append(osp.join(data_dir, f))
     files.sort()

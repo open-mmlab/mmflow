@@ -6,7 +6,7 @@ import os.path as osp
 import re
 from typing import Sequence
 
-import mmcv
+from mmengine.utils import mkdir_or_exist
 from utils import get_data_filename
 
 # these files contain nan, so exclude them.
@@ -172,7 +172,7 @@ def main():
                     train_list.append(data_info)
                 else:
                     test_list.append(data_info)
-    mmcv.mkdir_or_exist(args.save_dir)
+    mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'data_list': train_list, 'metainfo': {}}, jsonfile)
     with open(osp.join(args.save_dir, 'test.json'), 'w') as jsonfile:

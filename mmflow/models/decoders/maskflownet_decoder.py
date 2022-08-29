@@ -4,7 +4,7 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn.bricks.activation import build_activation_layer
+from mmcv.cnn import build_activation_layer
 from mmcv.ops import DeformConv2d
 from mmengine.model import BaseModule
 from torch import Tensor

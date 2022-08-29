@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
 
 from mmflow.structures import FlowDataSample
 from mmflow.visualization import FlowLocalVisualizer

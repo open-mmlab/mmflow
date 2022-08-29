@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import mmcv
 import pytest
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
+from mmengine.utils import is_list_of
 
 from mmflow.models.decoders.maskflownet_decoder import (BasicDeformWarpBlock,
                                                         DeformWarpBlock,
@@ -150,7 +150,7 @@ def test_maskflownets_decoder():
 
     # test predict forward
     out = model.predict(feat1, feat2, data_samples=data_samples)
-    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert isinstance(out, list) and is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (16, 16)
 
     # test forward function

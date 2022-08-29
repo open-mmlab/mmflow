@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import mmcv
 import pytest
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
+from mmengine.utils import is_list_of
 
 from mmflow.models.decoders.irrpwc_decoder import (IRRCorrBlock,
                                                    IRRFlowDecoder,
@@ -236,7 +236,7 @@ def test_irr_pwc_decoder():
 
     # test predict forward
     flow_result = model.predict(feat1, feat2, data_samples=data_samples)
-    assert isinstance(flow_result, list) and mmcv.is_list_of(
+    assert isinstance(flow_result, list) and is_list_of(
         flow_result, FlowDataSample)
     assert flow_result[0].pred_flow_fw.shape == (h, w)
     assert flow_result[0].pred_flow_bw.shape == (h, w)

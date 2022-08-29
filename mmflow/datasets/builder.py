@@ -2,7 +2,7 @@
 import platform
 from typing import Optional
 
-import mmcv
+from mmengine.config import Config
 from torch.utils.data import Dataset
 
 from mmflow.registry import DATASETS
@@ -17,12 +17,11 @@ if platform.system() != 'Windows':
     resource.setrlimit(resource.RLIMIT_NOFILE, (soft_limit, hard_limit))
 
 
-def build_dataset(cfg: mmcv.Config,
-                  default_args: Optional[dict] = None) -> Dataset:
+def build_dataset(cfg: Config, default_args: Optional[dict] = None) -> Dataset:
     """Build Pytorch dataset.
 
     Args:
-        cfg (mmcv.Config): Config dict of dataset. It should at
+        cfg (mmengine.Config): Config dict of dataset. It should at
             least contain the key "type".
         default_args (dict, optional): Default initialization arguments.
 

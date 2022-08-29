@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 
-from mmengine.data import BaseDataElement, PixelData
+from mmengine.structures import BaseDataElement, PixelData
 
 
 class FlowDataSample(BaseDataElement):
@@ -35,7 +35,7 @@ class FlowDataSample(BaseDataElement):
     Examples:
         >>> import torch
         >>> import numpy as np
-        >>> from mmengine.data import PixelData
+        >>> from mmengine.structures import PixelData
         >>> from mmflow.structures import FlowDataSample
 
         >>> data_sample = FlowDataSample()

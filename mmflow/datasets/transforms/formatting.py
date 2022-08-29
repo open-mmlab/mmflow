@@ -2,12 +2,11 @@
 from collections.abc import Sequence
 from typing import Union
 
-import mmcv
 import numpy as np
 import torch
-from mmcv.parallel import DataContainer as DC
 from mmcv.transforms import BaseTransform
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
+from mmengine.utils import is_str
 
 from mmflow.registry import TRANSFORMS
 from mmflow.structures import FlowDataSample
@@ -30,7 +29,7 @@ def to_tensor(
         return data
     elif isinstance(data, np.ndarray):
         return torch.from_numpy(data)
-    elif isinstance(data, Sequence) and not mmcv.is_str(data):
+    elif isinstance(data, Sequence) and not is_str(data):
         return torch.tensor(data)
     elif isinstance(data, int):
         return torch.LongTensor([data])
@@ -38,47 +37,6 @@ def to_tensor(
         return torch.FloatTensor([data])
     else:
         raise TypeError(f'type {type(data)} cannot be converted to tensor.')
-
-
-@TRANSFORMS.register_module()
-class TestFormatBundle:
-    """Default formatting bundle.
-
-    It simplifies the pipeline of formatting common fields, including "img1"
-    and "img2". These fields are formatted as follows.
-
-    - img1: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
-    - img2: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
-    """
-
-    def __call__(self, results: dict) -> dict:
-        """Call function to transform and format common fields in results.
-
-        Args:
-            results (dict): Result dict contains the data to convert.
-
-        Returns:
-            dict: The result dict contains the data that is formatted with
-                default bundle.
-        """
-
-        if 'img1' in results:
-            img1 = results['img1']
-            img1 = np.expand_dims(img1, -1) if len(img1.shape) < 3 else img1
-            img1 = img1.transpose(2, 0, 1)
-
-        if 'img2' in results:
-            img2 = results['img2']
-            img2 = np.expand_dims(img2, -1) if len(img2.shape) < 3 else img2
-            img2 = img2.transpose(2, 0, 1)
-
-        results['imgs'] = DC(
-            to_tensor(np.concatenate((img1, img2), axis=0)), stack=True)
-
-        return results
-
-    def __repr__(self) -> str:
-        return self.__class__.__name__
 
 
 @TRANSFORMS.register_module()
@@ -105,10 +63,9 @@ class PackFlowInputs(BaseTransform):
         - ``flip_direction``: the flipping direction
 
     Args:
-        meta_keys (Sequence[str], optional): Meta keys to be converted to
-            ``mmcv.DataContainer`` and collected in ``data[img_metas]``.
-            Default: ``('img1_path', 'img2_path', 'ori_shape', 'img_shape',
-            'scale_factor', 'flip', 'flip_direction')``
+        meta_keys (Sequence[str], optional): Meta keys to be collected in
+        ``data[img_metas]``. Default: ``('img1_path', 'img2_path',
+        'ori_shape', 'img_shape', 'scale_factor', 'flip', 'flip_direction')``
 
     Args:
         BaseTransform (_type_): _description_

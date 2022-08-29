@@ -3,8 +3,9 @@ import os.path as osp
 
 import pytest
 import torch
-from mmcv.utils import Config, is_list_of
-from mmengine.data import PixelData
+from mmengine.config import Config
+from mmengine.structures import PixelData
+from mmengine.utils import is_list_of
 from torch import Tensor
 
 from mmflow.models import MaskFlowNetS, build_flow_estimator

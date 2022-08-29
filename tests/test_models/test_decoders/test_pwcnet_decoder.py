@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import mmcv
 import pytest
 import torch
-from mmengine.data import PixelData
+from mmengine.structures import PixelData
+from mmengine.utils import is_list_of
 
 from mmflow.models.decoders.pwcnet_decoder import PWCModule, PWCNetDecoder
 from mmflow.structures import FlowDataSample
@@ -82,7 +82,7 @@ def test_pwcnet_decoder():
     assert float(loss['loss_flow']) > 0
 
     out = model.predict(feat1, feat2, data_samples=data_samples)
-    assert isinstance(out, list) and mmcv.is_list_of(out, FlowDataSample)
+    assert isinstance(out, list) and is_list_of(out, FlowDataSample)
     assert out[0].pred_flow_fw.shape == (32, 32)
 
     out = model(feat1, feat2)

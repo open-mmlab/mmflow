@@ -22,7 +22,7 @@ def init_model(config: Union[str, Config],
     """Initialize a flow estimator from config file.
 
     Args:
-        config (str or :obj:`mmcv.Config`): Config file path or the config
+        config (str or :obj:`mmengine.Config`): Config file path or the config
             object.
         checkpoint (str, optional): Checkpoint path. If left as None, the model
             will not load any weights. Default to: None.

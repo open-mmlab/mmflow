@@ -4,7 +4,7 @@ import json
 import os.path as osp
 from glob import glob
 
-import mmcv
+from mmengine.utils import mkdir_or_exist
 
 
 def parse_args():
@@ -59,7 +59,7 @@ def main():
             flow_fw_path=osp.join(flow_filenames[i]))
 
         train_list.append(data_info)
-    mmcv.mkdir_or_exist(args.save_dir)
+    mkdir_or_exist(args.save_dir)
     with open(osp.join(args.save_dir, 'train.json'), 'w') as jsonfile:
         json.dump({'metainfo': {}, 'data_list': train_list}, jsonfile)
 

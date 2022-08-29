@@ -3,8 +3,8 @@ from abc import abstractmethod
 from typing import Dict, List, Optional, Sequence, Union
 
 import torch.nn.functional as F
-from mmengine.data import PixelData
 from mmengine.model import BaseModule
+from mmengine.structures import PixelData
 from torch import Tensor
 
 from mmflow.structures import FlowDataSample

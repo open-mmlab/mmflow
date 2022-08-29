@@ -2,7 +2,7 @@
 from typing import Dict, Optional, Sequence, Union
 
 import torch
-from mmcv.cnn.bricks.conv_module import ConvModule
+from mmcv.cnn import ConvModule
 
 from mmflow.registry import MODELS
 from ..utils import CorrBlock
