@@ -3,7 +3,7 @@ from typing import Dict, Optional, Sequence, Tuple
 
 import torch
 import torch.nn as nn
-from mmcv.cnn import build_norm_layer
+from mmcv.cnn import build_activation_layer, build_norm_layer
 from mmengine.model import BaseModule
 from torch import Tensor
 
@@ -62,7 +62,7 @@ class DeconvModule(BaseModule):
             deconvs.append(build_norm_layer(norm_cfg, out_channels))
 
         if act_cfg is not None:
-            deconvs.append(MODELS.build(act_cfg))
+            deconvs.append(build_activation_layer(act_cfg))
 
         self.deconvs = nn.Sequential(*deconvs)
 

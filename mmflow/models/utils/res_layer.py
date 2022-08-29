@@ -1,10 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch.nn as nn
 import torch.utils.checkpoint as cp
-from mmcv.cnn import build_conv_layer, build_norm_layer, build_plugin_layer
+from mmcv.cnn import (build_activation_layer, build_conv_layer,
+                      build_norm_layer, build_plugin_layer)
 from mmengine.model import BaseModule
-
-from mmflow.registry import MODELS
 
 
 class BasicBlock(BaseModule):
@@ -46,7 +45,7 @@ class BasicBlock(BaseModule):
             conv_cfg, planes, planes, 3, padding=1, bias=True)
         self.add_module(self.norm2_name, norm2)
 
-        self.relu = MODELS.build(act_cfg)
+        self.relu = build_activation_layer(act_cfg)
         self.downsample = downsample
         self.stride = stride
         self.dilation = dilation

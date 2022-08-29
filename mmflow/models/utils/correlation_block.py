@@ -2,11 +2,11 @@
 from math import sqrt
 
 import torch
+from mmcv.cnn import build_activation_layer
 from mmengine.model import BaseModule
 from mmengine.runner import autocast
 
 from mmflow.models import build_operators
-from mmflow.registry import MODELS
 
 
 class CorrBlock(BaseModule):
@@ -37,7 +37,7 @@ class CorrBlock(BaseModule):
             f'but got {scale_mode}')
 
         corr = build_operators(corr_cfg)
-        act = MODELS.build(act_cfg)
+        act = build_activation_layer(act_cfg)
         self.scaled = scaled
         self.scale_mode = scale_mode
 
