@@ -5,8 +5,9 @@ import time
 
 import numpy as np
 import torch
-from mmcv import Config
-from mmengine.fileio import dump, mkdir_or_exist
+from mmengine import Config
+from mmengine.fileio import dump
+from mmengine.utils import mkdir_or_exist
 from mmengine.runner import Runner, load_checkpoint
 
 from mmflow.models import build_flow_estimator
@@ -19,6 +20,10 @@ def parse_args():
     parser.add_argument('checkpoint', help='checkpoint file')
     parser.add_argument(
         '--log-interval', type=int, default=50, help='interval of logging')
+    parser.add_argument(
+        '--work-dir',
+        help=('if specified, the results will be dumped '
+              'into the directory as json'))
     parser.add_argument(
         '--warm_up',
         type=int,
