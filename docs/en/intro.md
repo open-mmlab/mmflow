@@ -63,7 +63,7 @@ Here is a detailed step-by-step guide to learn more about MMFlow:
 
 1. For installation instructions, please see [install](install.md).
 
-2. [get_started](getting_started.md) is for the basic usage of MMFlow.
+2. [get_started](get_started.md) is for the basic usage of MMFlow.
 
 3. Refer to the below tutorials to dive deeper:
 
