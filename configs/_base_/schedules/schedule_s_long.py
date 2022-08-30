@@ -1,5 +1,5 @@
 # training schedule for S_long schedule
-train_cfg = dict(by_epoch=False, max_iters=1200000, val_interval=100)
+train_cfg = dict(by_epoch=False, max_iters=1200000, val_interval=100000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
