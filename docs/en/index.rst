@@ -44,7 +44,6 @@ Welcome to MMFlow's documentation!
 
    notes/changelog.md
    notes/faq.md
-   notes/contribution_guides.md
 
 .. toctree::
    :maxdepth: 1

@@ -73,9 +73,9 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 
    `batch_data_samples` contains the ground truth and `batch_img_metas` contains the information of original input images, such as original shape.
    `loss_by_feat` is the loss function to compute the losses between the model output and target,
-   and you can refer to the implementation of [PWCNetDecoder](https://github.com/open-mmlab/mmflow/blob/dev-1.x/mmflow/models/decoders/pwcnet_decoder.py).
+   and you can refer to the implementation of [PWCNetDecoder](https://github.com/open-mmlab/mmflow/blob/1.x/mmflow/models/decoders/pwcnet_decoder.py).
    `predict_by_feat` aims to restore the flow shape as the original shape of input images,
-   and you can refer to the implementations of [BaseDecoder](https://github.com/open-mmlab/mmflow/blob/dev-1.x/mmflow/models/decoders/base_decoder.py)
+   and you can refer to the implementations of [BaseDecoder](https://github.com/open-mmlab/mmflow/blob/1.x/mmflow/models/decoders/base_decoder.py)
 
 2. Import the module in `mmflow/models/decoders/__init__.py`
 
@@ -129,7 +129,7 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
    which can be used to move data to a specified device (such as a GPU) and further format the input data.
    In addition, image normalization, adding Gaussian noise are implemented in `data_preprocessor` as well.
    Therefore, `data_preprocessor` needs to be specified in the config of `MyEstimator`.
-   You can refer to the config of [PWC-Net](https://github.com/open-mmlab/mmflow/blob/dev-1.x/configs/_base_/models/pwcnet.py) for a typical configuration of `data_preprocessor`.
+   You can refer to the config of [PWC-Net](https://github.com/open-mmlab/mmflow/blob/1.x/configs/_base_/models/pwcnet.py) for a typical configuration of `data_preprocessor`.
 
    ```python
    model = dict(

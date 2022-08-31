@@ -8,7 +8,7 @@
    @TRANSFORMS.register_module()
    class MyTransform:
 
-       def __call__(self, results):
+       def transforms(self, results):
            results['dummy'] = True
            return results
    ```
