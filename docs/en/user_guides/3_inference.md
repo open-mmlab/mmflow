@@ -15,7 +15,7 @@ from mmflow.datasets import visualize_flow, write_flow
 from mmflow.utils import register_all_modules
 
 # Specify the path to model config and checkpoint file
-config_file = 'configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py'
+config_file = 'configs/pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py'
 checkpoint_file = 'checkpoints/pwcnet_8x1_slong_flyingchairs_384x448.pth'
 
 # register all modules in mmflow into the registries

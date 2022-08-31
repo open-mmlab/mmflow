@@ -3,34 +3,6 @@
 This chapter introduces you to the framework of MMFlow,
 the basic conception of optical flow, and provides links to detailed tutorials about MMFlow.
 
-## What is MMFlow
-
-MMFlow is the first toolbox that provides a framework for unified implementation and evaluation of optical flow methods.,
-and below is its whole framework:
-
-<div align=center>
-<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/resources/mmflow_framework.png" width=50%/>
-</div>
-
-MMFlow consists of 7 main parts, `apis`, `structures`, `datasets`, `models`, `engine`, `evaluation` and `visualization`.
-
-- `apis`, provides high-level APIs for models training, testing, and inference,
-
-- `datasets` is for datasets loading and data augmentation. In this part,
-  we support various datasets for supervised optical flow algorithms,
-  useful data augmentation transforms in `pipelines` for pre-processing image pairs
-  and flow data (including its auxiliary data), and samplers for data loading in `samplers`.
-
-- `models` is the most vital part containing models of learning-based optical flow.
-  As you can see, we implement each model as a flow estimator and decompose it into two components encoder and decoder.
-  The loss functions for flow models training are in this module as well.
-
-- `engine`
-
-- `evaluation`
-
-- `visualization`
-
 ## What is Optical flow estimation
 
 Optical flow is a 2D velocity field, representing the **apparent 2D image motion** of pixels from the reference image to the target image \[1\].
@@ -61,7 +33,35 @@ The metrics to compare the performance of the optical flow methods are *EPE*, En
 and *Fl-all*, percentage of outliers averaged over all pixels, that inliers are defined as EPE \< 3 pixels or \< 5%.
 The mainstream benchmark datasets are Sintel for dense optical flow and KITTI \[7-9\] for sparse optical flow.
 
-## How to Use this Guide
+## What is MMFlow(TODO)
+
+MMFlow is the first toolbox that provides a framework for unified implementation and evaluation of optical flow methods.,
+and below is its whole framework:
+
+<div align=center>
+<img src="https://raw.githubusercontent.com/open-mmlab/mmflow/master/resources/mmflow_framework.png" width=50%/>
+</div>
+
+MMFlow consists of 7 main parts, `apis`, `structures`, `datasets`, `models`, `engine`, `evaluation` and `visualization`.
+
+- `apis`, provides high-level APIs for models training, testing, and inference,
+
+- `datasets` is for datasets loading and data augmentation. In this part,
+  we support various datasets for supervised optical flow algorithms,
+  useful data augmentation transforms in `pipelines` for pre-processing image pairs
+  and flow data (including its auxiliary data), and samplers for data loading in `samplers`.
+
+- `models` is the most vital part containing models of learning-based optical flow.
+  As you can see, we implement each model as a flow estimator and decompose it into two components encoder and decoder.
+  The loss functions for flow models training are in this module as well.
+
+- `engine`
+
+- `evaluation`
+
+- `visualization`
+
+## How to Use this Guide(TODO)
 
 Here is a detailed step-by-step guide to learn more about MMFlow:
 

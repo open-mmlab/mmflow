@@ -44,7 +44,7 @@ To help the users have a basic idea of a complete config and the modules in MMFl
 we make brief comments on the config of PWC-Net trained on FlyingChairs with slong schedule.
 For more detailed usage and the corresponding alternative for each module,
 please refer to the API documentation and
-the [tutorial](https://github.com/open-mmlab/mmdetection/blob/dev-3.x/docs/en/user_guides/config.md) in MMDetection.
+the [tutorial](https://mmengine.readthedocs.io/en/latest/tutorials/config.html) in MMEngine.
 
 ```python
 _base_ = [
