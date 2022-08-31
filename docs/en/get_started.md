@@ -80,7 +80,6 @@ mim download mmflow --config pwcnet-ft_4xb1_300k_sintel-final-384x768.py
 The downloading will take several seconds or more, depending on your network environment. When it is done, you will find two files
 `pwcnet-ft_4xb1_300k_sintel-final-384x768.py` and `pwcnet_ft_4x1_300k_sintel_final_384x768.pth` in your current folder.
 
-
 **Step 2.** Verify the inference demo.
 
 Option (a). If you install mmflow from source, just run the following command.
