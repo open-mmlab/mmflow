@@ -4,157 +4,182 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 
 ## Add a new encoder
 
-1. Create a new file `mmflow/models/encoders/my_model.py`.
+1. Create a new file `mmflow/models/encoders/my_encoder.py`.
 
-```python
-from mmcv.runner import BaseModule
+   You can write a new head inherit from `BaseModule` from mmengine, and overwrite `forward`.
+   We have a unified interface for weight initialization in mmengine,
+   you can use `init_cfg` to specify the initialization function and arguments,
+   or overwrite `init_weights` if you prefer customized initialization.
 
-from mmflow.registry import MODELS
+   ```python
+   from mmengine.model import BaseModule
 
-@MODELS.register_module()
-class MyModel(BaseModule):
+   from mmflow.registry import MODELS
 
-    def __init__(self, arg1, arg2):
-        pass
+   @MODELS.register_module()
+   class MyEncoder(BaseModule):
 
-    def forward(self, x):  # should return a tuple
-        pass
+       def __init__(self, arg1, arg2):  # arg1 and arg2 need to be specified in config
+           pass
 
-    def init_weights(self, pretrained=None):
-        pass
-```
+       def forward(self, x):  # should return a dict
+           pass
+
+       # optional
+       def init_weights(self):
+           pass
+   ```
 
 2. Import the module in `mmflow/models/encoders/__init__.py`.
 
-```python
-from .my_model import MyModel
-```
+   ```python
+   from .my_model import MyEncoder
+   ```
 
 ## Add a new decoder
 
 1. Create a new file `mmflow/models/decoders/my_decoder.py`.
 
-You can write a new head inherit from `BaseModule` from MMCV,
-and overwrite `forward(self, x)`, `forward_train` and `forward_test` methods.
-We have a unified interface for [weights initialization](https://mmcv.readthedocs.io/en/latest/understand_mmcv/cnn.html#weight-initialization) in MMCV,
-you can use `init_cfg` to specify the initialization function and arguments,
-or overwrite `init_weigths` if you prefer customized initialization.
+   You can write a new head inherit from `BaseModule` from mmengine,
+   and overwrite `forward` and `init_weights`.
 
-```python
-from mmflow.registry import MODELS
+   ```python
+   from mmengine.model import BaseModule
 
+   from mmflow.registry import MODELS
 
-@MODELS.register_module()
-class MyDecoder(BaseModule):
+   @MODELS.register_module()
+   class MyDecoder(BaseModule):
 
-    def __init__(self, arg1, arg2):
-        pass
+       def __init__(self, arg1, arg2):  # arg1 and arg2 need to be specified in config
+           pass
 
-    def forward(self, *args):
-        pass
+       def forward(self, *args):
+           pass
 
-    # optional
-    def init_weights(self):
-        pass
+       # optional
+       def init_weights(self):
+           pass
 
-    def forward_train(self, *args, flow_gt):
-        flow_pred = self.forward(*args)
-        return self.losses(flow_pred, flow_gt)
+       def loss(self, *args, batch_data_samples):
+           flow_pred = self.forward(*args)
+           return self.loss_by_feat(flow_pred, batch_data_samples)
 
-    def forward_test(self,*args, img_metas):
-        flow_pred = self.forward(*args)
-        return self.get_flow(flow_pred, img_metas)
-```
+       def predict(self, *args, batch_img_metas):
+           flow_pred = self.forward(*args)
+           flow_results = flow_pred[self.end_level]
+           return self.predict_by_feat(flow_results, batch_img_metas)
+   ```
 
-`losses` is the loss function to compute the losses between the model output and target, `get_flow` is implemented in `BaseDecoder` to restore the flow shape as the original shape of input images.
+   `batch_data_samples` contains the ground truth and `batch_img_metas` contains the information of original input images, such as original shape.
+   `loss_by_feat` is the loss function to compute the losses between the model output and target,
+   and you can refer to the implementation of [PWCNetDecoder](../../../mmflow/models/decoders/pwcnet_decoder.py).
+   `predict_by_feat` aims to restore the flow shape as the original shape of input images,
+   and you can refer to the implementations of [BaseDecoder](../../../mmflow/models/decoders/base_decoder.py)
 
-1. Import the module in `mmflow/models/decoders/__init__.py`
+2. Import the module in `mmflow/models/decoders/__init__.py`
 
-```python
-from .my_decoder import MyDecoder
-```
+   ```python
+   from .my_decoder import MyDecoder
+   ```
 
 ## Add a new flow_estimator
 
 1. Create a new file `mmflow/models/flow_estimators/my_estimator.py`
 
-You can write a new flow estimator inherit from `FlowEstimator` like PWC-Net, and implement `forward_train` and `forward_test`
+   You can write a new flow estimator inherit from `FlowEstimator` like PWC-Net.
+   A typical encoder-decoder estimator can be written like:
 
-```python
-from ..builder import FLOW_ESTIMATORS
-from .base import FlowEstimator
+   ```python
+   from .base_flow_estimator import FlowEstimator
 
+   from mmflow.registry import MODELS
 
-@MODELS.register_module()
-class MyEstimator(FlowEstimator):
+   @MODELS.register_module()
+   class MyEstimator(FlowEstimator):
 
-    def __init__(self, arg1, arg2):
-        pass
+       def __init__(self, encoder: dict, decoder: dict):
+           pass
 
-    def forward_train(self, imgs):
-        pass
+       def loss(self, batch_inputs, batch_data_samples):
+           pass
 
-    def forward_test(self, imgs):
-        pass
-```
+       def predict(self, batch_inputs, batch_data_samples):
+           pass
 
-2. Import the module in `mmflow/models/flow_estimator/__init__.py`
+       def _forward(self, batch_inputs, data_samples):
+           pass
 
-```python
-from .my_estimator import MyEstimator
-```
+       def extract_feat(self, batch_inputs):
+           pass
+   ```
+
+   `loss`, `predict`, `_forward` and `extract_feat` are abstract methods of `FlowEstimator`.
+   They can be seen as high-level APIs of the methods in `MyEncoder` and `MyDecoder`.
+
+2. Import the module in `mmflow/models/flow_estimators/__init__.py`
+
+   ```python
+   from .my_estimator import MyEstimator
+   ```
 
 3. Use it in your config file.
 
-we set the module type as `MyEstimator`.
+   It's worth pointing out that `data_preprocessor` is an important parameter of `FlowEstimator`
+   which can be used to move data to a specified device (such as a GPU) and further format the input data.
+   In addition, image normalization, adding Gaussian noise are implemented in `data_preprocessor` as well.
+   Therefore, `data_preprocessor` needs to be specified in the config of `MyEstimator`.
+   You can refer to the config of [PWC-Net](../../../configs/_base_/models/pwcnet.py) for a typical configuration of `data_preprocessor`.
 
-```python
-model = dict(
-    type='MyEstimator',
-    encoder=dict(
-        type='MyModel',
-        arg1=xxx,
-        arg2=xxx),
-    decoder=dict(
-        type='MyDecoder',
-        arg1=xxx,
-        arg2=xxx))
-```
+   ```python
+   model = dict(
+       type='MyEstimator',
+       data_preprocessor=dict(
+           type='FlowDataPreprocessor',
+           mean=[0., 0., 0.],
+           std=[255., 255., 255.]),
+       encoder=dict(
+           type='MyEncoder',
+           arg1=xxx,
+           arg2=xxx),
+       decoder=dict(
+           type='MyDecoder',
+           arg1=xxx,
+           arg2=xxx))
+   ```
 
 ## Add new loss
 
-Assume you want to add a new loss as `MyLoss`, for flow estimation.
-To add a new loss function, the users need implement it in `mmflow/models/losses/my_loss.py`.
+1. Create a new file `mmflow/models/losses/my_loss.py`
 
-```python
-import torch
-import torch.nn as nn
+   Assume you want to add a new loss as `MyLoss` for flow estimation.
 
-from mmflow.models import LOSSES
+   ```python
+   import torch.nn as nn
 
-def my_loss(pred, target):
-    pass
+   from mmflow.registry import MODELS
 
-@MODELS.register_module()
-class MyLoss(nn.Module):
+   def my_loss(pred, target, *args):
+       pass
 
-    def __init__(self, arg1):
-        super(MyLoss, self).__init__()
+   @MODELS.register_module()
+   class MyLoss(nn.Module):
 
+       def __init__(self, *args):
+           super(MyLoss, self).__init__()
 
-    def forward(self, output, target):
-        return my_loss(output, target)
-```
+       def forward(self, preds_dict, target, *args):
+           return my_loss(preds_dict, target, *args)
+   ```
 
-Then the users need to add it in the `mmflow/models/losses/__init__.py`.
+2. Import the module in `mmflow/models/losses/__init__.py`.
 
-```python
-from .my_loss import MyLoss, my_loss
+   ```python
+   from .my_loss import MyLoss, my_loss
+   ```
 
-```
+3. Modify the `flow_loss` field in the model to use `MyLoss`
 
-To use it, modify the `flow_loss` field in the model.
-
-```python
-flow_loss=dict(type='MyLoss', use_target_weight=False)
-```
+   ```python
+   flow_loss=dict(type='MyLoss')
+   ```
