@@ -13,8 +13,8 @@ For all configs under the same folder, it is recommended to have only **one** _p
 All other configs should inherit from the _primitive_ config. In this way, the maximum of inheritance level is 3.
 
 For easy understanding, we recommend contributors to inherit from existing methods.
-For example, if some modification is made base on PWC-Net, user may first inherit the basic PWC-Net structure by
-specifying `_base_ = ../pwcnet/pwcnet_slong_8x1_flyingchairs_384x448.py`, then modify the necessary fields in the config files.
+For example, if some modification is made based on PWC-Net, users may first inherit the basic PWC-Net structure by
+specifying `_base_ = ../pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py`, then modify the necessary fields in the config files.
 
 If you are building an entirely new method that does not share the structure with any of the existing methods,
 you may create a folder `xxx` under `configs`.
@@ -26,15 +26,15 @@ Please refer to [mmcv](https://mmcv.readthedocs.io/en/latest/understand_mmcv/con
 We follow the below style to name config files. Contributors are advised to follow the same style.
 
 ```text
-{model}_{schedule}_[gpu x batch_per_gpu]_{training datasets}_[input_size].py
+{model}_[gpu x batch_per_gpu]_{schedule}_{training datasets}-[input_size].py
 ```
 
 `{xxx}` is a required field and `[yyy]` is optional.
 
 - `{model}`: model type like `pwcnet`, `flownets`, etc.
+- `[gpu x batch_per_gpu]`: GPUs and samples per GPU, like `8xb1`.
 - `{schedule}`: training schedule. Following FlowNet2's convention, we use `slong`, `sfine` and `sshort`, or number of iteration
   like `150k` 150k(iterations).
-- `[gpu x batch_per_gpu]`: GPUs and samples per GPU, like `8x1`.
 - `{training datasets}`: training dataset like `flyingchairs`, `flyingthings3d_subset`, `flyingthings3d`.
 - `[input_size]`: the size of training images.
 
@@ -44,30 +44,37 @@ To help the users have a basic idea of a complete config and the modules in MMFl
 we make brief comments on the config of PWC-Net trained on FlyingChairs with slong schedule.
 For more detailed usage and the corresponding alternative for each module,
 please refer to the API documentation and
-the [tutorial in MMDetection](https://github.com/open-mmlab/mmdetection/blob/master/docs/tutorials/config.md).
+the [tutorial](https://github.com/open-mmlab/mmdetection/blob/rangilyu/3.x-config-doc/docs/en/tutorials/config.md) in MMDetection.
 
 ```python
 _base_ = [
     '../_base_/models/pwcnet.py', '../_base_/datasets/flyingchairs_384x448.py',
     '../_base_/schedules/schedule_s_long.py', '../_base_/default_runtime.py'
-]# base config file which we build new config file on.
+]  # base config file which we build new config file on.
 ```
 
-`_base_/models/pwc_net.py` is a basic model cfg file for PWC-Net.
+`_base_/models/pwcnet.py` is a basic model cfg file for PWC-Net.
 
 ```python
 model = dict(
-    type='PWCNet',  # The algorithm name
+    type='PWCNet',  # The algorithm name.
+    data_preprocessor=dict(  # The config of data preprocessor, usually includes image normalization and augmentation.
+        type='FlowDataPreprocessor',  # The type of data preprocessor.
+        mean=[0., 0., 0.],  # Mean values used for normalizing the input images.
+        std=[255., 255., 255.],  # Standard variance used for normalizing the input images.
+        bgr_to_rgb=False,  # Whether to convert image from BGR to RGB.
+        sigma_range=(0, 0.04),  # Add gaussian noise for data augmentation, the sigma is uniformly sampled from [0, 0.04].
+        clamp_range=(0., 1.)),  # After adding gaussian noise, clamp the range to [0., 1.].
     encoder=dict(  # Encoder module config
         type='PWCNetEncoder',  # The name of encoder in PWC-Net.
-        in_channels=3,  # The input channels
-        #  The type of this sub-module, if net_type is Basic, the the number of convolution layers of each level is 3,
-        #  if net_type is Small, the the number of convolution layers of each level is 2.
+        in_channels=3,  # The input channels.
+        # The type of this sub-module, if net_type is Basic, then the number of convolution layers of each level is 3,
+        # if net_type is Small, the the number of convolution layers of each level is 2.
         net_type='Basic',
         pyramid_levels=[
             'level1', 'level2', 'level3', 'level4', 'level5', 'level6'
-        ], # The list of feature pyramid levels that are the keys for output dict.
-        out_channels=(16, 32, 64, 96, 128, 196),  #  List of numbers of output channels of each pyramid level.
+        ],  # The list of feature pyramid levels that are the keys for output dict.
+        out_channels=(16, 32, 64, 96, 128, 196),   # List of numbers of output channels of each pyramid level.
         strides=(2, 2, 2, 2, 2, 2),  # List of strides of each pyramid level.
         dilations=(1, 1, 1, 1, 1, 1),  # List of dilation of each pyramid level.
         act_cfg=dict(type='LeakyReLU', negative_slope=0.1)),  # Config dict for each activation layer in ConvModule.
@@ -77,15 +84,15 @@ model = dict(
             level6=81, level5=213, level4=181, level3=149, level2=117),  # Input channels of basic dense block.
         flow_div=20.,  # The constant divisor to scale the ground truth value.
         corr_cfg=dict(type='Correlation', max_displacement=4, padding=0),
-        warp_cfg=dict(type='Warp'),
+        warp_cfg=dict(type='Warp', align_corners=True, use_mask=True),
         act_cfg=dict(type='LeakyReLU', negative_slope=0.1),
         scaled=False,  # Whether to use scaled correlation by the number of elements involved to calculate correlation or not.
         post_processor=dict(type='ContextNet', in_channels=565),  # The configuration for post processor.
-        flow_loss=dict(  # The loss function configuration.
+        flow_loss=dict(
             type='MultiLevelEPE',
             p=2,
             reduction='sum',
-            weights={ # The weights for different levels of flow.
+            weights={  # The weights for different levels of flow.
                 'level2': 0.005,
                 'level3': 0.01,
                 'level4': 0.02,
@@ -102,145 +109,151 @@ model = dict(
         layer=['Conv2d', 'ConvTranspose2d'],
         mode='fan_in',
         bias=0))
+randomness = dict(seed=0, diff_rank_seed=True)  # Random seed.
 ```
 
 in `_base_/datasets/flyingchairs_384x448.py`
 
 ```python
-dataset_type = 'FlyingChairs'  # Dataset name
-data_root = 'data/FlyingChairs/data'  # Root path of dataset
+dataset_type = 'FlyingChairs'  # Dataset type, which will be used to define the dataset.
+data_root = 'data/FlyingChairs_release'  # Root path of the dataset.
 
-img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255], to_rgb=False)  # Image normalization config to normalize the input images
+# global_transform and relative_transform are intermediate variables used in RandomAffine
+# Keys of global_transform and relative_transform should be the subset of
+#     ('translates', 'zoom', 'shear', 'rotate'). And also, each key and its
+#     corresponding values has to satisfy the following rules:
+#         - translates: the translation ratios along x axis and y axis. Defaults
+#             to(0., 0.).
+#         - zoom: the min and max zoom ratios. Defaults to (1.0, 1.0).
+#         - shear: the min and max shear ratios. Defaults to (1.0, 1.0).
+#         - rotate: the min and max rotate degree. Defaults to (0., 0.).
+global_transform = dict(
+    translates=(0.05, 0.05),
+    zoom=(1.0, 1.5),
+    shear=(0.86, 1.16),
+    rotate=(-10., 10.))
 
-train_pipeline = [ # Training pipeline
-    dict(type='LoadImageFromFile'),  # load images
-    dict(type='LoadAnnotations'),  # load flow data
-    dict(type='ColorJitter',  # Randomly change the brightness, contrast, saturation and hue of an image.
-     brightness=0.5,  # How much to jitter brightness.
-     contrast=0.5,  # How much to jitter contrast.
-     saturation=0.5,  # How much to jitter saturation.
-         hue=0.5),  # How much to jitter hue.
+relative_transform = dict(
+    translates=(0.00375, 0.00375),
+    zoom=(0.985, 1.015),
+    shear=(1.0, 1.0),
+    rotate=(-1.0, 1.0))
+
+file_client_args = dict(backend='disk')  # File client arguments.
+
+train_pipeline = [  # Training pipeline.
+    dict(type='LoadImageFromFile', file_client_args=file_client_args),  # Load images.
+    dict(type='LoadAnnotations', file_client_args=file_client_args),  # Load flow data.
+    dict(
+        type='ColorJitter',  # Randomly change the brightness, contrast, saturation and hue of an image.
+        brightness=0.5,  # How much to jitter brightness.
+        contrast=0.5,  # How much to jitter contrast.
+        saturation=0.5,  # How much to jitter saturation.
+        hue=0.5),  # How much to jitter hue.
     dict(type='RandomGamma', gamma_range=(0.7, 1.5)),  # Randomly gamma correction on images.
-    dict(type='Normalize', **img_norm_cfg),  # Normalization config, the values are from img_norm_cfg
-    dict(type='GaussianNoise', sigma_range=(0, 0.04), clamp_range=(0., 1.)),  # Add Gaussian noise and a sigma uniformly sampled from [0, 0.04];
-    dict(type='RandomFlip', prob=0.5, direction='horizontal'),  # Random horizontal flip
-    dict(type='RandomFlip', prob=0.5, direction='vertical'),   # Random vertical flip
-    # Random affine transformation of images
-    # Keys of global_transform and relative_transform should be the subset of
-    #     ('translates', 'zoom', 'shear', 'rotate'). And also, each key and its
-    #     corresponding values has to satisfy the following rules:
-    #         - translates: the translation ratios along x axis and y axis. Defaults
-    #             to(0., 0.).
-    #         - zoom: the min and max zoom ratios. Defaults to (1.0, 1.0).
-    #         - shear: the min and max shear ratios. Defaults to (1.0, 1.0).
-    #         - rotate: the min and max rotate degree. Defaults to (0., 0.).
-    dict(type='RandomAffine',
-         global_transform=dict(
-            translates=(0.05, 0.05),
-            zoom=(1.0, 1.5),
-            shear=(0.86, 1.16),
-            rotate=(-10., 10.)
-        ),
-         relative_transform=dict(
-            translates=(0.00375, 0.00375),
-            zoom=(0.985, 1.015),
-            shear=(1.0, 1.0),
-            rotate=(-1.0, 1.0)
-        )),
-    dict(type='RandomCrop', crop_size=(384, 448)),  # Random crop the image and flow as (384, 448)
-    dict(type='DefaultFormatBundle'),  # It simplifies the pipeline of formatting common fields, including "img1", "img2" and "flow_gt".
+    dict(type='RandomFlip', prob=0.5, direction='horizontal'),  # Random horizontal flip.
+    dict(type='RandomFlip', prob=0.5, direction='vertical'),  # Random vertical flip.
     dict(
-        type='Collect',  # Collect data from the loader relevant to the specific task.
-        keys=['imgs', 'flow_gt'],
-        meta_keys=('img_fields', 'ann_fields', 'filename1', 'filename2',
-                   'ori_filename1', 'ori_filename2', 'filename_flow',
-                   'ori_filename_flow', 'ori_shape', 'img_shape',
-                   'img_norm_cfg')),
+        type='RandomAffine',  # Random affine transformation of images.
+        global_transform=global_transform,  # See comments above for global_transform.
+        relative_transform=relative_transform),  # See comments above for relative_transform.
+    dict(type='RandomCrop', crop_size=(384, 448)),  # Random crop the image and flow as (384, 448).
+    dict(type='PackFlowInputs')  # Format the annotation data and decide which keys in the data should be packed into data_samples.
 ]
 
-test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
-    dict(type='InputResize', exponent=4),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='TestFormatBundle'),  # It simplifies the pipeline of formatting common fields, including "img1"
-    # and "img2".
-    dict(
-        type='Collect',
-        keys=['imgs'],  # Collect data from the loader relevant to the specific task.
-        meta_keys=('flow_gt', 'filename1', 'filename2', 'ori_filename1',
-                   'ori_filename2', 'ori_shape', 'img_shape', 'img_norm_cfg',
-                   'scale_factor', 'pad_shape'))  # 'flow_gt' in img_meta is works for online evaluation.
+test_pipeline = [  # Testing pipeline.
+    dict(type='LoadImageFromFile'),  # Load images.
+    dict(type='LoadAnnotations'),  # Load flow data.
+    dict(type='InputResize', exponent=6),  # Resize the width and height of the input images to a multiple of 2^6.
+    dict(type='PackFlowInputs')  # Format the annotation data and decide which keys in the data should be packed into data_samples.
 ]
 
-data = dict(
-    train_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=5,  # Worker to pre-fetch data for each single GPU
-        drop_last=True),  # Drops the last non-full batch
+# flyingchairs_train and flyingchairs_test are intermediate variables used in dataloader,
+# they define the type, pipeline, root path and split file of FlyingChairs.
+flyingchairs_train = dict(
+    type=dataset_type,
+    pipeline=train_pipeline,
+    data_root=data_root,
+    split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt')  # train-validation split file.
+flyingchairs_test = dict(
+    type=dataset_type,
+    pipeline=test_pipeline,
+    data_root=data_root,
+    test_mode=True,  # Use test set.
+    split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt')  # train-validation split file
 
-    val_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=2,  # Worker to pre-fetch data for each single GPU
-        shuffle=False),  # Whether shuffle dataset.
+train_dataloader = dict(
+    batch_size=1,  # Batch size of a single GPU.
+    num_workers=2,  # Worker to pre-fetch data for each single GPU.
+    sampler=dict(type='InfiniteSampler', shuffle=True),  # Randomly shuffle during training.
+    drop_last=True,  # Drop the last non-full batch during training.
+    persistent_workers=True,  # Shut down the worker processes after an epoch end, which can accelerate training speed.
+    dataset=flyingchairs_train)
 
-    test_dataloader=dict(
-        samples_per_gpu=1,  # Batch size of a single GPU
-        workers_per_gpu=2,  # Worker to pre-fetch data for each single GPU
-        shuffle=False),  # Whether shuffle dataset.
+val_dataloader = dict(
+    batch_size=1,  # Batch size of a single GPU.
+    num_workers=2,  # Worker to pre-fetch data for each single GPU.
+    sampler=dict(type='DefaultSampler', shuffle=False),  # Not shuffle during validation and testing.
+    drop_last=False,  # No need to drop the last non-full batch.
+    persistent_workers=True,  # Shut down the worker processes after an epoch end, which can accelerate training speed.
+    dataset=flyingchairs_test)
+test_dataloader = val_dataloader
 
-    train=dict(  # Train dataset config
-        type=dataset_type,
-        pipeline=train_pipeline,
-        data_root=data_root,
-        split_file='data/FlyingChairs_release/FlyingChairs_train_val.txt',  # train-validation split file
-    ),
-
-    val=dict(
-        type=dataset_type,
-        pipeline=test_pipeline,
-        data_root=data_root,
-        test_mode=True),
-
-    test=dict(
-        type=dataset_type,
-        pipeline=test_pipeline,
-        data_root=data_root,
-        test_mode=True)
-)
+# The metric to measure the accuracy. Here, we use EnePointError.
+val_evaluator = dict(type='EndPointError')
+test_evaluator = val_evaluator
 ```
 
 in `_base_/schedules/schedule_s_long.py`
 
 ```python
+# training schedule for S_long schedule
+train_cfg = dict(by_epoch=False, max_iters=1200000, val_interval=100)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
 # optimizer
-optimizer = dict(
-    type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999))
-optimizer_config = dict(grad_clip=None)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999)))
+
 # learning policy
-lr_config = dict(
-    policy='step',
+param_scheduler = dict(
+    type='MultiStepLR',
     by_epoch=False,
     gamma=0.5,
-    step=[400000, 600000, 800000, 1000000])
-runner = dict(type='IterBasedRunner', max_iters=1200000)
-checkpoint_config = dict(by_epoch=False, interval=100000)
-evaluation = dict(interval=100000, metric='EPE')
+    milestones=[400000, 600000, 800000, 1000000])
+
+# default hooks
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),  # Log the time spent during iteration.
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),  # Collect and write logs from different components of ``Runner``.
+    param_scheduler=dict(type='ParamSchedulerHook'),  # update some hyper-parameters in optimizer, e.g., learning rate.
+    checkpoint=dict(type='CheckpointHook', interval=100000, by_epoch=False),  # Save checkpoints periodically.
+    sampler_seed=dict(type='DistSamplerSeedHook'),  # Data-loading sampler for distributed training.
+    visualization=dict(type='FlowVisualizationHook'))  # Show or Write the predicted results during the process of testing and validation.
 ```
 
 in `_base_/default_runtime.py`
 
 ```python
-log_config = dict(  # config to register logger hook
-    interval=50,  # Interval to print the log
-    hooks=[
-        dict(type='TextLoggerHook'),
-        dict(type='TensorboardLoggerHook')
-    ])  # The logger used to record the training process.
-dist_params = dict(backend='nccl')  # Parameters to setup distributed training, the port can also be set.
-log_level = 'INFO'  # The level of logging.
-load_from = None  # load models as a pre-trained model from a given path. This will not resume training.
-workflow = [('train', 1)]  # Workflow for runner. [('train', 1)] means there is only one workflow and the workflow named 'train' is executed once.
+# Set the default scope of the registry to mmflow.
+default_scope = 'mmflow'
+
+# environment
+env_cfg = dict(
+    cudnn_benchmark=False,
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0),
+    dist_cfg=dict(backend='nccl'),
+)
+
+# visualizer
+vis_backends = [dict(type='LocalVisBackend')]  # The backend of visualizer.
+visualizer = dict(
+    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
+
+resume = False  # Whether to resume from existed model.
 ```
 
 ## Modify config through script arguments
@@ -250,7 +263,7 @@ When submitting jobs using "tools/train.py" or "tools/test.py", you may specify 
 - Update config keys of dict chains.
 
   The config options can be specified following the order of the dict keys in the original config.
-  For example, `--cfg-option model.encoder.in_channels=6`.
+  For example, `--cfg-options model.encoder.in_channels=6`.
 
 - Update keys inside a list of configs.
 
@@ -260,19 +273,55 @@ When submitting jobs using "tools/train.py" or "tools/test.py", you may specify 
 
 - Update values of list/tuples.
 
-  If the value to be updated is a list or a tuple. For example, the config file normally sets `workflow=[('train', 1)]`. If you want to change this key, you may specify `--cfg-options workflow="[(train,1),(val,1)]"`. Note that the quotation mark " is necessary to
-  support list/tuple data types, and that **NO** white space is allowed inside the quotation marks in the specified value.
+  If the value to be updated is a list or a tuple. For example, the config file normally sets `sigma_range=(0, 0.04)` in `data_preprocessor` of `model`.
+  If you want to change this key, you may specify in two ways:
+
+  1. `--cfg-options model.data_preprocessor.sigma_range="(0, 0.05)"`. Note that the quotation mark " is necessary to support list/tuple data types.
+  2. `--cfg-options model.data_preprocessor.sigma_range=0,0.05`. Note that **NO** white space is allowed in the specified value.
+     In addition, if the original type is tuple, it will be automatically converted to list after this way.
+
+```{note}
+This modification of only supports modifying configuration items of string, int, float, boolean, None, list and tuple types.
+More specifically, for list and tuple types, the elements inside them must also be one of the above seven types.
+```
 
 ## FAQ
 
 ### Ignore some fields in the base configs
 
-Sometimes, you may set `_delete_=True` to ignore some of fields in base configs.
-You may refer to [mmcv](https://mmcv.readthedocs.io/en/latest/utils.html#inherit-from-base-config-with-ignored-fields) for simple illustration.
+Sometimes, you may set `_delete_=True` to ignore some fields in base configs.
+You may refer to mmengine for simple illustration.
 
-You may have a careful look at [this tutorial](https://github.com/open-mmlab/mmdetection/blob/master/docs/tutorials/config.md) for better understanding of this feature.
+You may have a careful look at [this tutorial](https://github.com/open-mmlab/mmdetection/blob/rangilyu/3.x-config-doc/docs/en/tutorials/config.md#ignore-some-fields-in-the-base-configs) for better understanding of this feature.
 
 ### Use intermediate variables in configs
 
 Some intermediate variables are used in the config files, like `train_pipeline`/`test_pipeline` in datasets.
-It's worth noting that when modifying intermediate variables in the children configs, users need to pass the intermediate variables into corresponding fields again. An intuitive example can be found in [this tutorial](https://github.com/open-mmlab/mmdetection/blob/master/docs/tutorials/config.md).
+It's worth noting that when modifying intermediate variables in the children configs, users need to pass the intermediate variables into corresponding fields again.
+For example, the original `pwcnet_8xb1_slong_flyingchairs-384x448.py` is
+
+```python
+_base_ = [
+    '../_base_/models/pwcnet.py', '../_base_/datasets/flyingchairs_384x448.py',
+    '../_base_/schedules/schedule_s_long.py', '../_base_/default_runtime.py'
+]
+```
+
+According to the setting: `vis_backends = [dict(type='LocalVisBackend')]` in `_base_/default_runtime.py`, we can only store the visualization results locally.
+If we want to store them on Tensorboard as well, then the `vis_backends` is the intermediate variable we would like to modify.
+
+```python
+_base_ = [
+    '../_base_/models/pwcnet.py', '../_base_/datasets/flyingchairs_384x448.py',
+    '../_base_/schedules/schedule_s_long.py', '../_base_/default_runtime.py'
+]
+
+vis_backends = [
+    dict(type='LocalVisBackend'),
+    dict(type='TensorboardVisBackend')
+]
+visualizer = dict(
+    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
+```
+
+We first define the new `vis_backends` and pass them into `visualizer` again.
