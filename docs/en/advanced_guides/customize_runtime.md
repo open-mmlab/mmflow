@@ -191,8 +191,8 @@ We list some common settings that could stabilize the training or accelerate the
 
 ## Customize training schedules
 
-By default we use step learning rate with 1x schedule, this calls [MultiStepLR](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py#L139) in MMEngine.
-We support many other learning rate schedule [here](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py), such as `CosineAnnealingLR` and `PolyLR` schedule. Here are some examples
+[MultiStepLR](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py#L139) schedule implemented in MMEngine is widely used in MMFlow.
+We also support many other learning rate schedules [here](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py), such as `CosineAnnealingLR` and `PolyLR` schedule. Here are some examples
 
 - Poly schedule:
 
@@ -302,59 +302,50 @@ custom_hooks = [
 
 By default the hook's priority is set as `NORMAL` during registration.
 
-### Use hooks implemented in MMFlow
-
-If the hook is already implemented in MMFlow, you can directly modify the config to use the hook as below.
-
-#### Example: `FlowVisualizationHook`
-
-We implement a customized hook named [FlowVisualizationHook](https://github.com/open-mmlab/mmflow/blob/dev-1.x/mmflow/engine/hooks/visualization_hook.py) to visualize the predicted optical flow. We set it in the schedule config file, such as [schedule_s_long.py](https://github.com/open-mmlab/mmflow/blob/dev-1.x/configs/_base_/schedules/schedule_s_long.py).
-
 ### Modify default runtime hooks
 
-There are some common hooks that are not registered through `custom_hooks` but has been registered by default when importing MMEngine, they are
+There are some common hooks that are registered through `default_hooks`, they are
 
-- log_config
-- checkpoint_config
-- evaluation
-- lr_config
-- optimizer_config
-- momentum_config
+- `IterTimerHook`: A hook that logs 'data_time' for loading data and 'time' for a model train step.
+- `LoggerHook`: A hook that Collect logs from different components of `Runner` and write them to terminal, JSON file, tensorboard and wandb .etc.
+- `ParamSchedulerHook`: A hook to update some hyper-parameters in optimizer, e.g., learning rate and momentum.
+- `CheckpointHook`: A hook that saves checkpoints periodically.
+- `DistSamplerSeedHook`: A hook that sets the seed for sampler and batch_sampler.
+- `FlowVisualizationHook`: A hook used to visualize predicted optical flow during validation and testing.
 
-In those hooks, only the logger hook has the `VERY_LOW` priority, others' priority are `NORMAL`.
-The above-mentioned tutorials already cover how to modify `optimizer_config`, `momentum_config`, and `lr_config`.
-Here we reveals how what we can do with `log_config`, `checkpoint_config`, and `evaluation`.
+`IterTimerHook`, `ParamSchedulerHook` and `DistSamplerSeedHook` are simple and no need to be modified usually, so here we reveals how what we can do with `LoggerHook`, `CheckpointHook` and `FlowVisualizationHook`.
 
-#### Checkpoint config
+#### CheckpointHook
 
-The MMCV runner will use `checkpoint_config` to initialize [`CheckpointHook`](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/hooks/checkpoint.py#L9).
+Except saving checkpoints periodically, [`CheckpointHook`](https://github.com/open-mmlab/mmengine/blob/main/mmengine/hooks/checkpoint_hook.py#L19) provides other options such as `max_keep_ckpts`, `save_optimizer` and etc. The users could set `max_keep_ckpts` to only save small number of checkpoints or decide whether to store state dict of optimizer by `save_optimizer`. More details of the arguments are [here](https://github.com/open-mmlab/mmengine/blob/main/mmengine/hooks/checkpoint_hook.py#L19).
 
 ```python
-checkpoint_config = dict(interval=1)
+default_hooks = dict(
+    checkpoint=dict(
+        type='CheckpointHook',
+        interval=1,
+        max_keep_ckpts=3,
+        save_optimizer=True))
 ```
 
-The users could set `max_keep_ckpts` to only save only small number of checkpoints or decide whether to store state dict of optimizer by `save_optimizer`.
-More details of the arguments are [here](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.CheckpointHook)
+#### LoggerHook
 
-#### Log config
-
-The `log_config` wraps multiple logger hooks and enables to set intervals. Now MMCV supports `WandbLoggerHook`, `MlflowLoggerHook`, and `TensorboardLoggerHook`.
-The detail usages can be found in the [doc](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.LoggerHook).
+The `LoggerHook` enables to set intervals. And the detail usages can be found in the [docstring](https://github.com/open-mmlab/mmengine/blob/main/mmengine/hooks/logger_hook.py#L18).
 
 ```python
-log_config = dict(
-    interval=50,
-    hooks=[
-        dict(type='TextLoggerHook'),
-        dict(type='TensorboardLoggerHook')
-    ])
+default_hooks = dict(logger=dict(type='LoggerHook', interval=50))
 ```
 
-#### Evaluation config
+#### FlowVisualizationHook
 
-The config of `evaluation` will be used to initialize the [`EvalHook`](<>).
-Except for the key `interval`, other arguments such as `metric` will be passed to the `online_evaluation()`
+`FlowVisualizationHook` uses `FlowLocalVisualizer` to visualize prediction results, and `FlowLocalVisualizer` current supports different backends, e.g., `TensorboardVisBackend` (see [docstring](https://github.com/open-mmlab/mmengine/blob/main/mmengine/visualization/vis_backend.py) for more detail). The users could add multi backbends to do visualization, as follows.
 
 ```python
-evaluation = dict(interval=50000, metric='EPE')
+default_hooks = dict(
+    visualization=dict(type='FlowVisualizationHook', draw=True))
+
+vis_backends = [dict(type='LocalVisBackend'),
+                dict(type='TensorboardVisBackend')]
+visualizer = dict(
+    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
 ```
