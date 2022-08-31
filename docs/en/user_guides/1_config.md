@@ -263,7 +263,7 @@ When submitting jobs using "tools/train.py" or "tools/test.py", you may specify 
 - Update config keys of dict chains.
 
   The config options can be specified following the order of the dict keys in the original config.
-  For example, `--cfg-option model.encoder.in_channels=6`.
+  For example, `--cfg-options model.encoder.in_channels=6`.
 
 - Update keys inside a list of configs.
 
