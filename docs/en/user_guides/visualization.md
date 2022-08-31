@@ -100,3 +100,5 @@ tensorboard --logdir work_dirs/test_visual/20220831_114424/vis_data
 ```
 
 The visualization image consists of two parts, the ground truth on the left and the network prediction result on the right.
+
+If you would like to know more visualization usage, you can refer to [visualization tutorial](https://mmengine.readthedocs.io/en/latest/advanced_tutorials/visualization.html) in mmengie.
