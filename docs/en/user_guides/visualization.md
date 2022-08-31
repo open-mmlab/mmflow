@@ -1,10 +1,61 @@
 # Visualization
 
-MMFlow provides visualization hook, used to visualize validation and testing process prediction results.
+MMFlow 1.x provides convenient ways for monitoring training status or visualizing data and model predictions.
 
-## Usage
+## Training status Monitor
 
-Users can modify `visualization` field in `default_hooks`. MMFlow configures `default_hooks` in each file under `configs/_base_/schedules`. For example, in `configs/_base_/schedules/schedules_s_long.py`, let's modify the `FlowVisualizationHook` related parameters. Set `draw` to `True` to enable the storage of network inference results. `interval` indicates the sampling interval of the predicted results, defaults to 50, and when set to 1, each inference result of the network will be saved. Now, the configuration of `default_hooks` is as follows:
+MMFlow 1.x uses TensorBoard to monitor training status.
+
+### TensorBoard Configuration
+
+Install TensorBoard following [official instructions](https://www.tensorflow.org/install)
+
+```shell
+pip install future tensorboard
+```
+
+Add `TensorboardVisBackend` in `vis_backend` of `visualizer` in `configs/_base_/default_runtime.py`:
+
+```python
+vis_backends = [dict(type='LocalVisBackend'), dict(type='TensorboardVisBackend')]
+visualizer = dict(
+    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
+```
+
+The configuration contains `LocalVisBackend`, which means the scalars during training will be stored locally as well.
+
+### Examining scalars in TensorBoard
+
+Launch training experiment e.g.
+
+```shell
+python tools/train.py configs/pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py --work-dir work_dirs/test_visual
+```
+
+You can specify the `save_dir` in `visualizer` to modify the storage path.
+The default storage path is `vis_data` under your `work_dir`.
+For example, the `vis_data` path of a particular experiment is
+
+```shell
+work_dirs/test_visual/20220831_165919/vis_data
+```
+
+The scalar file in `vis_data` includes learning rate, losses and data_time etc, and also record metrics results during evaluation.
+You can refer to [logging tutorial](TODO) in mmengine to log custom data.
+The TensorBoard visualization results are executed with the following command:
+
+```shell
+tensorboard --logdir work_dirs/test_visual/20220831_165919/vis_data
+```
+
+## Prediction Visualization
+
+MMFlow provides `FlowVisualizationHook` that can render optical flow of ground truth and prediction.
+Users can modify `visualization` in `default_hooks` to invoke the hook.
+MMFlow configures `default_hooks` in each file under `configs/_base_/schedules`.
+For example, in `configs/_base_/schedules/schedules_s_long.py`, let's modify the `FlowVisualizationHook` related parameters.
+Set `draw` to `True` to enable the storage of network inference results.
+`interval` indicates the sampling interval of the predicted results, defaults to 50, and when set to 1, each inference result of the network will be saved.
 
 ```python
 default_hooks = dict(
@@ -23,7 +74,7 @@ default_hooks = dict(
     visualization=dict(type='FlowVisualizationHook', draw=True, interval=1))
 ```
 
-Additionally, if you don't want to change the original files under `configs`, you can specify `--cfg-options` in commands by referring to this [guide](./1_config.md#modify-config-through-script-arguments).
+Additionally, if you want to keep the original file under `configs` unchanged, you can specify `--cfg-options` in commands by referring to this [guide](./1_config.md#modify-config-through-script-arguments).
 
 ```shell
 python tools/test.py \
@@ -35,18 +86,14 @@ python tools/test.py \
 
 The default backend of visualizatin is `LocalVisBackend`, which means storing the visualization results locally.
 Backend related configuration is in `configs/_base_/default_runtime.py`.
-In order to enable tensorboard visualization as well, modify the `visulizer` field in this way:
+In order to enable TensorBoard visualization as well, modify the `visulizer` just as this [configuration](#tensorboard-configuration):
+Assume the `vis_data` path of a particular test is
 
-```python
-vis_backends = [dict(type='LocalVisBackend'), dict(type='TensorboardVisBackend')]
-visualizer = dict(
-    type='FlowLocalVisualizer', vis_backends=vis_backends, name='visualizer')
+```shell
+work_dirs/test_visual/20220831_114424/vis_data
 ```
 
-You can change the storage path by specifying `save_dir` field in `visualizer`.
-The default storage path for visualization result is the `vis_data` path under your `work_dir`.
-For example, the `vis_data` path of a particular test is `work_dirs/test_visual/20220831_114424/vis_data`.
-The stored results of the local visualization are kept in `vis_image` under `vis_data`, while the tensorboard visualization results can be executed with the following command:
+The stored results of the local visualization are kept in `vis_image` under `vis_data`, while the TensorBoard visualization results can be executed with the following command:
 
 ```shell
 tensorboard --logdir work_dirs/test_visual/20220831_114424/vis_data
