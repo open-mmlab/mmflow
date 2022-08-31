@@ -80,7 +80,6 @@ mim download mmflow --config pwcnet-ft_4xb1_300k_sintel-final-384x768.py
 The downloading will take several seconds or more, depending on your network environment. When it is done, you will find two files
 `pwcnet-ft_4xb1_300k_sintel-final-384x768.py` and `pwcnet_ft_4x1_300k_sintel_final_384x768.pth` in your current folder.
 
-
 **Step 2.** Verify the inference demo.
 
 Option (a). If you install mmflow from source, just run the following command.
@@ -203,5 +202,5 @@ docker run --gpus all --shm-size=8g -it -v {DATA_DIR}:/mmflow/data mmflow
 
 ## Trouble shooting
 
-If you have some issues during the installation, please first view the [FAQ](faq.md) page.
+If you have some issues during the installation, please first view the [FAQ](notes/faq.md) page.
 You may [open an issue](https://github.com/open-mmlab/mmflow/issues/new/choose) on GitHub if no solution is found.
