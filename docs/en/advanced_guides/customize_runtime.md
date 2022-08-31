@@ -1,8 +1,18 @@
 # Runtime Settings Customization
 
-In this tutorial, we will introduce some methods about how to customize optimization methods, training schedules, workflow and hooks when running your own settings for the project.
+In this tutorial, we will introduce some methods about how to customize optimization methods, training schedules and hooks when running your own settings for the project.
 
-## Optimization Methods Customization
+## Customize optimization settings
+
+Optimization related configuration is now all managed by OptimWrapper, which is a high-level API of optimizer. The OptimWrapper supports different training strategies, including auto mixed precision training, gradient accumulation and gradient clipping. `optim_wrapper` usually has three fields: `optimizer`, `paramwise_cfg`, `clip_grad`, refer to [OptimWrapper](https://mmengine.readthedocs.io/en/latest/tutorials/optim_wrapper.md) for more detail. See the example below, where `Adam` is used as an optimizer and gradient clipping is added.
+
+```python
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(
+        type='Adam', lr=0.0001, weight_decay=0.0004, betas=(0.9, 0.999)))
+    clip_grad=dict(max_norm=0.01, norm_type=2)
+```
 
 ### Customize optimizer supported by PyTorch
 
@@ -30,11 +40,11 @@ optimizer = dict(type='Adam', lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_de
 A customized optimizer could be defined as following.
 
 Assume you want to add an optimizer named `MyOptimizer`, which has arguments `a`, `b`, and `c`.
-You need to create a new directory named `mmflow/core/optimizer`.
-And then implement the new optimizer in a file, e.g., in `mmflow/core/optimizer/my_optimizer.py`:
+You need to create a new directory named `mmflow/engine/optimizers/my_optimizer.py`.
+And then implement the new optimizer in a file, e.g., in `mmflow/engine/optimizers/my_optimizer.py`:
 
 ```python
-from .builder import OPTIMIZERS
+from mmflow.registry import OPTIMIZERS
 from torch.optim import Optimizer
 
 
@@ -49,9 +59,9 @@ class MyOptimizer(Optimizer):
 
 To find the above module defined above, this module should be imported into the main namespace at first. There are two ways to achieve it.
 
-- Modify `mmflow/core/optimizer/__init__.py` to import it.
+- Modify `mmflow/engine/optimizers/__init__.py` to import it.
 
-  The newly defined module should be imported in `mmflow/core/optimizer/__init__.py` so that the registry will
+  The newly defined module should be imported in `mmflow/engine/optimizers/__init__.py` so that the registry will
   find the new module and add it:
 
 ```python
@@ -60,184 +70,208 @@ from .my_optimizer import MyOptimizer
 
 - Use `custom_imports` in the config to manually import it
 
-`custom_imports` can import module manually as long as the module can be located in `PYTHONPATH`,
-without modifying source code
+`custom_imports` can import module manually as long as the module can be located in `PYTHONPATH`, without modifying source code
 
 ```python
-custom_imports = dict(imports=['mmflow.core.optimizer.my_optimizer'], allow_failed_imports=False)
+custom_imports = dict(imports=['mmflow.engine.optimizers.my_optimizer'], allow_failed_imports=False)
 ```
 
-The module `mmflow.core.optimizer.my_optimizer` will be imported at the beginning of the program and the class `MyOptimizer` is then automatically registered.
-Note that only the package containing the class `MyOptimizer` should be imported. `mmflow.core.optimizer.my_optimizer.MyOptimizer` **cannot** be imported directly.
+The module `mmflow.engine.optimizers.my_optimizer` will be imported at the beginning of the program and the class `MyOptimizer` is then automatically registered.
+Note that only the package containing the class `MyOptimizer` should be imported. `mmflow.engine.optimizers.my_optimizer.MyOptimizer` **cannot** be imported directly.
 
 #### 3. Specify the optimizer in the config file
 
-Then you can use `MyOptimizer` in `optimizer` field of config files.
+Then you can use `MyOptimizer` in `optimizer` field in `optim_wrapper` field of config files.
 In the configs, the optimizers are defined by the field `optimizer` like the following:
 
 ```python
-optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001))
 ```
 
 To use your own optimizer, the field can be changed to
 
 ```python
-optimizer = dict(type='MyOptimizer', a=a_value, b=b_value, c=c_value)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(type='MyOptimizer', a=a_value, b=b_value, c=c_value))
 ```
 
 ### Customize optimizer constructor
 
 Some models may have some parameter-specific settings for optimization, e.g. weight decay for BatchNorm layers.
-The users can do those fine-grained parameter tuning through customizing optimizer constructor.
+The users can do those fine-grained parameter tuning through customizing optimizer wrapper constructor.
 
 ```python
-from mmcv.utils import build_from_cfg
+from mmengine.optim import DefaultOptimWrapperConstructor
 
-from mmcv.runner.optimizer import OPTIMIZER_BUILDERS, OPTIMIZERS
-from mmflow.utils import get_root_logger
+from mmflow.registry import OPTIM_WRAPPER_CONSTRUCTORS
 from .my_optimizer import MyOptimizer
 
 
-@OPTIMIZER_BUILDERS.register_module()
+@OPTIM_WRAPPER_CONSTRUCTORS.register_module()
 class MyOptimizerConstructor:
 
-    def __init__(self, optimizer_cfg, paramwise_cfg=None):
+    def __init__(self,
+                 optimizer_wrapper_cfg: dict,
+                 paramwise_cfg: Optional[dict] = None):
         pass
 
-    def __call__(self, model):
+    def __call__(self, model: nn.Module) -> OptimWrapper:
 
-        return my_optimizer
+        return optim_wrapper
 ```
 
-The default optimizer constructor is implemented [here](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/optimizer/default_constructor.py#L11),
-which could also serve as a template for the new optimizer constructor.
+The default optimizer wrapper constructor is implemented [here](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/optimizer/default_constructor.py#L18),
+which could also serve as a template for the new optimizer wrapper constructor.
 
 ### Additional settings
 
-Tricks not implemented by the optimizer should be implemented through optimizer constructor (e.g., set parameter-wise learning rates) or hooks.
+Tricks not implemented by the optimizer should be implemented through optimizer wrapper constructor (e.g., set parameter-wise learning rates) or hooks.
 We list some common settings that could stabilize the training or accelerate the training. Feel free to create PR, issue for more settings.
 
-- __Use gradient clip to stabilize training__:
-  Some models need gradient clip to clip the gradients to stabilize the training process. An example is as below:
+- **Use gradient clip to stabilize training**:
+  Some models need gradient clip to stabilize the training process. An example is as below:
 
   ```python
-  optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+    optim_wrapper = dict(
+        _delete_=True, clip_grad=dict(max_norm=35, norm_type=2))
   ```
 
-- __Use momentum schedule to accelerate model convergence__:
+  If your config inherits the base config which already sets the `optim_wrapper`, you might need `_delete_=True` to override the unnecessary settings. See the [config documentation](../user_guides/config.md) for more details.
+
+- **Use momentum schedule to accelerate model convergence**:
   We support momentum scheduler to modify model's momentum according to learning rate, which could make the model converge in a faster way.
   Momentum scheduler is usually used with LR scheduler, for example, the following config is used in 3D detection to accelerate convergence.
-  For more details, please refer to the implementation of [CyclicLrUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L327)
-  and [CyclicMomentumUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/momentum_updater.py#L130).
+  For more details, please refer to the implementation of [CosineAnnealingLR](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py#L43) and [CosineAnnealingMomentum](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/momentum_scheduler.py#L71).
 
   ```python
-  lr_config = dict(
-      policy='cyclic',
-      target_ratio=(10, 1e-4),
-      cyclic_times=1,
-      step_ratio_up=0.4,
-  )
-  momentum_config = dict(
-      policy='cyclic',
-      target_ratio=(0.85 / 0.95, 1),
-      cyclic_times=1,
-      step_ratio_up=0.4,
-  )
+  param_scheduler = [
+      # learning rate scheduler
+      # During the first 8 epochs, learning rate increases from 0 to lr * 10
+      # during the next 12 epochs, learning rate decreases from lr * 10 to lr * 1e-4
+      dict(
+          type='CosineAnnealingLR',
+          T_max=8,
+          eta_min=lr * 10,
+          begin=0,
+          end=8,
+          by_epoch=True,
+          convert_to_iter_based=True),
+      dict(
+          type='CosineAnnealingLR',
+          T_max=12,
+          eta_min=lr * 1e-4,
+          begin=8,
+          end=20,
+          by_epoch=True,
+          convert_to_iter_based=True),
+      # momentum scheduler
+      # During the first 8 epochs, momentum increases from 0 to 0.85 / 0.95
+      # during the next 12 epochs, momentum increases from 0.85 / 0.95 to 1
+      dict(
+          type='CosineAnnealingMomentum',
+          T_max=8,
+          eta_min=0.85 / 0.95,
+          begin=0,
+          end=8,
+          by_epoch=True,
+          convert_to_iter_based=True),
+      dict(
+          type='CosineAnnealingMomentum',
+          T_max=12,
+          eta_min=1,
+          begin=8,
+          end=20,
+          by_epoch=True,
+          convert_to_iter_based=True)
+  ]
   ```
 
-## Customize Training Schedules
+## Customize training schedules
 
-we use step learning rate with default value in config files, this calls [`StepLRHook`](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L153) in MMCV.
-We support many other learning rate schedule [here](https://github.com/open-mmlab/mmcv/blob/master/mmcv/runner/hooks/lr_updater.py), such as `CosineAnnealing` and `Poly` schedule. Here are some examples
+By default we use step learning rate with 1x schedule, this calls [MultiStepLR](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py#L139) in MMEngine.
+We support many other learning rate schedule [here](https://github.com/open-mmlab/mmengine/blob/main/mmengine/optim/scheduler/lr_scheduler.py), such as `CosineAnnealingLR` and `PolyLR` schedule. Here are some examples
 
 - Poly schedule:
 
   ```python
-  lr_config = dict(policy='poly', power=0.9, min_lr=1e-4, by_epoch=False)
+  param_scheduler = [
+      dict(
+          type='PolyLR',
+          power=0.9,
+          eta_min=1e-4,
+          begin=0,
+          end=8,
+          by_epoch=True)]
   ```
 
 - ConsineAnnealing schedule:
 
   ```python
-  lr_config = dict(
-      policy='CosineAnnealing',
-      warmup='linear',
-      warmup_iters=1000,
-      warmup_ratio=1.0 / 10,
-      min_lr_ratio=1e-5)
+  param_scheduler = [
+      dict(
+          type='CosineAnnealingLR',
+          T_max=8,
+          eta_min=lr * 1e-5,
+          begin=0,
+          end=8,
+          by_epoch=True)]
   ```
 
-## Customize Workflow
-
-Workflow is a list of (phase, epochs) to specify the running order and epochs. By default it is set to be
-
-```python
-workflow = [('train', 1)]
-```
-
-which means running 1 epoch for training.
-Sometimes user may want to check some metrics (e.g. loss, accuracy) about the model on the validate set.
-In such case, we can set the workflow as
-
-```python
-[('train', 1), ('val', 1)]
-```
-
-so that 1 epoch for training and 1 epoch for validation will be run iteratively.
-
-**Note**:
-
-1. The parameters of model will not be updated during val epoch.
-2. Keyword `total_epochs` in the config only controls the number of training epochs and will not affect the validation workflow.
-3. Workflows `[('train', 1), ('val', 1)]` and `[('train', 1)]` will not change the behavior of `EpochEvalHook` because `EpochEvalHook` is called by `after_train_epoch` and validation workflow only affect hooks that are called through `after_val_epoch`.
-   Therefore, the only difference between `[('train', 1), ('val', 1)]` and `[('train', 1)]` is that the runner will calculate losses on the validation set after each training epoch.
-
-## Customize Hooks
+## Customize hooks
 
 ### Customize self-implemented hooks
 
 #### 1. Implement a new hook
 
+MMEngine provides many useful [hooks](https://mmengine.readthedocs.io/en/latest/tutorials/hooks.html), but there are some occasions when the users might need to implement a new hook. MMFlow supports customized hooks in training in v1.0. Thus the users could implement a hook directly in mmflow and use the hook by only modifying the config in training.
 Here we give an example of creating a new hook in mmflow and using it in training.
 
 ```python
-from mmcv.runner import HOOKS, Hook
+from mmengine.hooks import Hook
+from mmflow.registry import HOOKS
 
 
 @HOOKS.register_module()
 class MyHook(Hook):
 
     def __init__(self, a, b):
-        pass
 
-    def before_run(self, runner):
-        pass
+    def before_run(self, runner) -> None:
 
-    def after_run(self, runner):
-        pass
+    def after_run(self, runner) -> None:
 
-    def before_epoch(self, runner):
-        pass
+    def before_train(self, runner) -> None:
 
-    def after_epoch(self, runner):
-        pass
+    def after_train(self, runner) -> None:
 
-    def before_iter(self, runner):
-        pass
+    def before_train_epoch(self, runner) -> None:
 
-    def after_iter(self, runner):
-        pass
+    def after_train_epoch(self, runner) -> None:
+
+    def before_train_iter(self,
+                          runner,
+                          batch_idx: int,
+                          data_batch: DATA_BATCH = None) -> None:
+
+    def after_train_iter(self,
+                         runner,
+                         batch_idx: int,
+                         data_batch: DATA_BATCH = None,
+                         outputs: Optional[dict] = None) -> None:
 ```
 
-Depending on the functionality of the hook, the users need to specify what the hook will do at each stage of the training in `before_run`, `after_run`, `before_epoch`, `after_epoch`, `before_iter`, and `after_iter`.
+Depending on the functionality of the hook, the users need to specify what the hook will do at each stage of the training in `before_run`, `after_run`, `before_train`, `after_train` , `before_train_epoch`, `after_train_epoch`, `before_train_iter`, and `after_train_iter`.  There are more points where hooks can be inserted, referring to [base hook class](https://github.com/open-mmlab/mmengine/blob/main/mmengine/hooks/hook.py#L9) for more detail.
 
 #### 2. Register the new hook
 
-Then we need to make `MyHook` imported. Assuming the file is in `mmflow/core/hooks/my_hook.py` there are two ways to do that:
+Then we need to make `MyHook` imported. Assuming the implementation of `MyHook` is in `mmflow/engine/hooks/my_hook.py`, there are two ways to do that:
 
-- Modify `mmflow/core/hooks/__init__.py` to import it.
+- Modify `mmflow/engine/hooks/__init__.py` to import it.
 
-  The newly defined module should be imported in `mmflow/core/hooks/__init__.py` so that the registry will
+  The newly defined module should be imported in `mmflow/engine/hooks/__init__.py` so that the registry will
   find the new module and add it:
 
 ```python
@@ -247,7 +281,7 @@ from .my_hook import MyHook
 - Use `custom_imports` in the config to manually import it
 
 ```python
-custom_imports = dict(imports=['mmflow.core.hooks.my_hook'], allow_failed_imports=False)
+custom_imports = dict(imports=['mmflow.engine.hooks.my_hook'], allow_failed_imports=False)
 ```
 
 #### 3. Modify the config
@@ -268,19 +302,17 @@ custom_hooks = [
 
 By default the hook's priority is set as `NORMAL` during registration.
 
-### Use hooks implemented in MMCV
+### Use hooks implemented in MMFlow
 
-If the hook is already implemented in MMCV, you can directly modify the config to use the hook as below
+If the hook is already implemented in MMFlow, you can directly modify the config to use the hook as below.
 
-```python
-mmcv_hooks = [
-    dict(type='MMCVHook', a=a_value, b=b_value, priority='NORMAL')
-]
-```
+#### Example: `FlowVisualizationHook`
+
+We implement a customized hook named [FlowVisualizationHook](https://github.com/open-mmlab/mmflow/blob/dev-1.x/mmflow/engine/hooks/visualization_hook.py) to visualize the predicted optical flow. We set it in the schedule config file, such as [schedule_s_long.py](https://github.com/open-mmlab/mmflow/blob/dev-1.x/configs/_base_/schedules/schedule_s_long.py).
 
 ### Modify default runtime hooks
 
-There are some common hooks that are not registered through `custom_hooks` but has been registered by default when importing MMCV,  they are
+There are some common hooks that are not registered through `custom_hooks` but has been registered by default when importing MMEngine, they are
 
 - log_config
 - checkpoint_config
