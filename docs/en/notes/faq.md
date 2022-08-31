@@ -17,7 +17,7 @@ The compatible MMFlow and MMCV versions are as below. Please install the correct
     <tbody>
         <tr>
             <th>1.0.0rc0</th>
-            <th>mmcv>=2.0.0rc1, <1.7.0</th>
+            <th>mmcv>=2.0.0rc1, <2.1.0</th>
         </tr>
     </tbody>
     <tbody>
