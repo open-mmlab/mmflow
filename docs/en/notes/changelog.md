@@ -1,121 +1,86 @@
-# Changelog
+# Changelog of v1.x
 
-## v0.4.1(04/29/2022)
+## v1.0.0rc0 (31/8/2022)
 
-### Feature
-
-- Loading flow annotation from file client ([#116](https://github.com/open-mmlab/mmflow/pull/116))
-- Support overall dastaloader settings ([#117](https://github.com/open-mmlab/mmflow/pull/117))
-- Generate ann_file for flyingchairs ([121](https://github.com/open-mmlab/mmflow/pull/121))
-
-### Improvements
-
-- Add GPG keys in CI([127](https://github.com/open-mmlab/mmflow/pull/127))
-
-### Bug Fixes
-
-- The config and weights are not corresponding in the metafile.yml ([#118](https://github.com/open-mmlab/mmflow/pull/118))
-- Replace recommonmark with myst_parser ([#120](https://github.com/open-mmlab/mmflow/pull/120))
-
-### Documents
-
-- Add zh-cn doc 0_config\_.md ([#126](https://github.com/open-mmlab/mmflow/pull/126))
-
-## New Contributors
-
-- @HiiiXinyiii made their first contribution in https://github.com/open-mmlab/mmflow/pull/118
-- @SheffieldCao made their first contribution in https://github.com/open-mmlab/mmflow/pull/126
-
-## v0.4.0(04/01/2022)
+We are excited to announce the release of MMFlow 1.0.0rc0.
+MMFlow 1.0.0rc0 is a part of the OpenMMLab 2.x projects.
+Built upon the new [training engine](https://github.com/open-mmlab/mmengine),
+MMFlow 1.x unifies the interfaces of dataset, models, evaluation, and visualization with faster training and testing speed.
 
 ### Highlights
 
-- Support occlusion estimation methods including flow forward-backward consistency, range map of the backward flow, and flow forward-backward abstract difference
+1. **New engines**. MMFlow 1.x is based on [MMEngine](https://github.com/open-mmlab/mmengine), which provides a general and powerful runner that allows more flexible customizations and significantly simplifies the entrypoints of high-level interfaces.
 
-### Features
+2. **Unified interfaces**. As a part of the OpenMMLab 2.x projects, MMFlow 1.x unifies and refactors the interfaces and internal logics of training, testing, datasets, models, evaluation, and visualization. All the OpenMMLab 2.x projects share the same design in those interfaces and logics to allow the emergence of multi-task/modality algorithms.
 
-- Support three occlusion estimation methods (#106)
-- Support different seeds on different ranks when distributed training (#104)
+3. **Faster speed**. We optimize the training and inference speed for common models.
 
-### Improvements
+4. **More documentation and tutorials**. We add a bunch of documentation and tutorials to help users get started more smoothly. Read it [here](https://mmflow.readthedocs.io/en/dev-1.x/).
 
-- Revise collect_env for win platform (#112)
-- Add script and documentation for multi-machine distributed training (#107)
+### Breaking Changes
 
-## v0.3.0(03/04/2022)
+We briefly list the major breaking changes here.
+We will update the [migration guide](../migration.md) to provide complete details and migration instructions.
 
-### Highlights
+#### Dependencies
 
-- Officially support CPU Train/Inference
-- Add census loss, SSIM loss and smoothness loss
-- Officially support model inference in windows platform
-- Update `nan` files in Flyingthings3d_subset dataset
+- MMFlow 1.x runs on PyTorch>=1.6. We have deprecated the support of PyTorch 1.5 to embrace the mixed precision training and other new features since PyTorch 1.6. Some models can still run on PyTorch 1.5, but the full functionality of MMFlow 1.x is not guaranteed.
 
-### Features
+- MMFlow 1.x relies on MMEngine to run. MMEngine is a new foundational library for training deep learning models in OpenMMLab 2.x models. The dependencies of file IO and training are migrated from MMCV 1.x to MMEngine.
 
-- Add census loss (#100)
-- Add smoothness loss function (#97)
-- Add SSIM loss function (#96)
+- MMFlow 1.x relies on MMCV>=2.0.0rc0. Although MMCV no longer maintains the training functionalities since 2.0.0rc0, MMFlow 1.x relies on the data transforms, CUDA operators, and image processing interfaces in MMCV. Note that the package `mmcv` is the version that provide pre-built CUDA operators and `mmcv-lite` does not since MMCV 2.0.0rc0, while `mmcv-full` has been deprecated.
 
-### Bug Fixes
+#### Training and testing
 
-- Update `nan` files in Flyingthings3d_subset (#94)
-- Add pretrained pwcnet-model when train PWCNet+ (#99)
-- Fix bug in non-distributed multi-gpu training/testing (#85)
-- Fix writing flow map bug in test (#83)
+- MMFlow 1.x uses Runner in [MMEngine](https://github.com/open-mmlab/mmengine) rather than that in MMCV. The new Runner implements and unifies the building logic of dataset, model, evaluation, and visualization. Therefore, MMFlow 1.x no longer maintains the building logics of those modules in `mmflow.train.apis` and `tools/train.py`. Those code have been migrated into [MMEngine](https://github.com/open-mmlab/mmengine/blob/main/mmengine/runner/runner.py). Please refer to the [migration guide of Runner in MMEngine](https://mmengine.readthedocs.io/en/latest/migration/runner.html) for more details.
 
-### Improvements
+- The Runner in MMEngine also supports testing and validation. The testing scripts are also simplified, which has similar logic as that in training scripts to build the runner.
 
-- Add win-ci (#92)
-- Update the installation of MMCV (#89)
-- Upgrade isort in pre-commit hook (#87)
-- Support CPU Train/Inference (#86)
-- Add multi-processes script (#79)
-- Deprecate the support for "python setup.py test" (#73)
+- The execution points of hooks in the new Runner have been enriched to allow more flexible customization. Please refer to the [migration guide of Hook in MMEngine](https://mmengine.readthedocs.io/en/latest/migration/hook.html) for more details.
 
-### Documents
+- Learning rate and momentum scheduling has been migrated from `Hook` to `Parameter Scheduler` in MMEngine. Please refer to the [migration guide of Parameter Scheduler in MMEngine](https://mmengine.readthedocs.io/en/latest/migration/param_scheduler.html) for more details.
 
-- Fix broken URLs in GMA README (#93)
-- Fix date format in readme (#90)
-- Reorganizing OpenMMLab projects in readme (#98)
-- Fix README files of algorithms (#84)
-- Add url of OpenMMLab and platform in README (76)
+#### Configs
 
-## v0.2.0(01/07/2022)
+- The [Runner in MMEngine](https://github.com/open-mmlab/mmengine/blob/main/mmengine/runner/runner.py) uses a different config structures to ease the understanding of the components in runner. Users can read the [config example of mmflow](../user_guides/1_config.md) or refer to the [migration guide in MMEngine](https://mmengine.readthedocs.io/en/latest/migration/runner.html) for migration details.
 
-### Highlights
+- The file names of configs and models are also refactored to follow the new rules unified across OpenMMLab 2.x projects. Please refer to the [user guides of config](../user_guides/1_config.md) for more details.
 
-- Support [GMA](../../configs/gma/README.md): Learning to Estimate Hidden Motions with Global Motion Aggregation (ICCV 2021) (#32)
-- Fix the bug of wrong refine iter in RAFT, and update [RAFT](../../configs/raft/README.md) model checkpoint after the bug fixing (#62, #68)
-- Support resuming from the latest checkpoint automatically (#71)
+#### Dataset
 
-### Features
+The Dataset classes implemented in MMFlow 1.x all inherits from the [BaseDataset in MMEngine](https://mmengine.readthedocs.io/en/latest/advanced_tutorials/basedataset.html). There are several changes of Dataset in MMFlow 1.x.
 
-- Add `scale_as_level` for multi-level flow loss (#58)
-- Add `scale_mode` for correlation block (#56)
-- Add `upsample_cfg` in IRR-PWC decoder (#53)
+- All the datasets support to serialize the data list to reduce the memory when multiple workers are built to accelerate data loading.
 
-### Bug Fixes
+- The interfaces are changed accordingly.
 
-- Resized input image must be dividable by 2^6 (#65)
-- Fix RAFT wrong refine iter after evaluation (#62)
+#### Data Transforms
+
+The data transforms in MMFlow 1.x all inherits from those in MMCV>=2.0.0rc0, which follows a new convention in OpenMMLab 2.x projects.
+The changes are listed as below:
+
+- The interfaces are also changed. Please refer to the [API doc](https://mmflow.readthedocs.io/en/1.x/)
+- The functionality of some data transforms (e.g., `Resize`) are decomposed into several transforms.
+- The same data transforms in different OpenMMLab 2.x libraries have the same augmentation implementation and the logic of the same arguments, i.e., `Resize` in MMFlow 1.x and MMSeg 1.x will resize the image in the exact same manner given the same arguments.
+
+#### Model
+
+- Model:
+- Evaluation
+- Visualization
 
 ### Improvements
 
-- Add `persistent_workers=True` in `val_dataloader` (#63)
-- Revise `env_info` key (#46)
-- Add digital version (#43)
-- Try to create a symbolic link on windows (#37)
-- Set a random seed when the user does not set a seed (#27)
+- The training speed of those models with some common training strategies are improved, including those with synchronized batch normalization and mixed precision training.
 
-### Refactors
+- Support mixed precision training of all the models. However, some models may got Nan results due to some numerical issues. We will update the documentation and list their results (accuracy of failure) of mixed precision training.
 
-- Refactor utils in models (#50)
+### Ongoing changes
 
-### Documents
+1. Inference interfaces: a unified inference interfaces will be supported in the future to ease the use of released models.
 
-- Refactor documentation (#14)
-- Fix script bug in FlyingChairs dataset prepare (#21)
-- Fix broken links in model_zoo (#60)
-- Update metafile (#39, #41, #49)
-- Update documentation (#28, #35, #36, #47, #48, #70)
+2. Interfaces of useful tools that can be used in notebook: more useful tools that implemented in the `tools` directory will have their python interfaces so that they can be used through notebook and in downstream libraries.
+
+3. Documentation: we will add more design docs, tutorials, and migration guidance so that the community can deep dive into our new design, participate the future development, and smoothly migrate downstream libraries to MMFlow 1.x.
+
+4. SpyNet, Flow1D, CRAFT support.
