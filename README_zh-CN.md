@@ -21,13 +21,13 @@
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
 [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/dev-1.x/)
 [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
 [![codecov](https://codecov.io/gh/open-mmlab/mmflow/branch/master/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmflow)
-[![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/dev-1.x/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
 
-文档: https://mmflow.readthedocs.io/
+文档: <https://mmflow.readthedocs.io/en/dev-1.x>
 
 [English](README.md) | 简体中文
 
@@ -35,9 +35,9 @@
 
 MMFlow 是一款基于 PyTorch 的光流工具箱，是 [OpenMMLab](http://openmmlab.org/) 项目的成员之一。
 
-主分支代码目前支持 **PyTorch 1.5 以上**的版本。
+dev-1.x 分支代码目前支持 **PyTorch 1.6 以上**的版本。
 
-https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4
+<https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4>
 
 ### 主要特性
 
@@ -54,15 +54,10 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
   MMFlow 支持了众多主流经典的光流算法，例如 FlowNet, PWC-Net, RAFT 等，
   以及多种数据集的准备和构建，如 FlyingChairs, FlyingThings3D, Sintel, KITTI 等。
 
-## 开源许可证
-
-该项目采用 [Apache 2.0 开源许可证](LICENSE)。
-
 ## 更新日志
 
-最新的 v0.4.1 版本已经在 2022.04.29 发布:
-
-- 支持三种遮挡估计的方法，包括 flow forward-backward consistency，range map of the backward flow，和 flow forward-backward abstract difference
+最新版本 v1.0.0rc0 在 2022.8.31 发布。
+如果想了解更多版本更新细节和历史信息，请阅读[更新日志](docs/en/notes/changelog.md)。
 
 如果想了解更多版本更新细节和历史信息，请参考[更新日志](docs/en/changelog.md)。
 
@@ -84,26 +79,15 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## 安装
 
-请参考[安装文档](docs/en/install.md)进行安装, 参考[数据准备](docs/en/dataset_prepare.md)准备数据集。
+请参考[安装文档](docs/en/install.md)进行安装, 参考[数据准备](docs/en/user_guides/2_dataset_prepare.md)准备数据集。
 
 ## 快速入门
 
-如果初次接触光流算法，你可以从 [learn the basics](docs/en/intro.md) 开始了解光流的基本概念和 MMFlow 的框架。
-如果对光流很熟悉，请参考　[getting_started](docs/en/getting_started.md)　上手使用 MMFlow.
+请参考[概述](docs/zh_cn/overview.md)对 MMFlow 进行初步了解
 
-MMFlow 也提供了其他更详细的教程，包括：
+请参考[用户指南](https://mmflow.readthedocs.io/zh_CN/dev-1.x/user_guides/index.html)了解 mmflow 的基本使用，以及[进阶指南](https://mmflow.readthedocs.io/zh_CN/dev-1.x/advanced_guides/index.html)深入了解 mmflow 设计和代码实现。
 
-- [配置文件](docs/en/tutorials/0_config.md)
-
-- [模型推理](docs/en/tutorials/1_inference.md)
-
-- [微调模型](docs/en/tutorials/2_finetune.md)
-
-- [数据预处理](docs/en/tutorials/3_data_pipeline.md)
-
-- [添加新模型](docs/en/tutorials/4_new_modules.md)
-
-- [自定义模型运行参数](docs/en/tutorials/5_customize_runtime.md)。
+若需要将 0.x 版本的代码迁移至新版，请参考[迁移文档](docs/zh_cn/migration.md)
 
 ## 贡献指南
 
