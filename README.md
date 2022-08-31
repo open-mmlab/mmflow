@@ -21,13 +21,13 @@
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mmflow)](https://pypi.org/project/mmflow/)
 [![PyPI](https://img.shields.io/pypi/v/mmflow)](https://pypi.org/project/mmflow)
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/latest/)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://mmflow.readthedocs.io/en/dev-1.x/)
 [![badge](https://github.com/open-mmlab/mmflow/workflows/build/badge.svg)](https://github.com/open-mmlab/mmflow/actions)
 [![codecov](https://codecov.io/gh/open-mmlab/mmflow/branch/master/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmflow)
-[![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/blob/dev-1.x/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmflow.svg)](https://github.com/open-mmlab/mmflow/issues)
 
-Documentation: https://mmflow.readthedocs.io/
+Documentation: <https://mmflow.readthedocs.io/en/dev-1.x>
 
 ## Introduction
 
@@ -35,9 +35,9 @@ English | [简体中文](README_zh-CN.md)
 
 MMFlow is an open source optical flow toolbox based on PyTorch. It is a part of the [OpenMMLab](https://openmmlab.com/) project.
 
-The master branch works with **PyTorch 1.5+**.
+The dev-1.x branch works with **PyTorch 1.6+**.
 
-https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4
+<https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4>
 
 ### Major features
 
@@ -55,17 +55,14 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
   The toolbox directly supports popular and contemporary optical flow models, *e.g.* FlowNet, PWC-Net, RAFT, etc,
   and representative datasets, FlyingChairs, FlyingThings3D, Sintel, KITTI, etc.
 
-## License
+## What's New
 
-This project is released under the [Apache 2.0 license](LICENSE).
+v1.0.0rc0 was released in 31/8/2022.
+Please refer to [changelog.md](docs/en/notes/changelog.md) for details and release history.
 
-## Changelog
-
-**v0.4.1** was released in 04/29/2022:
-
-- Support occlusion estimation methods including flow forward-backward consistency, range map of the backward flow, and flow forward-backward abstract difference
-
-Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
+- Unifies interfaces of all components based on MMEngine.
+- Faster training and testing speed with complete support of mixed precision training.
+- Refactored and more flexible architecture.
 
 ## Benchmark and model zoo
 
@@ -86,25 +83,16 @@ Supported methods:
 ## Installation
 
 Please refer to [install.md](docs/en/install.md) for installation and
-guidance in [dataset_prepare](docs/en/dataset_prepare.md) for dataset preparation.
+guidance in [dataset_prepare](docs/en/user_guides/2_dataset_prepare.md) for dataset preparation.
 
-## Getting Started
+## Get Started
 
-If you're new of optical flow, you can start with [learn the basics](docs/en/intro.md). If you’re familiar with it, check out [getting_started](docs/en/getting_started.md) to try out MMFlow.
+Please see [Overview](docs/en/overview.md) for the general introduction of MMFlow.
 
-Refer to the below tutorials to dive deeper:
+Please see [user guides](https://mmflow.readthedocs.io/en/dev-1.x/user_guides/index.html) for the basic usage of MMFlow.
+There are also [advanced tutorials](https://mmflow.readthedocs.io/en/dev-1.x/advanced_guides/index.html) for in-depth understanding of mmflow design and implementation .
 
-- [config](docs/en/tutorials/0_config.md)
-
-- [model inference](docs/en/tutorials/1_inference.md)
-
-- [fine tuning](docs/en/tutorials/2_finetune.md)
-
-- [data pipeline](docs/en/tutorials/3_data_pipeline.md)
-
-- [add new modules](docs/en/tutorials/4_new_modules.md)
-
-- [customized runtime](docs/en/tutorials/5_customize_runtime.md)
+To migrate from MMFlow 1.x, please refer to [migration](docs/en/migration.md).
 
 ## Contributing
 
