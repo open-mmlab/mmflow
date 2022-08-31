@@ -19,7 +19,7 @@ specifying `_base_ = ../pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py`, then 
 If you are building an entirely new method that does not share the structure with any of the existing methods,
 you may create a folder `xxx` under `configs`.
 
-Please refer to [mmcv](https://mmcv.readthedocs.io/en/latest/understand_mmcv/config.html) for detailed documentation.
+Please refer to [mmengine](https://mmengine.readthedocs.io/en/latest/tutorials/config.html) for detailed documentation.
 
 ## Config File Naming Convention
 
@@ -44,7 +44,7 @@ To help the users have a basic idea of a complete config and the modules in MMFl
 we make brief comments on the config of PWC-Net trained on FlyingChairs with slong schedule.
 For more detailed usage and the corresponding alternative for each module,
 please refer to the API documentation and
-the [tutorial](https://github.com/open-mmlab/mmdetection/blob/rangilyu/3.x-config-doc/docs/en/tutorials/config.md) in MMDetection.
+the [tutorial](https://github.com/open-mmlab/mmdetection/blob/dev-3.x/docs/en/user_guides/config.md) in MMDetection.
 
 ```python
 _base_ = [

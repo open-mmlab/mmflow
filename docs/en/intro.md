@@ -61,23 +61,23 @@ MMFlow consists of 4 main parts, `datasets`, `models`, `core` and `apis`.
 
 Here is a detailed step-by-step guide to learn more about MMFlow:
 
-1. For installation instructions, please see [install](install.md).
+1. For installation instructions, please see [install](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/install.md).
 
-2. [get_started](getting_started.md) is for the basic usage of MMFlow.
+2. [get_started](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/get_started.md) is for the basic usage of MMFlow.
 
 3. Refer to the below tutorials to dive deeper:
 
-   - [config](tutorials/0_config.md)
+   - [config](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/1_config.md)
 
-   - [model inference](tutorials/1_inference.md)
+   - [model inference](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/3_inference.md)
 
-   - [fine tuning](tutorials/2_finetune.md)
+   - [fine tuning](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/4_train_test.md)
 
-   - [data pipeline](tutorials/3_data_pipeline.md)
+   - [data pipeline](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/advanced_guides/data_flow.md)
 
-   - [add new modules](tutorials/4_new_modules.md)
+   - [add new modules](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/advanced_guides/add_modules.md)
 
-   - [customized runtime](tutorials/5_customize_runtime.md)
+   - [customized runtime](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/advanced_guides/customize_runtime.md)
 
 ## References
 

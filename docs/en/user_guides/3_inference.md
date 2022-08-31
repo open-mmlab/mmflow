@@ -2,7 +2,7 @@
 
 MMFlow provides pre-trained models for flow estimation in [Model Zoo](../model_zoo.md), and supports multiple standard datasets, including FlyingChairs, Sintel, etc.
 This note will show how to use existing models to inference on given images.
-As for how to test existing models on standard datasets, please see this [guide](./4_train_test.md#Test-models-on-standard-datasets)
+As for how to test existing models on standard datasets, please see this [guide](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/4_train_test.md#Test-models-on-standard-datasets)
 
 ## Inference on given images
 
@@ -40,4 +40,4 @@ write_flow(result, flow_file='flow.flo')
 visualize_flow(result, save_file='flow_map.png')
 ```
 
-An image demo can be found in [demo/image_demo.py](../../../demo/image_demo.py).
+An image demo can be found in [demo/image_demo.py](https://github.com/open-mmlab/mmflow/blob/dev-1.x/demo/image_demo.py).

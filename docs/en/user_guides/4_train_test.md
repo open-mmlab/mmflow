@@ -69,7 +69,7 @@ This tool accepts several optional arguments, including:
 - `--amp`: Use auto mixed precision training.
 - `--resume ${CHECKPOINT_FILE}`: Resume from a previous checkpoint file.
 - `--cfg-options ${OVERRIDE_CONFIGS}`: Override some settings in the used config, the key-value pair in xxx=yyy format will be merged into config file.
-  For example, '--cfg-option model.encoder.in_channels=6'. Please see this [guide](./1_config.md#Modify-config-through-script-arguments) for more details.
+  For example, '--cfg-option model.encoder.in_channels=6'. Please see this [guide](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/1_config.md#Modify-config-through-script-arguments) for more details.
 
 Below is the optional arguments for multi-gpu test:
 
@@ -92,7 +92,7 @@ The process of training on the CPU is consistent with single GPU training. We ju
 export CUDA_VISIBLE_DEVICES=-1
 ```
 
-And then run the script [above](#training-on-a-single-GPU).
+And then run the script [above](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/4_train_test.md#training-on-a-single-GPU).
 
 We do not recommend users to use CPU for training because it is too slow. We support this feature to allow users to debug on machines without GPU for convenience.
 
@@ -110,7 +110,7 @@ sh tools/dist_train.sh \
     [optional arguments]
 ```
 
-Optional arguments remain the same as stated [above](#training-on-a-single-gpu)
+Optional arguments remain the same as stated [above](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/4_train_test.md#training-on-a-single-GPU#training-on-a-single-gpu)
 and has additional arguments to specify the number of GPUs.
 
 #### Launch multiple jobs on a single machine
@@ -165,7 +165,7 @@ Below is an example of using 8 GPUs to train PWC-Net on a Slurm partition named 
 GPUS=8 sh tools/slurm_train.sh dev pwc_chairs configs/pwcnet/pwcnet_8x1_slong_flyingchairs_384x448.py work_dir/pwc_chairs
 ```
 
-You can check [the source code](../../../tools/dist_train.sh) to review full arguments and environment variables.
+You can check [the source code](https://github.com/open-mmlab/mmflow/blob/dev-1.x/tools/dist_train.sh) to review full arguments and environment variables.
 
 When using Slurm, the port option need to be set in one of the following ways:
 
@@ -260,7 +260,7 @@ Optional arguments:
 - `--show-dir`: If specified, the visualized optical flow map will be saved in the specified directory.
 - `--wait-time`: The interval of show (s), which takes effect when `--show` is activated. Default to 2.
 - `--cfg-options`:  If specified, the key-value pair in xxx=yyy format will be merged into config file.
-  For example, '--cfg-option model.encoder.in_channels=6'. Please see this [guide](./1_config.md#Modify-config-through-script-arguments) for more details.
+  For example, '--cfg-option model.encoder.in_channels=6'. Please see this [guide](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/1_config.md#Modify-config-through-script-arguments) for more details.
 
 Below is the optional arguments for multi-gpu test:
 
@@ -292,7 +292,7 @@ According to the default setting, the results are show every 50 results.
 If you want to change the frequency, for example, you want every result to be shown,
 then add `--cfg-options default_hooks.visualization.interval=1` to the above command.
 Of course, you can also modify the relevant parameters in config files.
-For more details of visualization, please see this [guide](./visualization.md).
+For more details of visualization, please see this [guide](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/visualization.md).
 
 If you want to save the predicted optical flow, just specify the `--show-dir`.
 For example, if we want to save the predicted results in `show_dirs`, then run
