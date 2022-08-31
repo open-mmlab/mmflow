@@ -84,9 +84,9 @@ python tools/test.py \
     --cfg-options default_hooks.visualization.draw=True default_hooks.visualization.interval=1
 ```
 
-The default backend of visualizatin is `LocalVisBackend`, which means storing the visualization results locally.
+The default backend of visualization is `LocalVisBackend`, which means storing the visualization results locally.
 Backend related configuration is in `configs/_base_/default_runtime.py`.
-In order to enable TensorBoard visualization as well, modify the `visulizer` just as this [configuration](#tensorboard-configuration):
+In order to enable TensorBoard visualization as well, modify the `visulizer` just as this [configuration](#tensorboard-configuration).
 Assume the `vis_data` path of a particular test is
 
 ```shell
