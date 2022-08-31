@@ -41,7 +41,7 @@ work_dirs/test_visual/20220831_165919/vis_data
 ```
 
 The scalar file in `vis_data` includes learning rate, losses and data_time etc, and also record metrics results during evaluation.
-You can refer to [logging tutorial](TODO) in mmengine to log custom data.
+You can refer to [logging tutorial](https://mmengine.readthedocs.io/en/latest/advanced_tutorials/logging.html) in mmengine to log custom data.
 The TensorBoard visualization results are executed with the following command:
 
 ```shell
@@ -74,7 +74,7 @@ default_hooks = dict(
     visualization=dict(type='FlowVisualizationHook', draw=True, interval=1))
 ```
 
-Additionally, if you want to keep the original file under `configs` unchanged, you can specify `--cfg-options` in commands by referring to this [guide](./1_config.md#modify-config-through-script-arguments).
+Additionally, if you want to keep the original file under `configs` unchanged, you can specify `--cfg-options` in commands by referring to this [guide](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/1_config.md#modify-config-through-script-arguments).
 
 ```shell
 python tools/test.py \
@@ -86,7 +86,7 @@ python tools/test.py \
 
 The default backend of visualization is `LocalVisBackend`, which means storing the visualization results locally.
 Backend related configuration is in `configs/_base_/default_runtime.py`.
-In order to enable TensorBoard visualization as well, modify the `visulizer` just as this [configuration](#tensorboard-configuration).
+In order to enable TensorBoard visualization as well, modify the `visulizer` just as this [configuration](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/visualization.md#tensorboard-configuration).
 Assume the `vis_data` path of a particular test is
 
 ```shell

@@ -4,7 +4,7 @@ In this tutorial, we will introduce some methods about how to customize optimiza
 
 ## Customize optimization settings
 
-Optimization related configuration is now all managed by OptimWrapper, which is a high-level API of optimizer. The OptimWrapper supports different training strategies, including auto mixed precision training, gradient accumulation and gradient clipping. `optim_wrapper` usually has three fields: `optimizer`, `paramwise_cfg`, `clip_grad`, refer to [OptimWrapper](https://mmengine.readthedocs.io/en/latest/tutorials/optim_wrapper.md) for more detail. See the example below, where `Adam` is used as an optimizer and gradient clipping is added.
+Optimization related configuration is now all managed by OptimWrapper, which is a high-level API of optimizer. The OptimWrapper supports different training strategies, including auto mixed precision training, gradient accumulation and gradient clipping. `optim_wrapper` usually has three fields: `optimizer`, `paramwise_cfg`, `clip_grad`, refer to [OptimWrapper](https://mmengine.readthedocs.io/en/latest/tutorials/optim_wrapper.html) for more detail. See the example below, where `Adam` is used as an optimizer and gradient clipping is added.
 
 ```python
 optim_wrapper = dict(
@@ -139,7 +139,7 @@ We list some common settings that could stabilize the training or accelerate the
         _delete_=True, clip_grad=dict(max_norm=35, norm_type=2))
   ```
 
-  If your config inherits the base config which already sets the `optim_wrapper`, you might need `_delete_=True` to override the unnecessary settings. See the [config documentation](../user_guides/config.md) for more details.
+  If your config inherits the base config which already sets the `optim_wrapper`, you might need `_delete_=True` to override the unnecessary settings. See the [config documentation](https://github.com/open-mmlab/mmflow/blob/dev-1.x/docs/en/user_guides/1_config.md) for more details.
 
 - **Use momentum schedule to accelerate model convergence**:
   We support momentum scheduler to modify model's momentum according to learning rate, which could make the model converge in a faster way.
@@ -226,7 +226,7 @@ We also support many other learning rate schedules [here](https://github.com/ope
 
 #### 1. Implement a new hook
 
-MMEngine provides many useful [hooks](https://mmengine.readthedocs.io/en/latest/tutorials/hooks.html), but there are some occasions when the users might need to implement a new hook. MMFlow supports customized hooks in training in v1.0. Thus the users could implement a hook directly in mmflow and use the hook by only modifying the config in training.
+MMEngine provides many useful [hooks](https://mmengine.readthedocs.io/en/latest/tutorials/hook.html), but there are some occasions when the users might need to implement a new hook. MMFlow supports customized hooks in training in v1.0. Thus the users could implement a hook directly in mmflow and use the hook by only modifying the config in training.
 Here we give an example of creating a new hook in mmflow and using it in training.
 
 ```python
