@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import os.path as osp
+import re
 
 import numpy as np
 import pytest
@@ -191,12 +192,16 @@ class TestFlyingThings3DSubset:
             elif self.scene == 'right':
                 assert len(dataset) == 4
                 for data_info in dataset:
-                    img1_path = data_info['img1_path'].split(osp.sep)[-1]
-                    img2_path = data_info['img2_path'].split(osp.sep)[-1]
-                    flow_fw_path = data_info['flow_fw_path'].split(osp.sep)[-1]
-                    flow_bw_path = data_info['flow_bw_path'].split(osp.sep)[-1]
-                    occ_fw_path = data_info['occ_fw_path'].split(osp.sep)[-1]
-                    occ_bw_path = data_info['occ_bw_path'].split(osp.sep)[-1]
+                    img1_path = re.split(r'[/\\]', data_info['img1_path'])[-1]
+                    img2_path = re.split(r'[/\\]', data_info['img2_path'])[-1]
+                    flow_fw_path = re.split(r'[/\\]',
+                                            data_info['flow_fw_path'])[-1]
+                    flow_bw_path = re.split(r'[/\\]',
+                                            data_info['flow_bw_path'])[-1]
+                    occ_fw_path = re.split(r'[/\\]',
+                                           data_info['occ_fw_path'])[-1]
+                    occ_bw_path = re.split(r'[/\\]',
+                                           data_info['occ_bw_path'])[-1]
                     assert int(img1_path[:-4]) + 1 == int(img2_path[:-4])
                     assert (img1_path[:-4] == flow_fw_path[:-4] ==
                             occ_fw_path[:-4])
