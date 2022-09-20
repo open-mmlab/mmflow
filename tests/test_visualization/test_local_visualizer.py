@@ -35,6 +35,3 @@ class TestFlowLocalVisualizer(TestCase):
 
         flow_local_visualizer.add_datasample(
             'exclude_pred_flow', None, data_sample, draw_pred=False)
-
-        flow_local_visualizer.add_datasample(
-            'visualization', None, data_sample, show=True, wait_time=1)
