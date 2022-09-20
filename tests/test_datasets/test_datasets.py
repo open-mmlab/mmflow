@@ -191,12 +191,12 @@ class TestFlyingThings3DSubset:
             elif self.scene == 'right':
                 assert len(dataset) == 4
                 for data_info in dataset:
-                    img1_path = data_info['img1_path'].split(osp.sep)[-1]
-                    img2_path = data_info['img2_path'].split(osp.sep)[-1]
-                    flow_fw_path = data_info['flow_fw_path'].split(osp.sep)[-1]
-                    flow_bw_path = data_info['flow_bw_path'].split(osp.sep)[-1]
-                    occ_fw_path = data_info['occ_fw_path'].split(osp.sep)[-1]
-                    occ_bw_path = data_info['occ_bw_path'].split(osp.sep)[-1]
+                    img1_path = data_info['img1_path'].split('/')[-1]
+                    img2_path = data_info['img2_path'].split('/')[-1]
+                    flow_fw_path = data_info['flow_fw_path'].split('/')[-1]
+                    flow_bw_path = data_info['flow_bw_path'].split('/')[-1]
+                    occ_fw_path = data_info['occ_fw_path'].split('/')[-1]
+                    occ_bw_path = data_info['occ_bw_path'].split('/')[-1]
                     assert int(img1_path[:-4]) + 1 == int(img2_path[:-4])
                     assert (img1_path[:-4] == flow_fw_path[:-4] ==
                             occ_fw_path[:-4])
