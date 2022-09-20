@@ -129,7 +129,7 @@ jobs:
         run: pip install -e .
       - name: Run unittests
         run: |
-          coverage run --branch --source mmflow -m pytest tests/
+          coverage run --branch --source mmflow -m pytest tests/ --ignore tests/test_models/test_flow_estimators.py
       - name: Generate coverage report
         run: |
           coverage xml
