@@ -78,7 +78,7 @@ class BasicBlock(BaseModule):
             if self.downsample is not None:
                 identity = self.downsample(x)
 
-            out += identity
+            out = out + identity
 
             return out
 
@@ -288,7 +288,7 @@ class Bottleneck(BaseModule):
             if self.downsample is not None:
                 identity = self.downsample(x)
 
-            out += identity
+            out = out + identity
 
             return out
 
