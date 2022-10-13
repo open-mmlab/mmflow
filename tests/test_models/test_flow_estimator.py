@@ -44,6 +44,7 @@ def test_flow_estimator(cfg_file):
 
 @pytest.mark.parametrize('cfg_file', [
     '../../configs/_base_/models/raft.py',
+    '../../configs/_base_/models/flow1d.py',
     '../../configs/_base_/models/flownets.py',
     '../../configs/_base_/models/flownet2/flownet2sd.py',
     '../../configs/_base_/models/gma/gma.py',
@@ -57,7 +58,7 @@ def test_flow_estimator_without_cuda(cfg_file):
 
     cfg_file = osp.join(osp.dirname(__file__), cfg_file)
     cfg = Config.fromfile(cfg_file)
-    if cfg.model.type == 'RAFT':
+    if cfg.model.type == 'RAFT' or cfg.model.type == 'Flow1D':
         # Replace SyncBN with BN to inference on CPU
         cfg.model.cxt_encoder.norm_cfg = dict(type='BN', requires_grad=True)
 
