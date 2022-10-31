@@ -1,6 +1,6 @@
 model = dict(
     type='Flow1D',
-    radius=4,
+    radius=32,
     cxt_channels=128,
     h_channels=128,
     encoder=dict(
@@ -34,7 +34,7 @@ model = dict(
     decoder=dict(
         type='Flow1DDecoder',
         net_type='Basic',
-        radius=4,
+        radius=32,
         iters=12,
         corr_op_cfg=dict(type='CorrLookupFlow1D', align_corners=True),
         gru_type='SeqConv',

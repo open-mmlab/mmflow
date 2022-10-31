@@ -14,41 +14,27 @@ from ..builder import DECODERS, build_loss
 from ..utils.attention1d import Attention1D
 from ..utils.correlation1d import Correlation1D
 from .base_decoder import BaseDecoder
-from .raft_decoder import ConvGRU, XHead
+from .raft_decoder import ConvGRU, XHead, MotionEncoder
 
 
-class MotionEncoderFlow1D(BaseModule):
+class MotionEncoderFlow1D(MotionEncoder):
     """The module of motion encoder for Flow1D.
 
     An encoder which consists of several convolution layers and outputs
     features as GRU's input.
 
     Args:
-        num_levels (int): Number of levels used when calculating correlation
-            tensor. Default: 4.
         radius (int): Radius used when calculating correlation tensor.
-            Default: 4.
+            Default: 32.
         net_type (str): Type of the net. Choices: ['Basic', 'Small'].
             Default: 'Basic'.
     """
-    _corr_channels = {'Basic': (256, 192), 'Small': 96}
-    _corr_kernel = {'Basic': (1, 3), 'Small': 1}
-    _corr_padding = {'Basic': (0, 1), 'Small': 0}
-
-    _flow_channels = {'Basic': (128, 64), 'Small': (64, 32)}
-    _flow_kernel = {'Basic': (7, 3), 'Small': (7, 3)}
-    _flow_padding = {'Basic': (3, 1), 'Small': (3, 1)}
-
-    _out_channels = {'Basic': 126, 'Small': 80}
-    _out_kernel = {'Basic': 3, 'Small': 3}
-    _out_padding = {'Basic': 1, 'Small': 1}
 
     def __init__(self,
-                 radius: int = 4,
+                 radius: int = 32,
                  net_type: str = 'Basic',
                  **kwargs) -> None:
-        super().__init__()
-        assert net_type in ['Basic', 'Small']
+        super().__init__(radius=radius, net_type=net_type, **kwargs)
         corr_channels = self._corr_channels.get(net_type) if isinstance(
             self._corr_channels[net_type],
             (tuple, list)) else [self._corr_channels[net_type]]
@@ -59,68 +45,10 @@ class MotionEncoderFlow1D(BaseModule):
             self._corr_padding.get(net_type),
             (tuple, list)) else [self._corr_padding.get(net_type)]
 
-        flow_channels = self._flow_channels.get(net_type)
-        flow_kernel = self._flow_kernel.get(net_type)
-        flow_padding = self._flow_padding.get(net_type)
-
-        self.out_channels = self._out_channels.get(net_type) if isinstance(
-            self._out_channels.get(net_type),
-            (tuple, list)) else [self._out_channels.get(net_type)]
-        out_kernel = self._out_kernel.get(net_type) if isinstance(
-            self._out_kernel.get(net_type),
-            (tuple, list)) else [self._out_kernel.get(net_type)]
-        out_padding = self._out_padding.get(net_type) if isinstance(
-            self._out_padding.get(net_type),
-            (tuple, list)) else [self._out_padding.get(net_type)]
-
         corr_inch = 2 * (2 * radius + 1)
         corr_net = self._make_encoder(corr_inch, corr_channels, corr_kernel,
                                       corr_padding, **kwargs)
         self.corr_net = nn.Sequential(*corr_net)
-
-        flow_inch = 2
-        flow_net = self._make_encoder(flow_inch, flow_channels, flow_kernel,
-                                      flow_padding, **kwargs)
-        self.flow_net = nn.Sequential(*flow_net)
-
-        out_inch = corr_channels[-1] + flow_channels[-1]
-        out_net = self._make_encoder(out_inch, self.out_channels, out_kernel,
-                                     out_padding, **kwargs)
-        self.out_net = nn.Sequential(*out_net)
-
-    def _make_encoder(self, in_channel: int, channels: int, kernels: int,
-                      paddings: int, conv_cfg: dict, norm_cfg: dict,
-                      act_cfg: dict) -> None:
-        encoder = []
-
-        for ch, k, p in zip(channels, kernels, paddings):
-            encoder.append(
-                ConvModule(
-                    in_channels=in_channel,
-                    out_channels=ch,
-                    kernel_size=k,
-                    padding=p,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
-            in_channel = ch
-        return encoder
-
-    def forward(self, corr: torch.Tensor, flow: torch.Tensor) -> torch.Tensor:
-        """Forward function for MotionEncoder.
-
-        Args:
-            corr (Tensor): The correlation feature.
-            flow (Tensor): The last estimated optical flow.
-
-        Returns:
-            Tensor: The output feature of motion encoder.
-        """
-        corr_feat = self.corr_net(corr)
-        flow_feat = self.flow_net(flow)
-
-        out = self.out_net(torch.cat([corr_feat, flow_feat], dim=1))
-        return torch.cat([out, flow], dim=1)
 
 
 class PositionEmbeddingSine(nn.Module):
@@ -235,7 +163,7 @@ class Flow1DDecoder(BaseDecoder):
         self.h_channels = self._h_channels.get(net_type)
         self.cxt_channels = self._cxt_channels.get(net_type)
         self.iters = iters
-        self.mask_channels = mask_channels * (2 * radius + 1)
+        self.mask_channels = mask_channels * 9
         corr_op_cfg['radius'] = radius
         self.corr_lookup = build_operators(corr_op_cfg)
         self.encoder = MotionEncoderFlow1D(
@@ -276,7 +204,7 @@ class Flow1DDecoder(BaseDecoder):
             Tensor: The output optical flow with the shape [N, 2, H, W].
         """
         scale = 8
-        grid_size = self.radius * 2 + 1
+        grid_size = 9
         grid_side = int(math.sqrt(grid_size))
         N, _, H, W = flow.shape
         if mask is None:
