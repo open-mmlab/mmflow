@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from .context_net import ContextNet
+from .flow1d_decoder import Flow1DDecoder
 from .flownet_decoder import FlowNetCDecoder, FlowNetSDecoder
 from .gma_decoder import GMADecoder
 from .irr_refine import FlowRefine, OccRefine, OccShuffleUpsample
@@ -13,5 +14,5 @@ __all__ = [
     'FlowNetCDecoder', 'FlowNetSDecoder', 'PWCNetDecoder',
     'MaskFlowNetSDecoder', 'NetE', 'ContextNet', 'RAFTDecoder', 'FlowRefine',
     'OccRefine', 'OccShuffleUpsample', 'IRRPWCDecoder', 'MaskFlowNetDecoder',
-    'GMADecoder'
+    'GMADecoder', 'Flow1DDecoder'
 ]

@@ -583,7 +583,7 @@ class InputPad(BaseTransform):
         elif self.position == 'right':
             self._pad = [[pad_h // 2, pad_h - pad_h // 2], [pad_w, 0]]
         elif self.position == 'top':
-            self._pad = [[0, pad_h, pad_w // 2], [pad_w - pad_w // 2]]
+            self._pad = [[0, pad_h], [pad_w // 2, pad_w - pad_w // 2]]
         elif self.position == 'down':
             self._pad = [[pad_h, 0], [pad_w // 2, pad_w - pad_w // 2]]
         if len(img1.shape) > 2:
