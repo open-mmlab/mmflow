@@ -17,7 +17,7 @@ def digit_version(version_str):
 
 
 mmcv_minimum_version = '1.3.15'
-mmcv_maximum_version = '1.7.0'
+mmcv_maximum_version = '1.8.0'
 mmcv_version = digit_version(mmcv.__version__)
 
 assert (mmcv_version >= digit_version(mmcv_minimum_version)
