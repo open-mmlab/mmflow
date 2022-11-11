@@ -753,7 +753,6 @@ class RandomCrop:
 class ColorJitter:
     """Randomly change the brightness, contrast, saturation and hue of
     an image.
-    
     Args:
         asymmetric_prob (float): the probability to do color jitter for two
             images asymmetrically.
