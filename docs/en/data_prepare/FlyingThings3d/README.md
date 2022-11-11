@@ -87,7 +87,7 @@ You can use the following command to generate annotation file.
 python tools/dataset_converters/prepare_flyingthings3d.py [optional arguments]
 ```
 
-This scrip accepts these arguments:
+This script accepts these arguments:
 
 - `--data-root ${DATASET_DIR}`: The dataset directory of FlyingThings3D, default to `'data/flyingthings3d'`.
 

@@ -35,7 +35,7 @@ You can use the following command to generate annotation file.
 python tools/dataset_converters/prepare_kitti2012.py [optional arguments]
 ```
 
-This scrip accepts these arguments:
+This script accepts these arguments:
 
 - `--data-root ${DATASET_DIR}`: The dataset directory of FlyingChairs, default to `'data/kitti2012'`.
 
