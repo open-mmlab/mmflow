@@ -31,7 +31,7 @@ write_flow(result, flow_file='flow.flo')
 flow_map = visualize_flow(result, save_file='flow_map.png')
 ```
 
-An image demo can be found in [demo/image_demo.py](../../demo/image_demo.py).
+An image demo can be found in [demo/image_demo.py](../../../demo/image_demo.py).
 
 ## Evaluate existing models on standard datasets
 
