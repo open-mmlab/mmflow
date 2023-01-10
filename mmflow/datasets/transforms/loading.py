@@ -288,7 +288,7 @@ class LoadImageFromWebcam(LoadImageFromFile):
     ``results['img']``.
     """
 
-    def __call__(self, results: dict) -> dict:
+    def transform(self, results: dict) -> dict:
         """Call function to add image meta information.
 
         Args:
@@ -312,3 +312,29 @@ class LoadImageFromWebcam(LoadImageFromFile):
         results['ori_shape'] = img1.shape[:2]
 
         return results
+
+
+@TRANSFORMS.register_module()
+class InferencerLoader():
+    """Input loader for flow inferencer."""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        self.from_file = TRANSFORMS.build(
+            dict(type='LoadImageFromFile', **kwargs))
+        self.from_ndarray = TRANSFORMS.build(
+            dict(type='LoadImageFromWebcam', **kwargs))
+
+    def __call__(self, img1: Union[str, np.ndarray],
+                 img2: Union[str, np.ndarray]) -> Dict:
+        if isinstance(img1, str):
+            inputs = dict(img1_path=img1, img2_path=img2)
+        elif isinstance(img1, np.ndarray):
+            inputs = dict(img1=img1, img2=img2)
+        else:
+            raise NotImplementedError
+
+        if 'img1' in inputs:
+            return self.from_ndarray(inputs)
+        return self.from_file(inputs)
