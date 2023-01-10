@@ -88,3 +88,18 @@ class TestLoading:
         assert np.all(results['gt_flow_fw'] == flow)
         assert results['gt_flow_fw'].shape == (50, 50, 2)
         assert results['gt_flow_fw'].dtype == np.float32
+
+
+def test_inferencer_loader():
+    transform_img = dict(type='InferencerLoader')
+    transform = TRANSFORMS.build(transform_img)
+    # test input 2 file name
+    results = transform(img1_, img2_)
+    assert results['img1'].shape == (50, 50, 3)
+    assert results['img2'].shape == (50, 50, 3)
+    # test input 2 ndarray
+    img1 = np.random.randint(0, 255, size=(10, 10, 3))
+    img2 = np.random.randint(0, 255, size=(10, 10, 3))
+    results = transform(img1, img2)
+    assert results['img1'].shape == (10, 10, 3)
+    assert results['img2'].shape == (10, 10, 3)
