@@ -314,7 +314,8 @@ class LoadImageFromWebcam(LoadImageFromFile):
         return results
 
 
-class InferencerLoader(BaseTransform):
+@TRANSFORMS.register_module()
+class InferencerLoader():
     """Input loader for flow inferencer."""
 
     def __init__(self, **kwargs) -> None:
@@ -325,8 +326,8 @@ class InferencerLoader(BaseTransform):
         self.from_ndarray = TRANSFORMS.build(
             dict(type='LoadImageFromWebcam', **kwargs))
 
-    def transform(self, img1: Union[str, np.ndarray],
-                  img2: Union[str, np.ndarray]) -> Dict:
+    def __call__(self, img1: Union[str, np.ndarray],
+                 img2: Union[str, np.ndarray]) -> Dict:
         if isinstance(img1, str):
             inputs = dict(img1_path=img1, img2_path=img2)
         elif isinstance(img1, np.ndarray):
