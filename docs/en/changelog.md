@@ -21,6 +21,7 @@
 - Update mmcv max version ([#256](https://github.com/open-mmlab/mmflow/pull/256))
 - Update pre-commit hooks ([#258](https://github.com/open-mmlab/mmflow/pull/258))
 - Fix the deprecation of `np.int` ([#270](https://github.com/open-mmlab/mmflow/pull/270))
+- Fix the deprecation of `sklearn` PyPI package ([272](https://github.com/open-mmlab/mmflow/pull/272))
 
 ### New Contributors
 
