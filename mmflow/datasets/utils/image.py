@@ -25,7 +25,7 @@ def adjust_hue(img, hue_factor):
     else:
         assert hue_factor >= -0.5 and hue_factor <= 0.5
         img = mmcv.bgr2hsv(img)
-        img[:, :, 0] = (img[:, :, 0].astype(np.int) + int(hue_factor * 180.) +
+        img[:, :, 0] = (img[:, :, 0].astype(np.int_) + int(hue_factor * 180.) +
                         180) % 180
         img = mmcv.hsv2bgr(img)
         return img
