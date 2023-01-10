@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.5.2(01/10/2023)
+
+### New Features
+
+- Add flow1d attention ([#195](https://github.com/open-mmlab/mmflow/pull/195))
+
+### Fix bugs
+
+- Fix some URLs of RAFT ([#206](https://github.com/open-mmlab/mmflow/pull/206))
+- Fix in-place operator in RAFT ([#252](https://github.com/open-mmlab/mmflow/pull/252))
+- Fix the deprecation of `np.int` ([#270](https://github.com/open-mmlab/mmflow/pull/270))
+- Fix the deprecation of `sklearn` PyPI package ([272](https://github.com/open-mmlab/mmflow/pull/272))
+
+### Documentation
+
+- Update intro.md ([#238](https://github.com/open-mmlab/mmflow/pull/238))
+- Update 1_inference.md ([#267](https://github.com/open-mmlab/mmflow/pull/267))
+
+### Improvements
+
+- Update mmcv max version ([#256](https://github.com/open-mmlab/mmflow/pull/256))
+- Update pre-commit hooks ([#258](https://github.com/open-mmlab/mmflow/pull/258))
+
+### New Contributors
+
+- @Fc-idris made their first contribution in <https://github.com/open-mmlab/mmflow/pull/195>
+- @Salvatore-tech made their first contribution in <https://github.com/open-mmlab/mmflow/pull/238>
+- @forkbabu made their first contribution in <https://github.com/open-mmlab/mmflow/pull/267>
+
 ## v0.5.1(07/29/2022)
 
 ### Improvements
@@ -9,7 +38,7 @@
 
 ### New Contributors
 
-- @Weepingchestnut made their first contribution in https://github.com/open-mmlab/mmflow/pull/166
+- @Weepingchestnut made their first contribution in <https://github.com/open-mmlab/mmflow/pull/166>
 
 ## v0.5.0(07/01/2022)
 
@@ -67,8 +96,8 @@
 
 ## New Contributors
 
-- @HiiiXinyiii made their first contribution in https://github.com/open-mmlab/mmflow/pull/118
-- @SheffieldCao made their first contribution in https://github.com/open-mmlab/mmflow/pull/126
+- @HiiiXinyiii made their first contribution in <https://github.com/open-mmlab/mmflow/pull/118>
+- @SheffieldCao made their first contribution in <https://github.com/open-mmlab/mmflow/pull/126>
 
 ## v0.4.0(04/01/2022)
 

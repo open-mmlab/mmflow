@@ -45,7 +45,7 @@ MMFlow is an open source optical flow toolbox based on PyTorch. It is a part of 
 
 The master branch works with **PyTorch 1.5+**.
 
-https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4
+<https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-9dd6-fcd809a7d991.mp4>
 
 ### Major features
 
@@ -65,10 +65,9 @@ https://user-images.githubusercontent.com/76149310/141947796-af4f1e67-60c9-48ed-
 
 ## What's New
 
-**v0.5.1** was released in 07/29/2022:
+**v0.5.2** was released in 01/10/2023:
 
-- Set the maximum version of MMCV to 1.7.0
-- Update the qq_group_qrcode image in resources
+- Add flow1d attention
 
 Please refer to [changelog.md](docs/en/changelog.md) for details and release history.
 
