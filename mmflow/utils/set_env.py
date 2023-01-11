@@ -11,7 +11,6 @@ from ..utils import get_root_logger
 def setup_multi_processes(cfg):
     """Setup multi-processing environment variables."""
     logger = get_root_logger()
-
     # set multi-process start method
     if platform.system() != 'Windows':
         mp_start_method = cfg.get('mp_start_method', None)
@@ -31,7 +30,13 @@ def setup_multi_processes(cfg):
     else:
         logger.info(f'OpenCV num_threads is `{cv2.getNumThreads()}')
 
-    if cfg.data.train_dataloader.workers_per_gpu > 1:
+    if cfg.data.get('train_dataloader') is not None:
+        workers_per_gpu = cfg.data.train_dataloader.get('workers_per_gpu', 0)
+    elif cfg.data.get('test_dataloader') is not None:
+        workers_per_gpu = cfg.data.test_dataloader.get('workers_per_gpu', 0)
+    else:
+        workers_per_gpu = 0
+    if workers_per_gpu > 1:
         # setup OMP threads
         # This code is referred from https://github.com/pytorch/pytorch/blob/master/torch/distributed/run.py  # noqa
         omp_num_threads = cfg.get('omp_num_threads', None)
