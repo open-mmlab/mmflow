@@ -2,9 +2,9 @@
 import os.path as osp
 
 from mmflow.registry import DATASETS
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
-register_all_modules()
+init_default_scope('mmflow')
 data_root = osp.join(osp.dirname(__file__), '../data/pseudo_sintel')
 
 dataset_A_cfg = dict(

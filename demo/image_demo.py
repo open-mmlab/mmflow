@@ -6,7 +6,7 @@ from mmengine.utils import mkdir_or_exist
 
 from mmflow.apis import inference_model, init_model
 from mmflow.datasets import visualize_flow, write_flow
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
 
 def parse_args():
@@ -30,7 +30,7 @@ def parse_args():
 
 def main(args):
     # register all modules in mmflow into the registries
-    register_all_modules()
+    init_default_scope('mmflow')
 
     # build the model from a config file and a checkpoint file
     model = init_model(args.config, args.checkpoint, device=args.device)

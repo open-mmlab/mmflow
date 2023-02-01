@@ -8,7 +8,7 @@ from numpy import ndarray
 
 from mmflow.apis import inference_model, init_model
 from mmflow.datasets import visualize_flow
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
 try:
     import imageio
@@ -37,7 +37,7 @@ def main(args):
     assert args.out[-3:] == 'gif' or args.out[-3:] == 'mp4', \
         f'Output file must be gif and mp4, but got {args.out[-3:]}.'
 
-    register_all_modules()
+    init_default_scope('mmflow')
 
     # build the model from a config file and a checkpoint file
     model = init_model(args.config, args.checkpoint, device=args.device)

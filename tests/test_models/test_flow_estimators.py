@@ -11,9 +11,9 @@ from torch import Tensor
 from mmflow.models import MaskFlowNetS, build_flow_estimator
 from mmflow.models.flow_estimators.base_flow_estimator import FlowEstimator
 from mmflow.structures import FlowDataSample
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
-register_all_modules()
+init_default_scope('mmflow')
 
 
 def _demo_model_inputs(H=64, W=64):

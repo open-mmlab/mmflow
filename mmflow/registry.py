@@ -21,6 +21,7 @@ from mmengine.registry import \
     RUNNER_CONSTRUCTORS as MMENGINE_RUNNER_CONSTRUCTORS
 from mmengine.registry import RUNNERS as MMENGINE_RUNNERS
 from mmengine.registry import TASK_UTILS as MMENGINE_TASK_UTILS
+from mmengine.registry import EVALUATOR as MMENGINE_EVALUATOR
 from mmengine.registry import TRANSFORMS as MMENGINE_TRANSFORMS
 from mmengine.registry import VISBACKENDS as MMENGINE_VISBACKENDS
 from mmengine.registry import VISUALIZERS as MMENGINE_VISUALIZERS
@@ -39,12 +40,13 @@ LOOPS = Registry('loop', parent=MMENGINE_LOOPS)
 HOOKS = Registry('hook', parent=MMENGINE_HOOKS)
 
 # manage data-related modules
-DATASETS = Registry('dataset', parent=MMENGINE_DATASETS)
+DATASETS = Registry(
+    'dataset', parent=MMENGINE_DATASETS, locations=['mmflow.datasets'])
 DATA_SAMPLERS = Registry('data sampler', parent=MMENGINE_DATA_SAMPLERS)
 TRANSFORMS = Registry('transform', parent=MMENGINE_TRANSFORMS)
 
 # mangage all kinds of modules inheriting `nn.Module`
-MODELS = Registry('model', parent=MMENGINE_MODELS)
+MODELS = Registry('model', parent=MMENGINE_MODELS, locations=['mmflow.models'])
 # mangage all kinds of model wrappers like 'MMDistributedDataParallel'
 MODEL_WRAPPERS = Registry('model_wrapper', parent=MMENGINE_MODEL_WRAPPERS)
 # mangage all kinds of weight initialization modules like `Uniform`
@@ -60,12 +62,17 @@ OPTIM_WRAPPER_CONSTRUCTORS = Registry(
 PARAM_SCHEDULERS = Registry(
     'parameter scheduler', parent=MMENGINE_PARAM_SCHEDULERS)
 # manage all kinds of metrics
-METRICS = Registry('metric', parent=MMENGINE_METRICS)
-
+METRICS = Registry(
+    'metric', parent=MMENGINE_METRICS, locations=['mmflow.evaluation'])
+EVALUATOR = Registry(
+    'evaluator', parent=MMENGINE_EVALUATOR, locations=['mmflow.evaluation'])
 # manage task-specific modules like warp
 TASK_UTILS = Registry('task util', parent=MMENGINE_TASK_UTILS)
 
 # manage visualizer
-VISUALIZERS = Registry('visualizer', parent=MMENGINE_VISUALIZERS)
+VISUALIZERS = Registry(
+    'visualizer',
+    parent=MMENGINE_VISUALIZERS,
+    locations=['mmflow.visualization'])
 # manage visualizer backend
 VISBACKENDS = Registry('vis_backend', parent=MMENGINE_VISBACKENDS)
