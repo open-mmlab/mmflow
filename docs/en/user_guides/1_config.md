@@ -139,11 +139,11 @@ relative_transform = dict(
     shear=(1.0, 1.0),
     rotate=(-1.0, 1.0))
 
-file_client_args = dict(backend='disk')  # File client arguments.
+backend_args = dict(backend='local')  # File client arguments.
 
 train_pipeline = [  # Training pipeline.
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),  # Load images.
-    dict(type='LoadAnnotations', file_client_args=file_client_args),  # Load flow data.
+    dict(type='LoadImageFromFile', backend_args=backend_args),  # Load images.
+    dict(type='LoadAnnotations', backend_args=backend_args),  # Load flow data.
     dict(
         type='ColorJitter',  # Randomly change the brightness, contrast, saturation and hue of an image.
         brightness=0.5,  # How much to jitter brightness.

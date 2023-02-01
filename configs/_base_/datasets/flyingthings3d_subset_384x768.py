@@ -15,13 +15,13 @@ relative_transform = dict(
     shear=(1.0, 1.0),
     rotate=(-1.0, 1.0))
 
-# file_client_args = dict(
+# backend_args = dict(
 #     backend='petrel',
 #     path_mapping=dict({
 #         './data/': 's3://openmmlab/datasets/mmflow/',
 #         'data/': 's3://openmmlab/datasets/mmflow/'
 #     }))
-file_client_args = dict(backend='disk')
+backend_args = dict(backend='local')
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
