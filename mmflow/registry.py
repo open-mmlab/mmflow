@@ -35,15 +35,16 @@ RUNNERS = Registry('runner', parent=MMENGINE_RUNNERS)
 RUNNER_CONSTRUCTORS = Registry(
     'runner constructor', parent=MMENGINE_RUNNER_CONSTRUCTORS)
 # manage all kinds of loops like `EpochBasedTrainLoop`
-LOOPS = Registry('loop', parent=MMENGINE_LOOPS)
+LOOPS = Registry('loop', parent=MMENGINE_LOOPS, locations=['mmflow.engine'])
 # manage all kinds of hooks like `CheckpointHook`
-HOOKS = Registry('hook', parent=MMENGINE_HOOKS)
+HOOKS = Registry('hook', parent=MMENGINE_HOOKS, locations=['mmflow.engine'])
 
 # manage data-related modules
 DATASETS = Registry(
     'dataset', parent=MMENGINE_DATASETS, locations=['mmflow.datasets'])
 DATA_SAMPLERS = Registry('data sampler', parent=MMENGINE_DATA_SAMPLERS)
-TRANSFORMS = Registry('transform', parent=MMENGINE_TRANSFORMS)
+TRANSFORMS = Registry(
+    'transform', parent=MMENGINE_TRANSFORMS, locations=['mmflow.datasets'])
 
 # mangage all kinds of modules inheriting `nn.Module`
 MODELS = Registry('model', parent=MMENGINE_MODELS, locations=['mmflow.models'])
@@ -60,7 +61,9 @@ OPTIM_WRAPPER_CONSTRUCTORS = Registry(
     'optimizer constructor', parent=MMENGINE_OPTIM_WRAPPER_CONSTRUCTORS)
 # mangage all kinds of parameter schedulers like `MultiStepLR`
 PARAM_SCHEDULERS = Registry(
-    'parameter scheduler', parent=MMENGINE_PARAM_SCHEDULERS)
+    'parameter scheduler',
+    parent=MMENGINE_PARAM_SCHEDULERS,
+    locations=['mmflow.engine'])
 # manage all kinds of metrics
 METRICS = Registry(
     'metric', parent=MMENGINE_METRICS, locations=['mmflow.evaluation'])
