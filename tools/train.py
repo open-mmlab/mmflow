@@ -6,10 +6,8 @@ import os.path as osp
 
 from mmengine.config import Config, DictAction
 from mmengine.logging import print_log
-from mmengine.registry import RUNNERS
+from mmengine.registry import RUNNERS, init_default_scope
 from mmengine.runner import Runner
-
-from mmflow.utils import register_all_modules
 
 
 def parse_args():

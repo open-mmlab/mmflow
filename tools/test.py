@@ -4,9 +4,8 @@ import os
 import os.path as osp
 
 from mmengine.config import Config, DictAction
+from mmengine.registry import init_default_scope
 from mmengine.runner import Runner
-
-from mmflow.utils import register_all_modules
 
 
 # TODO: support fuse_conv_bn and format_only
