@@ -4,6 +4,7 @@ import os.path as osp
 import pytest
 import torch
 from mmengine.config import Config
+from mmengine.registry import init_default_scope
 from mmengine.structures import PixelData
 from mmengine.utils import is_list_of
 from torch import Tensor
@@ -11,7 +12,6 @@ from torch import Tensor
 from mmflow.models import MaskFlowNetS, build_flow_estimator
 from mmflow.models.flow_estimators.base_flow_estimator import FlowEstimator
 from mmflow.structures import FlowDataSample
-from mmengine.registry import init_default_scope
 
 init_default_scope('mmflow')
 

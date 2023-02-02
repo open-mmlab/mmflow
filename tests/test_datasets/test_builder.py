@@ -1,8 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import os.path as osp
 
-from mmflow.registry import DATASETS
 from mmengine.registry import init_default_scope
+
+from mmflow.registry import DATASETS
 
 init_default_scope('mmflow')
 data_root = osp.join(osp.dirname(__file__), '../data/pseudo_sintel')

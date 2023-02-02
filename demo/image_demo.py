@@ -2,11 +2,11 @@
 import os.path as osp
 from argparse import ArgumentParser
 
+from mmengine.registry import init_default_scope
 from mmengine.utils import mkdir_or_exist
 
 from mmflow.apis import inference_model, init_model
 from mmflow.datasets import visualize_flow, write_flow
-from mmengine.registry import init_default_scope
 
 
 def parse_args():

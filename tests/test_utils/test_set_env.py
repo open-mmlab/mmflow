@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from mmengine import DefaultScope
 
-from mmengine.registry import init_default_scope
+from mmflow.utils import register_all_modules
 
 
 class TestSetupEnv(TestCase):

@@ -4,7 +4,6 @@ import os
 import os.path as osp
 
 from mmengine.config import Config, DictAction
-from mmengine.registry import init_default_scope
 from mmengine.runner import Runner
 
 
@@ -50,9 +49,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-    # register all modules in mmflow into the registries
-    # do not init the default scope here because it will be init in the runner
-    register_all_modules(init_default_scope=False)
 
     # load config
     cfg = Config.fromfile(args.config)
