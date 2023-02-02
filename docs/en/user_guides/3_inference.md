@@ -12,14 +12,14 @@ Please download the [pre-trained model](https://download.openmmlab.com/mmflow/pw
 ```python
 from mmflow.apis import init_model, inference_model
 from mmflow.datasets import visualize_flow, write_flow
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
 # Specify the path to model config and checkpoint file
 config_file = 'configs/pwcnet/pwcnet_8xb1_slong_flyingchairs-384x448.py'
 checkpoint_file = 'checkpoints/pwcnet_8x1_slong_flyingchairs_384x448.pth'
 
 # register all modules in mmflow into the registries
-register_all_modules()
+init_default_scope('mmflow')
 
 # build the model from a config file and a checkpoint file
 model = init_model(config_file, checkpoint_file, device='cuda:0')

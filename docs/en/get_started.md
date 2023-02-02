@@ -96,9 +96,9 @@ Option (b). If you install mmflow with pip, open you python interpreter and copy
 
 ```python
 from mmflow.apis import inference_model, init_model
-from mmflow.utils import register_all_modules
+from mmengine.registry import init_default_scope
 
-register_all_modules()
+init_default_scope('mmflow')
 config_file = 'pwcnet-ft_4xb1_300k_sintel-final-384x768.py'
 checkpoint_file = 'pwcnet_ft_4x1_300k_sintel_final_384x768.pth'
 device = 'cuda:0'
