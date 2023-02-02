@@ -8,6 +8,7 @@ https://mmengine.readthedocs.io/en/latest/tutorials/registry.html.
 
 from mmengine.registry import DATA_SAMPLERS as MMENGINE_DATA_SAMPLERS
 from mmengine.registry import DATASETS as MMENGINE_DATASETS
+from mmengine.registry import EVALUATOR as MMENGINE_EVALUATOR
 from mmengine.registry import HOOKS as MMENGINE_HOOKS
 from mmengine.registry import LOOPS as MMENGINE_LOOPS
 from mmengine.registry import METRICS as MMENGINE_METRICS
@@ -34,17 +35,19 @@ RUNNERS = Registry('runner', parent=MMENGINE_RUNNERS)
 RUNNER_CONSTRUCTORS = Registry(
     'runner constructor', parent=MMENGINE_RUNNER_CONSTRUCTORS)
 # manage all kinds of loops like `EpochBasedTrainLoop`
-LOOPS = Registry('loop', parent=MMENGINE_LOOPS)
+LOOPS = Registry('loop', parent=MMENGINE_LOOPS, locations=['mmflow.engine'])
 # manage all kinds of hooks like `CheckpointHook`
-HOOKS = Registry('hook', parent=MMENGINE_HOOKS)
+HOOKS = Registry('hook', parent=MMENGINE_HOOKS, locations=['mmflow.engine'])
 
 # manage data-related modules
-DATASETS = Registry('dataset', parent=MMENGINE_DATASETS)
+DATASETS = Registry(
+    'dataset', parent=MMENGINE_DATASETS, locations=['mmflow.datasets'])
 DATA_SAMPLERS = Registry('data sampler', parent=MMENGINE_DATA_SAMPLERS)
-TRANSFORMS = Registry('transform', parent=MMENGINE_TRANSFORMS)
+TRANSFORMS = Registry(
+    'transform', parent=MMENGINE_TRANSFORMS, locations=['mmflow.datasets'])
 
 # mangage all kinds of modules inheriting `nn.Module`
-MODELS = Registry('model', parent=MMENGINE_MODELS)
+MODELS = Registry('model', parent=MMENGINE_MODELS, locations=['mmflow.models'])
 # mangage all kinds of model wrappers like 'MMDistributedDataParallel'
 MODEL_WRAPPERS = Registry('model_wrapper', parent=MMENGINE_MODEL_WRAPPERS)
 # mangage all kinds of weight initialization modules like `Uniform`
@@ -58,14 +61,21 @@ OPTIM_WRAPPER_CONSTRUCTORS = Registry(
     'optimizer constructor', parent=MMENGINE_OPTIM_WRAPPER_CONSTRUCTORS)
 # mangage all kinds of parameter schedulers like `MultiStepLR`
 PARAM_SCHEDULERS = Registry(
-    'parameter scheduler', parent=MMENGINE_PARAM_SCHEDULERS)
+    'parameter scheduler',
+    parent=MMENGINE_PARAM_SCHEDULERS,
+    locations=['mmflow.engine'])
 # manage all kinds of metrics
-METRICS = Registry('metric', parent=MMENGINE_METRICS)
-
+METRICS = Registry(
+    'metric', parent=MMENGINE_METRICS, locations=['mmflow.evaluation'])
+EVALUATOR = Registry(
+    'evaluator', parent=MMENGINE_EVALUATOR, locations=['mmflow.evaluation'])
 # manage task-specific modules like warp
 TASK_UTILS = Registry('task util', parent=MMENGINE_TASK_UTILS)
 
 # manage visualizer
-VISUALIZERS = Registry('visualizer', parent=MMENGINE_VISUALIZERS)
+VISUALIZERS = Registry(
+    'visualizer',
+    parent=MMENGINE_VISUALIZERS,
+    locations=['mmflow.visualization'])
 # manage visualizer backend
 VISBACKENDS = Registry('vis_backend', parent=MMENGINE_VISBACKENDS)

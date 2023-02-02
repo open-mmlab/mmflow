@@ -12,60 +12,70 @@ The compatible MMFlow and MMCV versions are as below. Please install the correct
         <tr>
             <td>MMFlow version</td>
             <td>MMCV version</td>
+            <td>MMEngine version</td>
         </tr>
     </thead>
     <tbody>
         <tr>
             <th>1.0.0rc0</th>
             <th>mmcv>=2.0.0rc1, <2.1.0</th>
+            <th>mmengine>=0.4.0, <1.0.0</th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>master</th>
             <th>mmcv-full>=1.3.15, <1.7.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.5.1</th>
             <th>mmcv-full>=1.3.15, <1.7.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.5.0</th>
             <th>mmcv-full>=1.3.15, <=1.6.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.4.2</th>
             <th>mmcv-full>=1.3.15, <=1.6.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.4.1</th>
             <th>mmcv-full>=1.3.15, <=1.6.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.4.0</th>
             <th>mmcv-full>=1.3.15, <=1.5.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.3.0</th>
             <th>mmcv-full>=1.3.15, <=1.5.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
     <tbody>
         <tr>
             <th>0.2.0</th>
             <th>mmcv-full>=1.3.15, <=1.5.0</th>
+            <th> Not required </th>
         </tr>
     </tbody>
 </table>

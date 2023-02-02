@@ -3,11 +3,11 @@ import argparse
 import os.path as osp
 
 from mmengine.config import Config, DictAction
+from mmengine.registry import init_default_scope
 from mmengine.utils import ProgressBar
 
 from mmflow.datasets.builder import build_dataset
 from mmflow.registry import VISUALIZERS
-from mmflow.utils import register_all_modules
 
 
 def parse_args():
@@ -40,7 +40,7 @@ def main():
         cfg.merge_from_dict(args.cfg_options)
 
     # register all modules in mmseg into the registries
-    register_all_modules()
+    init_default_scope('mmflow')
 
     dataset = build_dataset(cfg.train_dataloader.dataset)
 

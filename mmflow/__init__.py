@@ -9,7 +9,8 @@ from .version import __version__, version_info
 
 MMCV_MIN = '2.0.0rc1'
 MMCV_MAX = '2.1.0'
-MMENGINE_MIN = '0.1.0'
+MMENGINE_MIN = '0.4.0'
+MMENGINE_MAX = '1.0.0'
 
 
 def digit_version(version_str: str, length: int = 4):
@@ -60,10 +61,12 @@ assert (mmcv_min_version <= mmcv_version < mmcv_max_version), \
     f'Please install mmcv>={MMCV_MIN}, <{MMCV_MAX}.'
 
 mmengine_min_version = digit_version(MMENGINE_MIN)
+mmengine_max_version = digit_version(MMENGINE_MAX)
 mmengine_version = digit_version(mmengine.__version__)
 
-assert (mmengine_min_version <= mmengine_version), \
-    f'MMEngine=={mmengine.__version__} is used but incompatible. ' \
-    f'Please install mmengine>={mmengine_min_version}.'
+assert (
+    mmengine_min_version <= mmengine_version < mmengine_max_version), \
+        f'MMEngine=={mmengine.__version__} is used but incompatible. Please ' \
+        f'install {mmengine_min_version}<=mmengine<{mmengine_max_version}.'
 
 __all__ = ['__version__', 'version_info', 'digit_version']
