@@ -1,6 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from .AutoFlow import AutoFlow
 from .builder import DATASETS, PIPELINES, build_dataloader, build_dataset
 from .chairssdhom import ChairsSDHom
+from .CrowdFlow import CrowdFlow
 from .dataset_wrappers import ConcatDataset, RepeatDataset
 from .flyingchairs import FlyingChairs
 from .flyingchairsocc import FlyingChairsOcc
@@ -33,5 +35,5 @@ __all__ = [
     'read_flow_kitti', 'GaussianNoise', 'RandomTranslate', 'Compose',
     'InputPad', 'FlyingThings3DSubset', 'FlyingThings3D', 'Sintel',
     'KITTI2012', 'KITTI2015', 'ChairsSDHom', 'HD1K', 'FlyingChairsOcc',
-    'render_color_wheel'
+    'CrowdFlow', 'AutoFlow', 'render_color_wheel'
 ]
