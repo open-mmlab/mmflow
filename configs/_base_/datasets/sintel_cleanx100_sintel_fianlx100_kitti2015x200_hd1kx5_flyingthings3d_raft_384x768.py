@@ -3,7 +3,7 @@ backend_args = dict(backend='local')
 # Sintel config
 sintel_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.2,
@@ -28,7 +28,7 @@ sintel_train_pipeline = [
 ]
 sintel_test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]
@@ -67,7 +67,7 @@ sintel_final_test = dict(
 # KITTI config
 kitti_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.0,
@@ -99,7 +99,7 @@ kitti_train_x200 = dict(type='RepeatDataset', times=200, dataset=kitti_train)
 # Flyingthings3d config
 flyingthing3d_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.2,
@@ -132,7 +132,7 @@ flyingthings3d_clean_train = dict(
 # HD1K config
 hd1k_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.,

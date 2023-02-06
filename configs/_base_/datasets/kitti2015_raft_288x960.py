@@ -3,7 +3,7 @@ backend_args = dict(backend='local')
 # KITTI config
 kitti_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.0,
@@ -31,7 +31,7 @@ kitti_train = dict(
 
 kitti_test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]
