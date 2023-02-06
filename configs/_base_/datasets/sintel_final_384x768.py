@@ -18,7 +18,7 @@ relative_transform = dict(
     rotate=(-1.0, 1.0))
 
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_occ=True),
     dict(
         type='ColorJitter',
@@ -38,7 +38,7 @@ train_pipeline = [
 ]
 
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=6),
     dict(type='Normalize', **img_norm_cfg),

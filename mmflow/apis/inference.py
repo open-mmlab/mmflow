@@ -86,8 +86,9 @@ def inference_model(model: torch.nn.Module, img1s: Union[str, np.ndarray],
 
     # as load annotation is for online evaluation
     # there is no need to load annotation.
-    if dict(type='LoadAnnotations') in cfg.pipeline:
-        cfg.pipeline.remove(dict(type='LoadAnnotations'))
+    for t in cfg.pipeline:
+        if t.get('type') == 'LoadAnnotations':
+            cfg.test_pipeline.remove(t)
 
     test_pipeline = Compose(cfg.pipeline)
     datas = defaultdict(list)

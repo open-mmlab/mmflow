@@ -2,7 +2,7 @@ crop_size = (288, 960)
 
 # KITTI config
 kitti_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',
@@ -30,7 +30,7 @@ kitti_train = dict(
     test_mode=False)
 
 kitti_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')

@@ -36,14 +36,17 @@ train_pipeline = [
 ]
 
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputResize', exponent=6),
     dict(type='PackFlowInputs')
 ]
 
 chairssdhom_train = dict(
-    type=dataset_type, pipeline=train_pipeline, data_root=data_root)
+    type=dataset_type,
+    pipeline=train_pipeline,
+    data_root=data_root,
+    backend_args=backend_args)
 
 chairssdhom_test = dict(
     type=dataset_type,

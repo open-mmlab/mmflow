@@ -13,7 +13,7 @@ relative_transform = dict(
     rotate=(-1.0, 1.0))
 
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(
         type='ColorJitter',
@@ -33,7 +33,7 @@ sintel_train_pipeline = [
 ]
 
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=4),
     dict(type='PackFlowInputs')

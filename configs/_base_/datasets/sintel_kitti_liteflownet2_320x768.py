@@ -13,8 +13,8 @@ sintel_relative_transform = dict(
     rotate=(-1.0, 1.0))
 
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         brightness=0.5,
@@ -33,8 +33,8 @@ sintel_train_pipeline = [
 ]
 
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputResize', exponent=4),
     dict(type='PackFlowInputs')
 ]
@@ -80,7 +80,7 @@ sparse_relative_transform = dict(
     rotate=(-0.5, 0.5))
 
 sparse_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',
@@ -100,7 +100,7 @@ sparse_train_pipeline = [
 ]
 
 sparse_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='InputResize', exponent=6),
     dict(type='PackFlowInputs')

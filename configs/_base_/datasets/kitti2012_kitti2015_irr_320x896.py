@@ -13,7 +13,7 @@ relative_transform = dict(
     rotate=(-0.5, 0.5))
 
 sparse_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',
@@ -34,7 +34,7 @@ sparse_train_pipeline = [
 ]
 
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='InputResize', exponent=6),
     dict(type='PackFlowInputs')

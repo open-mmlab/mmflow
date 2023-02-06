@@ -15,7 +15,7 @@ sintel_relative_transform = dict(
     rotate=(-1.0, 1.0))
 
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_occ=True),
     dict(
         type='ColorJitter',
@@ -45,7 +45,7 @@ sintel_train_pipeline = [
 ]
 
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputPad', exponent=6),
     dict(type='Normalize', **img_norm_cfg),
@@ -119,7 +119,7 @@ kitti_relative_transform = dict(
     rotate=(-0.5, 0.5))
 
 sparse_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='RandomCrop', crop_size=crop_size * 2),
     dict(

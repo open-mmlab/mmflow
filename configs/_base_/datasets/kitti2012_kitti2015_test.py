@@ -1,7 +1,7 @@
 img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False)
 
 kitti_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='InputResize', exponent=6),
     dict(type='Normalize', **img_norm_cfg),

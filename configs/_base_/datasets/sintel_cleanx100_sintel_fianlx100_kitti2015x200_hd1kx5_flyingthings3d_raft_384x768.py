@@ -2,7 +2,7 @@ crop_size = (368, 768)
 
 # Sintel config
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(
         type='ColorJitter',
@@ -27,7 +27,7 @@ sintel_train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
@@ -66,7 +66,7 @@ sintel_final_test = dict(
 
 # KITTI config
 kitti_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',
@@ -98,7 +98,7 @@ kitti_train_x200 = dict(type='RepeatDataset', times=200, dataset=kitti_train)
 
 # Flyingthings3d config
 flyingthing3d_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(
         type='ColorJitter',
@@ -131,7 +131,7 @@ flyingthings3d_clean_train = dict(
 
 # HD1K config
 hd1k_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',

@@ -4,7 +4,7 @@ test_dataset_type = 'Sintel'
 test_data_root = 'data/Sintel'
 
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(
         type='ColorJitter',
@@ -29,7 +29,7 @@ train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')

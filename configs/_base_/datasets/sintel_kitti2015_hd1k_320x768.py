@@ -13,7 +13,7 @@ sintel_relative_transform = dict(
     rotate=(-1.0, 1.0))
 
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_occ=True),
     dict(
         type='ColorJitter',
@@ -33,7 +33,7 @@ sintel_train_pipeline = [
 ]
 
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(type='InputResize', exponent=4),
     dict(type='PackFlowInputs')
@@ -80,7 +80,7 @@ kitti_relative_transform = dict(
     rotate=(-0.5, 0.5))
 
 kitti_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(
         type='ColorJitter',
@@ -106,7 +106,7 @@ kitti2015_train = dict(
     test_mode=False)
 
 hd1k_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True),
     dict(type='RandomCrop', crop_size=(436, 1024)),
     dict(

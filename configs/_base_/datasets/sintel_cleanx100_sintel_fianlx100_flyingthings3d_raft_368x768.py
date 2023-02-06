@@ -2,8 +2,8 @@ crop_size = (368, 768)
 
 # Sintel config
 sintel_train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.2,
@@ -27,8 +27,8 @@ sintel_train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 sintel_test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]
@@ -66,7 +66,7 @@ sintel_final_test = dict(
 
 # Flyingthings3d config
 flyingthing3d_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),
     dict(
         type='ColorJitter',

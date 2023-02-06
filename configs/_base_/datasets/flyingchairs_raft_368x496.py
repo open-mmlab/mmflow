@@ -33,8 +33,8 @@ train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]

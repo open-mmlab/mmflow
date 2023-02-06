@@ -65,12 +65,12 @@ class LoadImageFromFile(BaseTransform):
             dict: The dict contains loaded image and meta information.
         """
         filename1 = results['img1_path']
-        img1_bytes = fileio.get(filename1)
+        img1_bytes = fileio.get(filename1, self.backend_args)
         img1 = mmcv.imfrombytes(
             img1_bytes, flag=self.color_type, backend=self.imdecode_backend)
 
         filename2 = results['img2_path']
-        img2_bytes = fileio.get(filename2)
+        img2_bytes = fileio.get(filename2, self.backend_args)
         img2 = mmcv.imfrombytes(
             img2_bytes, flag=self.color_type, backend=self.imdecode_backend)
 
@@ -196,13 +196,13 @@ class LoadAnnotations(BaseTransform):
         flow_bw_filename = results.get('flow_bw_path', None)
 
         if flow_fw_filename is not None:
-            flow_fw_bytes = fileio.get(flow_fw_filename)
+            flow_fw_bytes = fileio.get(flow_fw_filename, self.backend_args)
             flow_fw = flow_from_bytes(flow_fw_bytes, flow_fw_filename[-3:])
         else:
             flow_fw = None
 
         if flow_bw_filename is not None:
-            flow_bw_bytes = fileio.get(flow_bw_filename)
+            flow_bw_bytes = fileio.get(flow_bw_filename, self.backend_args)
             flow_bw = flow_from_bytes(flow_bw_bytes, flow_bw_filename[-3:])
         else:
             flow_bw = None
@@ -223,7 +223,7 @@ class LoadAnnotations(BaseTransform):
         flow_fw_filename = results.get('flow_fw_path', None)
 
         if flow_fw_filename is not None:
-            flow_fw_bytes = fileio.get(flow_fw_filename)
+            flow_fw_bytes = fileio.get(flow_fw_filename, self.backend_args)
             flow_fw, valid_fw = sparse_flow_from_bytes(flow_fw_bytes)
         else:
             flow_fw = None
@@ -250,13 +250,13 @@ class LoadAnnotations(BaseTransform):
         occ_bw_filename = results.get('occ_bw_path', None)
 
         if occ_fw_filename is not None:
-            occ_fw_bytes = fileio.get(occ_fw_filename)
+            occ_fw_bytes = fileio.get(occ_fw_filename, self.backend_args)
             occ_fw = (mmcv.imfrombytes(occ_fw_bytes, flag='grayscale') /
                       255).astype(np.float32)
         else:
             occ_fw = None
         if occ_bw_filename is not None:
-            occ_bw_bytes = fileio.get(occ_bw_filename)
+            occ_bw_bytes = fileio.get(occ_bw_filename, self.backend_args)
             occ_bw = (mmcv.imfrombytes(occ_bw_bytes, flag='grayscale') /
                       255).astype(np.float32)
         else:
