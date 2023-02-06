@@ -2,7 +2,7 @@ train_dataset_type = 'FlyingThings3D'
 train_data_root = 'data/flyingthings3d'
 test_dataset_type = 'Sintel'
 test_data_root = 'data/Sintel'
-
+backend_args = dict(backend='local')
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations'),

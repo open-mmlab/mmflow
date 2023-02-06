@@ -16,7 +16,7 @@ relative_transform = dict(
     zoom=(0.985, 1.015),
     shear=(1.0, 1.0),
     rotate=(-1.0, 1.0))
-
+backend_args = dict(backend='local')
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_occ=True),

@@ -1,5 +1,5 @@
 crop_size = (368, 768)
-
+backend_args = dict(backend='local')
 # Sintel config
 sintel_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),

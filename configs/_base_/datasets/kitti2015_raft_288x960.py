@@ -1,5 +1,5 @@
 crop_size = (288, 960)
-
+backend_args = dict(backend='local')
 # KITTI config
 kitti_train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
