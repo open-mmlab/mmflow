@@ -156,7 +156,7 @@ kitti2015_train = dict(
     test_mode=False)
 
 hd1k_train_pipeline = [
-    dict(type='LoadImageFromFile'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(type='RandomCrop', crop_size=(436, 1024)),
     dict(
