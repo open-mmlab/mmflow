@@ -30,15 +30,19 @@ class FlowLocalVisualizer(Visualizer):
     def __init__(self, name='visualizer', **kwargs):
         super().__init__(name, **kwargs)
 
-    def add_datasample(self,
-                       name: str,
-                       image: Optional[np.ndarray] = None,
-                       data_sample: Optional[FlowDataSample] = None,
-                       draw_gt: bool = True,
-                       draw_pred: bool = True,
-                       show: bool = False,
-                       wait_time: int = 0,
-                       step: int = 0) -> None:
+    def add_datasample(
+            self,
+            name: str,
+            image: Optional[np.ndarray] = None,
+            data_sample: Optional[FlowDataSample] = None,
+            draw_gt: bool = True,
+            draw_pred: bool = True,
+            direction='forward_flow',
+            show: bool = False,
+            wait_time: int = 0,
+            # TODO: Supported in mmengine's Viusalizer.
+            out_file: Optional[str] = None,
+            step: int = 0) -> np.ndarray:
         """Draw datasample and save to all backends.
 
         - If GT and prediction are plotted at the same time, they are
@@ -57,6 +61,8 @@ class FlowLocalVisualizer(Visualizer):
             draw_pred (bool): Whether to draw Prediction FlowDataSample.
                 Defaults to True.
             show (bool): Whether to display the drawn image. Default to False.
+            direction (str): The direction of optical flow. Default to
+                `forward`.
             wait_time (int): Delay in milliseconds. 0 is the special
                 value that means "forever". Defaults to 0.
             step (int): Global step value to record. Defaults to 0.
@@ -70,9 +76,11 @@ class FlowLocalVisualizer(Visualizer):
                                                              0).cpu().numpy()
             gt_flow_fw_map = np.uint8(mmcv.flow2rgb(gt_flow_fw) * 255.)
 
+        flow_direction = 'pred_flow_fw' if direction == 'forward' \
+            else 'pred_flow_bw'
         if (draw_pred and data_sample is not None
-                and 'pred_flow_fw' in data_sample):
-            pred_flow_fw = data_sample.pred_flow_fw.data.permute(
+                and flow_direction in data_sample):
+            pred_flow_fw = data_sample[flow_direction].data.permute(
                 1, 2, 0).cpu().numpy()
             pred_flow_fw_map = np.uint8(mmcv.flow2rgb(pred_flow_fw) * 255.)
 
@@ -87,5 +95,8 @@ class FlowLocalVisualizer(Visualizer):
 
         if show:
             self.show(drawn_img, win_name=name, wait_time=wait_time)
+        if out_file is not None:
+            mmcv.imwrite(drawn_img, out_file)
         else:
             self.add_image(name, drawn_img, step)
+        return drawn_img
