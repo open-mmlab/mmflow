@@ -2,7 +2,7 @@ img_norm_cfg = dict(mean=[0., 0., 0.], std=[255., 255., 255.], to_rgb=False)
 backend_args = dict(backend='local')
 kitti_test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='TestFormatBundle'),
