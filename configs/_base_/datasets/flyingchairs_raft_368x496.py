@@ -1,15 +1,15 @@
 dataset_type = 'FlyingChairs'
 data_root = 'data/FlyingChairs_release'
-# file_client_args = dict(
+# backend_args = dict(
 #     backend='petrel',
 #     path_mapping=dict({
 #         './data/': 's3://openmmlab/datasets/mmflow/',
 #         'data/': 's3://openmmlab/datasets/mmflow/'
 #     }))
-file_client_args = dict(backend='disk')
+backend_args = dict(backend='local')
 train_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(type='LoadAnnotations', file_client_args=file_client_args),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.2,
@@ -33,8 +33,8 @@ train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]

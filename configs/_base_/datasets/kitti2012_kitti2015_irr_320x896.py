@@ -11,10 +11,10 @@ relative_transform = dict(
     zoom=(0.99, 1.01),
     shear=(1.0, 1.0),
     rotate=(-0.5, 0.5))
-
+backend_args = dict(backend='local')
 sparse_train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(
         type='ColorJitter',
         brightness=0.05,
@@ -34,8 +34,8 @@ sparse_train_pipeline = [
 ]
 
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', sparse=True),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', sparse=True, backend_args=backend_args),
     dict(type='InputResize', exponent=6),
     dict(type='PackFlowInputs')
 ]

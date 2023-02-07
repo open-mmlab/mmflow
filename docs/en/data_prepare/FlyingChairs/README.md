@@ -61,13 +61,13 @@ Annotation file is not required for local file storage, and it will be used in d
 ```python
 dataset_type = 'FlyingChairs'
 data_root = 'data/FlyingChairs_release'
-file_client_args= dict(
+backend_args= dict(
     backend='s3',
     path_mapping=dict(
         {'data/': 's3://dataset_path'}))
 train_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(type='LoadAnnotations', file_client_args=file_client_args),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
 ]
 flyingchairs_train = dict(
     type=dataset_type,
@@ -76,8 +76,8 @@ flyingchairs_train = dict(
     data_root=data_root)
 
 test_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(type='LoadAnnotations', file_client_args=file_client_args),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
 ]
 flyingchairs_test = dict(
     type=dataset_type,

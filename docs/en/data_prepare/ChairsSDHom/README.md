@@ -64,13 +64,13 @@ This script accepts these arguments:
 Annotation file is not required for local file storage, and it will be used in dataset config file when using cloud object storage like s3 storage. There is an example for using object storage:
 
 ```python
-file_client_args = dict(
+backend_args = dict(
     backend='s3',
     path_mapping=dict(
         {'data/': 's3://dataset_path'}))
 train_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(type='LoadAnnotations', file_client_args=file_client_args)]
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args)]
 chairssdhom_train = dict(
     type='ChairsSDHom',
     ann_file='train.json', # train.json is in data_root i.e. data/ChairsSDHom/
