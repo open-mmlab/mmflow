@@ -12,7 +12,6 @@ from rich.progress import track
 from mmflow.datasets import write_flow
 from mmflow.datasets.transforms import Compose
 from mmflow.structures import FlowDataSample
-from mmflow.utils import register_all_modules
 
 ConfigType = Union[Config, ConfigDict]
 ModelType = Union[dict, ConfigType, str]
@@ -60,7 +59,8 @@ class FlowInferencer(BaseInferencer):
 
         Args:
             inputs (InputsType): _description_
-            return_datasamples (bool, optional): _description_. Defaults to False.
+            return_datasamples (bool, optional): _description_.
+                Defaults to False.
             batch_size (int, optional): _description_. Defaults to 1.
             return_vis (bool, optional): _description_. Defaults to False.
             show (bool, optional): _description_. Defaults to False.
@@ -102,9 +102,9 @@ class FlowInferencer(BaseInferencer):
         - list or tuple: return tuple of list.
         - str:
             - Directory path: return all files in the directory and split two
-              list of adjancent frames.
+              list of adjacent frames.
             - Other cases: return a list containing the string and split two
-              list of adjancent frames. The string could be a path to file, a
+              list of adjacent frames. The string could be a path to file, a
               url or other types of string according to the task.
 
         Args:
@@ -237,12 +237,12 @@ class FlowInferencer(BaseInferencer):
         return results_dict
 
     def _init_pipeline(self, cfg: ConfigType) -> Callable:
-        """Initialize the test pipeline.
-        Return a pipeline to handle various input data, such as ``str``,
-        ``np.ndarray``. It is an abstract method in BaseInferencer, and should
-        be implemented in subclasses.
-        The returned pipeline will be used to process a single data.
-        It will be used in :meth:`preprocess` like this:
+        """Initialize the test pipeline. Return a pipeline to handle various
+        input data, such as ``str``, ``np.ndarray``. It is an abstract method
+        in BaseInferencer, and should be implemented in subclasses. The
+        returned pipeline will be used to process a single data. It will be
+        used in :meth:`preprocess` like this:
+
         .. code-block:: python
             def preprocess(self, inputs, batch_size, **kwargs):
                 ...
@@ -264,6 +264,7 @@ class FlowInferencer(BaseInferencer):
 
     def _get_transform_idx(self, pipeline_cfg: ConfigType, name: str) -> int:
         """Returns the index of the transform in a pipeline.
+
         If the transform is not found, returns -1.
         """
         for i, transform in enumerate(pipeline_cfg):
