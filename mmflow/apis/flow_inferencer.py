@@ -45,7 +45,6 @@ class FlowInferencer(BaseInferencer):
         # A global counter tracking the number of images processed, for
         # naming of the output images
         self.num_visualized_imgs = 0
-        register_all_modules()
         super().__init__(
             model=model, weights=weights, device=device, scope=scope)
 
