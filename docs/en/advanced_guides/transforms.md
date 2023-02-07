@@ -19,8 +19,8 @@ Here is a pipeline example for PWC-Net training on FlyingChairs.
 
 ```python
 train_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(type='LoadAnnotations', file_client_args=file_client_args),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         brightness=0.5,

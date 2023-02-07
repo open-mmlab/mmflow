@@ -2,10 +2,10 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import mmcv
+import mmengine.fileio as fileio
 import numpy as np
 from mmcv import sparse_flow_from_bytes
 from mmcv.transforms import BaseTransform
-from mmengine.fileio import FileClient
 
 from mmflow.registry import TRANSFORMS
 from ..utils import flow_from_bytes
@@ -37,21 +37,21 @@ class LoadImageFromFile(BaseTransform):
             argument for :func:``mmcv.imfrombytes``.
             See :func:``mmcv.imfrombytes`` for details.
             Defaults to 'cv2'.
-        file_client_args (dict): Arguments to instantiate a FileClient.
-            See :class:`mmengine.fileio.FileClient` for details.
-            Defaults to ``dict(backend='disk')``.
+        backend_args (dict): Arguments to instantiate a file backend.
+            See https://mmengine.readthedocs.io/en/latest/api/fileio.htm
+            for details. Defaults to ``dict(backend='local')``
+            Notes: mmcv>=2.0.0rc4, mmengine>=0.2.0 required.
     """
 
     def __init__(self,
                  to_float32: bool = False,
                  color_type: str = 'color',
-                 file_client_args: dict = dict(backend='disk'),
+                 backend_args: dict = dict(backend='local'),
                  imdecode_backend: str = 'cv2') -> None:
         super().__init__()
         self.to_float32 = to_float32
         self.color_type = color_type
-        self.file_client_args = file_client_args.copy()
-        self.file_client = FileClient(**self.file_client_args)
+        self.backend_args = backend_args.copy()
         self.imdecode_backend = imdecode_backend
 
     def transform(self,
@@ -65,12 +65,12 @@ class LoadImageFromFile(BaseTransform):
             dict: The dict contains loaded image and meta information.
         """
         filename1 = results['img1_path']
-        img1_bytes = self.file_client.get(filename1)
+        img1_bytes = fileio.get(filename1, self.backend_args)
         img1 = mmcv.imfrombytes(
             img1_bytes, flag=self.color_type, backend=self.imdecode_backend)
 
         filename2 = results['img2_path']
-        img2_bytes = self.file_client.get(filename2)
+        img2_bytes = fileio.get(filename2, self.backend_args)
         img2 = mmcv.imfrombytes(
             img2_bytes, flag=self.color_type, backend=self.imdecode_backend)
 
@@ -145,22 +145,21 @@ class LoadAnnotations(BaseTransform):
         with_occ (bool): whether to parse and load occlusion mask.
             Default to False.
         sparse (bool): whether the flow is sparse. Default to False.
-        file_client_args (dict): Arguments to instantiate a FileClient.
+        backend_args (dict): Arguments to instantiate a FileClient.
             See :class:`mmengine.fileio.FileClient` for details.
-            Defaults to ``dict(backend='disk')``.
+            Defaults to ``dict(backend='local')``.
     """
 
     def __init__(
             self,
             with_occ: bool = False,
             sparse: bool = False,
-            file_client_args: dict = dict(backend='disk'),
+            backend_args: dict = dict(backend='local'),
     ) -> None:
 
         self.with_occ = with_occ
         self.sparse = sparse
-        self.file_client_args = file_client_args
-        self.file_client = None
+        self.backend_args = backend_args
 
     def transform(self, results: Dict) -> Dict:
         """Call function to load optical flow and occlusion mask (optional).
@@ -171,9 +170,6 @@ class LoadAnnotations(BaseTransform):
         Returns:
             dict: The dict contains loaded annotation data.
         """
-
-        if self.file_client is None:
-            self.file_client = FileClient(**self.file_client_args)
 
         if self.sparse:
             results = self._load_sparse_flow(results)
@@ -200,13 +196,13 @@ class LoadAnnotations(BaseTransform):
         flow_bw_filename = results.get('flow_bw_path', None)
 
         if flow_fw_filename is not None:
-            flow_fw_bytes = self.file_client.get(flow_fw_filename)
+            flow_fw_bytes = fileio.get(flow_fw_filename, self.backend_args)
             flow_fw = flow_from_bytes(flow_fw_bytes, flow_fw_filename[-3:])
         else:
             flow_fw = None
 
         if flow_bw_filename is not None:
-            flow_bw_bytes = self.file_client.get(flow_bw_filename)
+            flow_bw_bytes = fileio.get(flow_bw_filename, self.backend_args)
             flow_bw = flow_from_bytes(flow_bw_bytes, flow_bw_filename[-3:])
         else:
             flow_bw = None
@@ -227,7 +223,7 @@ class LoadAnnotations(BaseTransform):
         flow_fw_filename = results.get('flow_fw_path', None)
 
         if flow_fw_filename is not None:
-            flow_fw_bytes = self.file_client.get(flow_fw_filename)
+            flow_fw_bytes = fileio.get(flow_fw_filename, self.backend_args)
             flow_fw, valid_fw = sparse_flow_from_bytes(flow_fw_bytes)
         else:
             flow_fw = None
@@ -254,13 +250,13 @@ class LoadAnnotations(BaseTransform):
         occ_bw_filename = results.get('occ_bw_path', None)
 
         if occ_fw_filename is not None:
-            occ_fw_bytes = self.file_client.get(occ_fw_filename)
+            occ_fw_bytes = fileio.get(occ_fw_filename, self.backend_args)
             occ_fw = (mmcv.imfrombytes(occ_fw_bytes, flag='grayscale') /
                       255).astype(np.float32)
         else:
             occ_fw = None
         if occ_bw_filename is not None:
-            occ_bw_bytes = self.file_client.get(occ_bw_filename)
+            occ_bw_bytes = fileio.get(occ_bw_filename, self.backend_args)
             occ_bw = (mmcv.imfrombytes(occ_bw_bytes, flag='grayscale') /
                       255).astype(np.float32)
         else:
@@ -275,7 +271,7 @@ class LoadAnnotations(BaseTransform):
         repr_str = self.__class__.__name__
         repr_str += f'(with_occ={self.with_occ},'
         repr_str += f"sparse='{self.sparse}',"
-        repr_str += f"file_client_args='{self.file_client_args}')"
+        repr_str += f"backend_args='{self.backend_args}')"
 
         return repr_str
 

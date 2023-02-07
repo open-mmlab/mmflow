@@ -2,10 +2,10 @@ train_dataset_type = 'FlyingThings3D'
 train_data_root = 'data/flyingthings3d'
 test_dataset_type = 'Sintel'
 test_data_root = 'data/Sintel'
-
+backend_args = dict(backend='local')
 train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(
         type='ColorJitter',
         asymmetric_prob=0.2,
@@ -29,8 +29,8 @@ train_pipeline = [
     dict(type='PackFlowInputs')
 ]
 test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', backend_args=backend_args),
     dict(type='InputPad', exponent=3),
     dict(type='PackFlowInputs')
 ]
