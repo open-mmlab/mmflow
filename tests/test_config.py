@@ -3,13 +3,10 @@ import glob
 import os
 from os.path import dirname, exists, isdir, join, relpath
 
-import numpy as np
 from mmengine import Config
-from mmengine.dataset import Compose
-from mmengine.runner import Runner
-from torch import nn
 
 from mmflow.models import build_flow_estimator
+from mmflow.registry import DATASETS
 from mmflow.utils import register_all_modules
 
 register_all_modules()
@@ -78,8 +75,38 @@ def test_config_data_pipeline():
         print(f'Building data pipeline, config_fpath = {config_fpath!r}')
         config_mod = Config.fromfile(config_fpath)
         if hasattr(config_mod, 'train_dataloader'):
-            config_mod.train_dataloader.dataset.lazy_init = True
-            Runner.build_dataloader(config_mod.train_dataloader)
+
+            print('build train dataloader')
+            if not isinstance(config_mod.train_dataloader, list):
+                dataset_cfgs = [config_mod.train_dataloader.dataset]
+            else:
+                dataset_cfgs = [
+                    loader.dataset for loader in config_mod.train_dataloader
+                ]
+            _test_dataset_cfgs_build(dataset_cfgs)
+
         if hasattr(config_mod, 'test_dataloader'):
-            config_mod.test_dataloader.dataset.lazy_init = True
-            Runner.build_dataloader(config_mod.test_dataloader)
+            print('build test dataloader')
+            if not isinstance(config_mod.test_dataloader, list):
+                dataset_cfgs = [config_mod.test_dataloader.dataset]
+            else:
+                dataset_cfgs = [
+                    loader.dataset for loader in config_mod.test_dataloader
+                ]
+            _test_dataset_cfgs_build(dataset_cfgs)
+
+
+def _test_dataset_cfgs_build(dataset_cfgs):
+
+    def _dataset_wrapper(dataset):
+        dataset['lazy_init'] = True
+        if dataset.type == 'ConcatDataset':
+            [_dataset_wrapper(ds) for ds in dataset.datasets]
+        elif dataset.type == 'RepeatDataset':
+            _dataset_wrapper(dataset.dataset)
+        else:
+            dataset.lazy_init = True
+            DATASETS.build(dataset)
+
+    for dataset in dataset_cfgs:
+        _dataset_wrapper(dataset)

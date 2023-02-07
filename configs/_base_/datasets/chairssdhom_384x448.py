@@ -43,10 +43,7 @@ test_pipeline = [
 ]
 
 chairssdhom_train = dict(
-    type=dataset_type,
-    pipeline=train_pipeline,
-    data_root=data_root,
-    backend_args=backend_args)
+    type=dataset_type, pipeline=train_pipeline, data_root=data_root)
 
 chairssdhom_test = dict(
     type=dataset_type,
