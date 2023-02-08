@@ -138,3 +138,94 @@ class CorrLookup(nn.Module):
 
         out = torch.cat(out_corr_pyramid, dim=-1)
         return out.permute(0, 3, 1, 2).contiguous().float()
+
+
+@MODELS.register_module()
+class CorrLookupFlow1D(nn.Module):
+    """Correlation lookup operator for Flow1D.
+    This operator is used in `Flow1D<https://arxiv.org/pdf/2104.13918.pdf>`_
+    Args:
+        radius (int): the radius of the local neighborhood of the pixels.
+            Default to 32.
+        mode (str): interpolation mode to calculate output values 'bilinear'
+            | 'nearest' | 'bicubic'. Default: 'bilinear' Note: mode='bicubic'
+            supports only 4-D input.
+        padding_mode (str): padding mode for outside grid values 'zeros' |
+            'border' | 'reflection'. Default: 'zeros'
+        align_corners (bool): If set to True, the extrema (-1 and 1) are
+            considered as referring to the center points of the input’s corner
+            pixels. If set to False, they are instead considered as referring
+            to the corner points of the input’s corner pixels, making the
+            sampling more resolution agnostic. Default to True.
+    """
+
+    def __init__(self,
+                 radius: int = 32,
+                 mode: str = 'bilinear',
+                 padding_mode: str = 'zeros',
+                 align_corners: bool = True) -> None:
+        super().__init__()
+        self.r = radius
+        self.mode = mode
+        self.padding_mode = padding_mode
+        self.align_corners = align_corners
+
+    def forward(self, corr: Sequence[Tensor], flow: Tensor) -> Tensor:
+        """Forward function of Correlation lookup for Flow1D.
+
+        Args:
+            corr (Sequence[Tensor]): Correlation on x and y direction.
+            flow (Tensor): Current estimated optical flow.
+        Returns:
+            Tensor: lookup cost volume on the correlation of x and y directions
+             concatenate together.
+        """
+        B, _, H, W = flow.shape
+        # reshape corr_x from [B, H, W, W] to [B*H*W, 1, 1, W]
+        corr_x = corr[0].view(-1, 1, 1, W)
+        # reshape corr_y from [B, W, H, H]to [B*H*W, 1, H, 1]
+        corr_y = corr[1].permute(0, 2, 1, 3).contiguous().view(-1, 1, H, 1)
+
+        # reshape flow to [B, H, W, 2]
+        flow = flow.permute(0, 2, 3, 1)
+
+        dx = torch.linspace(
+            -self.r, self.r, 2 * self.r + 1, device=flow.device)
+        dy = torch.linspace(
+            -self.r, self.r, 2 * self.r + 1, device=flow.device)
+
+        delta_x = torch.stack((dx, torch.zeros_like(dx)), dim=-1)
+        delta_y = torch.stack((torch.zeros_like(dy), dy), dim=-1)
+        # # [1, 2r+1, 1, 2]
+        delta_y = delta_y.unsqueeze(1).unsqueeze(0)
+
+        xx = torch.arange(0, W, device=flow.device)
+        yy = torch.arange(0, H, device=flow.device)
+        coords = coords_grid(B, xx, yy).permute(0, 2, 3, 1) + flow
+
+        coords_x = coords[:, :, :, 0]
+        coords_y = coords[:, :, :, 1]
+
+        coords_x = torch.stack((coords_x, torch.zeros_like(coords_x)), dim=-1)
+        coords_y = torch.stack((torch.zeros_like(coords_y), coords_y), dim=-1)
+
+        centroid_x = coords_x.view(B * H * W, 1, 1, 2)
+        centroid_y = coords_y.view(B * H * W, 1, 1, 2)
+
+        coords_x = centroid_x + delta_x
+        coords_y = centroid_y + delta_y
+
+        corr_x = bilinear_sample(corr_x, coords_x, self.mode,
+                                 self.padding_mode, self.align_corners)
+        corr_y = bilinear_sample(corr_y, coords_y, self.mode,
+                                 self.padding_mode, self.align_corners)
+
+        # shape is [B, 2r+1, H, W]
+        corr_x = corr_x.view(B, H, W, -1)
+        corr_x = corr_x.permute(0, 3, 1, 2).contiguous()
+        corr_y = corr_y.view(B, H, W, -1)
+        corr_y = corr_y.permute(0, 3, 1, 2).contiguous()
+
+        correlation = torch.cat((corr_x, corr_y), dim=1)
+
+        return correlation

@@ -4,6 +4,7 @@ import torch
 from mmflow.models import build_components
 from mmflow.models.decoders.raft_decoder import CorrelationPyramid
 from mmflow.models.utils.corr_lookup import bilinear_sample, coords_grid
+from mmflow.models.utils.correlation1d import Correlation1D
 
 
 def test_coords_grid():
@@ -56,3 +57,27 @@ def test_corr_lookup():
 
     corr_lpt = corr_lookup_op(corr_pyramid, torch.randn(1, 2, H, W))
     assert corr_lpt.shape == torch.Size((1, 81 * 4, H, W))
+
+
+def test_corr_lookup_flow1d():
+    corr_block = Correlation1D()
+    feat1 = torch.arange(0, 24)
+    feat1 = feat1.view(1, 2, 3, 4)
+    feat2 = feat1 + 1
+    flow = torch.ones_like(feat1)
+    b, _, h, w = feat1.size()
+    radius = 32
+
+    correlation_x = corr_block(feat1, feat2, True)
+    correlation_y = corr_block(feat1, feat2, False)
+    correlation = [correlation_x, correlation_y]
+    corr_lookup_cfg = dict(
+        type='CorrLookupFlow1D',
+        radius=radius,
+        mode='bilinear',
+        padding_mode='zeros',
+        align_corners=True)
+    corr_lookup_op = build_components(corr_lookup_cfg)
+
+    corr_xy = corr_lookup_op(correlation, flow)
+    assert corr_xy.size() == (b, 2 * (2 * radius + 1), h, w)
