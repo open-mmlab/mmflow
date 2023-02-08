@@ -1,0 +1,56 @@
+@INPROCEEDINGS{TUBCrowdFlow2018,
+	AUTHOR = {Gregory Schr{\"o}der and Tobias Senst and Erik Bochinski and Thomas Sikora},
+	TITLE = {Optical Flow Dataset and Benchmark for Visual Crowd Analysis},
+	BOOKTITLE = {IEEE International Conference on Advanced Video and Signals-based Surveillance},
+	YEAR = {2018},
+}
+├─test
+│  ├─gt_flow
+│  │  └─IMXX
+│  │          frameGT_xxxx.flo
+│  │          frameGT_xxxx.png
+│  │
+│  └─images
+│      └─IMxx
+│              frameGT_xxxx.png
+│              frameGT_xxxx.png
+│              frameGT_xxxx.png
+│
+└─train
+    │  README.txt
+    │
+    ├─gt_flow
+    │  └─IMxx
+    │          frameGT_xxxx.flo
+    │          frameGT_xxxx.png
+    │          frameGT_xxxx.flo
+    │          frameGT_xxxx.png
+    │
+    ├─gt_trajectories
+    │  └─IMxx
+    │          bgTrajectories.mat
+    │          bgTrajectories.txt
+    │          bgTrajectoriesUCF.mat
+    │          DenseTracks.pb
+    │          denseTrajectories.mat
+    │          denseTrajectories.txt
+    │          denseTrajectoriesUCF.mat
+    │          PersonTracks.pb
+    │          personTrajectories.mat
+    │          personTrajectories.txt
+    │          personTrajectoriesUCF.mat
+    │
+    ├─images
+    │  └─IMxx
+    │          frame_xxx.png
+    │          frame_xxx.png
+    │          frame_xxx.png
+    │
+    └─masks
+        └─IMxx
+                maskGT_xxxx.png
+                maskGT_xxxx.png
+                maskGT_xxxx.png
+Download the dataset via:
+https://github.com/tsenst/CrowdFlow
+wget http://ftp01.nue.tu-berlin.de/crowdflow/TUBCrowdFlow.rar
