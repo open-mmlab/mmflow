@@ -1,0 +1,41 @@
+@inproceedings{sun2021autoflow,
+  title={AutoFlow: Learning a Better Training Set for Optical Flow},
+  author={Sun, Deqing and Vlasic, Daniel and Herrmann, Charles and Jampani, Varun and Krainin, Michael
+   and Chang, Huiwen and Zabih, Ramin and Freeman, William T and Liu, Ce}, 
+    booktitle={CVPR},
+  year={2021}
+}
+
+Dataset
+├─test
+│  ├─static_40k_png_1_of_4
+│  │  ├─table_x_batch_xxx
+│  │  └─table_x_batch_xxx
+│  ├─static_40k_png_2_of_4
+│  │  ├─table_x_batch_xxx
+│  │  └─table_x_batch_xxx
+│  ├─static_40k_png_3_of_4
+│  │  ├─table_x_batch_xxx
+│  │  └─table_x_batch_xxx
+│  └─static_40k_png_4_of_4
+│      ├─table_x_batch_xxx
+│      └─table_x_batch_xxx
+└─train
+    ├─static_40k_png_1_of_4
+    │  ├─table_x_batch_xxx
+    │  └─table_x_batch_xxx
+    ├─static_40k_png_2_of_4
+    │  ├─table_x_batch_xxx
+    │  └─table_x_batch_xxx
+    ├─static_40k_png_3_of_4
+    │  ├─table_x_batch_xxx
+    │  └─table_x_batch_xxx
+    └─static_40k_png_4_of_4
+        ├─table_x_batch_xxx
+        └─table_x_batch_xxx
+     
+Link for Code
+https://github.com/google-research/opticalflow-autoflow
+
+Link for AutoFlow Dataset
+https://autoflow-google.github.io/
