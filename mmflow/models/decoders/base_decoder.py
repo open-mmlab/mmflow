@@ -99,7 +99,7 @@ class BaseDecoder(BaseModule):
                             f[1, :, :] = f[1, :, :] / h_scale
                     data_samples[i].set_data(
                         {'pred_' + key: PixelData(**{'data': f})})
-            return data_samples
+        return data_samples
 
     def predict_by_feat(self,
                         flow_results: Tensor,
